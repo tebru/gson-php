@@ -15,7 +15,7 @@ use Tebru\Gson\PropertyNamingStrategy;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class SnakePropertyNamingStrategy implements PropertyNamingStrategy
+final class SnakePropertyNamingStrategy implements PropertyNamingStrategy
 {
     /**
      * Accepts the PHP class property name and returns the name that should
