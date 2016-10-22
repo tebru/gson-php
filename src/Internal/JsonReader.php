@@ -154,9 +154,9 @@ final class JsonReader implements JsonReadable
      */
     public function hasNext(): bool
     {
-        $token = $this->peek();
+        $nextChar = $this->nextNonWhitespace();
 
-        return !$token->equals(JsonToken::END_ARRAY) && !$token->equals(JsonToken::END_OBJECT);
+        return '}' !== $nextChar && ']' !== $nextChar;
     }
 
     /**
