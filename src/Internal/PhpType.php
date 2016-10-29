@@ -195,7 +195,7 @@ final class PhpType
      *
      * @return string
      */
-    public function getClass()
+    public function getClass(): string
     {
         return $this->class;
     }
