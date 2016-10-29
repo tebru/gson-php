@@ -15,4 +15,14 @@ class ChildClassParent2
 {
     public $qux;
     public $overridden;
+
+    public function getOverridden()
+    {
+        return $this->overridden;
+    }
+
+    public function setOverridden($value)
+    {
+        $this->overridden = $value;
+    }
 }
