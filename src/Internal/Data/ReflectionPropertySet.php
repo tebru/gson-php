@@ -24,7 +24,7 @@ final class ReflectionPropertySet extends HashSet
      * @param ReflectionProperty $element
      * @return mixed
      */
-    public function getKey($element)
+    public function getKey($element): string
     {
         return $element->getName();
     }

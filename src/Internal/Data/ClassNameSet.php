@@ -23,7 +23,7 @@ final class ClassNameSet extends HashSet
      * @param object $element
      * @return mixed
      */
-    public function getKey($element)
+    public function getKey($element): string
     {
         return get_class($element);
     }

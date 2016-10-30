@@ -30,7 +30,7 @@ final class TypeToken extends AbstractEnum
      *
      * @return array
      */
-    public static function getConstants()
+    public static function getConstants(): array
     {
         return [
             self::STRING,
