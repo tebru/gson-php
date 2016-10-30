@@ -6,6 +6,8 @@
 
 namespace Tebru\Gson\Test\Mock;
 
+use Tebru\Gson\Test\Mock\Annotation\QuxAnnotation;
+
 /**
  * Class ChildClassParent2
  *
@@ -13,6 +15,9 @@ namespace Tebru\Gson\Test\Mock;
  */
 class ChildClassParent2
 {
+    /**
+     * @QuxAnnotation("qux")
+     */
     public $qux;
     public $overridden;
 
