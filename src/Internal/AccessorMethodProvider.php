@@ -46,7 +46,7 @@ final class AccessorMethodProvider
      * @param SetInterface $annotations
      * @return null|ReflectionMethod
      */
-    public function getterMethod(ReflectionClass $reflectionClass, ReflectionProperty $reflectionProperty, SetInterface $annotations)
+    public function getterMethod(ReflectionClass $reflectionClass, ReflectionProperty $reflectionProperty, SetInterface $annotations): ?ReflectionMethod
     {
         /** @var Accessor $accessorAnnotation */
         $accessorAnnotation = $annotations->find(function ($element) { return $element instanceof Accessor; });
@@ -66,7 +66,7 @@ final class AccessorMethodProvider
      * @param SetInterface $annotations
      * @return null|ReflectionMethod
      */
-    public function setterMethod(ReflectionClass $reflectionClass, ReflectionProperty $reflectionProperty, SetInterface $annotations)
+    public function setterMethod(ReflectionClass $reflectionClass, ReflectionProperty $reflectionProperty, SetInterface $annotations): ?ReflectionMethod
     {
         /** @var Accessor $accessorAnnotation */
         $accessorAnnotation = $annotations->find(function ($element) { return $element instanceof Accessor; });
@@ -85,7 +85,7 @@ final class AccessorMethodProvider
      * @param array $accessors
      * @return null|ReflectionMethod
      */
-    private function reflectionClassMethod(ReflectionClass $reflectionClass, array $accessors)
+    private function reflectionClassMethod(ReflectionClass $reflectionClass, array $accessors): ?ReflectionMethod
     {
         foreach ($accessors as $method) {
             if (!$reflectionClass->hasMethod($method)) {

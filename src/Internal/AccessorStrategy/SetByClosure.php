@@ -50,7 +50,7 @@ final class SetByClosure implements SetterStrategy
      * @param mixed $value
      * @return void
      */
-    public function set($object, $value)
+    public function set($object, $value): void
     {
         if (null === $this->setter) {
             $this->setter = Closure::bind(function ($object, $value, string $propertyName) {

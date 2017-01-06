@@ -21,7 +21,7 @@ final class ClassNameSet extends HashSet
      * Return the key to use for the HashMap
      *
      * @param object $element
-     * @return mixed
+     * @return string
      */
     public function getKey($element): string
     {

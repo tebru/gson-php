@@ -52,9 +52,9 @@ final class TypeToken extends AbstractEnum
      * gettype()
      *
      * @param string $type
-     * @return static
+     * @return TypeToken
      */
-    public static function createFromString(string $type)
+    public static function createFromString(string $type): TypeToken
     {
         switch ($type) {
             case 'string':

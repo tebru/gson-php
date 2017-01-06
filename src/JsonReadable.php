@@ -20,28 +20,28 @@ interface JsonReadable
      *
      * @return void
      */
-    public function beginArray();
+    public function beginArray(): void;
 
     /**
      * Consumes the next token and asserts it's the end of an array
      *
      * @return void
      */
-    public function endArray();
+    public function endArray(): void;
 
     /**
      * Consumes the next token and asserts it's the beginning of a new object
      *
      * @return void
      */
-    public function beginObject();
+    public function beginObject(): void;
 
     /**
      * Consumes the next token and asserts it's the end of an object
      *
      * @return void
      */
-    public function endObject();
+    public function endObject(): void;
 
     /**
      * Returns true if the array or object has another element
@@ -85,7 +85,7 @@ interface JsonReadable
      *
      * @return void
      */
-    public function nextNull();
+    public function nextNull(): void;
 
     /**
      * Consumes the next name and returns it
@@ -107,5 +107,5 @@ interface JsonReadable
      *
      * @return void
      */
-    public function skipValue();
+    public function skipValue(): void;
 }

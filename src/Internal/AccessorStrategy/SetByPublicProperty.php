@@ -37,7 +37,7 @@ final class SetByPublicProperty implements SetterStrategy
      * @param mixed $value
      * @return void
      */
-    public function set($object, $value)
+    public function set($object, $value): void
     {
         $object->{$this->propertyName} = $value;
     }

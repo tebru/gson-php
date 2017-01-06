@@ -66,7 +66,7 @@ final class JsonReader implements JsonReadable
      * @throws \RuntimeException If there's an error reading the stream
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If next token does not match expectation
      */
-    public function beginArray()
+    public function beginArray(): void
     {
         $token = $this->peek();
         if (!$token->equals(JsonToken::BEGIN_ARRAY)) {
@@ -87,7 +87,7 @@ final class JsonReader implements JsonReadable
      * @throws \RuntimeException If there's an error reading the stream
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token does not match expectation
      */
-    public function endArray()
+    public function endArray(): void
     {
         $token = $this->peek();
         if (!$token->equals(JsonToken::END_ARRAY)) {
@@ -108,7 +108,7 @@ final class JsonReader implements JsonReadable
      * @throws \RuntimeException If there's an error reading the stream
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token does not match expectation
      */
-    public function beginObject()
+    public function beginObject(): void
     {
         $token = $this->peek();
         if (!$token->equals(JsonToken::BEGIN_OBJECT)) {
@@ -130,7 +130,7 @@ final class JsonReader implements JsonReadable
      * @throws \RuntimeException If there's an error reading the stream
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token does not match expectation
      */
-    public function endObject()
+    public function endObject(): void
     {
         $token = $this->peek();
         if (!$token->equals(JsonToken::END_OBJECT)) {
@@ -263,13 +263,13 @@ final class JsonReader implements JsonReadable
     /**
      * Consumes the value of the next token and asserts it's null
      *
-     * @return null
+     * @return void
      * @throws \Tebru\Gson\Exception\MalformedJsonException If an unexpected character is encountered
      * @throws \RuntimeException If there's an error reading the stream
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTypeException If the scalar type is not null
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token does not match expectation
      */
-    public function nextNull()
+    public function nextNull(): void
     {
         $token = $this->peek();
         if (!$token->equals(JsonToken::NULL)) {
@@ -281,8 +281,6 @@ final class JsonReader implements JsonReadable
         if (null !== $value) {
             throw new UnexpectedJsonTypeException(sprintf('Expected null, but got "%s"', gettype($value)));
         }
-
-        return $value;
     }
 
     /**
@@ -509,7 +507,7 @@ final class JsonReader implements JsonReadable
      * @return void
      * @throws \RuntimeException If there's an error reading the stream
      */
-    public function skipValue()
+    public function skipValue(): void
     {
         $depth = 0;
         do {

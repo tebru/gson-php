@@ -24,5 +24,5 @@ interface SetterStrategy
      * @param mixed $value
      * @return void
      */
-    public function set($object, $value);
+    public function set($object, $value): void;
 }

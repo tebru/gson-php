@@ -102,7 +102,7 @@ final class PhpType
      * @return void
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
-    private function parseType(string $type)
+    private function parseType(string $type): void
     {
         if (false === strpos($type, '<')) {
             $this->setType($type);
@@ -160,8 +160,9 @@ final class PhpType
      * Create a type enum and set the class if necessary
      *
      * @param string $type
+     * @return void
      */
-    private function setType(string $type)
+    private function setType(string $type): void
     {
         $this->type = TypeToken::createFromString($type);
 
@@ -306,7 +307,7 @@ final class PhpType
      * @param array $options
      * @return void
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): void
     {
         $this->options->putAllArray($options);
     }
