@@ -30,4 +30,34 @@ class ChildClass extends ChildClassParent
      * @FooAnnotation("foo2")
      */
     public $overridden;
+
+    public function getBaz()
+    {
+        return $this->baz;
+    }
+
+    public function setBaz($baz)
+    {
+        $this->baz = $baz;
+    }
+
+    public function baz()
+    {
+        return $this->baz;
+    }
+
+    public function set_baz($baz)
+    {
+        $this->baz = $baz;
+    }
+
+    protected function isFoo()
+    {
+        return $this->foo;
+    }
+
+    private function setFoo($foo)
+    {
+        $this->foo = $foo;
+    }
 }
