@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4ae28fb3487970d2a23d0a2dd6ccb41f",
-    "content-hash": "9fe3ce864649e87f8b4586e9413842be",
+    "hash": "623be7198773a53183161e27df18a8ec",
+    "content-hash": "a1c2c870d2b381baf0312c9198553ed7",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -309,16 +309,16 @@
         },
         {
             "name": "tebru/enum",
-            "version": "v0.3.0",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tebru/enum.git",
-                "reference": "97252ce9ea45487103f5395ce105da48c57f569f"
+                "reference": "c04b9700442bfb8d168b39029779aef16ac018fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tebru/enum/zipball/97252ce9ea45487103f5395ce105da48c57f569f",
-                "reference": "97252ce9ea45487103f5395ce105da48c57f569f",
+                "url": "https://api.github.com/repos/tebru/enum/zipball/c04b9700442bfb8d168b39029779aef16ac018fd",
+                "reference": "c04b9700442bfb8d168b39029779aef16ac018fd",
                 "shasum": ""
             },
             "require": {
@@ -326,8 +326,7 @@
             },
             "require-dev": {
                 "php": ">= 5.5",
-                "phpunit/phpunit": "^4.0",
-                "satooshi/php-coveralls": "^0.6.1"
+                "phpunit/phpunit": "^4.0"
             },
             "type": "library",
             "autoload": {
@@ -347,7 +346,7 @@
                 }
             ],
             "description": "Simple enum library for PHP",
-            "time": "2016-09-14 23:37:20"
+            "time": "2017-01-07 00:42:11"
         },
         {
             "name": "tebru/php-collections",
@@ -1743,7 +1742,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">= 7.0"
+        "php": ">= 7.1"
     },
     "platform-dev": []
 }

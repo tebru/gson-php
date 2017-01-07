@@ -11,6 +11,15 @@ use Tebru\Enum\AbstractEnum;
 /**
  * Class TypeToken
  *
+ * @method static $this STRING()
+ * @method static $this INTEGER()
+ * @method static $this FLOAT()
+ * @method static $this BOOLEAN()
+ * @method static $this ARRAY()
+ * @method static $this OBJECT()
+ * @method static $this NULL()
+ * @method static $this RESOURCE()
+ * @method static $this WILDCARD()
  * @author Nate Brunette <n@tebru.net>
  */
 final class TypeToken extends AbstractEnum
@@ -53,32 +62,33 @@ final class TypeToken extends AbstractEnum
      *
      * @param string $type
      * @return TypeToken
+     * @throws \RuntimeException If the value is not valid
      */
     public static function createFromString(string $type): TypeToken
     {
         switch ($type) {
             case 'string':
-                return new static(self::STRING);
+                return TypeToken::create(self::STRING);
             case 'int':
             case 'integer':
-                return new static(self::INTEGER);
+                return TypeToken::create(self::INTEGER);
             case 'double':
             case 'float':
-                return new static(self::FLOAT);
+                return TypeToken::create(self::FLOAT);
             case 'bool':
             case 'boolean':
-                return new static(self::BOOLEAN);
+                return TypeToken::create(self::BOOLEAN);
             case 'array':
-                return new static(self::ARRAY);
+                return TypeToken::create(self::ARRAY);
             case 'null':
             case 'NULL':
-                return new static(self::NULL);
+                return TypeToken::create(self::NULL);
             case 'resource':
-                return new static(self::RESOURCE);
+                return TypeToken::create(self::RESOURCE);
             case '?':
-                return new static(self::WILDCARD);
+                return TypeToken::create(self::WILDCARD);
             default:
-                return new static(self::OBJECT);
+                return TypeToken::create(self::OBJECT);
         }
     }
 }

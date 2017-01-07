@@ -83,6 +83,7 @@ final class PhpType
      * Constructor
      *
      * @param string $type
+     * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function __construct(string $type)
@@ -100,6 +101,7 @@ final class PhpType
      *
      * @param string $type
      * @return void
+     * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     private function parseType(string $type): void
@@ -161,6 +163,7 @@ final class PhpType
      *
      * @param string $type
      * @return void
+     * @throws \RuntimeException If the value is not valid
      */
     private function setType(string $type): void
     {
@@ -208,7 +211,7 @@ final class PhpType
      */
     public function isString(): bool
     {
-        return $this->type->equals(TypeToken::STRING);
+        return $this->type->equals(TypeToken::STRING());
     }
 
     /**
@@ -218,7 +221,7 @@ final class PhpType
      */
     public function isInteger(): bool
     {
-        return $this->type->equals(TypeToken::INTEGER);
+        return $this->type->equals(TypeToken::INTEGER());
     }
 
     /**
@@ -228,7 +231,7 @@ final class PhpType
      */
     public function isFloat(): bool
     {
-        return $this->type->equals(TypeToken::FLOAT);
+        return $this->type->equals(TypeToken::FLOAT());
     }
 
     /**
@@ -238,7 +241,7 @@ final class PhpType
      */
     public function isBoolean(): bool
     {
-        return $this->type->equals(TypeToken::BOOLEAN);
+        return $this->type->equals(TypeToken::BOOLEAN());
     }
 
     /**
@@ -248,7 +251,7 @@ final class PhpType
      */
     public function isArray(): bool
     {
-        return $this->type->equals(TypeToken::ARRAY);
+        return $this->type->equals(TypeToken::ARRAY());
     }
 
     /**
@@ -258,7 +261,7 @@ final class PhpType
      */
     public function isObject(): bool
     {
-        return $this->type->equals(TypeToken::OBJECT);
+        return $this->type->equals(TypeToken::OBJECT());
     }
 
     /**
@@ -268,7 +271,7 @@ final class PhpType
      */
     public function isNull(): bool
     {
-        return $this->type->equals(TypeToken::NULL);
+        return $this->type->equals(TypeToken::NULL());
     }
 
     /**
@@ -278,7 +281,7 @@ final class PhpType
      */
     public function isResource(): bool
     {
-        return $this->type->equals(TypeToken::RESOURCE);
+        return $this->type->equals(TypeToken::RESOURCE());
     }
 
     /**
@@ -288,7 +291,7 @@ final class PhpType
      */
     public function isWildcard(): bool
     {
-        return $this->type->equals(TypeToken::WILDCARD);
+        return $this->type->equals(TypeToken::WILDCARD());
     }
 
     /**

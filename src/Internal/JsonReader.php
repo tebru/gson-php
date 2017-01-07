@@ -35,7 +35,7 @@ final class JsonReader implements JsonReadable
      * Manages [@see JsonScope] depth.  This allows the reader to know what
      * scope to use once a nested object has finished being parsed.
      *
-     * @var array
+     * @var JsonScope[]
      */
     private $stack;
 
@@ -69,7 +69,7 @@ final class JsonReader implements JsonReadable
     public function beginArray(): void
     {
         $token = $this->peek();
-        if (!$token->equals(JsonToken::BEGIN_ARRAY)) {
+        if (!$token->equals(JsonToken::BEGIN_ARRAY())) {
             $currentCharacter = $this->stream->read(1);
             throw new UnexpectedJsonTokenException(sprintf('Expected "[", but found "%s"', $currentCharacter));
         }
@@ -90,7 +90,7 @@ final class JsonReader implements JsonReadable
     public function endArray(): void
     {
         $token = $this->peek();
-        if (!$token->equals(JsonToken::END_ARRAY)) {
+        if (!$token->equals(JsonToken::END_ARRAY())) {
             $currentCharacter = $this->stream->read(1);
             throw new UnexpectedJsonTokenException(sprintf('Expected "]", but found "%s"', $currentCharacter));
         }
@@ -111,7 +111,7 @@ final class JsonReader implements JsonReadable
     public function beginObject(): void
     {
         $token = $this->peek();
-        if (!$token->equals(JsonToken::BEGIN_OBJECT)) {
+        if (!$token->equals(JsonToken::BEGIN_OBJECT())) {
             $currentCharacter = $this->stream->read(1);
             throw new UnexpectedJsonTokenException(sprintf('Expected "{", but found "%s"', $currentCharacter));
         }
@@ -119,7 +119,6 @@ final class JsonReader implements JsonReadable
         $this->currentToken = null;
         $this->stream->read(1);
         $this->stack[] = JsonScope::EMPTY_OBJECT();
-
     }
 
     /**
@@ -133,7 +132,7 @@ final class JsonReader implements JsonReadable
     public function endObject(): void
     {
         $token = $this->peek();
-        if (!$token->equals(JsonToken::END_OBJECT)) {
+        if (!$token->equals(JsonToken::END_OBJECT())) {
             $currentCharacter = $this->stream->read(1);
             throw new UnexpectedJsonTokenException(sprintf('Expected "}", but found "%s"', $currentCharacter));
         }
@@ -171,7 +170,7 @@ final class JsonReader implements JsonReadable
     public function nextBoolean(): bool
     {
         $token = $this->peek();
-        if (!$token->equals(JsonToken::BOOLEAN)) {
+        if (!$token->equals(JsonToken::BOOLEAN())) {
             throw new UnexpectedJsonTokenException(sprintf('Expected boolean, but got "%s"', $token->getTokenName()));
         }
 
@@ -196,7 +195,7 @@ final class JsonReader implements JsonReadable
     public function nextDouble(): float
     {
         $token = $this->peek();
-        if (!$token->equals(JsonToken::NUMBER)) {
+        if (!$token->equals(JsonToken::NUMBER())) {
             throw new UnexpectedJsonTokenException(sprintf('Expected double, but got "%s"', $token->getTokenName()));
         }
 
@@ -221,7 +220,7 @@ final class JsonReader implements JsonReadable
     public function nextInteger(): int
     {
         $token = $this->peek();
-        if (!$token->equals(JsonToken::NUMBER)) {
+        if (!$token->equals(JsonToken::NUMBER())) {
             throw new UnexpectedJsonTokenException(sprintf('Expected integer, but got "%s"', $token->getTokenName()));
         }
 
@@ -238,13 +237,14 @@ final class JsonReader implements JsonReadable
      * Consumes the value of the next token, asserts it's a string and returns it
      *
      * @return string
+     * @throws \Tebru\Gson\Exception\MalformedJsonException If an unexpected character is encountered
      * @throws \RuntimeException If there's an error reading the stream
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token does not match expectation
      */
     public function nextString(): string
     {
         $token = $this->peek();
-        if (!$token->equals(JsonToken::STRING) && !$token->equals(JsonToken::NAME)) {
+        if (!$token->equals(JsonToken::STRING()) && !$token->equals(JsonToken::NAME())) {
             throw new UnexpectedJsonTokenException(sprintf('Expected string, but got "%s"', $token->getTokenName()));
         }
 
@@ -272,7 +272,7 @@ final class JsonReader implements JsonReadable
     public function nextNull(): void
     {
         $token = $this->peek();
-        if (!$token->equals(JsonToken::NULL)) {
+        if (!$token->equals(JsonToken::NULL())) {
             throw new UnexpectedJsonTokenException(sprintf('Expected null, but got "%s"', $token->getTokenName()));
         }
 
@@ -295,7 +295,7 @@ final class JsonReader implements JsonReadable
     public function nextName(): string
     {
         $scope = $this->currentScope();
-        if (!$scope->equals(JsonScope::EMPTY_OBJECT) && !$scope->equals(JsonScope::NONEMPTY_OBJECT)) {
+        if (!$scope->equals(JsonScope::EMPTY_OBJECT()) && !$scope->equals(JsonScope::NONEMPTY_OBJECT())) {
             throw new UnexpectedJsonScopeException(sprintf('Method call not allowed in current scope'));
         }
 
@@ -362,7 +362,7 @@ final class JsonReader implements JsonReadable
 
                 // if the current scope is a non-empty object, the next character must end the object
                 //or be a comma
-                if ($currentScope->equals(JsonScope::NONEMPTY_OBJECT)) {
+                if ($currentScope->equals(JsonScope::NONEMPTY_OBJECT())) {
                     switch ($this->nextNonWhitespace()) {
                         case '}':
                             // if the current scope is an empty/non-empty object, change it to be a dangling name
