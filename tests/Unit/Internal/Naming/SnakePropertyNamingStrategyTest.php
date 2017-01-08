@@ -13,6 +13,7 @@ use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
  * Class SnakePropertyNamingStrategyTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy
  */
 class SnakePropertyNamingStrategyTest extends PHPUnit_Framework_TestCase
 {

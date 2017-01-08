@@ -14,6 +14,7 @@ use Throwable;
  * Class SetByMethodTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\AccessorStrategy\SetByMethod
  */
 class SetByMethodTest extends PHPUnit_Framework_TestCase
 {

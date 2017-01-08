@@ -34,6 +34,7 @@ use Tebru\Gson\Test\Mock\PropertyCollectionMock;
  * Class PropertyCollectionFactoryTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\Data\PropertyCollectionFactory
  */
 class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
 {

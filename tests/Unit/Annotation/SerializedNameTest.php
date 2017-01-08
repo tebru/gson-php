@@ -14,6 +14,7 @@ use Tebru\Gson\Annotation\SerializedName;
  * Class SerializedNameTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Annotation\SerializedName
  */
 class SerializedNameTest extends PHPUnit_Framework_TestCase
 {

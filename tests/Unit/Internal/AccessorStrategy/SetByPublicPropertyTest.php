@@ -13,6 +13,7 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
  * Class SetByPublicPropertyTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty
  */
 class SetByPublicPropertyTest extends PHPUnit_Framework_TestCase
 {

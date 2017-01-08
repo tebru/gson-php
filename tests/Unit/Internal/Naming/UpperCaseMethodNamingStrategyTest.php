@@ -13,6 +13,7 @@ use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
  * Class UpperCaseMethodNamingStrategyTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy
  */
 class UpperCaseMethodNamingStrategyTest extends PHPUnit_Framework_TestCase
 {

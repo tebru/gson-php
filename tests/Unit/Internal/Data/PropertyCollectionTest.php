@@ -17,7 +17,6 @@ use Tebru\Gson\Internal\Data\Property;
  * Class PropertyCollectionTest
  *
  * @author Nate Brunette <n@tebru.net>
- *
  * @covers \Tebru\Gson\Internal\Data\PropertyCollection
  */
 class PropertyCollectionTest extends PHPUnit_Framework_TestCase

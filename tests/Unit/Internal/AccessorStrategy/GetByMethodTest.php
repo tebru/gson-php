@@ -14,6 +14,7 @@ use Throwable;
  * Class GetByMethodTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\AccessorStrategy\GetByMethod
  */
 class GetByMethodTest extends PHPUnit_Framework_TestCase
 {

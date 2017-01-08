@@ -22,7 +22,6 @@ use Tebru\Gson\Test\Mock\ChildClassParent;
  * Class PropertyTest
  *
  * @author Nate Brunette <n@tebru.net>
- *
  * @covers \Tebru\Gson\Internal\Data\Property
  */
 class PropertyTest extends PHPUnit_Framework_TestCase

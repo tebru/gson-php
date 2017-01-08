@@ -14,6 +14,7 @@ use Tebru\Gson\Annotation\Accessor;
  * Class AccessorTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Annotation\Accessor
  */
 class AccessorTest extends PHPUnit_Framework_TestCase
 {

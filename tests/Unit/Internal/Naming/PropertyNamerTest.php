@@ -18,7 +18,6 @@ use Tebru\Gson\Test\Mock\AnnotatedMock;
  * Class PropertyNamerTest
  *
  * @author Nate Brunette <n@tebru.net>
- *
  * @covers \Tebru\Gson\Internal\Naming\PropertyNamer
  */
 class PropertyNamerTest extends PHPUnit_Framework_TestCase

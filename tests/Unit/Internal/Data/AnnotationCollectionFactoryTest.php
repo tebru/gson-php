@@ -21,6 +21,7 @@ use Tebru\Gson\Test\Mock\ClassWithoutParent;
  * Class AnnotationCollectionFactoryTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\Data\AnnotationCollectionFactory
  */
 class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
 {

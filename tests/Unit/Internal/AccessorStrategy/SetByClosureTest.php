@@ -14,6 +14,7 @@ use Tebru\Gson\Test\Mock\ClosureTestMock;
  * Class SetByClosureTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\AccessorStrategy\SetByClosure
  */
 class SetByClosureTest extends PHPUnit_Framework_TestCase
 {

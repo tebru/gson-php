@@ -16,6 +16,7 @@ use Throwable;
  * Class GetByClosureTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\AccessorStrategy\GetByClosure
  */
 class GetByClosureTest extends PHPUnit_Framework_TestCase
 {

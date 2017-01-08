@@ -19,7 +19,6 @@ use Tebru\Gson\Test\Mock\ClassWithoutParent;
  * Class ReflectionPropertySetFactoryTest
  *
  * @author Nate Brunette <n@tebru.net>
- *
  * @covers \Tebru\Gson\Internal\Data\ReflectionPropertySetFactory
  */
 class ReflectionPropertySetFactoryTest extends PHPUnit_Framework_TestCase

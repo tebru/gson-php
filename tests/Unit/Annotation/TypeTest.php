@@ -15,6 +15,7 @@ use Tebru\Gson\Annotation\Type;
  * Class TypeTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Annotation\Type
  */
 class TypeTest extends PHPUnit_Framework_TestCase
 {

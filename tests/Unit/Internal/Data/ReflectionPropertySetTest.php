@@ -15,7 +15,6 @@ use Tebru\Gson\Test\Mock\ClosureTestMock;
  * Class ReflectionPropertySetTest
  *
  * @author Nate Brunette <n@tebru.net>
- *
  * @covers \Tebru\Gson\Internal\Data\ReflectionPropertySet
  */
 class ReflectionPropertySetTest extends PHPUnit_Framework_TestCase

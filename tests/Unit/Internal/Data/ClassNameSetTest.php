@@ -13,7 +13,6 @@ use Tebru\Gson\Internal\Data\ClassNameSet;
  * Class ClassNameSetTest
  *
  * @author Nate Brunette <n@tebru.net>
- *
  * @covers \Tebru\Gson\Internal\Data\ClassNameSet
  */
 class ClassNameSetTest extends PHPUnit_Framework_TestCase

@@ -14,6 +14,7 @@ use Throwable;
  * Class GetByPublicPropertyTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty
  */
 class GetByPublicPropertyTest extends PHPUnit_Framework_TestCase
 {
