@@ -21,8 +21,8 @@ use Tebru\Gson\Test\Mock\ChildClass;
 /**
  * Class AccessorStrategyFactoryTest
  *
- * @covers \Tebru\Gson\Internal\AccessorStrategyFactory
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\AccessorStrategyFactory
  */
 class AccessorStrategyFactoryTest extends PHPUnit_Framework_TestCase
 {

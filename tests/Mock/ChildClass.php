@@ -31,6 +31,8 @@ class ChildClass extends ChildClassParent
      */
     public $overridden;
 
+    private $withTypehint;
+
     public function getBaz()
     {
         return $this->baz;
@@ -56,8 +58,18 @@ class ChildClass extends ChildClassParent
         return $this->foo;
     }
 
-    private function setFoo($foo)
+    private function setFoo($foo = 'bar')
     {
         $this->foo = $foo;
+    }
+
+    public function getWithReturnType(): ChildClass
+    {
+        return $this->withTypehint;
+    }
+
+    public function setWithTypehint(ChildClass $childClass)
+    {
+        $this->withTypehint = $childClass;
     }
 }
