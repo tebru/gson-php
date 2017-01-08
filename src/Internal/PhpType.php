@@ -171,6 +171,8 @@ final class PhpType
 
         if ($this->isObject()) {
             $this->class = 'object' === $type ? 'stdClass' : $type;
+        } else {
+            $this->fullType = (string) $this->type;
         }
     }
 

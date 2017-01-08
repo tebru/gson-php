@@ -25,14 +25,14 @@ class Accessor
      *
      * @var string
      */
-    private $getter;
+    private $get;
 
     /**
      * Method name representing setter
      *
      * @var string
      */
-    private $setter;
+    private $set;
 
     /**
      * Constructor
@@ -43,14 +43,14 @@ class Accessor
     public function __construct(array $params)
     {
         if (array_key_exists('get', $params)) {
-            $this->getter = $params['get'];
+            $this->get = $params['get'];
         }
 
         if (array_key_exists('set', $params)) {
-            $this->setter = $params['set'];
+            $this->set = $params['set'];
         }
 
-        if (null === $this->getter && null === $this->setter) {
+        if (null === $this->get && null === $this->set) {
             throw new LogicException('@Accessor annotation must specify either get or set key');
         }
     }
@@ -62,7 +62,7 @@ class Accessor
      */
     public function getter(): string
     {
-        return $this->getter;
+        return $this->get;
     }
 
     /**
@@ -72,6 +72,6 @@ class Accessor
      */
     public function setter(): string
     {
-        return $this->setter;
+        return $this->set;
     }
 }

@@ -208,4 +208,11 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
 
         self::assertSame('ArrayList<HashMap<string,Bar<string,bool>>>', (string) $phpType);
     }
+
+    public function testToStringReturnsCanonicalType()
+    {
+        $phpType = new PhpType('int');
+
+        self::assertSame('integer', (string) $phpType);
+    }
 }
