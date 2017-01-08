@@ -19,7 +19,6 @@ use Tebru\Gson\Test\Mock\ChildClass;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\AccessorMethodProvider
- * @covers \Tebru\Gson\Annotation\Accessor
  */
 class AccessorMethodProviderTest extends PHPUnit_Framework_TestCase
 {
