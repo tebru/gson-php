@@ -6,6 +6,8 @@
 
 namespace Tebru\Gson\Annotation;
 
+use LogicException;
+
 /**
  * Class SerializedName
  *
@@ -28,12 +30,15 @@ class SerializedName
      * Constructor
      *
      * @param array $params
+     * @throws \LogicException If name isn't provided
      */
     public function __construct(array $params)
     {
-        if (array_key_exists('value', $params)) {
-            $this->value = $params['value'];
+        if (!array_key_exists('value', $params)) {
+            throw new LogicException('@SerializedName annotation must specify a name as the first argument');
         }
+
+        $this->value = $params['value'];
     }
 
     /**

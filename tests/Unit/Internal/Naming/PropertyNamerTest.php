@@ -20,7 +20,6 @@ use Tebru\Gson\Test\Mock\AnnotatedMock;
  * @author Nate Brunette <n@tebru.net>
  *
  * @covers \Tebru\Gson\Internal\Naming\PropertyNamer
- * @covers \Tebru\Gson\Annotation\SerializedName
  */
 class PropertyNamerTest extends PHPUnit_Framework_TestCase
 {
