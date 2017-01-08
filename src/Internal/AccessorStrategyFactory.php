@@ -22,7 +22,7 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class AccessorStrategyFactory
+final class AccessorStrategyFactory
 {
     /**
      * Create strategy to access a value

@@ -17,7 +17,7 @@ use Tebru\Gson\Annotation\Type;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class PhpTypeFactory
+final class PhpTypeFactory
 {
     /**
      * Attempts to guess a property type based method type hints, defaults to wildcard type
