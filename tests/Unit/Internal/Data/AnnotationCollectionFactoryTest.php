@@ -8,6 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\Data;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit_Framework_TestCase;
+use ReflectionClass;
 use ReflectionProperty;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Test\Mock\Annotation\BarAnnotation;
@@ -28,7 +29,7 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateWithoutParents()
     {
         $factory = new AnnotationCollectionFactory(new AnnotationReader());
-        $annotations = $factory->create(new ReflectionProperty(ClassWithoutParent::class, 'foo'));
+        $annotations = $factory->createPropertyAnnotations(new ReflectionProperty(ClassWithoutParent::class, 'foo'));
 
         $expected = [
             new FooAnnotation(['value' => 'foo']),
@@ -42,7 +43,7 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateWithParents()
     {
         $factory = new AnnotationCollectionFactory(new AnnotationReader());
-        $annotations = $factory->create(new ReflectionProperty(ChildClass::class, 'foo'));
+        $annotations = $factory->createPropertyAnnotations(new ReflectionProperty(ChildClass::class, 'foo'));
 
         $expected = [
             new FooAnnotation(['value' => 'foo']),
@@ -57,10 +58,24 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateTwoLevels()
     {
         $factory = new AnnotationCollectionFactory(new AnnotationReader());
-        $annotations = $factory->create(new ReflectionProperty(ChildClass::class, 'qux'));
+        $annotations = $factory->createPropertyAnnotations(new ReflectionProperty(ChildClass::class, 'qux'));
 
         $expected = [
             new QuxAnnotation(['value' => 'qux']),
+        ];
+
+        self::assertEquals($expected, $annotations->toArray());
+    }
+
+    public function testCreateClassAnnotations()
+    {
+        $factory = new AnnotationCollectionFactory(new AnnotationReader());
+        $annotations = $factory->createClassAnnotations(new ReflectionClass(ChildClass::class));
+
+        $expected = [
+            new FooAnnotation(['value' => 'foo3']),
+            new BazAnnotation(['value' => 'baz']),
+            new BarAnnotation(['value' => 'bar2']),
         ];
 
         self::assertEquals($expected, $annotations->toArray());

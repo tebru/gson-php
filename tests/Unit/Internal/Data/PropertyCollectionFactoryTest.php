@@ -23,11 +23,15 @@ use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
+use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
+use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcludeClassMockExclusionStrategy;
+use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
+use Tebru\Gson\Test\Mock\PropertyCollectionExclusionMock;
 use Tebru\Gson\Test\Mock\PropertyCollectionMock;
 
 /**
@@ -40,13 +44,16 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testCreate()
     {
+        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader());
+
         $factory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
-            new AnnotationCollectionFactory(new AnnotationReader()),
+            $annotationCollectionFactory,
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
             new PhpTypeFactory(),
+            new Excluder($annotationCollectionFactory),
             new VoidCache()
         );
 
@@ -81,15 +88,17 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateUsesCache()
     {
+        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader());
         $cache = new ArrayCache();
 
         $factory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
-            new AnnotationCollectionFactory(new AnnotationReader()),
+            $annotationCollectionFactory,
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
             new PhpTypeFactory(),
+            new Excluder($annotationCollectionFactory),
             $cache
         );
 
@@ -103,5 +112,31 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         // assert we use the new cache
         $collection = $factory->create(new PhpType(PropertyCollectionMock::class));
         self::assertCount(0, $collection->toArray());
+    }
+
+    public function testCreateExcludes()
+    {
+        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader());
+        $excluder = new Excluder($annotationCollectionFactory);
+        $excluder->addExclusionStrategy(new FooPropertyExclusionStrategy(), true, true);
+        $excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), true, true);
+
+        $factory = new PropertyCollectionFactory(
+            new ReflectionPropertySetFactory(),
+            $annotationCollectionFactory,
+            new PropertyNamer(new SnakePropertyNamingStrategy()),
+            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
+            new AccessorStrategyFactory(),
+            new PhpTypeFactory(),
+            $excluder,
+            new VoidCache()
+        );
+
+        $collection = $factory->create(new PhpType(PropertyCollectionExclusionMock::class));
+
+        /** @var Property[] $elements */
+        $elements = $collection->toArray();
+
+        self::assertCount(0, $elements);
     }
 }

@@ -11,6 +11,7 @@ use ReflectionClass;
 use ReflectionProperty;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
+use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
@@ -56,6 +57,11 @@ final class PropertyCollectionFactory
     private $phpTypeFactory;
 
     /**
+     * @var Excluder
+     */
+    private $excluder;
+
+    /**
      * @var Cache
      */
     private $cache;
@@ -69,6 +75,7 @@ final class PropertyCollectionFactory
      * @param AccessorMethodProvider $accessorMethodProvider
      * @param AccessorStrategyFactory $accessorStrategyFactory
      * @param PhpTypeFactory $phpTypeFactory
+     * @param Excluder $excluder
      * @param Cache $cache
      */
     public function __construct(
@@ -78,6 +85,7 @@ final class PropertyCollectionFactory
         AccessorMethodProvider $accessorMethodProvider,
         AccessorStrategyFactory $accessorStrategyFactory,
         PhpTypeFactory $phpTypeFactory,
+        Excluder $excluder,
         Cache $cache
     ) {
         $this->reflectionPropertySetFactory = $reflectionPropertySetFactory;
@@ -86,6 +94,7 @@ final class PropertyCollectionFactory
         $this->accessorMethodProvider = $accessorMethodProvider;
         $this->accessorStrategyFactory = $accessorStrategyFactory;
         $this->phpTypeFactory = $phpTypeFactory;
+        $this->excluder = $excluder;
         $this->cache = $cache;
     }
 
@@ -94,6 +103,8 @@ final class PropertyCollectionFactory
      *
      * @param PhpType $phpType
      * @return PropertyCollection
+     * @throws \RuntimeException If the value is not valid
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function create(PhpType $phpType): PropertyCollection
     {
@@ -109,7 +120,7 @@ final class PropertyCollectionFactory
 
         /** @var ReflectionProperty $reflectionProperty */
         foreach ($reflectionProperties as $reflectionProperty) {
-            $annotations = $this->annotationCollectionFactory->create($reflectionProperty);
+            $annotations = $this->annotationCollectionFactory->createPropertyAnnotations($reflectionProperty);
             $serializedName = $this->propertyNamer->serializedName($reflectionProperty, $annotations);
             $getterMethod = $this->accessorMethodProvider->getterMethod($reflectionClass, $reflectionProperty, $annotations);
             $setterMethod = $this->accessorMethodProvider->setterMethod($reflectionClass, $reflectionProperty, $annotations);
@@ -117,11 +128,55 @@ final class PropertyCollectionFactory
             $setterStrategy = $this->accessorStrategyFactory->setterStrategy($reflectionProperty, $setterMethod);
             $type = $this->phpTypeFactory->create($annotations, $getterMethod, $setterMethod);
 
-            $properties->add(new Property($reflectionProperty->getName(), $serializedName, $type, $getterStrategy, $setterStrategy));
+            $property = new Property(
+                $reflectionProperty->getName(),
+                $serializedName,
+                $type,
+                $getterStrategy,
+                $setterStrategy,
+                $annotations,
+                $reflectionProperty->getModifiers()
+            );
+
+            $skipSerialize = $this->excludeProperty($property, true);
+            $skipDeserialize = $this->excludeProperty($property, false);
+
+            // if we're skipping serialization and deserialization, we don't need
+            // to add the property to the collection
+            if ($skipSerialize && $skipDeserialize) {
+                continue;
+            }
+
+            $property->setSkipSerialize($skipSerialize);
+            $property->setSkipDeserialize($skipDeserialize);
+
+            $properties->add($property);
         }
 
         $this->cache->save($class, $properties);
 
         return $properties;
+    }
+
+    /**
+     * Returns true if we should skip this property
+     *
+     * Asks the excluder if we should skip the property or class
+     *
+     * @param Property $property
+     * @param bool $serialize
+     * @return bool
+     */
+    private function excludeProperty(Property $property, bool $serialize): bool
+    {
+        $excludeClass = false;
+        $class = $property->getType()->getClass();
+        if (null !== $class) {
+            $excludeClass = $this->excluder->excludeClass($class, $serialize);
+        }
+
+        $excludeProperty = $this->excluder->excludeProperty($property, $serialize);
+
+        return $excludeClass || $excludeProperty;
     }
 }

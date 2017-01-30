@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Internal\Data;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use ReflectionClass;
 use ReflectionProperty;
 
 /**
@@ -34,15 +35,15 @@ final class AnnotationCollectionFactory
     }
 
     /**
-     * Create a set of annotations
+     * Create a set of property annotations
      *
      * @param ReflectionProperty $reflectionProperty
-     * @return ClassNameSet
+     * @return AnnotationSet
      */
-    public function create(ReflectionProperty $reflectionProperty): ClassNameSet
+    public function createPropertyAnnotations(ReflectionProperty $reflectionProperty): AnnotationSet
     {
         // start with with all property annotations
-        $annotations = new ClassNameSet($this->reader->getPropertyAnnotations($reflectionProperty));
+        $annotations = new AnnotationSet($this->reader->getPropertyAnnotations($reflectionProperty));
 
         $reflectionClass = $reflectionProperty->getDeclaringClass();
         $parentClass = $reflectionClass->getParentClass();
@@ -61,6 +62,25 @@ final class AnnotationCollectionFactory
             $annotations->addAllArray($this->reader->getClassAnnotations($parentClass));
 
             // reset $parentClass
+            $parentClass = $parentClass->getParentClass();
+        }
+
+        return $annotations;
+    }
+
+    /**
+     * Create a set of class annotations
+     *
+     * @param ReflectionClass $reflectionClass
+     * @return AnnotationSet
+     */
+    public function createClassAnnotations(ReflectionClass $reflectionClass): AnnotationSet
+    {
+        $annotations = new AnnotationSet($this->reader->getClassAnnotations($reflectionClass));
+        $parentClass = $reflectionClass->getParentClass();
+
+        while (false !== $parentClass) {
+            $annotations->addAllArray($this->reader->getClassAnnotations($parentClass));
             $parentClass = $parentClass->getParentClass();
         }
 

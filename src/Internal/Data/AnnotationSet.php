@@ -7,18 +7,16 @@
 namespace Tebru\Gson\Internal\Data;
 
 use ArrayIterator;
-use ReflectionProperty;
 use Tebru\Collection\AbstractSet;
-use Tebru\Collection\HashSet;
 
 /**
- * Class ReflectionPropertySet
+ * Class ClassNameSet
  *
- * A [@see HashSet] that is keyed by [@see \ReflectionProperty] name
+ * A HashSet that is keyed by class name
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class ReflectionPropertySet extends AbstractSet
+final class AnnotationSet extends AbstractSet
 {
     /**
      * @var array
@@ -36,13 +34,29 @@ final class ReflectionPropertySet extends AbstractSet
             $this->add($element);
         }
     }
+
+    /**
+     * Get an annotation by class name
+     *
+     * @param string $annotationClass
+     * @return object|null
+     */
+    public function getAnnotation(string $annotationClass)
+    {
+        if (!array_key_exists($annotationClass, $this->elements)) {
+            return null;
+        }
+
+        return $this->elements[$annotationClass];
+    }
+
     /**
      * Ensure the element exists in the collection
      *
      * Returns true if the collection can contain duplicates,
      * and false if it cannot.
      *
-     * @param ReflectionProperty $element
+     * @param mixed $element
      * @return bool
      */
     public function add($element): bool
@@ -51,7 +65,7 @@ final class ReflectionPropertySet extends AbstractSet
             return false;
         }
 
-        $key = $element->getName();
+        $key = get_class($element);
         $this->elements[$key] = $element;
 
         return true;
@@ -68,14 +82,14 @@ final class ReflectionPropertySet extends AbstractSet
     }
 
     /**
-     * Returns true if the collection contains element
+     * Returns true if the element exists
      *
-     * @param ReflectionProperty $element
+     * @param object $element
      * @return bool
      */
     public function contains($element): bool
     {
-        $key = $element->getName();
+        $key = get_class($element);
 
         return array_key_exists($key, $this->elements);
     }
@@ -85,12 +99,12 @@ final class ReflectionPropertySet extends AbstractSet
      *
      * Returns true if the element was removed
      *
-     * @param ReflectionProperty $element
+     * @param mixed $element
      * @return bool
      */
     public function remove($element): bool
     {
-        $key = $element->getName();
+        $key = get_class($element);
 
         if (!array_key_exists($key, $this->elements)) {
             return false;
@@ -100,6 +114,7 @@ final class ReflectionPropertySet extends AbstractSet
 
         return true;
     }
+
 
     /**
      * Returns an array of all elements in the collection

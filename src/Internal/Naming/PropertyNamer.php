@@ -7,8 +7,8 @@
 namespace Tebru\Gson\Internal\Naming;
 
 use ReflectionProperty;
-use Tebru\Collection\SetInterface;
 use Tebru\Gson\Annotation\SerializedName;
+use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\PropertyNamingStrategy;
 
 /**
@@ -39,12 +39,12 @@ final class PropertyNamer
      * Get the serialized version of the property name
      *
      * @param ReflectionProperty $reflectionProperty
-     * @param SetInterface $annotations
+     * @param AnnotationSet $annotations
      * @return string
      */
-    public function serializedName(ReflectionProperty $reflectionProperty, SetInterface $annotations): string
+    public function serializedName(ReflectionProperty $reflectionProperty, AnnotationSet $annotations): string
     {
-        $serializedName = $annotations->find(function ($element) { return $element instanceof SerializedName; });
+        $serializedName = $annotations->getAnnotation(SerializedName::class);
         if (null !== $serializedName) {
             return $serializedName->getName();
         }

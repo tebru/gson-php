@@ -9,7 +9,7 @@ namespace Tebru\Gson\Test\Unit\Internal;
 use PHPUnit_Framework_TestCase;
 use ReflectionMethod;
 use Tebru\Gson\Annotation\Type;
-use Tebru\Gson\Internal\Data\ClassNameSet;
+use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Test\Mock\ChildClass;
 
@@ -24,7 +24,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromAnnotation()
     {
         $type = new Type(['value' => ChildClass::class]);
-        $annotations = new ClassNameSet([$type]);
+        $annotations = new AnnotationSet([$type]);
         $factory = new PhpTypeFactory();
         $phpType = $factory->create($annotations);
 
@@ -34,7 +34,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateFromSetterTypehint()
     {
-        $annotations = new ClassNameSet();
+        $annotations = new AnnotationSet();
         $factory = new PhpTypeFactory();
         $setter = new ReflectionMethod(ChildClass::class, 'setWithTypehint');
         $phpType = $factory->create($annotations, null, $setter);
@@ -45,7 +45,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateFromGetterReturnType()
     {
-        $annotations = new ClassNameSet();
+        $annotations = new AnnotationSet();
         $factory = new PhpTypeFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'getWithReturnType');
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
@@ -57,7 +57,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateFromSetterDefault()
     {
-        $annotations = new ClassNameSet();
+        $annotations = new AnnotationSet();
         $factory = new PhpTypeFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'isFoo');
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
@@ -68,7 +68,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateWildcard()
     {
-        $annotations = new ClassNameSet();
+        $annotations = new AnnotationSet();
         $factory = new PhpTypeFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'isFoo');
         $setter = new ReflectionMethod(ChildClass::class, 'set_baz');

@@ -9,8 +9,8 @@ namespace Tebru\Gson\Internal;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
-use Tebru\Collection\SetInterface;
 use Tebru\Gson\Annotation\Accessor;
+use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\MethodNamingStrategy;
 
 /**
@@ -43,13 +43,13 @@ final class AccessorMethodProvider
      *
      * @param ReflectionClass $reflectionClass
      * @param ReflectionProperty $reflectionProperty
-     * @param SetInterface $annotations
+     * @param AnnotationSet $annotations
      * @return null|ReflectionMethod
      */
-    public function getterMethod(ReflectionClass $reflectionClass, ReflectionProperty $reflectionProperty, SetInterface $annotations): ?ReflectionMethod
+    public function getterMethod(ReflectionClass $reflectionClass, ReflectionProperty $reflectionProperty, AnnotationSet $annotations): ?ReflectionMethod
     {
         /** @var Accessor $accessorAnnotation */
-        $accessorAnnotation = $annotations->find(function ($element) { return $element instanceof Accessor; });
+        $accessorAnnotation = $annotations->getAnnotation(Accessor::class);
         $getters = null !== $accessorAnnotation && null !== $accessorAnnotation->getter()
             ? [$accessorAnnotation->getter()]
             : $this->methodNamingStrategy->translateToGetter($reflectionProperty->getName());
@@ -63,13 +63,13 @@ final class AccessorMethodProvider
      *
      * @param ReflectionClass $reflectionClass
      * @param ReflectionProperty $reflectionProperty
-     * @param SetInterface $annotations
+     * @param AnnotationSet $annotations
      * @return null|ReflectionMethod
      */
-    public function setterMethod(ReflectionClass $reflectionClass, ReflectionProperty $reflectionProperty, SetInterface $annotations): ?ReflectionMethod
+    public function setterMethod(ReflectionClass $reflectionClass, ReflectionProperty $reflectionProperty, AnnotationSet $annotations): ?ReflectionMethod
     {
         /** @var Accessor $accessorAnnotation */
-        $accessorAnnotation = $annotations->find(function ($element) { return $element instanceof Accessor; });
+        $accessorAnnotation = $annotations->getAnnotation(Accessor::class);
         $setters = null !== $accessorAnnotation && null !== $accessorAnnotation->setter()
             ? [$accessorAnnotation->setter()]
             : $this->methodNamingStrategy->translateToSetter($reflectionProperty->getName());

@@ -7,8 +7,8 @@
 namespace Tebru\Gson\Internal;
 
 use ReflectionMethod;
-use Tebru\Collection\SetInterface;
 use Tebru\Gson\Annotation\Type;
+use Tebru\Gson\Internal\Data\AnnotationSet;
 
 /**
  * Class PhpTypeFactory
@@ -28,17 +28,17 @@ final class PhpTypeFactory
      * - Uses setter default value if it exists
      * - Defaults to wildcard type
      *
-     * @param SetInterface $annotations
+     * @param AnnotationSet $annotations
      * @param ReflectionMethod|null $getterMethod
      * @param ReflectionMethod|null $setterMethod
      * @return PhpType
      * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
-    public function create(SetInterface $annotations, ReflectionMethod $getterMethod = null, ReflectionMethod $setterMethod = null): PhpType
+    public function create(AnnotationSet $annotations, ReflectionMethod $getterMethod = null, ReflectionMethod $setterMethod = null): PhpType
     {
         /** @var Type $typeAnnotation */
-        $typeAnnotation = $annotations->find(function ($element) { return $element instanceof Type; });
+        $typeAnnotation = $annotations->getAnnotation(Type::class);
 
         if (null !== $typeAnnotation) {
             return new PhpType($typeAnnotation->getType());

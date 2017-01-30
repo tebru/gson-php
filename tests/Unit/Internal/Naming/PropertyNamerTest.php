@@ -27,7 +27,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
         $namer = new PropertyNamer(new SnakePropertyNamingStrategy());
         $reflectionProperty = new ReflectionProperty(AnnotatedMock::class, 'fooBar');
         $factory = new AnnotationCollectionFactory(new AnnotationReader());
-        $annotations = $factory->create($reflectionProperty);
+        $annotations = $factory->createPropertyAnnotations($reflectionProperty);
 
         self::assertSame('foobar', $namer->serializedName($reflectionProperty, $annotations));
     }
@@ -37,7 +37,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
         $namer = new PropertyNamer(new SnakePropertyNamingStrategy());
         $reflectionProperty = new ReflectionProperty(AnnotatedMock::class, 'fooBarBaz');
         $factory = new AnnotationCollectionFactory(new AnnotationReader());
-        $annotations = $factory->create($reflectionProperty);
+        $annotations = $factory->createPropertyAnnotations($reflectionProperty);
 
         self::assertSame('foo_bar_baz', $namer->serializedName($reflectionProperty, $annotations));
     }

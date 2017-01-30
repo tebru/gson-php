@@ -15,7 +15,7 @@
         "tebru/enum": "^0.4.1",
         "tebru/realtype": "^0.1.2",
         "guzzlehttp/psr7": "^1.0",
-        "tebru/php-collections": "0.2.*",
+        "tebru/php-collections": "0.3.*",
         "doctrine/cache": "^1.0"
     },
     "require-dev": {

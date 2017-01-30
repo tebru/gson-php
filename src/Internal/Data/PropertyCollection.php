@@ -23,7 +23,7 @@ final class PropertyCollection extends Bag
      * @param string $name
      * @return Property|null
      */
-    public function getByName(string $name)
+    public function getByName(string $name): ?Property
     {
         return $this->find(function (Property $property) use ($name) {
             return $property->getRealName() === $name;
@@ -36,7 +36,7 @@ final class PropertyCollection extends Bag
      * @param string $name
      * @return Property|null
      */
-    public function getBySerializedName(string $name)
+    public function getBySerializedName(string $name): ?Property
     {
         return $this->find(function (Property $property) use ($name) {
             return $property->getSerializedName() === $name;

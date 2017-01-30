@@ -56,6 +56,36 @@ final class Property
     private $setterStrategy;
 
     /**
+     * A set of annotations
+     *
+     * @var AnnotationSet
+     */
+    private $annotations;
+
+    /**
+     * An integer that represents what modifiers are associated with the property
+     *
+     * These constants are defined in [@see \ReflectionProperty]
+     *
+     * @var int
+     */
+    private $modifiers;
+
+    /**
+     * True if the property should be skipped during serialization
+     *
+     * @var bool
+     */
+    private $skipSerialize = false;
+
+    /**
+     * True if the property should be skipped during deserialization
+     *
+     * @var bool
+     */
+    private $skipDeserialize = false;
+
+    /**
      * Constructor
      *
      * @param string $realName
@@ -63,19 +93,25 @@ final class Property
      * @param PhpType $type
      * @param GetterStrategy $getterStrategy
      * @param SetterStrategy $setterStrategy
+     * @param AnnotationSet $annotations
+     * @param int $modifiers
      */
     public function __construct(
         string $realName,
         string $serializedName,
         PhpType $type,
         GetterStrategy $getterStrategy,
-        SetterStrategy $setterStrategy
+        SetterStrategy $setterStrategy,
+        AnnotationSet $annotations,
+        int $modifiers
     ) {
         $this->realName = $realName;
         $this->serializedName = $serializedName;
         $this->type = $type;
         $this->getterStrategy = $getterStrategy;
         $this->setterStrategy = $setterStrategy;
+        $this->annotations = $annotations;
+        $this->modifiers = $modifiers;
     }
 
     /**
@@ -109,6 +145,66 @@ final class Property
     }
 
     /**
+     * Return the collection of annotations
+     *
+     * @return AnnotationSet
+     */
+    public function getAnnotations(): AnnotationSet
+    {
+        return $this->annotations;
+    }
+
+    /**
+     * The property modifiers
+     *
+     * @return int
+     */
+    public function getModifiers(): int
+    {
+        return $this->modifiers;
+    }
+
+    /**
+     * Returns should if we should skip during serialization
+     *
+     * @return bool
+     */
+    public function skipSerialize(): bool
+    {
+        return $this->skipSerialize;
+    }
+
+    /**
+     * Set whether we should skip during serialization
+     *
+     * @param bool $skipSerialize
+     */
+    public function setSkipSerialize(bool $skipSerialize): void
+    {
+        $this->skipSerialize = $skipSerialize;
+    }
+
+    /**
+     * Returns should if we should skip during deserialization
+     *
+     * @return bool
+     */
+    public function skipDeserialize(): bool
+    {
+        return $this->skipDeserialize;
+    }
+
+    /**
+     * Set whether we should skip during deserialization
+     *
+     * @param bool $skipDeserialize
+     */
+    public function setSkipDeserialize(bool $skipDeserialize): void
+    {
+        $this->skipDeserialize = $skipDeserialize;
+    }
+
+    /**
      * Given an object, get the value at this property
      *
      * @param object $object
@@ -123,7 +219,7 @@ final class Property
      * Given an object an value, set the value to the object at this property
      *
      * @param object $object
-     * @param $value
+     * @param mixed $value
      */
     public function set($object, $value)
     {
