@@ -108,10 +108,41 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
 
         // overwrite cache
         $cache->save(PropertyCollectionMock::class, new PropertyCollection());
+        $reflectionProperty = new \ReflectionProperty(PropertyCollectionFactory::class, 'collectionCache');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($factory, []);
 
         // assert we use the new cache
         $collection = $factory->create(new PhpType(PropertyCollectionMock::class));
         self::assertCount(0, $collection->toArray());
+    }
+
+    public function testCreateUsesMemoryCache()
+    {
+        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader());
+        $cache = new ArrayCache();
+
+        $factory = new PropertyCollectionFactory(
+            new ReflectionPropertySetFactory(),
+            $annotationCollectionFactory,
+            new PropertyNamer(new SnakePropertyNamingStrategy()),
+            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
+            new AccessorStrategyFactory(),
+            new PhpTypeFactory(),
+            new Excluder($annotationCollectionFactory),
+            $cache
+        );
+
+        // assert data is stored in cache
+        $factory->create(new PhpType(PropertyCollectionMock::class));
+        self::assertCount(3, $cache->fetch(PropertyCollectionMock::class)->toArray());
+
+        // overwrite cache
+        $cache->save(PropertyCollectionMock::class, new PropertyCollection());
+
+        // assert we use the new cache
+        $collection = $factory->create(new PhpType(PropertyCollectionMock::class));
+        self::assertCount(3, $collection->toArray());
     }
 
     public function testCreateExcludes()

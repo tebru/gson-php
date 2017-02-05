@@ -39,7 +39,6 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         );
         $propertyCollection = new PropertyCollection([$property]);
 
-        self::assertSame($property, $propertyCollection->getByName('foo'));
         self::assertSame($property, $propertyCollection->getBySerializedName('foo_bar'));
     }
 
@@ -60,7 +59,26 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         );
         $propertyCollection = new PropertyCollection([$property]);
 
-        self::assertNull($propertyCollection->getByName('foo2'));
         self::assertNull($propertyCollection->getBySerializedName('foo_bar2'));
+    }
+
+    public function testToArray()
+    {
+        $realName = 'foo';
+        $serializedName = 'foo_bar';
+        $type = new PhpType('Foo');
+
+        $property = new Property(
+            $realName,
+            $serializedName,
+            $type,
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
+            new AnnotationSet(),
+            0
+        );
+        $propertyCollection = new PropertyCollection([$property]);
+
+        self::assertSame([$property], $propertyCollection->toArray());
     }
 }

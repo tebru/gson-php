@@ -83,9 +83,9 @@ interface JsonReadable
     /**
      * Consumes the value of the next token and asserts it's null
      *
-     * @return void
+     * @return null
      */
-    public function nextNull(): void;
+    public function nextNull();
 
     /**
      * Consumes the next name and returns it
@@ -97,9 +97,9 @@ interface JsonReadable
     /**
      * Returns an enum representing the type of the next token without consuming it
      *
-     * @return JsonToken
+     * @return string
      */
-    public function peek(): JsonToken;
+    public function peek(): string;
 
     /**
      * Skip the next value.  If the next value is an object or array, all children will

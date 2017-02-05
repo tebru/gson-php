@@ -67,6 +67,11 @@ final class PropertyCollectionFactory
     private $cache;
 
     /**
+     * @var array
+     */
+    private $collectionCache = [];
+
+    /**
      * Constructor
      *
      * @param ReflectionPropertySetFactory $reflectionPropertySetFactory
@@ -109,8 +114,14 @@ final class PropertyCollectionFactory
     public function create(PhpType $phpType): PropertyCollection
     {
         $class = $phpType->getClass();
+
+        if (array_key_exists($class, $this->collectionCache)) {
+            return $this->collectionCache[$class];
+        }
+
         $data = $this->cache->fetch($class);
         if (false !== $data) {
+            $this->collectionCache[$class] = $data;
             return $data;
         }
 
@@ -153,6 +164,7 @@ final class PropertyCollectionFactory
             $properties->add($property);
         }
 
+        $this->collectionCache[$class] = $properties;
         $this->cache->save($class, $properties);
 
         return $properties;

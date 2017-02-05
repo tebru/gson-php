@@ -24,7 +24,7 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
     {
         $phpType = new PhpType(' string ');
 
-        self::assertSame('string', (string) $phpType->getType());
+        self::assertSame('string', (string) $phpType);
     }
     public function testString()
     {
@@ -141,7 +141,7 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
         self::assertTrue($phpType->isObject());
         self::assertSame('ArrayList', $phpType->getClass());
         self::assertCount(1, $phpType->getGenerics());
-        self::assertSame('integer', (string) $phpType->getGenerics()->get(0)->getType());
+        self::assertSame('integer', (string) $phpType->getGenerics()[0]);
     }
 
     public function testTwoGeneric()
@@ -151,8 +151,8 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
         self::assertTrue($phpType->isObject());
         self::assertSame('HashMap', $phpType->getClass());
         self::assertCount(2, $phpType->getGenerics());
-        self::assertSame('string', (string) $phpType->getGenerics()->get(0)->getType());
-        self::assertSame('integer', (string) $phpType->getGenerics()->get(1)->getType());
+        self::assertSame('string', (string) $phpType->getGenerics()[0]);
+        self::assertSame('integer', (string) $phpType->getGenerics()[1]);
     }
 
     public function testThreeGeneric()
@@ -162,10 +162,9 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
         self::assertTrue($phpType->isObject());
         self::assertSame('Foo', $phpType->getClass());
         self::assertCount(3, $phpType->getGenerics());
-        self::assertSame('string', (string) $phpType->getGenerics()->get(0)->getType());
-        self::assertSame('integer', (string) $phpType->getGenerics()->get(1)->getType());
-        self::assertSame('object', (string) $phpType->getGenerics()->get(2)->getType());
-        self::assertSame('Bar', (string) $phpType->getGenerics()->get(2)->getClass());
+        self::assertSame('string', (string) $phpType->getGenerics()[0]);
+        self::assertSame('integer', (string) $phpType->getGenerics()[1]);
+        self::assertSame('Bar', (string) $phpType->getGenerics()[2]->getClass());
     }
 
     public function testNestedGeneric()
@@ -175,15 +174,13 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
         self::assertTrue($phpType->isObject());
         self::assertSame('ArrayList', $phpType->getClass());
         self::assertCount(1, $phpType->getGenerics());
-        self::assertSame('object', (string) $phpType->getGenerics()->get(0)->getType());
-        self::assertSame('HashMap', (string) $phpType->getGenerics()->get(0)->getClass());
-        self::assertCount(2, $phpType->getGenerics()->get(0)->getGenerics());
-        self::assertSame('string', (string) $phpType->getGenerics()->get(0)->getGenerics()->get(0)->getType());
-        self::assertSame('object', (string) $phpType->getGenerics()->get(0)->getGenerics()->get(1)->getType());
-        self::assertSame('Bar', (string) $phpType->getGenerics()->get(0)->getGenerics()->get(1)->getClass());
-        self::assertCount(2, $phpType->getGenerics()->get(0)->getGenerics()->get(1)->getGenerics());
-        self::assertSame('string', (string) $phpType->getGenerics()->get(0)->getGenerics()->get(1)->getGenerics()->get(0)->getType());
-        self::assertSame('boolean', (string) $phpType->getGenerics()->get(0)->getGenerics()->get(1)->getGenerics()->get(1)->getType());
+        self::assertSame('HashMap', (string) $phpType->getGenerics()[0]->getClass());
+        self::assertCount(2, $phpType->getGenerics()[0]->getGenerics());
+        self::assertSame('string', (string) $phpType->getGenerics()[0]->getGenerics()[0]);
+        self::assertSame('Bar', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getClass());
+        self::assertCount(2, $phpType->getGenerics()[0]->getGenerics()[1]->getGenerics());
+        self::assertSame('string', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getGenerics()[0]);
+        self::assertSame('boolean', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getGenerics()[1]);
     }
 
     public function testGenericNoEndingBracket()
@@ -199,7 +196,7 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
         $phpType = new PhpType('DateTime');
         $phpType->setOptions(['format' => DateTime::ATOM]);
 
-        self::assertSame(DateTime::ATOM, $phpType->getOptions()->get('format'));
+        self::assertSame(DateTime::ATOM, $phpType->getOptions()['format']);
     }
 
     public function testToString()

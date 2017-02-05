@@ -32,7 +32,7 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $phpType = $type->getType();
 
         self::assertSame(DateTime::class, (string) $phpType);
-        self::assertSame(DateTime::ATOM, $phpType->getOptions()->get('format'));
+        self::assertSame(DateTime::ATOM, $phpType->getOptions()['format']);
     }
 
     public function testCreateThrowsException()

@@ -15,14 +15,14 @@ use Tebru\Gson\TypeAdapterFactory;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class TypeAdapterProvider
+final class TypeAdapterProvider
 {
     /**
-     * A cache of created type adapters
+     * A cache of mapped factories
      *
-     * @var array
+     * @var TypeAdapterFactory[]
      */
-    private $typeAdapters = [];
+    private $typeAdapterFactoryCache = [];
 
     /**
      * All registered [@see TypeAdapter]s
@@ -53,9 +53,13 @@ class TypeAdapterProvider
      */
     public function getAdapter(PhpType $type, string $skipClass = null): TypeAdapter
     {
-        $key = (string) $type . ':' . (string) $skipClass;
-        if (array_key_exists($key, $this->typeAdapters)) {
-            return $this->typeAdapters[$key];
+        $fullType = (string) $type;
+        if (array_key_exists($fullType, $this->typeAdapterFactoryCache)) {
+            $factory = $this->typeAdapterFactoryCache[$fullType];
+
+            if (get_class($factory) !== $skipClass) {
+                return $factory->create($type, $this);
+            }
         }
 
         foreach ($this->typeAdapterFactories as $typeAdapterFactory) {
@@ -67,10 +71,9 @@ class TypeAdapterProvider
                 continue;
             }
 
-            $typeAdapter = $typeAdapterFactory->create($type, $this);
-            $this->typeAdapters[$key] = $typeAdapter;
+            $this->typeAdapterFactoryCache[$fullType] = $typeAdapterFactory;
 
-            return $typeAdapter;
+            return $typeAdapterFactory->create($type, $this);
         }
 
         throw new InvalidArgumentException(sprintf(

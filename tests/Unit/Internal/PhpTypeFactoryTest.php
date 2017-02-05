@@ -28,7 +28,6 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $factory = new PhpTypeFactory();
         $phpType = $factory->create($annotations);
 
-        self::assertSame('object', (string) $phpType->getType());
         self::assertSame(ChildClass::class, $phpType->getClass());
     }
 
@@ -39,7 +38,6 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $setter = new ReflectionMethod(ChildClass::class, 'setWithTypehint');
         $phpType = $factory->create($annotations, null, $setter);
 
-        self::assertSame('object', (string) $phpType->getType());
         self::assertSame(ChildClass::class, $phpType->getClass());
     }
 
@@ -51,7 +49,6 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
         $phpType = $factory->create($annotations, $getter, $setter);
 
-        self::assertSame('object', (string) $phpType->getType());
         self::assertSame(ChildClass::class, $phpType->getClass());
     }
 
@@ -63,7 +60,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
         $phpType = $factory->create($annotations, $getter, $setter);
 
-        self::assertSame('string', (string) $phpType->getType());
+        self::assertSame('string', (string) $phpType);
     }
 
     public function testCreateWildcard()
@@ -74,6 +71,6 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $setter = new ReflectionMethod(ChildClass::class, 'set_baz');
         $phpType = $factory->create($annotations, $getter, $setter);
 
-        self::assertSame('?', (string) $phpType->getType());
+        self::assertSame('?', (string) $phpType);
     }
 }

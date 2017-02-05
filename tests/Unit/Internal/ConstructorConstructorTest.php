@@ -27,8 +27,7 @@ class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
 {
     public function testCreateFromInstanceCreator()
     {
-        $instanceCreators = new HashMap();
-        $instanceCreators->put(ClassWithParameters::class, new ClassWithParametersInstanceCreator());
+        $instanceCreators = [ClassWithParameters::class => new ClassWithParametersInstanceCreator()];
         $constructorConstructor = new ConstructorConstructor($instanceCreators);
         $object = $constructorConstructor->get(new PhpType(ClassWithParameters::class));
 
@@ -37,7 +36,7 @@ class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
 
     public function testCreateWithoutArguments()
     {
-        $constructorConstructor = new ConstructorConstructor(new HashMap());
+        $constructorConstructor = new ConstructorConstructor();
         $object = $constructorConstructor->get(new PhpType(ChildClass::class));
 
         self::assertInstanceOf(CreateWithoutArguments::class, $object);
@@ -45,7 +44,7 @@ class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
 
     public function testCreateFromReflectionClass()
     {
-        $constructorConstructor = new ConstructorConstructor(new HashMap());
+        $constructorConstructor = new ConstructorConstructor();
         $object = $constructorConstructor->get(new PhpType(ClassWithParameters::class));
 
         self::assertInstanceOf(CreateFromReflectionClass::class, $object);

@@ -6,8 +6,6 @@
 
 namespace Tebru\Gson\Internal\Data;
 
-use Tebru\Collection\Bag;
-
 /**
  * Class PropertyCollection
  *
@@ -15,19 +13,33 @@ use Tebru\Collection\Bag;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class PropertyCollection extends Bag
+final class PropertyCollection
 {
     /**
-     * Get [@see Property] by real name
+     * Array of [@see Property] objects
      *
-     * @param string $name
-     * @return Property|null
+     * @var Property[]
      */
-    public function getByName(string $name): ?Property
+    private $elements = [];
+
+    /**
+     * Constructor
+     *
+     * @param array $properties
+     */
+    public function __construct(array $properties = [])
     {
-        return $this->find(function (Property $property) use ($name) {
-            return $property->getRealName() === $name;
-        });
+        foreach ($properties as $property) {
+            $this->add($property);
+        }
+    }
+
+    /**
+     * @param Property $property
+     */
+    public function add(Property $property)
+    {
+        $this->elements[$property->getSerializedName()] = $property;
     }
 
     /**
@@ -38,8 +50,20 @@ final class PropertyCollection extends Bag
      */
     public function getBySerializedName(string $name): ?Property
     {
-        return $this->find(function (Property $property) use ($name) {
-            return $property->getSerializedName() === $name;
-        });
+        if (!array_key_exists($name, $this->elements)) {
+            return null;
+        }
+
+        return $this->elements[$name];
+    }
+
+    /**
+     * Array of Property objects
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return array_values($this->elements);
     }
 }

@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Internal;
 
 use ReflectionClass;
-use Tebru\Collection\MapInterface;
+use Tebru\Gson\InstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromReflectionClass;
 use Tebru\Gson\Internal\ObjectConstructor\CreateWithoutArguments;
@@ -25,16 +25,16 @@ use Throwable;
 final class ConstructorConstructor
 {
     /**
-     * @var MapInterface
+     * @var InstanceCreator[]
      */
     private $instanceCreators;
 
     /**
      * Constructor
      *
-     * @param MapInterface $instanceCreators
+     * @param InstanceCreator[] $instanceCreators
      */
-    public function __construct(MapInterface $instanceCreators)
+    public function __construct(array $instanceCreators = [])
     {
         $this->instanceCreators = $instanceCreators;
     }
@@ -48,15 +48,15 @@ final class ConstructorConstructor
     public function get(PhpType $type): ObjectConstructor
     {
         $class = $type->getClass();
-        if ($this->instanceCreators->containsKey($class)) {
-            return new CreateFromInstanceCreator($this->instanceCreators->get($class), $type);
+        if (array_key_exists($class, $this->instanceCreators)) {
+            return new CreateFromInstanceCreator($this->instanceCreators[$class], $type);
         }
 
         try {
             // attempt to instantiate a new class without any arguments
             new $class();
 
-            return new CreateWithoutArguments($type);
+            return new CreateWithoutArguments($class);
         } catch (Throwable $throwable) {
             return new CreateFromReflectionClass(new ReflectionClass($class));
         }

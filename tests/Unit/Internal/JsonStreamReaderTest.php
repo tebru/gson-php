@@ -11,27 +11,27 @@ use Tebru\Gson\Exception\MalformedJsonException;
 use Tebru\Gson\Exception\UnexpectedJsonScopeException;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\Exception\UnexpectedJsonTypeException;
-use Tebru\Gson\Internal\JsonReader;
+use Tebru\Gson\Internal\JsonStreamReader;
 use Tebru\Gson\Internal\JsonScope;
 use Tebru\Gson\JsonToken;
 use function GuzzleHttp\Psr7\stream_for;
 
 /**
- * Class JsonReaderTest
+ * Class JsonStreamReaderTest
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\JsonToken
- * @covers \Tebru\Gson\Internal\JsonReader
+ * @covers \Tebru\Gson\Internal\JsonStreamReader
  * @covers \Tebru\Gson\Internal\JsonScope
  */
-class JsonReaderTest extends PHPUnit_Framework_TestCase
+class JsonStreamReaderTest extends PHPUnit_Framework_TestCase
 {
     public function testBeginArray()
     {
-        $reader = new JsonReader(stream_for('['));
+        $reader = new JsonStreamReader(stream_for('['));
         $reader->beginArray();
 
-        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT(), JsonScope::EMPTY_ARRAY()], 'stack', $reader);
+        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT, JsonScope::EMPTY_ARRAY], 'stack', $reader);
     }
 
     public function testBeginArrayInvalidToken()
@@ -39,27 +39,27 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Expected "[", but found "{"');
 
-        $reader = new JsonReader(stream_for('{'));
+        $reader = new JsonStreamReader(stream_for('{'));
         $reader->beginArray();
     }
 
     public function testEndArrayEmpty()
     {
-        $reader = new JsonReader(stream_for('[]'));
+        $reader = new JsonStreamReader(stream_for('[]'));
         $reader->beginArray();
         $reader->endArray();
 
-        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT()], 'stack', $reader);
+        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT], 'stack', $reader);
     }
 
     public function testEndArrayNonEmpty()
     {
-        $reader = new JsonReader(stream_for('[1]'));
+        $reader = new JsonStreamReader(stream_for('[1]'));
         $reader->beginArray();
         $reader->nextInteger();
         $reader->endArray();
 
-        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT()], 'stack', $reader);
+        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT], 'stack', $reader);
     }
 
     public function testEndArrayInvalidToken()
@@ -67,17 +67,17 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Expected "]", but found "{"');
 
-        $reader = new JsonReader(stream_for('[{}]'));
+        $reader = new JsonStreamReader(stream_for('[{}]'));
         $reader->beginArray();
         $reader->endArray();
     }
 
     public function testBeginObject()
     {
-        $reader = new JsonReader(stream_for('{'));
+        $reader = new JsonStreamReader(stream_for('{'));
         $reader->beginObject();
 
-        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT(), JsonScope::EMPTY_OBJECT()], 'stack', $reader);
+        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT, JsonScope::EMPTY_OBJECT], 'stack', $reader);
     }
 
     public function testBeginObjectInvalidToken()
@@ -85,28 +85,28 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Expected "{", but found "["');
 
-        $reader = new JsonReader(stream_for('['));
+        $reader = new JsonStreamReader(stream_for('['));
         $reader->beginObject();
     }
 
     public function testEndObjectEmpty()
     {
-        $reader = new JsonReader(stream_for('{}'));
+        $reader = new JsonStreamReader(stream_for('{}'));
         $reader->beginObject();
         $reader->endObject();
 
-        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT()], 'stack', $reader);
+        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT], 'stack', $reader);
     }
 
     public function testEndObjectNonEmpty()
     {
-        $reader = new JsonReader(stream_for('{"test": 1}'));
+        $reader = new JsonStreamReader(stream_for('{"test": 1}'));
         $reader->beginObject();
         $reader->nextName();
         $reader->nextInteger();
         $reader->endObject();
 
-        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT()], 'stack', $reader);
+        self::assertAttributeEquals([JsonScope::NONEMPTY_DOCUMENT], 'stack', $reader);
     }
 
     public function testEndObjectInvalidToken()
@@ -114,14 +114,14 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Expected "}", but found """');
 
-        $reader = new JsonReader(stream_for('{"test": 1}'));
+        $reader = new JsonStreamReader(stream_for('{"test": 1}'));
         $reader->beginObject();
         $reader->endObject();
     }
 
     public function testHasNextObjectTrue()
     {
-        $reader = new JsonReader(stream_for('{"test": 1}'));
+        $reader = new JsonStreamReader(stream_for('{"test": 1}'));
         $reader->beginObject();
 
         self::assertTrue($reader->hasNext());
@@ -129,7 +129,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
 
     public function testHasNextObjectFalse()
     {
-        $reader = new JsonReader(stream_for('{}'));
+        $reader = new JsonStreamReader(stream_for('{}'));
         $reader->beginObject();
 
         self::assertFalse($reader->hasNext());
@@ -137,7 +137,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
 
     public function testHasNextArrayTrue()
     {
-        $reader = new JsonReader(stream_for('[1]'));
+        $reader = new JsonStreamReader(stream_for('[1]'));
         $reader->beginArray();
 
         self::assertTrue($reader->hasNext());
@@ -145,7 +145,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
 
     public function testHasNextArrayFalse()
     {
-        $reader = new JsonReader(stream_for('[]'));
+        $reader = new JsonStreamReader(stream_for('[]'));
         $reader->beginArray();
 
         self::assertFalse($reader->hasNext());
@@ -153,14 +153,14 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextBooleanTrue()
     {
-        $reader = new JsonReader(stream_for('true'));
+        $reader = new JsonStreamReader(stream_for('true'));
 
         self::assertTrue($reader->nextBoolean());
     }
 
     public function testNextBooleanFalse()
     {
-        $reader = new JsonReader(stream_for('false'));
+        $reader = new JsonStreamReader(stream_for('false'));
 
         self::assertFalse($reader->nextBoolean());
     }
@@ -168,9 +168,9 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
     public function testNextBooleanInvalidToken()
     {
         $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected boolean, but got "String"');
+        $this->expectExceptionMessage('Expected boolean, but got "string"');
 
-        $reader = new JsonReader(stream_for('"tru"'));
+        $reader = new JsonStreamReader(stream_for('"tru"'));
         $reader->nextBoolean();
     }
 
@@ -179,20 +179,20 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTypeException::class);
         $this->expectExceptionMessage('Expected boolean, but got "string"');
 
-        $reader = new JsonReader(stream_for('trues'));
+        $reader = new JsonStreamReader(stream_for('trues'));
         $reader->nextBoolean();
     }
 
     public function testNextDouble()
     {
-        $reader = new JsonReader(stream_for('1.1'));
+        $reader = new JsonStreamReader(stream_for('1.1'));
 
         self::assertSame(1.1, $reader->nextDouble());
     }
 
     public function testNextDoubleAsInt()
     {
-        $reader = new JsonReader(stream_for('1'));
+        $reader = new JsonStreamReader(stream_for('1'));
 
         self::assertSame(1.0, $reader->nextDouble());
     }
@@ -200,9 +200,9 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
     public function testNextDoubleInvalidToken()
     {
         $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected double, but got "String"');
+        $this->expectExceptionMessage('Expected double, but got "string"');
 
-        $reader = new JsonReader(stream_for('"1.1"'));
+        $reader = new JsonStreamReader(stream_for('"1.1"'));
         $reader->nextDouble();
     }
 
@@ -211,13 +211,13 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTypeException::class);
         $this->expectExceptionMessage('Expected double, but got "string"');
 
-        $reader = new JsonReader(stream_for('1asdf'));
+        $reader = new JsonStreamReader(stream_for('1asdf'));
         $reader->nextDouble();
     }
 
     public function testNextInteger()
     {
-        $reader = new JsonReader(stream_for('1'));
+        $reader = new JsonStreamReader(stream_for('1'));
 
         self::assertSame(1, $reader->nextInteger());
     }
@@ -225,9 +225,9 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
     public function testNextIntegerInvalidToken()
     {
         $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected integer, but got "String"');
+        $this->expectExceptionMessage('Expected integer, but got "string"');
 
-        $reader = new JsonReader(stream_for('"1"'));
+        $reader = new JsonStreamReader(stream_for('"1"'));
         $reader->nextInteger();
     }
 
@@ -236,48 +236,48 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTypeException::class);
         $this->expectExceptionMessage('Expected integer, but got "string"');
 
-        $reader = new JsonReader(stream_for('1asdf'));
+        $reader = new JsonStreamReader(stream_for('1asdf'));
         $reader->nextInteger();
     }
 
     public function testNextString()
     {
-        $reader = new JsonReader(stream_for('"test"'));
+        $reader = new JsonStreamReader(stream_for('"test"'));
 
         self::assertSame('test', $reader->nextString());
     }
 
     public function testNextStringIntType()
     {
-        $reader = new JsonReader(stream_for('"1"'));
+        $reader = new JsonStreamReader(stream_for('"1"'));
 
         self::assertSame('1', $reader->nextString());
     }
 
     public function testNextStringDoubleType()
     {
-        $reader = new JsonReader(stream_for('"1.1"'));
+        $reader = new JsonStreamReader(stream_for('"1.1"'));
 
         self::assertSame('1.1', $reader->nextString());
     }
 
     public function testNextStringBooleanTrueType()
     {
-        $reader = new JsonReader(stream_for('"true"'));
+        $reader = new JsonStreamReader(stream_for('"true"'));
 
         self::assertSame('true', $reader->nextString());
     }
 
     public function testNextStringBooleanFalseType()
     {
-        $reader = new JsonReader(stream_for('"false"'));
+        $reader = new JsonStreamReader(stream_for('"false"'));
 
         self::assertSame('false', $reader->nextString());
     }
 
     public function testNextStringNullType()
     {
-        $reader = new JsonReader(stream_for('"null"'));
+        $reader = new JsonStreamReader(stream_for('"null"'));
 
         self::assertSame('null', $reader->nextString());
     }
@@ -285,28 +285,28 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
     public function testNextStringIgnoresDoubleQuote()
     {
         $string = 'te"st';
-        $reader = new JsonReader(stream_for(json_encode($string)));
+        $reader = new JsonStreamReader(stream_for(json_encode($string)));
 
         self::assertSame('te\"st', $reader->nextString());
     }
 
     public function testNextStringIgnoresOtherTerminationCharacters()
     {
-        $reader = new JsonReader(stream_for('"te]},st"'));
+        $reader = new JsonStreamReader(stream_for('"te]},st"'));
 
         self::assertSame('te]},st', $reader->nextString());
     }
 
     public function testNextStringWithEscapedCharacters()
     {
-        $reader = new JsonReader(stream_for('"te\\\/\b\f\n\r\t\u1234st"'));
+        $reader = new JsonStreamReader(stream_for('"te\\\/\b\f\n\r\t\u1234st"'));
 
         self::assertSame('te\\\/\b\f\n\r\t\u1234st', $reader->nextString());
     }
 
     public function testNextStringWithEmoji()
     {
-        $reader = new JsonReader(stream_for('"te👍st"'));
+        $reader = new JsonStreamReader(stream_for('"te👍st"'));
 
         self::assertSame('te👍st', $reader->nextString());
     }
@@ -314,15 +314,15 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
     public function testNextStringInvalidToken()
     {
         $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected string, but got "Number"');
+        $this->expectExceptionMessage('Expected string, but got "number"');
 
-        $reader = new JsonReader(stream_for('1'));
+        $reader = new JsonStreamReader(stream_for('1'));
         $reader->nextString();
     }
 
     public function testNextNull()
     {
-        $reader = new JsonReader(stream_for('null'));
+        $reader = new JsonStreamReader(stream_for('null'));
 
         self::assertNull($reader->nextNull());
     }
@@ -330,9 +330,9 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
     public function testNextNullInvalidToken()
     {
         $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected null, but got "String"');
+        $this->expectExceptionMessage('Expected null, but got "string"');
 
-        $reader = new JsonReader(stream_for('"test"'));
+        $reader = new JsonStreamReader(stream_for('"test"'));
         $reader->nextNull();
     }
 
@@ -341,13 +341,13 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTypeException::class);
         $this->expectExceptionMessage('Expected null, but got "string"');
 
-        $reader = new JsonReader(stream_for('nulls'));
+        $reader = new JsonStreamReader(stream_for('nulls'));
         $reader->nextNull();
     }
 
     public function testNextName()
     {
-        $reader = new JsonReader(stream_for('{"test"'));
+        $reader = new JsonStreamReader(stream_for('{"test"'));
         $reader->beginObject();
 
         self::assertSame('test', $reader->nextName());
@@ -358,7 +358,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonScopeException::class);
         $this->expectExceptionMessage('Method call not allowed in current scope');
 
-        $reader = new JsonReader(stream_for('{"test": "test"}'));
+        $reader = new JsonStreamReader(stream_for('{"test": "test"}'));
         $reader->beginObject();
         $reader->nextName();
         $reader->nextName();
@@ -366,36 +366,36 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
 
     public function testPeekEmptyArrayEnding()
     {
-        $reader = new JsonReader(stream_for('[]'));
+        $reader = new JsonStreamReader(stream_for('[]'));
         $reader->beginArray();
 
-        self::assertEquals(JsonToken::END_ARRAY(), $reader->peek());
+        self::assertEquals(JsonToken::END_ARRAY, $reader->peek());
     }
 
     public function testPeekEmptyArrayDefault()
     {
-        $reader = new JsonReader(stream_for('[1]'));
+        $reader = new JsonStreamReader(stream_for('[1]'));
         $reader->beginArray();
 
-        self::assertEquals(JsonToken::NUMBER(), $reader->peek());
+        self::assertEquals(JsonToken::NUMBER, $reader->peek());
     }
 
     public function testPeekNonEmptyArrayEnding()
     {
-        $reader = new JsonReader(stream_for('[1]'));
+        $reader = new JsonStreamReader(stream_for('[1]'));
         $reader->beginArray();
         $reader->nextInteger();
 
-        self::assertEquals(JsonToken::END_ARRAY(), $reader->peek());
+        self::assertEquals(JsonToken::END_ARRAY, $reader->peek());
     }
 
     public function testPeekNonEmptyArrayNext()
     {
-        $reader = new JsonReader(stream_for('[1, 2]'));
+        $reader = new JsonStreamReader(stream_for('[1, 2]'));
         $reader->beginArray();
         $reader->nextInteger();
 
-        self::assertEquals(JsonToken::NUMBER(), $reader->peek());
+        self::assertEquals(JsonToken::NUMBER, $reader->peek());
     }
 
     public function testPeekNonEmptyArrayException()
@@ -403,7 +403,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedJsonException::class);
         $this->expectExceptionMessage('Expected "]" or ",", but found "}"');
 
-        $reader = new JsonReader(stream_for('[1}]'));
+        $reader = new JsonStreamReader(stream_for('[1}]'));
         $reader->beginArray();
         $reader->nextInteger();
         $reader->peek();
@@ -411,22 +411,22 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
 
     public function testPeekNonEmptyObjectEnding()
     {
-        $reader = new JsonReader(stream_for('{"test": true}'));
+        $reader = new JsonStreamReader(stream_for('{"test": true}'));
         $reader->beginObject();
         $reader->nextName();
         $reader->nextBoolean();
 
-        self::assertEquals(JsonToken::END_OBJECT(), $reader->peek());
+        self::assertEquals(JsonToken::END_OBJECT, $reader->peek());
     }
 
     public function testPeekNonEmptyObjectNext()
     {
-        $reader = new JsonReader(stream_for('{"test": true, "test2": false}'));
+        $reader = new JsonStreamReader(stream_for('{"test": true, "test2": false}'));
         $reader->beginObject();
         $reader->nextName();
         $reader->nextBoolean();
 
-        self::assertEquals(JsonToken::NAME(), $reader->peek());
+        self::assertEquals(JsonToken::NAME, $reader->peek());
     }
 
     public function testPeekNonEmptyObjectNextException()
@@ -434,7 +434,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedJsonException::class);
         $this->expectExceptionMessage('Expected ", but found ","');
 
-        $reader = new JsonReader(stream_for('{"test": true,,'));
+        $reader = new JsonStreamReader(stream_for('{"test": true,,'));
         $reader->beginObject();
         $reader->nextName();
         $reader->nextBoolean();
@@ -446,7 +446,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedJsonException::class);
         $this->expectExceptionMessage('Expected "}" or ",", but found "]"');
 
-        $reader = new JsonReader(stream_for('{"test": true]'));
+        $reader = new JsonStreamReader(stream_for('{"test": true]'));
         $reader->beginObject();
         $reader->nextName();
         $reader->nextBoolean();
@@ -455,18 +455,18 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
 
     public function testPeekEmptyObjectEnding()
     {
-        $reader = new JsonReader(stream_for('{}'));
+        $reader = new JsonStreamReader(stream_for('{}'));
         $reader->beginObject();
 
-        self::assertEquals(JsonToken::END_OBJECT(), $reader->peek());
+        self::assertEquals(JsonToken::END_OBJECT, $reader->peek());
     }
 
     public function testPeekEmptyObjectName()
     {
-        $reader = new JsonReader(stream_for('{"test": true}'));
+        $reader = new JsonStreamReader(stream_for('{"test": true}'));
         $reader->beginObject();
 
-        self::assertEquals(JsonToken::NAME(), $reader->peek());
+        self::assertEquals(JsonToken::NAME, $reader->peek());
     }
 
     public function testPeekEmptyObjectException()
@@ -474,18 +474,18 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedJsonException::class);
         $this->expectExceptionMessage('Expected " or "}", but found "."');
 
-        $reader = new JsonReader(stream_for('{.'));
+        $reader = new JsonStreamReader(stream_for('{.'));
         $reader->beginObject();
         $reader->peek();
     }
 
     public function testPeekDanglingName()
     {
-        $reader = new JsonReader(stream_for('{"test": "test2"}'));
+        $reader = new JsonStreamReader(stream_for('{"test": "test2"}'));
         $reader->beginObject();
         $reader->nextName();
 
-        self::assertEquals(JsonToken::STRING(), $reader->peek());
+        self::assertEquals(JsonToken::STRING, $reader->peek());
     }
 
     public function testPeekDanglingNameException()
@@ -493,7 +493,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedJsonException::class);
         $this->expectExceptionMessage('Expected ":", but found "."');
 
-        $reader = new JsonReader(stream_for('{"test".'));
+        $reader = new JsonStreamReader(stream_for('{"test".'));
         $reader->beginObject();
         $reader->nextName();
         $reader->peek();
@@ -501,53 +501,53 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
 
     public function testPeekEmptyDocumentBeginObject()
     {
-        $reader = new JsonReader(stream_for('{'));
+        $reader = new JsonStreamReader(stream_for('{'));
 
-        self::assertEquals(JsonToken::BEGIN_OBJECT(), $reader->peek());
+        self::assertEquals(JsonToken::BEGIN_OBJECT, $reader->peek());
     }
 
     public function testPeekEmptyDocumentBeginArray()
     {
-        $reader = new JsonReader(stream_for('['));
+        $reader = new JsonStreamReader(stream_for('['));
 
-        self::assertEquals(JsonToken::BEGIN_ARRAY(), $reader->peek());
+        self::assertEquals(JsonToken::BEGIN_ARRAY, $reader->peek());
     }
 
     public function testValueArray()
     {
-        $reader = new JsonReader(stream_for('[['));
+        $reader = new JsonStreamReader(stream_for('[['));
         $reader->beginArray();
 
-        self::assertEquals(JsonToken::BEGIN_ARRAY(), $reader->peek());
+        self::assertEquals(JsonToken::BEGIN_ARRAY, $reader->peek());
     }
 
     public function testValueObject()
     {
-        $reader = new JsonReader(stream_for('[{'));
+        $reader = new JsonStreamReader(stream_for('[{'));
         $reader->beginArray();
 
-        self::assertEquals(JsonToken::BEGIN_OBJECT(), $reader->peek());
+        self::assertEquals(JsonToken::BEGIN_OBJECT, $reader->peek());
     }
 
     public function testValueString()
     {
-        $reader = new JsonReader(stream_for('"'));
+        $reader = new JsonStreamReader(stream_for('"'));
 
-        self::assertEquals(JsonToken::STRING(), $reader->peek());
+        self::assertEquals(JsonToken::STRING, $reader->peek());
     }
 
     public function testValueTrue()
     {
-        $reader = new JsonReader(stream_for('true'));
+        $reader = new JsonStreamReader(stream_for('true'));
 
-        self::assertEquals(JsonToken::BOOLEAN(), $reader->peek());
+        self::assertEquals(JsonToken::BOOLEAN, $reader->peek());
     }
 
     public function testValueTrueCapital()
     {
-        $reader = new JsonReader(stream_for('TRUE'));
+        $reader = new JsonStreamReader(stream_for('TRUE'));
 
-        self::assertEquals(JsonToken::BOOLEAN(), $reader->peek());
+        self::assertEquals(JsonToken::BOOLEAN, $reader->peek());
     }
 
     public function testValueTrueException()
@@ -555,22 +555,22 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedJsonException::class);
         $this->expectExceptionMessage('Expected "true", but found "t1"');
 
-        $reader = new JsonReader(stream_for('t1'));
+        $reader = new JsonStreamReader(stream_for('t1'));
         $reader->peek();
     }
 
     public function testValueFalse()
     {
-        $reader = new JsonReader(stream_for('false'));
+        $reader = new JsonStreamReader(stream_for('false'));
 
-        self::assertEquals(JsonToken::BOOLEAN(), $reader->peek());
+        self::assertEquals(JsonToken::BOOLEAN, $reader->peek());
     }
 
     public function testValueFalseCapital()
     {
-        $reader = new JsonReader(stream_for('FALSE'));
+        $reader = new JsonStreamReader(stream_for('FALSE'));
 
-        self::assertEquals(JsonToken::BOOLEAN(), $reader->peek());
+        self::assertEquals(JsonToken::BOOLEAN, $reader->peek());
     }
 
     public function testValueFalseException()
@@ -578,22 +578,22 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedJsonException::class);
         $this->expectExceptionMessage('Expected "false", but found "f1"');
 
-        $reader = new JsonReader(stream_for('f1'));
+        $reader = new JsonStreamReader(stream_for('f1'));
         $reader->peek();
     }
 
     public function testValueNull()
     {
-        $reader = new JsonReader(stream_for('null'));
+        $reader = new JsonStreamReader(stream_for('null'));
 
-        self::assertEquals(JsonToken::NULL(), $reader->peek());
+        self::assertEquals(JsonToken::NULL, $reader->peek());
     }
 
     public function testValueNullCapital()
     {
-        $reader = new JsonReader(stream_for('NULL'));
+        $reader = new JsonStreamReader(stream_for('NULL'));
 
-        self::assertEquals(JsonToken::NULL(), $reader->peek());
+        self::assertEquals(JsonToken::NULL, $reader->peek());
     }
 
     public function testValueNullException()
@@ -601,7 +601,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedJsonException::class);
         $this->expectExceptionMessage('Expected "null", but found "n1"');
 
-        $reader = new JsonReader(stream_for('n1'));
+        $reader = new JsonStreamReader(stream_for('n1'));
         $reader->peek();
     }
 
@@ -610,9 +610,9 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
      */
     public function testValueNumber($number)
     {
-        $reader = new JsonReader(stream_for(sprintf('%s', $number)));
+        $reader = new JsonStreamReader(stream_for(sprintf('%s', $number)));
 
-        self::assertEquals(JsonToken::NUMBER(), $reader->peek());
+        self::assertEquals(JsonToken::NUMBER, $reader->peek());
     }
 
     public function testValueException()
@@ -620,16 +620,16 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedJsonException::class);
         $this->expectExceptionMessage('Unable to handle "s" character');
 
-        $reader = new JsonReader(stream_for('s'));
+        $reader = new JsonStreamReader(stream_for('s'));
         $reader->peek();
     }
 
     public function testWillUseCachedToken()
     {
-        $reader = new JsonReader(stream_for('{'));
+        $reader = new JsonStreamReader(stream_for('{'));
         $reader->peek();
 
-        self::assertEquals(JsonToken::BEGIN_OBJECT(), $reader->peek());
+        self::assertEquals(JsonToken::BEGIN_OBJECT, $reader->peek());
     }
 
     public function testSkipValue()
@@ -644,7 +644,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
             ],
             'nextProp' => 1,
         ];
-        $reader = new JsonReader(stream_for(json_encode($array)));
+        $reader = new JsonStreamReader(stream_for(json_encode($array)));
         $reader->beginObject();
         $reader->nextName();
         $reader->skipValue();
@@ -666,7 +666,7 @@ class JsonReaderTest extends PHPUnit_Framework_TestCase
            "active": true
         }';
 
-        $reader = new JsonReader(stream_for($string));
+        $reader = new JsonStreamReader(stream_for($string));
         $reader->beginObject();
         self::assertSame('id', $reader->nextName());
         self::assertSame(1, $reader->nextInteger());

@@ -26,7 +26,7 @@ use Tebru\Gson\Test\Mock\ExcluderVersionMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\BarPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcludeClassMockExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExcluderExcludeMock;
-use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcluderExposeMock;
+use Tebru\Gson\Test\Mock\ExcluderExposeMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
 
@@ -104,8 +104,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setRequireExpose(true);
 
-        self::assertTrue($excluder->excludeClass(ExcluderExposeMock::class, true));
-        self::assertFalse($excluder->excludeClass(ExcluderExposeMock::class, false));
+        self::assertFalse($excluder->excludeClass(ExcluderExposeMock::class, true));
+        self::assertTrue($excluder->excludeClass(ExcluderExposeMock::class, false));
     }
 
     public function testExcludeClassWithStrategySerialization()

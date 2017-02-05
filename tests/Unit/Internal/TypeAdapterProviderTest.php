@@ -7,6 +7,7 @@ namespace Tebru\Gson\Test\Unit\Internal;
 
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
+use ReflectionProperty;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\TypeAdapterMock;
@@ -44,12 +45,30 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         $provider->getAdapter(new PhpType('string'), TypeAdapterMock::class);
     }
 
-    public function testGetTypeAdapterMultiple()
+    public function testGetTypeAdapterUsesCache()
     {
         $provider = new TypeAdapterProvider([new TypeAdapterMock()]);
-        $adapter = $provider->getAdapter(new PhpType('string'));
-        $adapter2 = $provider->getAdapter(new PhpType('string'));
+        $provider->getAdapter(new PhpType('string'));
 
-        self::assertSame($adapter, $adapter2);
+        $reflectionProperty = new ReflectionProperty(TypeAdapterProvider::class, 'typeAdapterFactories');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($provider, []);
+
+        self::assertInstanceOf(TypeAdapterMock::class, $provider->getAdapter(new PhpType('string')));
+    }
+
+    public function testGetTypeAdapterSkipsCache()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The type "string" could not be handled by any of the registered type adapters');
+
+        $provider = new TypeAdapterProvider([new TypeAdapterMock()]);
+        $provider->getAdapter(new PhpType('string'));
+
+        $reflectionProperty = new ReflectionProperty(TypeAdapterProvider::class, 'typeAdapterFactories');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($provider, []);
+
+        self::assertInstanceOf(TypeAdapterMock::class, $provider->getAdapter(new PhpType('string'), TypeAdapterMock::class));
     }
 }

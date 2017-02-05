@@ -60,7 +60,7 @@ class Accessor
      *
      * @return string
      */
-    public function getter(): string
+    public function getter(): ?string
     {
         return $this->get;
     }
@@ -70,7 +70,7 @@ class Accessor
      *
      * @return string
      */
-    public function setter(): string
+    public function setter(): ?string
     {
         return $this->set;
     }

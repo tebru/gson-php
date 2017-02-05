@@ -148,10 +148,12 @@ final class Excluder
      */
     public function excludeClass(string $class, bool $serialize): bool
     {
-        $annotations = $this->annotationCollectionFactory->createClassAnnotations(new ReflectionClass($class));
+        if (class_exists($class)) {
+            $annotations = $this->annotationCollectionFactory->createClassAnnotations(new ReflectionClass($class));
 
-        if ($this->excludeByAnnotation($annotations, $serialize)) {
-            return true;
+            if ($this->excludeByAnnotation($annotations, $serialize)) {
+                return true;
+            }
         }
 
         $strategies = $serialize ? $this->serializationStrategies : $this->deserializationStrategies;

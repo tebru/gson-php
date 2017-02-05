@@ -6,10 +6,9 @@
 
 namespace Tebru\Gson;
 
-use GuzzleHttp\Psr7;
 use Tebru\Gson\Element\JsonElement;
+use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\Internal\JsonElementReader;
-use Tebru\Gson\Internal\JsonReader;
 use Tebru\Gson\Internal\JsonWritable;
 
 /**
@@ -39,26 +38,24 @@ abstract class TypeAdapter
      * @param mixed $value
      * @return void
      */
-    abstract public function write(JsonWritable $writer, $value);
+    abstract public function write(JsonWritable $writer, $value): void;
 
     /**
      * Constructs a JsonReader for a given string of json and passes it to ::read()
      *
-     * @param string|resource $json
-     * @return object
+     * @param string $json
+     * @return mixed
      */
     public function readFromJson($json)
     {
-        $stream = Psr7\stream_for($json);
-
-        return $this->read(new JsonReader($stream));
+        return $this->read(new JsonDecodeReader($json));
     }
 
     /**
      * Constructs a JsonElementReader with a JsonElement and passes it to ::read()
      *
      * @param JsonElement $jsonElement
-     * @return object
+     * @return mixed
      */
     public function readFromJsonElement(JsonElement $jsonElement)
     {
@@ -68,20 +65,20 @@ abstract class TypeAdapter
     /**
      * Constructs a JsonWriter and passes it to ::write().  Returns the written json.
      *
-     * @param object $object
+     * @param mixed $var
      * @return string
      */
-    public function writeToJson($object)
+    public function writeToJson($var): string
     {
     }
 
     /**
      * Constructs a JsonElementWriter and passes it to ::write().  Returns the JsonElement written.
      *
-     * @param object $object
+     * @param mixed $var
      * @return JsonElement
      */
-    public function writeToJsonElement($object)
+    public function writeToJsonElement($var): JsonElement
     {
     }
 }

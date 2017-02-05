@@ -6,23 +6,12 @@
 
 namespace Tebru\Gson\Internal;
 
-use Tebru\Enum\AbstractEnum;
-
 /**
  * Class TypeToken
  *
- * @method static $this STRING()
- * @method static $this INTEGER()
- * @method static $this FLOAT()
- * @method static $this BOOLEAN()
- * @method static $this ARRAY()
- * @method static $this OBJECT()
- * @method static $this NULL()
- * @method static $this RESOURCE()
- * @method static $this WILDCARD()
  * @author Nate Brunette <n@tebru.net>
  */
-final class TypeToken extends AbstractEnum
+final class TypeToken
 {
     const STRING = 'string';
     const INTEGER = 'integer';
@@ -35,60 +24,39 @@ final class TypeToken extends AbstractEnum
     const WILDCARD = '?';
 
     /**
-     * Return an array of enum class constants
-     *
-     * @return array
-     */
-    public static function getConstants(): array
-    {
-        return [
-            self::STRING,
-            self::INTEGER,
-            self::FLOAT,
-            self::BOOLEAN,
-            self::ARRAY,
-            self::OBJECT,
-            self::NULL,
-            self::RESOURCE,
-            self::WILDCARD,
-        ];
-    }
-
-    /**
      * Create a token from a string
      *
      * This is useful in combination with something like
      * gettype()
      *
      * @param string $type
-     * @return TypeToken
-     * @throws \RuntimeException If the value is not valid
+     * @return string
      */
-    public static function createFromString(string $type): TypeToken
+    public static function normalizeType(string $type): string
     {
         switch ($type) {
             case 'string':
-                return TypeToken::create(self::STRING);
+                return self::STRING;
             case 'int':
             case 'integer':
-                return TypeToken::create(self::INTEGER);
+                return self::INTEGER;
             case 'double':
             case 'float':
-                return TypeToken::create(self::FLOAT);
+                return self::FLOAT;
             case 'bool':
             case 'boolean':
-                return TypeToken::create(self::BOOLEAN);
+                return self::BOOLEAN;
             case 'array':
-                return TypeToken::create(self::ARRAY);
+                return self::ARRAY;
             case 'null':
             case 'NULL':
-                return TypeToken::create(self::NULL);
+                return self::NULL;
             case 'resource':
-                return TypeToken::create(self::RESOURCE);
+                return self::RESOURCE;
             case '?':
-                return TypeToken::create(self::WILDCARD);
+                return self::WILDCARD;
             default:
-                return TypeToken::create(self::OBJECT);
+                return self::OBJECT;
         }
     }
 }

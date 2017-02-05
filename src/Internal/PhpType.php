@@ -6,8 +6,7 @@
 
 namespace Tebru\Gson\Internal;
 
-use Tebru\Collection\ArrayList;
-use Tebru\Collection\HashMap;
+use stdClass;
 use Tebru\Gson\Exception\MalformedTypeException;
 
 /**
@@ -52,7 +51,7 @@ final class PhpType
     /**
      * An enum representing core php types
      *
-     * @var TypeToken
+     * @var string
      */
     private $type;
 
@@ -66,31 +65,28 @@ final class PhpType
     /**
      * Generic types, if they exist
      *
-     * @var ArrayList
+     * @var array
      */
-    private $genericTypes;
+    private $genericTypes = [];
 
     /**
      * Various options a type might need to reference
      *
      * For example, a DateTime object might want to store formatting options
      *
-     * @var HashMap
+     * @var array
      */
-    private $options;
+    private $options = [];
 
     /**
      * Constructor
      *
      * @param string $type
-     * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function __construct(string $type)
     {
         $this->fullType = (string) str_replace(' ', '', $type);
-        $this->genericTypes = new ArrayList();
-        $this->options = new HashMap();
 
         $this->parseType($this->fullType);
     }
@@ -101,7 +97,6 @@ final class PhpType
      *
      * @param string $type
      * @return void
-     * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     private function parseType(string $type): void
@@ -143,7 +138,7 @@ final class PhpType
             // we only care about commas for the initial list of generics
             if (',' === $char && 0 === $depth) {
                 // add new type to list
-                $this->genericTypes->add(new PhpType($type));
+                $this->genericTypes[] = new PhpType($type);
 
                 // reset type
                 $type = '';
@@ -155,7 +150,7 @@ final class PhpType
             $type .= $char;
         }
 
-        $this->genericTypes->add(new PhpType($type));
+        $this->genericTypes[] = new PhpType($type);
     }
 
     /**
@@ -163,35 +158,24 @@ final class PhpType
      *
      * @param string $type
      * @return void
-     * @throws \RuntimeException If the value is not valid
      */
     private function setType(string $type): void
     {
-        $this->type = TypeToken::createFromString($type);
+        $this->type = TypeToken::normalizeType($type);
 
         if ($this->isObject()) {
-            $this->class = 'object' === $type ? 'stdClass' : $type;
+            $this->class = 'object' === $type ? stdClass::class : $type;
         } else {
             $this->fullType = (string) $this->type;
         }
     }
 
     /**
-     * Returns a [@see TypeToken]
+     * Returns an array of generic types
      *
-     * @return TypeToken
+     * @return array
      */
-    public function getType(): TypeToken
-    {
-        return $this->type;
-    }
-
-    /**
-     * Returns an ArrayList of generic types
-     *
-     * @return ArrayList
-     */
-    public function getGenerics(): ArrayList
+    public function getGenerics(): array
     {
         return $this->genericTypes;
     }
@@ -213,7 +197,7 @@ final class PhpType
      */
     public function isString(): bool
     {
-        return $this->type->equals(TypeToken::STRING());
+        return $this->type === TypeToken::STRING;
     }
 
     /**
@@ -223,7 +207,7 @@ final class PhpType
      */
     public function isInteger(): bool
     {
-        return $this->type->equals(TypeToken::INTEGER());
+        return $this->type === TypeToken::INTEGER;
     }
 
     /**
@@ -233,7 +217,7 @@ final class PhpType
      */
     public function isFloat(): bool
     {
-        return $this->type->equals(TypeToken::FLOAT());
+        return $this->type === TypeToken::FLOAT;
     }
 
     /**
@@ -243,7 +227,7 @@ final class PhpType
      */
     public function isBoolean(): bool
     {
-        return $this->type->equals(TypeToken::BOOLEAN());
+        return $this->type === TypeToken::BOOLEAN;
     }
 
     /**
@@ -253,7 +237,7 @@ final class PhpType
      */
     public function isArray(): bool
     {
-        return $this->type->equals(TypeToken::ARRAY());
+        return $this->type === TypeToken::ARRAY;
     }
 
     /**
@@ -263,7 +247,7 @@ final class PhpType
      */
     public function isObject(): bool
     {
-        return $this->type->equals(TypeToken::OBJECT());
+        return $this->type === TypeToken::OBJECT;
     }
 
     /**
@@ -273,7 +257,7 @@ final class PhpType
      */
     public function isNull(): bool
     {
-        return $this->type->equals(TypeToken::NULL());
+        return $this->type === TypeToken::NULL;
     }
 
     /**
@@ -283,7 +267,7 @@ final class PhpType
      */
     public function isResource(): bool
     {
-        return $this->type->equals(TypeToken::RESOURCE());
+        return $this->type === TypeToken::RESOURCE;
     }
 
     /**
@@ -293,15 +277,15 @@ final class PhpType
      */
     public function isWildcard(): bool
     {
-        return $this->type->equals(TypeToken::WILDCARD());
+        return $this->type === TypeToken::WILDCARD;
     }
 
     /**
-     * Returns a HashMap of extra options
+     * Returns an array of extra options
      *
-     * @return HashMap
+     * @return array
      */
-    public function getOptions(): HashMap
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -314,7 +298,7 @@ final class PhpType
      */
     public function setOptions(array $options): void
     {
-        $this->options->putAllArray($options);
+        $this->options = $options;
     }
 
     /**

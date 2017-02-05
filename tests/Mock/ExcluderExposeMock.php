@@ -4,12 +4,12 @@
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
 
-namespace Tebru\Gson\Test\Mock\ExclusionStrategies;
+namespace Tebru\Gson\Test\Mock;
 
 use Tebru\Gson\Annotation\Expose;
 
 /**
- * @Expose(serialize=false)
+ * @Expose(deserialize=false)
  */
 class ExcluderExposeMock
 {
