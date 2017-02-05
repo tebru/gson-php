@@ -186,8 +186,9 @@ final class Excluder
         }
 
         $strategies = $serialize ? $this->serializationStrategies : $this->deserializationStrategies;
+        $reflectionProperty = new ReflectionProperty($property->getClassName(), $property->getRealName());
         foreach ($strategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipProperty($property->getRealName())) {
+            if ($exclusionStrategy->shouldSkipProperty($reflectionProperty)) {
                 return true;
             }
         }

@@ -13,5 +13,5 @@ namespace Tebru\Gson\Test\Mock;
  */
 class Foo
 {
-
+    private $foo;
 }

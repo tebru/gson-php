@@ -36,6 +36,7 @@ use Tebru\Gson\Test\Mock\UserMock;
  * Class ReflectionTypeAdapterTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter
  */
 class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

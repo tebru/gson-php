@@ -140,6 +140,7 @@ final class PropertyCollectionFactory
             $type = $this->phpTypeFactory->create($annotations, $getterMethod, $setterMethod);
 
             $property = new Property(
+                $reflectionProperty->getDeclaringClass()->getName(),
                 $reflectionProperty->getName(),
                 $serializedName,
                 $type,

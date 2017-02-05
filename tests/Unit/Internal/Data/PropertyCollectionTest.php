@@ -29,6 +29,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
+            'foo',
             $realName,
             $serializedName,
             $type,
@@ -49,6 +50,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
+            'foo',
             $realName,
             $serializedName,
             $type,
@@ -69,6 +71,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
+            'foo',
             $realName,
             $serializedName,
             $type,

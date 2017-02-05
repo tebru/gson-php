@@ -29,12 +29,14 @@ class PropertyTest extends PHPUnit_Framework_TestCase
 {
     public function testGetters()
     {
+        $className = 'foo';
         $realName = 'foo';
         $serializedName = 'foo_bar';
         $type = new PhpType('Foo');
         $annotationSet = new AnnotationSet();
 
         $property = new Property(
+            $className,
             $realName,
             $serializedName,
             $type,
@@ -44,6 +46,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             0
         );
 
+        self::assertSame($className, $property->getClassName());
         self::assertSame($realName, $property->getRealName());
         self::assertSame($serializedName, $property->getSerializedName());
         self::assertSame($type, $property->getType());
@@ -61,6 +64,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $annotationSet = new AnnotationSet();
 
         $property = new Property(
+            'foo',
             $realName,
             $serializedName,
             $type,
@@ -85,6 +89,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
+            'foo',
             $realName,
             $serializedName,
             $type,
@@ -106,6 +111,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
+            'foo',
             $realName,
             $serializedName,
             $type,
@@ -127,6 +133,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
+            'foo',
             $realName,
             $serializedName,
             $type,
@@ -150,6 +157,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $setter = new SetByClosure('bar', ChildClassParent::class);
 
         $property = new Property(
+            'foo',
             $realName,
             $serializedName,
             $type,
@@ -173,6 +181,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $setter = new SetByClosure('bar', ChildClass::class);
 
         $property = new Property(
+            'foo',
             $realName,
             $serializedName,
             $type,

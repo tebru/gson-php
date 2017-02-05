@@ -21,6 +21,13 @@ use Tebru\Gson\Internal\SetterStrategy;
 final class Property
 {
     /**
+     * The class name of the property
+     *
+     * @var string
+     */
+    private $className;
+
+    /**
      * The actual name of the property
      *
      * @var string
@@ -88,6 +95,7 @@ final class Property
     /**
      * Constructor
      *
+     * @param string $className
      * @param string $realName
      * @param string $serializedName
      * @param PhpType $type
@@ -97,6 +105,7 @@ final class Property
      * @param int $modifiers
      */
     public function __construct(
+        string $className,
         string $realName,
         string $serializedName,
         PhpType $type,
@@ -105,6 +114,7 @@ final class Property
         AnnotationSet $annotations,
         int $modifiers
     ) {
+        $this->className = $className;
         $this->realName = $realName;
         $this->serializedName = $serializedName;
         $this->type = $type;
@@ -112,6 +122,16 @@ final class Property
         $this->setterStrategy = $setterStrategy;
         $this->annotations = $annotations;
         $this->modifiers = $modifiers;
+    }
+
+    /**
+     * Get the class name of the property
+     *
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return $this->className;
     }
 
     /**

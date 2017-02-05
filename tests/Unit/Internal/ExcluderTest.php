@@ -29,6 +29,7 @@ use Tebru\Gson\Test\Mock\ExcluderExcludeMock;
 use Tebru\Gson\Test\Mock\ExcluderExposeMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
+use Tebru\Gson\Test\Mock\Foo;
 
 /**
  * Class ExcluderTest
@@ -133,6 +134,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -152,6 +154,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setExcludedModifiers(ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -171,6 +174,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setExcludedModifiers(ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -190,6 +194,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setVersion(1);
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -208,6 +213,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -227,6 +233,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setVersion('1.0.0');
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -246,6 +253,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setVersion('1.0.1');
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -265,6 +273,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setVersion('1.0.2');
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -284,6 +293,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setVersion('1');
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -303,6 +313,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setVersion('2.0.0');
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -322,6 +333,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setVersion('2.0.1');
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -340,6 +352,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -358,6 +371,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -376,6 +390,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -395,6 +410,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setRequireExpose(true);
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -414,6 +430,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setRequireExpose(true);
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -433,6 +450,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setRequireExpose(true);
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -451,6 +469,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -470,6 +489,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->setRequireExpose(true);
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),
@@ -490,6 +510,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder->addExclusionStrategy(new FooPropertyExclusionStrategy(), true, true);
 
         $property = new Property(
+            Foo::class,
             'foo',
             'foo',
             new PhpType('string'),

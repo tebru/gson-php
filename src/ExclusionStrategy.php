@@ -6,6 +6,8 @@
 
 namespace Tebru\Gson;
 
+use ReflectionProperty;
+
 /**
  * Interface ExclusionStrategy
  *
@@ -26,8 +28,8 @@ interface ExclusionStrategy
     /**
      * Return true if the property should be ignored
      *
-     * @param string $property
+     * @param ReflectionProperty $property
      * @return bool
      */
-    public function shouldSkipProperty(string $property): bool;
+    public function shouldSkipProperty(ReflectionProperty $property): bool;
 }
