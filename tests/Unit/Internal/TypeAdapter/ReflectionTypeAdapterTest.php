@@ -92,8 +92,8 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         /** @var ReflectionTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
 
-        /** @var UserMock $result */
-        $result = $adapter->readFromJson('
+        /** @var UserMock $user */
+        $user = $adapter->readFromJson('
             {
                 "id": 1,
                 "name": "Test User",
@@ -105,11 +105,22 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
                     "state": "MN",
                     "zip": 12345
                 },
-                "phone": "1234567890",
+                "phone": null,
                 "enabled": true
             }
         ');
+        $address = $user->getAddress();
 
-        self::assertInstanceOf(UserMock::class, $result);
+        self::assertInstanceOf(UserMock::class, $user);
+        self::assertSame(1, $user->getId());
+        self::assertSame('test@example.com', $user->getEmail());
+        self::assertSame('Test User', $user->getName());
+        self::assertNull($user->getPhone());
+        self::assertTrue($user->isEnabled());
+        self::assertNull($user->getPassword());
+        self::assertSame('123 ABC St.', $address->getStreet());
+        self::assertSame('My City', $address->getCity());
+        self::assertSame('MN', $address->getState());
+        self::assertSame(12345, $address->getZip());
     }
 }
