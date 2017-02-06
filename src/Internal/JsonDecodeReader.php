@@ -18,7 +18,7 @@ use Tebru\Gson\JsonToken;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class JsonDecodeReader implements JsonReadable
+final class JsonDecodeReader implements JsonReadable
 {
     /**
      * A stack representing the next element to be consumed

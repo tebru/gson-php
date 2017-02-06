@@ -15,7 +15,7 @@ use stdClass;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class StdClassIterator implements Iterator
+final class StdClassIterator implements Iterator
 {
     /**
      * @var SplQueue

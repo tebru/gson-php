@@ -87,7 +87,7 @@ class UserMock
     /**
      * @return string
      */
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -119,7 +119,7 @@ class UserMock
     /**
      * @return AddressMock
      */
-    public function getAddress(): AddressMock
+    public function getAddress(): ?AddressMock
     {
         return $this->address;
     }

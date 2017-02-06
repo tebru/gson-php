@@ -15,7 +15,7 @@ use Tebru\Gson\Element\JsonObject;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class JsonObjectIterator implements Iterator
+final class JsonObjectIterator implements Iterator
 {
     /**
      * @var SplQueue
