@@ -84,4 +84,27 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
 
         self::assertSame([$property], $propertyCollection->toArray());
     }
+
+    public function testIterate()
+    {
+        $realName = 'foo';
+        $serializedName = 'foo_bar';
+        $type = new PhpType('Foo');
+
+        $property = new Property(
+            'foo',
+            $realName,
+            $serializedName,
+            $type,
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
+            new AnnotationSet(),
+            0
+        );
+        $propertyCollection = new PropertyCollection([$property]);
+
+        foreach ($propertyCollection as $p) {
+            self::assertSame($property, $p);
+        }
+    }
 }

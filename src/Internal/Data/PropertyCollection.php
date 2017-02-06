@@ -6,6 +6,10 @@
 
 namespace Tebru\Gson\Internal\Data;
 
+use ArrayIterator;
+use IteratorAggregate;
+use Traversable;
+
 /**
  * Class PropertyCollection
  *
@@ -13,7 +17,7 @@ namespace Tebru\Gson\Internal\Data;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class PropertyCollection
+final class PropertyCollection implements IteratorAggregate
 {
     /**
      * Array of [@see Property] objects
@@ -65,5 +69,15 @@ final class PropertyCollection
     public function toArray()
     {
         return array_values($this->elements);
+    }
+
+    /**
+     * Retrieve an external iterator
+     *
+     * @return ArrayIterator
+     */
+    public function getIterator(): ArrayIterator
+    {
+        return new ArrayIterator($this->toArray());
     }
 }
