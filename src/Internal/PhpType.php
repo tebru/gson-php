@@ -165,7 +165,7 @@ final class PhpType
 
         if ($this->isObject()) {
             $this->class = 'object' === $type ? stdClass::class : $type;
-        } else {
+        } elseif (false === strpos($this->fullType, '<')) {
             $this->fullType = (string) $this->type;
         }
     }

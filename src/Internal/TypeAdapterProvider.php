@@ -20,16 +20,16 @@ final class TypeAdapterProvider
     /**
      * A cache of mapped factories
      *
-     * @var TypeAdapterFactory[]
+     * @var TypeAdapter[]
      */
-    private $typeAdapterFactoryCache = [];
+    private $typeAdapterCache = [];
 
     /**
      * All registered [@see TypeAdapter]s
      *
      * @var TypeAdapterFactory[]
      */
-    private $typeAdapterFactories;
+    private $typeAdapterFactories = [];
 
     /**
      * Constructor
@@ -54,12 +54,8 @@ final class TypeAdapterProvider
     public function getAdapter(PhpType $type, string $skipClass = null): TypeAdapter
     {
         $fullType = (string) $type;
-        if (array_key_exists($fullType, $this->typeAdapterFactoryCache)) {
-            $factory = $this->typeAdapterFactoryCache[$fullType];
-
-            if (get_class($factory) !== $skipClass) {
-                return $factory->create($type, $this);
-            }
+        if (null === $skipClass && array_key_exists($fullType, $this->typeAdapterCache)) {
+            return $this->typeAdapterCache[$fullType];
         }
 
         foreach ($this->typeAdapterFactories as $typeAdapterFactory) {
@@ -71,9 +67,10 @@ final class TypeAdapterProvider
                 continue;
             }
 
-            $this->typeAdapterFactoryCache[$fullType] = $typeAdapterFactory;
+            $adapter = $typeAdapterFactory->create($type, $this);
+            $this->typeAdapterCache[$fullType] = $adapter;
 
-            return $typeAdapterFactory->create($type, $this);
+            return $adapter;
         }
 
         throw new InvalidArgumentException(sprintf(
