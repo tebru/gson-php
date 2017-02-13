@@ -9,6 +9,7 @@ namespace Tebru\Gson\Test\Mock;
 use Tebru\Gson\Annotation\Accessor;
 use Tebru\Gson\Annotation\SerializedName;
 use Tebru\Gson\Annotation\Type;
+use Tebru\Gson\Annotation\VirtualProperty;
 
 /**
  * Class PropertyCollectionMock
@@ -40,5 +41,14 @@ class PropertyCollectionMock
     public function setChanged(bool $changed)
     {
         $this->changedAccessors = $changed;
+    }
+
+    /**
+     * @VirtualProperty()
+     * @SerializedName("new_virtual_property")
+     */
+    public function virtualProperty(): string
+    {
+        return 'foo'.'bar';
     }
 }

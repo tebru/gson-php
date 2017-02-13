@@ -10,7 +10,10 @@ use Doctrine\Common\Cache\Cache;
 use ReflectionClass;
 use ReflectionProperty;
 use Tebru\Gson\Annotation\JsonAdapter;
+use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\AccessorMethodProvider;
+use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
+use Tebru\Gson\Internal\AccessorStrategy\SetByNull;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
@@ -126,7 +129,7 @@ final class PropertyCollectionFactory
         /** @var ReflectionProperty $reflectionProperty */
         foreach ($reflectionProperties as $reflectionProperty) {
             $annotations = $this->annotationCollectionFactory->createPropertyAnnotations($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getName());
-            $serializedName = $this->propertyNamer->serializedName($reflectionProperty, $annotations);
+            $serializedName = $this->propertyNamer->serializedName($reflectionProperty->getName(), $annotations);
             $getterMethod = $this->accessorMethodProvider->getterMethod($reflectionClass, $reflectionProperty, $annotations);
             $setterMethod = $this->accessorMethodProvider->setterMethod($reflectionClass, $reflectionProperty, $annotations);
             $getterStrategy = $this->accessorStrategyFactory->getterStrategy($reflectionProperty, $getterMethod);
@@ -148,6 +151,51 @@ final class PropertyCollectionFactory
                 $setterStrategy,
                 $annotations,
                 $reflectionProperty->getModifiers(),
+                $adapter
+            );
+
+            $skipSerialize = $this->excludeProperty($property, true);
+            $skipDeserialize = $this->excludeProperty($property, false);
+
+            // if we're skipping serialization and deserialization, we don't need
+            // to add the property to the collection
+            if ($skipSerialize && $skipDeserialize) {
+                continue;
+            }
+
+            $property->setSkipSerialize($skipSerialize);
+            $property->setSkipDeserialize($skipDeserialize);
+
+            $properties->add($property);
+        }
+
+        // add virtual properties
+        foreach ($reflectionClass->getMethods() as $reflectionMethod) {
+            $annotations = $this->annotationCollectionFactory->createMethodAnnotations($reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getName());
+            if (null === $annotations->getAnnotation(VirtualProperty::class)) {
+                continue;
+            }
+
+            $serializedName = $this->propertyNamer->serializedName($reflectionMethod->getName(), $annotations);
+            $type = $this->phpTypeFactory->create($annotations, $reflectionMethod);
+            $getterStrategy = new GetByMethod($reflectionMethod->getName());
+            $setterStrategy = new SetByNull();
+
+            /** @var JsonAdapter $jsonAdapterAnnotation */
+            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class);
+            $adapter = null !== $jsonAdapterAnnotation
+                ? $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation)
+                : $typeAdapterProvider->getAdapter($type);
+
+            $property = new Property(
+                $reflectionMethod->getDeclaringClass()->getName(),
+                $reflectionMethod->getName(),
+                $serializedName,
+                $type,
+                $getterStrategy,
+                $setterStrategy,
+                $annotations,
+                $reflectionMethod->getModifiers(),
                 $adapter
             );
 

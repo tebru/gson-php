@@ -30,7 +30,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
         $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
         $annotations = $factory->createPropertyAnnotations($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getName());
 
-        self::assertSame('foobar', $namer->serializedName($reflectionProperty, $annotations));
+        self::assertSame('foobar', $namer->serializedName($reflectionProperty->getName(), $annotations));
     }
 
     public function testGetNameUsingStrategy()
@@ -40,6 +40,6 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
         $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
         $annotations = $factory->createPropertyAnnotations($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getName());
 
-        self::assertSame('foo_bar_baz', $namer->serializedName($reflectionProperty, $annotations));
+        self::assertSame('foo_bar_baz', $namer->serializedName($reflectionProperty->getName(), $annotations));
     }
 }

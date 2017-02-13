@@ -20,7 +20,7 @@ use Tebru\Gson\Internal\PhpType;
  * @author Nate Brunette <n@tebru.net>
  *
  * @Annotation
- * @Target({"PROPERTY"})
+ * @Target({"PROPERTY", "METHOD"})
  */
 class Type
 {

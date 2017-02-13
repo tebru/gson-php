@@ -9,6 +9,7 @@ namespace Tebru\Gson\Internal\Data;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\Cache;
 use ReflectionClass;
+use ReflectionMethod;
 use ReflectionProperty;
 
 /**
@@ -111,6 +112,30 @@ final class AnnotationCollectionFactory
         }
 
         $this->cache->save($className, $annotations);
+
+        return $annotations;
+    }
+
+    /**
+     * Create a set of method annotations
+     *
+     * @param string $className
+     * @param string $methodName
+     * @return AnnotationSet
+     */
+    public function createMethodAnnotations(string $className, string $methodName): AnnotationSet
+    {
+        $key = $className.':'.$methodName;
+        if ($this->cache->contains($key)) {
+            return $this->cache->fetch($key);
+        }
+
+        $annotations = new AnnotationSet();
+
+        $reflectionMethod = new ReflectionMethod($className, $methodName);
+        $annotations->addAllArray($this->reader->getMethodAnnotations($reflectionMethod));
+
+        $this->cache->save($key, $annotations);
 
         return $annotations;
     }

@@ -6,6 +6,8 @@
 
 namespace Tebru\Gson\Test\Mock;
 
+use Tebru\Gson\Annotation\SerializedName;
+use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Test\Mock\Annotation\BarAnnotation;
 use Tebru\Gson\Test\Mock\Annotation\BazAnnotation;
 use Tebru\Gson\Test\Mock\Annotation\FooAnnotation;
@@ -71,5 +73,14 @@ class ChildClass extends ChildClassParent
     public function setWithTypehint(UserMock $childClass)
     {
         $this->withTypehint = $childClass;
+    }
+
+    /**
+     * @VirtualProperty()
+     * @SerializedName("new_virtual_property")
+     */
+    public function virtualProperty(): string
+    {
+        return 'foo'.'bar';
     }
 }

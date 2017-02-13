@@ -10,6 +10,8 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
+use Tebru\Gson\Annotation\SerializedName;
+use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Test\Mock\Annotation\BarAnnotation;
@@ -102,6 +104,31 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
         $cache->save(ChildClass::class, $cachedAnnotations);
         $factory = new AnnotationCollectionFactory(new AnnotationReader(), $cache);
         $annotations = $factory->createClassAnnotations(ChildClass::class);
+
+        self::assertSame($cachedAnnotations, $annotations);
+    }
+
+    public function testCreateMethodAnnotations()
+    {
+        $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $annotations = $factory->createMethodAnnotations(ChildClass::class, 'virtualProperty');
+
+        $expected = [
+            new VirtualProperty(),
+            new SerializedName(['value' => 'new_virtual_property']),
+        ];
+
+        self::assertEquals($expected, $annotations->toArray());
+    }
+
+    public function testCreateMethodAnnotationsUsesCache()
+    {
+        $cachedAnnotations = new AnnotationSet([new VirtualProperty()]);
+        $cache = new ArrayCache();
+        $cache->save(ChildClass::class.':'.'virtualProperty', $cachedAnnotations);
+
+        $factory = new AnnotationCollectionFactory(new AnnotationReader(), $cache);
+        $annotations = $factory->createMethodAnnotations(ChildClass::class, 'virtualProperty');
 
         self::assertSame($cachedAnnotations, $annotations);
     }

@@ -17,7 +17,7 @@ use LogicException;
  * @author Nate Brunette <n@tebru.net>
  *
  * @Annotation
- * @Target({"PROPERTY"})
+ * @Target({"PROPERTY", "METHOD"})
  */
 class SerializedName
 {

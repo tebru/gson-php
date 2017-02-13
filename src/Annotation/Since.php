@@ -18,7 +18,7 @@ use LogicException;
  * @author Nate Brunette <n@tebru.net>
  *
  * @Annotation
- * @Target({"CLASS", "PROPERTY"})
+ * @Target({"CLASS", "PROPERTY", "METHOD"})
  */
 class Since
 {
