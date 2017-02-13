@@ -95,7 +95,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
             new IntegerTypeAdapterFactory(),
             new BooleanTypeAdapterFactory(),
             new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class)),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory),
+            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
         ]);
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));

@@ -59,7 +59,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
             new StringTypeAdapterFactory(),
             new IntegerTypeAdapterFactory(),
             new BooleanTypeAdapterFactory(),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory)
+            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
         ]);
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
@@ -90,7 +90,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
             new FloatTypeAdapterFactory(),
             new BooleanTypeAdapterFactory(),
             new NullTypeAdapterFactory(),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory)
+            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
         ]);
 
         /** @var ReflectionTypeAdapter $adapter */

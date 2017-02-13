@@ -134,7 +134,7 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         self::assertCount(0, $collection->toArray());
     }
 
-    public function testCreateExcludes()
+    public function testCreateExcludesWillNotUsePropertyExclusionStrategy()
     {
         $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
         $excluder = new Excluder($annotationCollectionFactory);
@@ -153,7 +153,7 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         );
 
         $typeAdapterProvider = new TypeAdapterProvider([
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $factory),
+            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $factory, $excluder),
             new WildcardTypeAdapterFactory(),
         ]);
 
@@ -162,7 +162,7 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         /** @var Property[] $elements */
         $elements = $collection->toArray();
 
-        self::assertCount(0, $elements);
+        self::assertCount(1, $elements);
     }
 
     public function testCreateUsesJsonAdapter()

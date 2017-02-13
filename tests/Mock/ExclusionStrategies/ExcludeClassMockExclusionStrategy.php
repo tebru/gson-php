@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Test\Mock\ExclusionStrategies;
 
-use ReflectionProperty;
 use Tebru\Gson\ExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExcluderVersionMock;
 
@@ -20,21 +19,22 @@ class ExcludeClassMockExclusionStrategy implements ExclusionStrategy
     /**
      * Return true if the class should be ignored
      *
-     * @param string $class
+     * @param string $className
      * @return bool
      */
-    public function shouldSkipClass(string $class): bool
+    public function shouldSkipClass(string $className): bool
     {
-        return ExcluderVersionMock::class === $class;
+        return ExcluderVersionMock::class === $className;
     }
 
     /**
      * Return true if the property should be ignored
      *
-     * @param ReflectionProperty $property
+     * @param string $className
+     * @param string $propertyName
      * @return bool
      */
-    public function shouldSkipProperty(ReflectionProperty $property): bool
+    public function shouldSkipProperty(string $className, string $propertyName): bool
     {
         return false;
     }

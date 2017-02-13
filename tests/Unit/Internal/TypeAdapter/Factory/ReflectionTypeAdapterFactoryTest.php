@@ -66,6 +66,7 @@ class ReflectionTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     private function factory(): ReflectionTypeAdapterFactory
     {
         $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $excluder = new Excluder($annotationCollectionFactory);
         $propertyCollectionFactory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationCollectionFactory,
@@ -73,10 +74,10 @@ class ReflectionTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
             new PhpTypeFactory(),
-            new Excluder($annotationCollectionFactory),
+            $excluder,
             new VoidCache()
         );
 
-        return new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory);
+        return new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder);
     }
 }

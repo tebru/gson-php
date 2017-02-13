@@ -141,14 +141,14 @@ final class Excluder
     /**
      * Returns true if we should exclude the class for a given serialization direction
      *
-     * @param string $class
+     * @param string $className
      * @param bool $serialize
      * @return bool
      */
-    public function excludeClass(string $class, bool $serialize): bool
+    public function excludeClass(string $className, bool $serialize): bool
     {
-        if (class_exists($class)) {
-            $annotations = $this->annotationCollectionFactory->createClassAnnotations($class);
+        if (class_exists($className)) {
+            $annotations = $this->annotationCollectionFactory->createClassAnnotations($className);
 
             if ($this->excludeByAnnotation($annotations, $serialize)) {
                 return true;
@@ -157,7 +157,7 @@ final class Excluder
 
         $strategies = $serialize ? $this->serializationStrategies : $this->deserializationStrategies;
         foreach ($strategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipClass($class)) {
+            if ($exclusionStrategy->shouldSkipClass($className)) {
                 return true;
             }
         }
@@ -184,10 +184,23 @@ final class Excluder
             return true;
         }
 
+        return false;
+    }
+
+    /**
+     * Returns true if we should exclude the class for a given serialization direction
+     *
+     * Uses user-defined strategies
+     *
+     * @param Property $property
+     * @param bool $serialize
+     * @return bool
+     */
+    public function excludePropertyByStrategy(Property $property, bool $serialize): bool
+    {
         $strategies = $serialize ? $this->serializationStrategies : $this->deserializationStrategies;
-        $reflectionProperty = new ReflectionProperty($property->getClassName(), $property->getRealName());
         foreach ($strategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipProperty($reflectionProperty)) {
+            if ($exclusionStrategy->shouldSkipProperty($property->getClassName(), $property->getRealName())) {
                 return true;
             }
         }

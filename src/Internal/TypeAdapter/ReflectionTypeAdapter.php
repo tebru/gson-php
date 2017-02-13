@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter;
 
+use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\JsonWritable;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -29,6 +30,11 @@ final class ReflectionTypeAdapter extends TypeAdapter
     private $typeAdapterProvider;
 
     /**
+     * @var Excluder
+     */
+    private $excluder;
+
+    /**
      * @var ObjectConstructor
      */
     private $objectConstructor;
@@ -42,12 +48,19 @@ final class ReflectionTypeAdapter extends TypeAdapter
      * Constructor
      *
      * @param TypeAdapterProvider $typeAdapterProvider
+     * @param Excluder $excluder
      * @param ObjectConstructor $objectConstructor
      * @param PropertyCollection $properties
      */
-    public function __construct(TypeAdapterProvider $typeAdapterProvider, ObjectConstructor $objectConstructor, PropertyCollection $properties)
+    public function __construct(
+        TypeAdapterProvider $typeAdapterProvider,
+        Excluder $excluder,
+        ObjectConstructor $objectConstructor,
+        PropertyCollection $properties
+    )
     {
         $this->typeAdapterProvider = $typeAdapterProvider;
+        $this->excluder = $excluder;
         $this->objectConstructor = $objectConstructor;
         $this->properties = $properties;
     }
@@ -70,7 +83,7 @@ final class ReflectionTypeAdapter extends TypeAdapter
         while ($reader->hasNext()) {
             $name = $reader->nextName();
             $property = $this->properties->getBySerializedName($name);
-            if (null === $property || $property->skipDeserialize()) {
+            if (null === $property || $property->skipDeserialize() || $this->excluder->excludePropertyByStrategy($property, false)) {
                 $reader->skipValue();
                 continue;
             }

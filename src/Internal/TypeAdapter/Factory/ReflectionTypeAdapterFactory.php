@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use Tebru\Gson\Internal\ConstructorConstructor;
+use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
@@ -32,6 +33,11 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
     private $propertyCollectionFactory;
 
     /**
+     * @var Excluder
+     */
+    private $excluder;
+
+    /**
      * Constructor
      *
      * @param ConstructorConstructor $constructorConstructor
@@ -39,10 +45,12 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      */
     public function __construct(
         ConstructorConstructor $constructorConstructor,
-        PropertyCollectionFactory $propertyCollectionFactory
+        PropertyCollectionFactory $propertyCollectionFactory,
+        Excluder $excluder
     ) {
         $this->constructorConstructor = $constructorConstructor;
         $this->propertyCollectionFactory = $propertyCollectionFactory;
+        $this->excluder = $excluder;
     }
 
     /**
@@ -72,6 +80,6 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
         $properties = $this->propertyCollectionFactory->create($type, $typeAdapterProvider);
         $objectConstructor = $this->constructorConstructor->get($type);
 
-        return new ReflectionTypeAdapter($typeAdapterProvider, $objectConstructor, $properties);
+        return new ReflectionTypeAdapter($typeAdapterProvider, $this->excluder, $objectConstructor, $properties);
     }
 }

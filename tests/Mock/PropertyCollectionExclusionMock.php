@@ -17,7 +17,7 @@ use Tebru\Gson\Test\Mock\ExcluderVersionMock;
 class PropertyCollectionExclusionMock
 {
     /**
-     * @Type(ExcluderVersionMock::class)
+     * @Type("Tebru\Gson\Test\Mock\ExcluderVersionMock")
      */
     private $excluderVersionMock;
     public $foo;

@@ -542,8 +542,28 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new TypeAdapterMock()
         );
 
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        self::assertTrue($excluder->excludePropertyByStrategy($property, true));
+        self::assertTrue($excluder->excludePropertyByStrategy($property, false));
+    }
+
+    public function testExcludeFromStrategyFalse()
+    {
+        $excluder = $this->excluder();
+
+        $property = new Property(
+            Foo::class,
+            'foo',
+            'foo',
+            new PhpType('string'),
+            new GetByMethod('getFoo'),
+            new SetByMethod('setFoo'),
+            new AnnotationSet(),
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
+        );
+
+        self::assertFalse($excluder->excludePropertyByStrategy($property, true));
+        self::assertFalse($excluder->excludePropertyByStrategy($property, false));
     }
 
     private function excluder(): Excluder
