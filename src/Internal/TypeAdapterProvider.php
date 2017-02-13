@@ -7,6 +7,10 @@
 namespace Tebru\Gson\Internal;
 
 use InvalidArgumentException;
+use Tebru\Gson\Annotation\JsonAdapter;
+use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
+use Tebru\Gson\JsonDeserializer;
+use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 
@@ -76,6 +80,37 @@ final class TypeAdapterProvider
         throw new InvalidArgumentException(sprintf(
             'The type "%s" could not be handled by any of the registered type adapters',
             (string) $type
+        ));
+    }
+
+    /**
+     * Get a type adapter from a [@see JsonAdapter] annotation
+     *
+     * The class may be a TypeAdapter, TypeAdapterFactory, JsonSerializer, or JsonDeserializer
+     *
+     * @param PhpType $phpType
+     * @param JsonAdapter $jsonAdapterAnnotation
+     * @return TypeAdapter
+     * @throws \InvalidArgumentException if an invalid adapter is found
+     */
+    public function getAdapterFromAnnotation(PhpType $phpType, JsonAdapter $jsonAdapterAnnotation): TypeAdapter
+    {
+        $class = $jsonAdapterAnnotation->getClass();
+        $object = new $class();
+
+        if ($object instanceof TypeAdapter) {
+            return $object;
+        } elseif ($object instanceof TypeAdapterFactory) {
+            return $object->create($phpType, $this);
+        } elseif ($object instanceof JsonSerializer) {
+            return new CustomWrappedTypeAdapter($phpType, $this, $object);
+        } elseif ($object instanceof JsonDeserializer) {
+            return new CustomWrappedTypeAdapter($phpType, $this, null, $object);
+        }
+
+        throw new InvalidArgumentException(sprintf(
+            'The type adapter must be an instance of TypeAdapter, TypeAdapterFactory, JsonSerializer, or JsonDeserializer, but "%s" was found',
+            get_class($object)
         ));
     }
 }

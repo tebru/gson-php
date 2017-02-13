@@ -9,6 +9,8 @@ namespace Tebru\Gson\Internal\Data;
 use Tebru\Gson\Internal\GetterStrategy;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\SetterStrategy;
+use Tebru\Gson\JsonReadable;
+use Tebru\Gson\TypeAdapter;
 
 /**
  * Class Property
@@ -93,6 +95,13 @@ final class Property
     private $skipDeserialize = false;
 
     /**
+     * The type adapter that should be used for this property
+     *
+     * @var TypeAdapter
+     */
+    private $typeAdapter;
+
+    /**
      * Constructor
      *
      * @param string $className
@@ -103,6 +112,7 @@ final class Property
      * @param SetterStrategy $setterStrategy
      * @param AnnotationSet $annotations
      * @param int $modifiers
+     * @param TypeAdapter $typeAdapter
      */
     public function __construct(
         string $className,
@@ -112,7 +122,8 @@ final class Property
         GetterStrategy $getterStrategy,
         SetterStrategy $setterStrategy,
         AnnotationSet $annotations,
-        int $modifiers
+        int $modifiers,
+        TypeAdapter $typeAdapter
     ) {
         $this->className = $className;
         $this->realName = $realName;
@@ -122,6 +133,7 @@ final class Property
         $this->setterStrategy = $setterStrategy;
         $this->annotations = $annotations;
         $this->modifiers = $modifiers;
+        $this->typeAdapter = $typeAdapter;
     }
 
     /**
@@ -225,6 +237,19 @@ final class Property
     }
 
     /**
+     * Read the next value using the type adapter registered to property
+     * and set it to the object
+     *
+     * @param JsonReadable $reader
+     * @param mixed $object
+     */
+    public function read(JsonReadable $reader, $object)
+    {
+        $value = $this->typeAdapter->read($reader);
+        $this->set($object, $value);
+    }
+
+    /**
      * Given an object, get the value at this property
      *
      * @param object $object
@@ -241,8 +266,12 @@ final class Property
      * @param object $object
      * @param mixed $value
      */
-    public function set($object, $value)
+    public function set($object, $value): void
     {
+        if (null === $value) {
+            return;
+        }
+
         $this->setterStrategy->set($object, $value);
     }
 }

@@ -10,6 +10,12 @@ use LogicException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Annotation\Since;
 
+/**
+ * Class SinceTest
+ *
+ * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Annotation\Since
+ */
 class SinceTest extends PHPUnit_Framework_TestCase
 {
     public function testVersion()

@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Excluder;
@@ -29,7 +30,7 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
     public function testDeserializeSkips()
     {
-        $excluder = new Excluder(new AnnotationCollectionFactory(new AnnotationReader()));
+        $excluder = new Excluder(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
         $excluder->addExclusionStrategy(new FooExclusionStrategy(), false, true);
 
         $typeAdapterProvider = new TypeAdapterProvider([
@@ -43,7 +44,7 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeDelegates()
     {
-        $excluder = new Excluder(new AnnotationCollectionFactory(new AnnotationReader()));
+        $excluder = new Excluder(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
         $excluder->addExclusionStrategy(new FooExclusionStrategy(), true, false);
 
         $typeAdapterProvider = new TypeAdapterProvider([

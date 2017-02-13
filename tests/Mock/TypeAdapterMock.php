@@ -28,6 +28,7 @@ class TypeAdapterMock extends TypeAdapter implements TypeAdapterFactory
      */
     public function read(JsonReadable $reader)
     {
+        return $reader->nextString();
     }
 
     /**

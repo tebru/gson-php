@@ -8,6 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
@@ -42,7 +43,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
     public function testNull()
     {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader());
+        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
         $excluder = new Excluder($annotationCollectionFactory);
         $propertyCollectionFactory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
@@ -55,6 +56,9 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
         $typeAdapterProvider = new TypeAdapterProvider([
+            new StringTypeAdapterFactory(),
+            new IntegerTypeAdapterFactory(),
+            new BooleanTypeAdapterFactory(),
             new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory)
         ]);
 
@@ -67,7 +71,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserialize()
     {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader());
+        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
         $excluder = new Excluder($annotationCollectionFactory);
         $propertyCollectionFactory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),

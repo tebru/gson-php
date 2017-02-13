@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Excluder;
@@ -92,6 +93,6 @@ class ExcluderTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
 
     private function excluder(): Excluder
     {
-        return new Excluder(new AnnotationCollectionFactory(new AnnotationReader()));
+        return new Excluder(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
     }
 }

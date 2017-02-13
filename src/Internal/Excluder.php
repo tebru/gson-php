@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Internal;
 
-use ReflectionClass;
 use ReflectionProperty;
 use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
@@ -149,7 +148,7 @@ final class Excluder
     public function excludeClass(string $class, bool $serialize): bool
     {
         if (class_exists($class)) {
-            $annotations = $this->annotationCollectionFactory->createClassAnnotations(new ReflectionClass($class));
+            $annotations = $this->annotationCollectionFactory->createClassAnnotations($class);
 
             if ($this->excludeByAnnotation($annotations, $serialize)) {
                 return true;

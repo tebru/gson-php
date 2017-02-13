@@ -12,6 +12,7 @@ use Tebru\Gson\Annotation\Type;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Test\Mock\ChildClass;
+use Tebru\Gson\Test\Mock\UserMock;
 
 /**
  * Class PhpTypeFactoryTest
@@ -38,7 +39,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $setter = new ReflectionMethod(ChildClass::class, 'setWithTypehint');
         $phpType = $factory->create($annotations, null, $setter);
 
-        self::assertSame(ChildClass::class, $phpType->getClass());
+        self::assertSame(UserMock::class, $phpType->getClass());
     }
 
     public function testCreateFromGetterReturnType()
@@ -49,7 +50,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
         $phpType = $factory->create($annotations, $getter, $setter);
 
-        self::assertSame(ChildClass::class, $phpType->getClass());
+        self::assertSame(UserMock::class, $phpType->getClass());
     }
 
     public function testCreateFromSetterDefault()

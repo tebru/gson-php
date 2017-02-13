@@ -65,10 +65,11 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      * @return TypeAdapter
      * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      */
     public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        $properties = $this->propertyCollectionFactory->create($type);
+        $properties = $this->propertyCollectionFactory->create($type, $typeAdapterProvider);
         $objectConstructor = $this->constructorConstructor->get($type);
 
         return new ReflectionTypeAdapter($typeAdapterProvider, $objectConstructor, $properties);

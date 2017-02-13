@@ -7,7 +7,6 @@
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
-use Tebru\Collection\HashMap;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromReflectionClass;

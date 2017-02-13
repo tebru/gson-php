@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
 use Tebru\Gson\Annotation\Exclude;
@@ -30,6 +31,7 @@ use Tebru\Gson\Test\Mock\ExcluderExposeMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\Foo;
+use Tebru\Gson\Test\Mock\TypeAdapterMock;
 
 /**
  * Class ExcluderTest
@@ -141,7 +143,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
-            ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_STATIC
+            ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_STATIC,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -161,7 +164,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -181,7 +185,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
-            ReflectionProperty::IS_PROTECTED
+            ReflectionProperty::IS_PROTECTED,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -201,7 +206,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet(),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertFalse($excluder->excludeProperty($property, true));
@@ -220,7 +226,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Until(['value' => '2'])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertFalse($excluder->excludeProperty($property, true));
@@ -240,7 +247,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Since(['value' => '1.0.1'])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -260,7 +268,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Since(['value' => '1.0.1'])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertFalse($excluder->excludeProperty($property, true));
@@ -280,7 +289,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Since(['value' => '1.0.1'])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertFalse($excluder->excludeProperty($property, true));
@@ -300,7 +310,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Until(['value' => '2.0.0'])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertFalse($excluder->excludeProperty($property, true));
@@ -320,7 +331,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Until(['value' => '2.0.0'])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -340,7 +352,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Until(['value' => '2.0.0'])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -359,7 +372,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Exclude([])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -378,7 +392,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Exclude(['deserialize' => false])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -397,7 +412,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Exclude(['serialize' => false])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertFalse($excluder->excludeProperty($property, true));
@@ -417,7 +433,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Expose([])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertFalse($excluder->excludeProperty($property, true));
@@ -437,7 +454,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Expose(['deserialize' => false])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertFalse($excluder->excludeProperty($property, true));
@@ -457,7 +475,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Expose(['serialize' => false])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -476,7 +495,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet([new Expose(['serialize' => false])]),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertFalse($excluder->excludeProperty($property, true));
@@ -496,7 +516,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet(),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -517,7 +538,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
             new AnnotationSet(),
-            ReflectionProperty::IS_PRIVATE
+            ReflectionProperty::IS_PRIVATE,
+            new TypeAdapterMock()
         );
 
         self::assertTrue($excluder->excludeProperty($property, true));
@@ -526,6 +548,6 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     private function excluder(): Excluder
     {
-        return new Excluder(new AnnotationCollectionFactory(new AnnotationReader()));
+        return new Excluder(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
     }
 }

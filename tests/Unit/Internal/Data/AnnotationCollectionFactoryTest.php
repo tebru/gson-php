@@ -7,10 +7,11 @@
 namespace Tebru\Gson\Test\Unit\Internal\Data;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
-use ReflectionClass;
-use ReflectionProperty;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
+use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Test\Mock\Annotation\BarAnnotation;
 use Tebru\Gson\Test\Mock\Annotation\BazAnnotation;
 use Tebru\Gson\Test\Mock\Annotation\FooAnnotation;
@@ -28,8 +29,8 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testCreateWithoutParents()
     {
-        $factory = new AnnotationCollectionFactory(new AnnotationReader());
-        $annotations = $factory->createPropertyAnnotations(new ReflectionProperty(ClassWithoutParent::class, 'foo'));
+        $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $annotations = $factory->createPropertyAnnotations(ClassWithoutParent::class, 'foo');
 
         $expected = [
             new FooAnnotation(['value' => 'foo']),
@@ -42,8 +43,8 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateWithParents()
     {
-        $factory = new AnnotationCollectionFactory(new AnnotationReader());
-        $annotations = $factory->createPropertyAnnotations(new ReflectionProperty(ChildClass::class, 'foo'));
+        $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $annotations = $factory->createPropertyAnnotations(ChildClass::class, 'foo');
 
         $expected = [
             new FooAnnotation(['value' => 'foo']),
@@ -57,8 +58,8 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateTwoLevels()
     {
-        $factory = new AnnotationCollectionFactory(new AnnotationReader());
-        $annotations = $factory->createPropertyAnnotations(new ReflectionProperty(ChildClass::class, 'qux'));
+        $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $annotations = $factory->createPropertyAnnotations(ChildClass::class, 'qux');
 
         $expected = [
             new QuxAnnotation(['value' => 'qux']),
@@ -67,10 +68,22 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
         self::assertEquals($expected, $annotations->toArray());
     }
 
+    public function testCreatePropertyAnnotationsUsesCache()
+    {
+        $cachedAnnotations = new AnnotationSet([new FooAnnotation([])]);
+        $cache = new ArrayCache();
+
+        $cache->save(ChildClass::class.':'.'foo', $cachedAnnotations);
+        $factory = new AnnotationCollectionFactory(new AnnotationReader(), $cache);
+        $annotations = $factory->createPropertyAnnotations(ChildClass::class, 'foo');
+
+        self::assertSame($cachedAnnotations, $annotations);
+    }
+
     public function testCreateClassAnnotations()
     {
-        $factory = new AnnotationCollectionFactory(new AnnotationReader());
-        $annotations = $factory->createClassAnnotations(new ReflectionClass(ChildClass::class));
+        $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $annotations = $factory->createClassAnnotations(ChildClass::class);
 
         $expected = [
             new FooAnnotation(['value' => 'foo3']),
@@ -79,5 +92,17 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
         ];
 
         self::assertEquals($expected, $annotations->toArray());
+    }
+
+    public function testCreateClassAnnotationsUsesCache()
+    {
+        $cachedAnnotations = new AnnotationSet([new FooAnnotation([])]);
+        $cache = new ArrayCache();
+
+        $cache->save(ChildClass::class, $cachedAnnotations);
+        $factory = new AnnotationCollectionFactory(new AnnotationReader(), $cache);
+        $annotations = $factory->createClassAnnotations(ChildClass::class);
+
+        self::assertSame($cachedAnnotations, $annotations);
     }
 }

@@ -75,14 +75,7 @@ final class ReflectionTypeAdapter extends TypeAdapter
                 continue;
             }
 
-            $adapter = $this->typeAdapterProvider->getAdapter($property->getType());
-
-            $value = $adapter->read($reader);
-            if (null === $value) {
-                continue;
-            }
-
-            $property->set($object, $value);
+            $property->read($reader, $object);
         }
         $reader->endObject();
 

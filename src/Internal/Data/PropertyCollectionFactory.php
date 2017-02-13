@@ -9,12 +9,14 @@ namespace Tebru\Gson\Internal\Data;
 use Doctrine\Common\Cache\Cache;
 use ReflectionClass;
 use ReflectionProperty;
+use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
+use Tebru\Gson\Internal\TypeAdapterProvider;
 
 /**
  * Class PropertyCollectionFactory
@@ -67,11 +69,6 @@ final class PropertyCollectionFactory
     private $cache;
 
     /**
-     * @var array
-     */
-    private $collectionCache = [];
-
-    /**
      * Constructor
      *
      * @param ReflectionPropertySetFactory $reflectionPropertySetFactory
@@ -107,21 +104,18 @@ final class PropertyCollectionFactory
      * Create a [@see PropertyCollection] based on the properties of the provided type
      *
      * @param PhpType $phpType
+     * @param TypeAdapterProvider $typeAdapterProvider
      * @return PropertyCollection
      * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      */
-    public function create(PhpType $phpType): PropertyCollection
+    public function create(PhpType $phpType, TypeAdapterProvider $typeAdapterProvider): PropertyCollection
     {
         $class = $phpType->getClass();
 
-        if (array_key_exists($class, $this->collectionCache)) {
-            return $this->collectionCache[$class];
-        }
-
         $data = $this->cache->fetch($class);
         if (false !== $data) {
-            $this->collectionCache[$class] = $data;
             return $data;
         }
 
@@ -131,13 +125,19 @@ final class PropertyCollectionFactory
 
         /** @var ReflectionProperty $reflectionProperty */
         foreach ($reflectionProperties as $reflectionProperty) {
-            $annotations = $this->annotationCollectionFactory->createPropertyAnnotations($reflectionProperty);
+            $annotations = $this->annotationCollectionFactory->createPropertyAnnotations($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getName());
             $serializedName = $this->propertyNamer->serializedName($reflectionProperty, $annotations);
             $getterMethod = $this->accessorMethodProvider->getterMethod($reflectionClass, $reflectionProperty, $annotations);
             $setterMethod = $this->accessorMethodProvider->setterMethod($reflectionClass, $reflectionProperty, $annotations);
             $getterStrategy = $this->accessorStrategyFactory->getterStrategy($reflectionProperty, $getterMethod);
             $setterStrategy = $this->accessorStrategyFactory->setterStrategy($reflectionProperty, $setterMethod);
             $type = $this->phpTypeFactory->create($annotations, $getterMethod, $setterMethod);
+
+            /** @var JsonAdapter $jsonAdapterAnnotation */
+            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class);
+            $adapter = null !== $jsonAdapterAnnotation
+                ? $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation)
+                : $typeAdapterProvider->getAdapter($type);
 
             $property = new Property(
                 $reflectionProperty->getDeclaringClass()->getName(),
@@ -147,7 +147,8 @@ final class PropertyCollectionFactory
                 $getterStrategy,
                 $setterStrategy,
                 $annotations,
-                $reflectionProperty->getModifiers()
+                $reflectionProperty->getModifiers(),
+                $adapter
             );
 
             $skipSerialize = $this->excludeProperty($property, true);
@@ -165,7 +166,6 @@ final class PropertyCollectionFactory
             $properties->add($property);
         }
 
-        $this->collectionCache[$class] = $properties;
         $this->cache->save($class, $properties);
 
         return $properties;

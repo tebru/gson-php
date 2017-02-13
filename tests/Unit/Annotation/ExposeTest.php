@@ -13,6 +13,7 @@ use Tebru\Gson\Annotation\Expose;
  * Class ExposeTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Annotation\Expose
  */
 class ExposeTest extends PHPUnit_Framework_TestCase
 {

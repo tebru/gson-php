@@ -63,12 +63,12 @@ class ChildClass extends ChildClassParent
         $this->foo = $foo;
     }
 
-    public function getWithReturnType(): ChildClass
+    public function getWithReturnType(): UserMock
     {
         return $this->withTypehint;
     }
 
-    public function setWithTypehint(ChildClass $childClass)
+    public function setWithTypehint(UserMock $childClass)
     {
         $this->withTypehint = $childClass;
     }

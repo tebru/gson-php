@@ -13,6 +13,7 @@ use Tebru\Gson\Annotation\Exclude;
  * Class ExcludeTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Annotation\Exclude
  */
 class ExcludeTest extends PHPUnit_Framework_TestCase
 {

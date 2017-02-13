@@ -7,6 +7,7 @@ namespace Tebru\Gson\Test\Unit\Internal;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\Internal\AccessorMethodProvider;
@@ -32,6 +33,7 @@ use Tebru\Gson\Test\Mock\AddressMock;
  * Class DefaultJsonDeserializationContextTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\DefaultJsonDeserializationContext
  */
 class DefaultJsonDeserializationContextTest extends PHPUnit_Framework_TestCase
 {
@@ -43,7 +45,7 @@ class DefaultJsonDeserializationContextTest extends PHPUnit_Framework_TestCase
         $jsonObject->addString('state', 'MN');
         $jsonObject->addInteger('zip', 12345);
 
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader());
+        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
         $excluder = new Excluder($annotationCollectionFactory);
         $propertyCollectionFactory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),

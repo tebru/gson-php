@@ -13,6 +13,7 @@ use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\Data\Property;
+use Tebru\Gson\Test\Mock\TypeAdapterMock;
 
 /**
  * Class PropertyCollectionTest
@@ -36,7 +37,8 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
-            0
+            0,
+            new TypeAdapterMock()
         );
         $propertyCollection = new PropertyCollection([$property]);
 
@@ -57,7 +59,8 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
-            0
+            0,
+            new TypeAdapterMock()
         );
         $propertyCollection = new PropertyCollection([$property]);
 
@@ -78,7 +81,8 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
-            0
+            0,
+            new TypeAdapterMock()
         );
         $propertyCollection = new PropertyCollection([$property]);
 
@@ -99,7 +103,8 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
-            0
+            0,
+            new TypeAdapterMock()
         );
         $propertyCollection = new PropertyCollection([$property]);
 
