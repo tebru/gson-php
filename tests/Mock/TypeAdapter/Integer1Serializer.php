@@ -41,12 +41,12 @@ class Integer1Serializer implements JsonSerializer
         $jsonObject->addInteger('integer', $object->getInteger() + 1);
         $jsonObject->addFloat('float', $object->getFloat());
         $jsonObject->addString('string', $object->getString());
-        $jsonObject->addBoolean('string', $object->getBoolean());
+        $jsonObject->addBoolean('boolean', $object->getBoolean());
         $jsonObject->add('array', $context->serialize($object->getArray(), 'array'));
         $jsonObject->add('array_list', $context->serialize($object->getArrayList(), ListInterface::class));
         $jsonObject->add('hash_map', $context->serialize($object->getHashMap(), MapInterface::class));
         $jsonObject->add('date', $context->serialize($object->getDate(), DateTime::class));
-        $jsonObject->add('public', $object->public);
+        $jsonObject->addString('public', $object->public);
         $jsonObject->addString('since', $object->getSince());
         $jsonObject->addString('until', $object->getUntil());
         $jsonObject->addString('accessor', $object->getMyAccessor());
@@ -58,10 +58,7 @@ class Integer1Serializer implements JsonSerializer
         }
         $jsonObject->add('type', $jsonArray);
 
-        $jsonAdapter = new JsonObject();
-        $jsonAdapter->add('foo', $object->getJsonAdapter()->getFoo());
-        $jsonObject->add('json_adapter', $jsonAdapter);
-
+        $jsonObject->addString('json_adapter', $object->getJsonAdapter()->getFoo());
         $jsonObject->addBoolean('expose', $object->getExpose());
         $jsonObject->addBoolean('exclude_from_strategy', $object->getExcludeFromStrategy());
         $jsonObject->add('gson_object_mock', $context->serialize($object->getGsonObjectMock(), GsonObjectMock::class));

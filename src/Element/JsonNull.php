@@ -15,4 +15,13 @@ namespace Tebru\Gson\Element;
  */
 class JsonNull extends JsonElement
 {
+    /**
+     * Specify data which should be serialized to JSON
+     *
+     * @return null
+     */
+    public function jsonSerialize()
+    {
+        return null;
+    }
 }

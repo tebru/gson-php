@@ -146,4 +146,14 @@ class JsonPrimitive extends JsonElement
     {
         return $this->value;
     }
+
+    /**
+     * Specify data which should be serialized to JSON
+     *
+     * @return mixed
+     */
+    public function jsonSerialize()
+    {
+        return $this->value;
+    }
 }

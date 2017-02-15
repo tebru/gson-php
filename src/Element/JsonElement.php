@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Element;
 
+use JsonSerializable;
 use Tebru\Gson\Exception\UnsupportedMethodException;
 
 /**
@@ -15,7 +16,7 @@ use Tebru\Gson\Exception\UnsupportedMethodException;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-abstract class JsonElement
+abstract class JsonElement implements JsonSerializable
 {
     /**
      * Returns from if the element is an instance of [@see JsonObject]
@@ -149,17 +150,6 @@ abstract class JsonElement
     public function asBoolean(): bool
     {
         throw new UnsupportedMethodException(sprintf('This method "asBoolean" is not supported on "%s"', get_called_class()));
-    }
-
-    /**
-     * Get the value as an array
-     *
-     * @return array
-     * @throws \Tebru\Gson\Exception\UnsupportedMethodException
-     */
-    public function asArray(): array
-    {
-        throw new UnsupportedMethodException(sprintf('This method "asArray" is not supported on "%s"', get_called_class()));
     }
 
     /**

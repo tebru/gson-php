@@ -7,15 +7,20 @@
 namespace Tebru\Gson\Internal;
 
 use BadMethodCallException;
-use stdClass;
+use JsonSerializable;
+use Tebru\Gson\Element\JsonArray;
+use Tebru\Gson\Element\JsonElement;
+use Tebru\Gson\Element\JsonNull;
+use Tebru\Gson\Element\JsonObject;
+use Tebru\Gson\Element\JsonPrimitive;
 use Tebru\Gson\JsonWritable;
 
 /**
- * Class JsonEncodeWriter
+ * Class JsonElementWriter
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class JsonEncodeWriter implements JsonWritable
+final class JsonElementWriter implements JsonWritable, JsonSerializable
 {
     /**
      * True if we should serialize nulls
@@ -41,7 +46,7 @@ final class JsonEncodeWriter implements JsonWritable
     /**
      * The final result that will be json encoded
      *
-     * @var mixed
+     * @var JsonElement
      */
     private $result;
 
@@ -57,9 +62,9 @@ final class JsonEncodeWriter implements JsonWritable
             throw new BadMethodCallException('Cannot call beginArray() before name() during object serialization');
         }
 
-        $array = [];
+        $array = new JsonArray();
         $this->push($array);
-        $this->stack[] = &$array;
+        $this->stack[] = $array;
 
         return $this;
     }
@@ -93,7 +98,7 @@ final class JsonEncodeWriter implements JsonWritable
             throw new BadMethodCallException('Cannot call beginObject() before name() during object serialization');
         }
 
-        $class = new stdClass();
+        $class = new JsonObject();
         $this->push($class);
         $this->stack[] = $class;
 
@@ -148,7 +153,7 @@ final class JsonEncodeWriter implements JsonWritable
             throw new BadMethodCallException('Cannot call writeInteger() before name() during object serialization');
         }
 
-        return $this->push($value);
+        return $this->push(JsonPrimitive::create($value));
     }
 
     /**
@@ -164,7 +169,7 @@ final class JsonEncodeWriter implements JsonWritable
             throw new BadMethodCallException('Cannot call writeFloat() before name() during object serialization');
         }
 
-        return $this->push($value);
+        return $this->push(JsonPrimitive::create($value));
     }
 
     /**
@@ -180,7 +185,7 @@ final class JsonEncodeWriter implements JsonWritable
             throw new BadMethodCallException('Cannot call writeString() before name() during object serialization');
         }
 
-        return $this->push($value);
+        return $this->push(JsonPrimitive::create($value));
     }
 
     /**
@@ -196,7 +201,7 @@ final class JsonEncodeWriter implements JsonWritable
             throw new BadMethodCallException('Cannot call writeBoolean() before name() during object serialization');
         }
 
-        return $this->push($value);
+        return $this->push(JsonPrimitive::create($value));
     }
 
     /**
@@ -214,8 +219,7 @@ final class JsonEncodeWriter implements JsonWritable
         }
 
         if ($this->serializeNull) {
-            $null = null;
-            return $this->push($null);
+            return $this->push(new JsonNull());
         }
 
         // if we're not serializing nulls
@@ -237,13 +241,27 @@ final class JsonEncodeWriter implements JsonWritable
     }
 
     /**
-     * Convert the writer to json
+     * Specify data which should be serialized to JSON
      *
-     * @return string
+     * @return mixed
      */
-    public function __toString(): string
+    public function jsonSerialize()
     {
-        return json_encode($this->result);
+        if (null === $this->result) {
+            return null;
+        }
+
+        return $this->result->jsonSerialize();
+    }
+
+    /**
+     * Get the result as a json element
+     *
+     * @return JsonElement
+     */
+    public function toJsonElement(): JsonElement
+    {
+        return $this->result;
     }
 
     /**
@@ -259,29 +277,29 @@ final class JsonEncodeWriter implements JsonWritable
     /**
      * Push a value to the result or current array/object
      *
-     * @param mixed $value
+     * @param JsonElement $value
      * @return JsonWritable
      * @throws \BadMethodCallException
      */
-    private function push(&$value): JsonWritable
+    private function push(JsonElement $value): JsonWritable
     {
         if (0 === $this->stackSize()) {
             if (null !== $this->result) {
                 throw new BadMethodCallException('Attempting to write two different types');
             }
 
-            $this->result = &$value;
+            $this->result = $value;
 
             return $this;
         }
 
         if (null !== $this->pendingName) {
-            $this->stack[$this->last()]->{$this->pendingName} = &$value;
+            $this->stack[$this->last()]->add($this->pendingName, $value);
             $this->pendingName = null;
         }
 
         if ($this->topIsArray()) {
-            $this->stack[$this->last()][] = &$value;
+            $this->stack[$this->last()]->addJsonElement($value);
         }
 
         return $this;
@@ -306,7 +324,7 @@ final class JsonEncodeWriter implements JsonWritable
             return false;
         }
 
-        return $this->stack[$this->last()] instanceof stdClass && null === $this->pendingName;
+        return $this->stack[$this->last()] instanceof JsonObject && null === $this->pendingName;
     }
 
     /**
@@ -320,7 +338,7 @@ final class JsonEncodeWriter implements JsonWritable
             return false;
         }
 
-        return $this->stack[$this->last()] instanceof stdClass;
+        return $this->stack[$this->last()] instanceof JsonObject;
     }
 
     /**
@@ -334,7 +352,7 @@ final class JsonEncodeWriter implements JsonWritable
             return false;
         }
 
-        return is_array($this->stack[$this->last()]);
+        return $this->stack[$this->last()] instanceof JsonArray;
     }
 
     /**

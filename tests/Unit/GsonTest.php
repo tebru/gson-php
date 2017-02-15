@@ -5,6 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit;
 
+use BadMethodCallException;
 use DateTime;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
@@ -12,6 +13,7 @@ use Tebru\Collection\ArrayList;
 use Tebru\Collection\HashMap;
 use Tebru\Gson\Gson;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
+use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\GsonMockExclusionStrategyMock;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
 use Tebru\Gson\Test\Mock\GsonMock;
@@ -566,19 +568,27 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeCustomSerializer()
     {
-        $this->markTestSkipped('Remove when JsonElementWriter is finished');
-
         $gson = Gson::builder()
             ->registerType(GsonMock::class, new Integer1Serializer())
             ->build();
 
         $result = $gson->toJson($this->gsonMock());
         $json = json_decode($this->json(), true);
-        unset($json['exclude']);
+        unset($json['exclude'], $json['protected']);
         $json['integer'] = 2;
         $json['type'] = [2, 3, 4];
 
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeWithInvalidHandler()
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Handler of type "Tebru\Gson\Test\Mock\ChildClass" is not supported');
+
+        Gson::builder()
+            ->registerType('foo', new ChildClass())
+            ->build();
     }
 
     public function testSerializeWithExclusionStrategy()

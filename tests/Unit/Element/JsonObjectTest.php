@@ -217,7 +217,7 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
         $jsonObject = new JsonObject();
         $jsonObject->add('foo', $object);
 
-        self::assertSame(['foo' => ['bar' => [1]]], $jsonObject->asArray());
+        self::assertSame(json_encode(['foo' => ['bar' => [1]]]), json_encode($jsonObject->jsonSerialize()));
     }
 
     public function testRemove()

@@ -96,11 +96,4 @@ interface JsonWritable
      * @param bool $serializeNull
      */
     public function setSerializeNull(bool $serializeNull): void;
-
-    /**
-     * Convert the writer to json
-     *
-     * @return string
-     */
-    public function __toString(): string;
 }

@@ -167,19 +167,15 @@ class JsonArray extends JsonElement implements IteratorAggregate, Countable
     }
 
     /**
-     * Return as array
+     * Specify data which should be serialized to JSON
      *
-     * @return array
+     * @return mixed
      */
-    public function asArray(): array
+    public function jsonSerialize()
     {
         $array = [];
         foreach ($this->values as $value) {
-            if ($value->isJsonPrimitive()) {
-                $array[] = $value->getValue();
-            } else {
-                $array[] = $value->asArray();
-            }
+            $array[] = $value->jsonSerialize();
         }
 
         return $array;

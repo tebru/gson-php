@@ -14,6 +14,7 @@ use Tebru\Gson\Exception\UnsupportedMethodException;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Element\JsonElement
+ * @covers \Tebru\Gson\Element\JsonNull
  */
 class JsonElementTest extends PHPUnit_Framework_TestCase
 {
@@ -72,11 +73,8 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
 
     public function testAsArray()
     {
-        $this->expectException(UnsupportedMethodException::class);
-        $this->expectExceptionMessage('This method "asArray" is not supported on "Tebru\Gson\Element\JsonNull"');
-
         $element = new JsonNull();
-        $element->asArray();
+        self::assertNull($element->jsonSerialize());
     }
 
     public function testAsJsonObject()

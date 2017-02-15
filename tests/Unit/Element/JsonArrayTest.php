@@ -153,7 +153,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertSame($jsonArray, $result);
     }
 
-    public function testAsArray()
+    public function testJsonSerialize()
     {
         $object = new JsonObject();
         $object->addFloat('float', 2);
@@ -169,7 +169,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
 
         $expected = [1, [1, true, ['float' => 2.0]]];
 
-        self::assertSame($expected, $jsonArray->asArray());
+        self::assertSame(json_encode($expected), json_encode($jsonArray->jsonSerialize()));
     }
 }
 

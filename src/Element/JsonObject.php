@@ -10,6 +10,7 @@ use ArrayIterator;
 use BadMethodCallException;
 use Countable;
 use IteratorAggregate;
+use stdClass;
 
 /**
  * Class JsonObject
@@ -216,9 +217,9 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      * @return array
      * @throws \BadMethodCallException If the value is not an array
      */
-    public function getAsArray(string $property): array
+    public function getAsArray(string $property)
     {
-        return $this->get($property)->asArray();
+        return json_decode(json_encode($this->get($property)), true);
     }
 
     /**
@@ -249,22 +250,18 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
     }
 
     /**
-     * Return hash map as array
+     * Specify data which should be serialized to JSON
      *
-     * @return array
+     * @return stdClass
      */
-    public function asArray(): array
+    public function jsonSerialize()
     {
-        $array = [];
+        $class = new stdClass();
         foreach ($this->properties as $key => $property) {
-            if ($property->isJsonPrimitive()) {
-                $array[$key] = $property->getValue();
-            } else {
-                $array[$key] = $property->asArray();
-            }
+            $class->$key = $property->jsonSerialize();
         }
 
-        return $array;
+        return $class;
     }
 
     /**
