@@ -1,0 +1,351 @@
+<?php
+/*
+ * Copyright (c) Nate Brunette.
+ * Distributed under the MIT License (http://opensource.org/licenses/MIT)
+ */
+
+namespace Tebru\Gson\Internal;
+
+use BadMethodCallException;
+use stdClass;
+use Tebru\Gson\JsonWritable;
+
+/**
+ * Class JsonEncodeWriter
+ *
+ * @author Nate Brunette <n@tebru.net>
+ */
+final class JsonEncodeWriter implements JsonWritable
+{
+    /**
+     * True if we should serialize nulls
+     *
+     * @var bool
+     */
+    private $serializeNull = false;
+
+    /**
+     * Stack of values to be written
+     *
+     * @var array
+     */
+    private $stack = [];
+
+    /**
+     * When serializing an object, store the name that should be serialized
+     *
+     * @var
+     */
+    private $pendingName;
+
+    /**
+     * The final result that will be json encoded
+     *
+     * @var mixed
+     */
+    private $result;
+
+    /**
+     * Begin writing array
+     *
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    public function beginArray(): JsonWritable
+    {
+        if ($this->topIsObjectStart()) {
+            throw new BadMethodCallException('Cannot call beginArray() before name() during object serialization');
+        }
+
+        $array = [];
+        $this->push($array);
+        $this->stack[] = &$array;
+
+        return $this;
+    }
+
+    /**
+     * End writing array
+     *
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    public function endArray(): JsonWritable
+    {
+        if (!$this->topIsArray()) {
+            throw new BadMethodCallException('Cannot call endArray() if not serializing array');
+        }
+
+        $this->pop();
+
+        return $this;
+    }
+
+    /**
+     * Begin writing object
+     *
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    public function beginObject(): JsonWritable
+    {
+        if ($this->topIsObjectStart()) {
+            throw new BadMethodCallException('Cannot call beginObject() before name() during object serialization');
+        }
+
+        $class = new stdClass();
+        $this->push($class);
+        $this->stack[] = $class;
+
+        return $this;
+    }
+
+    /**
+     * End writing object
+     *
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    public function endObject(): JsonWritable
+    {
+        if (!$this->topIsObject()) {
+            throw new BadMethodCallException('Cannot call endObject() if not serializing object');
+        }
+
+        $this->pop();
+
+        return $this;
+    }
+
+    /**
+     * Writes a property name
+     *
+     * @param string $name
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    public function name(string $name): JsonWritable
+    {
+        if (!$this->topIsObjectStart()) {
+            throw new BadMethodCallException('Cannot call name() at this point.  Either name() has already been called or object serialization has not been started');
+        }
+
+        $this->pendingName = $name;
+
+        return $this;
+    }
+
+    /**
+     * Write an integer value
+     *
+     * @param int $value
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    public function writeInteger(int $value): JsonWritable
+    {
+        if ($this->topIsObjectStart()) {
+            throw new BadMethodCallException('Cannot call writeInteger() before name() during object serialization');
+        }
+
+        return $this->push($value);
+    }
+
+    /**
+     * Write a float value
+     *
+     * @param float $value
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    public function writeFloat(float $value): JsonWritable
+    {
+        if ($this->topIsObjectStart()) {
+            throw new BadMethodCallException('Cannot call writeFloat() before name() during object serialization');
+        }
+
+        return $this->push($value);
+    }
+
+    /**
+     * Write a string value
+     *
+     * @param string $value
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    public function writeString(string $value): JsonWritable
+    {
+        if ($this->topIsObjectStart()) {
+            throw new BadMethodCallException('Cannot call writeString() before name() during object serialization');
+        }
+
+        return $this->push($value);
+    }
+
+    /**
+     * Write a boolean value
+     *
+     * @param boolean $value
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    public function writeBoolean(bool $value): JsonWritable
+    {
+        if ($this->topIsObjectStart()) {
+            throw new BadMethodCallException('Cannot call writeBoolean() before name() during object serialization');
+        }
+
+        return $this->push($value);
+    }
+
+    /**
+     * Write a null value if we are serializing nulls, otherwise
+     * skip the value.  If this is a property value, that property
+     * should be skippped as well.
+     *
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    public function writeNull(): JsonWritable
+    {
+        if ($this->topIsObjectStart()) {
+            throw new BadMethodCallException('Cannot call writeNull() before name() during object serialization');
+        }
+
+        if ($this->serializeNull) {
+            $null = null;
+            return $this->push($null);
+        }
+
+        // if we're not serializing nulls
+        if (null !== $this->pendingName) {
+            $this->pendingName = null;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sets whether nulls are serialized
+     *
+     * @param bool $serializeNull
+     */
+    public function setSerializeNull(bool $serializeNull): void
+    {
+        $this->serializeNull = $serializeNull;
+    }
+
+    /**
+     * Convert the writer to json
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return json_encode($this->result);
+    }
+
+    /**
+     * Get the last index of the stack
+     *
+     * @return int
+     */
+    private function last(): int
+    {
+        return $this->stackSize() - 1;
+    }
+
+    /**
+     * Push a value to the result or current array/object
+     *
+     * @param mixed $value
+     * @return JsonWritable
+     * @throws \BadMethodCallException
+     */
+    private function push(&$value): JsonWritable
+    {
+        if (0 === $this->stackSize()) {
+            if (null !== $this->result) {
+                throw new BadMethodCallException('Attempting to write two different types');
+            }
+
+            $this->result = &$value;
+
+            return $this;
+        }
+
+        $last = $this->last();
+
+        if (null !== $this->pendingName) {
+            $this->stack[$last]->{$this->pendingName} = &$value;
+            $this->pendingName = null;
+        }
+
+        if (is_array($this->stack[$last])) {
+            $this->stack[$last][] = &$value;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove the last element of the stack
+     */
+    private function pop(): void
+    {
+        unset($this->stack[$this->last()]);
+    }
+
+    /**
+     * Returns true if an object is the top element of the stack and we haven't called name() yet
+     *
+     * @return bool
+     */
+    private function topIsObjectStart(): bool
+    {
+        if (0 === $this->stackSize()) {
+            return false;
+        }
+
+        return $this->stack[$this->last()] instanceof stdClass && null === $this->pendingName;
+    }
+
+    /**
+     * Returns true if an object is the top element of the stack
+     *
+     * @return bool
+     */
+    private function topIsObject()
+    {
+        if (0 === $this->stackSize()) {
+            return false;
+        }
+
+        return $this->stack[$this->last()] instanceof stdClass;
+    }
+
+    /**
+     * Returns true if an array is the top element of the stack
+     *
+     * @return bool
+     */
+    private function topIsArray()
+    {
+        if (0 === $this->stackSize()) {
+            return false;
+        }
+
+        return is_array($this->stack[$this->last()]);
+    }
+
+    /**
+     * Return the stack size
+     *
+     * @return int
+     */
+    private function stackSize(): int
+    {
+        return count($this->stack);
+    }
+}
