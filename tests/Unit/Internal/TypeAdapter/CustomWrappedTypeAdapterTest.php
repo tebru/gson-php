@@ -38,6 +38,7 @@ use Tebru\Gson\Test\Mock\UserMock;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

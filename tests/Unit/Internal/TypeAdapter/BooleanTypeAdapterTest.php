@@ -14,6 +14,7 @@ use Tebru\Gson\Internal\TypeAdapter\BooleanTypeAdapter;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\BooleanTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class BooleanTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

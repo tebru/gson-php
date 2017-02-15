@@ -26,6 +26,7 @@ use Tebru\Gson\Internal\TypeAdapterProvider;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

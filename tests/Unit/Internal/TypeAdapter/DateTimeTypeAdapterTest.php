@@ -16,6 +16,7 @@ use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class DateTimeTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

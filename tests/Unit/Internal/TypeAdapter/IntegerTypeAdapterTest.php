@@ -14,6 +14,7 @@ use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class IntegerTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

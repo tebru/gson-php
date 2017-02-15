@@ -25,6 +25,7 @@ use Tebru\Gson\Internal\TypeAdapterProvider;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\WildcardTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

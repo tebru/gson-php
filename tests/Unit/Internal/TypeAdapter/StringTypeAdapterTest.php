@@ -14,6 +14,7 @@ use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class StringTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

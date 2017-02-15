@@ -19,6 +19,7 @@ use Tebru\Gson\Internal\TypeAdapter\JsonElementTypeAdapter;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\JsonElementTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

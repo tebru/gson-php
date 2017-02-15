@@ -34,6 +34,7 @@ use Tebru\Gson\Test\Mock\AddressMock;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\DefaultJsonDeserializationContext
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class DefaultJsonDeserializationContextTest extends PHPUnit_Framework_TestCase
 {

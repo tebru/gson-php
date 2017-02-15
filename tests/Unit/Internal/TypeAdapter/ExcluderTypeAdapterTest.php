@@ -38,6 +38,7 @@ use Tebru\Gson\Test\Mock\TypeAdapter\FooTypeAdapterFactory;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

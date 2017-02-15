@@ -14,6 +14,7 @@ use Tebru\Gson\Internal\TypeAdapter\FloatTypeAdapter;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\FloatTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class FloatTypeAdapterTest extends PHPUnit_Framework_TestCase
 {

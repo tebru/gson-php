@@ -14,6 +14,7 @@ use Tebru\Gson\Internal\TypeAdapter\NullTypeAdapter;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\NullTypeAdapter
+ * @covers \Tebru\Gson\TypeAdapter
  */
 class NullTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
