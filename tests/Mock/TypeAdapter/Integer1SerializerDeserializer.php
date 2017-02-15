@@ -16,15 +16,16 @@ use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\JsonDeserializationContext;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializationContext;
+use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
 
 /**
- * Class Integer1Deserializer
+ * Class Integer1SerializerDeserializer
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class Integer1Deserializer implements JsonDeserializer
+class Integer1SerializerDeserializer implements JsonDeserializer, JsonSerializer
 {
     /**
      * Called during deserialization process, passing in the JsonElement for the type.  Use
@@ -64,5 +65,47 @@ class Integer1Deserializer implements JsonDeserializer
         $mock->setGsonObjectMock($context->deserialize($json->get('gson_object_mock'), GsonObjectMock::class));
 
         return $mock;
+    }
+
+    /**
+     * Called during serialization process, passing in the object and type that should
+     * be serialized.  Delegate serialization using the provided context.  Method should
+     * return a JsonElement.
+     *
+     * @param GsonMock $object
+     * @param PhpType $type
+     * @param JsonSerializationContext $context
+     * @return JsonElement
+     */
+    public function serialize($object, PhpType $type, JsonSerializationContext $context): JsonElement
+    {
+        $jsonObject = new JsonObject();
+        $jsonObject->addInteger('integer', $object->getInteger() + 1);
+        $jsonObject->addFloat('float', $object->getFloat());
+        $jsonObject->addString('string', $object->getString());
+        $jsonObject->addBoolean('string', $object->getBoolean());
+        $jsonObject->add('array', $context->serialize($object->getArray(), 'array'));
+        $jsonObject->add('array_list', $context->serialize($object->getArrayList(), ListInterface::class));
+        $jsonObject->add('hash_map', $context->serialize($object->getHashMap(), MapInterface::class));
+        $jsonObject->add('date', $context->serialize($object->getDate(), DateTime::class));
+        $jsonObject->add('public', $object->public);
+        $jsonObject->addString('since', $object->getSince());
+        $jsonObject->addString('until', $object->getUntil());
+        $jsonObject->addString('accessor', $object->getMyAccessor());
+        $jsonObject->addString('serialized_name', $object->getSerializedname());
+
+        $jsonArray = new JsonArray();
+        foreach ($object->getType() as $item) {
+            $jsonArray->addInteger($item + 1);
+        }
+        $jsonObject->add('type', $jsonArray);
+
+        $jsonAdapter = new JsonObject();
+        $jsonAdapter->add('foo', $object->getJsonAdapter()->getFoo());
+        $jsonObject->add('json_adapter', $jsonAdapter);
+
+        $jsonObject->addBoolean('expose', $object->getExpose());
+        $jsonObject->addBoolean('exclude_from_strategy', $object->getExcludeFromStrategy());
+        $jsonObject->add('gson_object_mock', $context->serialize($object->getGsonObjectMock(), GsonObjectMock::class));
     }
 }

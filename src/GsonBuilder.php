@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson;
 
+use BadMethodCallException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\ArrayCache;
@@ -139,20 +140,36 @@ class GsonBuilder
      * @param string $type
      * @param $handler
      * @return GsonBuilder
+     * @throws \BadMethodCallException If the handler is not supported
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function registerType(string $type, $handler): GsonBuilder
     {
         if ($handler instanceof TypeAdapter) {
             $this->typeAdapters[(string) new PhpType($type)] = $handler;
-        } elseif ($handler instanceof JsonSerializer && $handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new PhpType($type), $handler, $handler);
-        } elseif ($handler instanceof JsonSerializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new PhpType($type), $handler);
-        } elseif ($handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new PhpType($type), null, $handler);
+
+            return $this;
         }
 
-        return $this;
+        if ($handler instanceof JsonSerializer && $handler instanceof JsonDeserializer) {
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new PhpType($type), $handler, $handler);
+
+            return $this;
+        }
+
+        if ($handler instanceof JsonSerializer) {
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new PhpType($type), $handler);
+
+            return $this;
+        }
+
+        if ($handler instanceof JsonDeserializer) {
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new PhpType($type), null, $handler);
+
+            return $this;
+        }
+
+        throw new BadMethodCallException(sprintf('Handler of type "%s" is not supported', get_class($handler)));
     }
 
     /**

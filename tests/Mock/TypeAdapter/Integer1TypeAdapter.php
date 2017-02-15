@@ -32,11 +32,12 @@ class Integer1TypeAdapter extends TypeAdapter
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param mixed $value
+     * @param int $value
      * @return void
      */
     public function write(JsonWritable $writer, $value): void
     {
+        $writer->writeInteger($value + 1);
     }
 
 }

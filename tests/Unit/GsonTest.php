@@ -8,6 +8,8 @@ namespace Tebru\Gson\Test\Unit;
 use DateTime;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
+use Tebru\Collection\ArrayList;
+use Tebru\Collection\HashMap;
 use Tebru\Gson\Gson;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\GsonMockExclusionStrategyMock;
@@ -15,6 +17,8 @@ use Tebru\Gson\Test\Mock\GsonObjectMock;
 use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\Strategy\TwoPropertyNamingStrategy;
 use Tebru\Gson\Test\Mock\TypeAdapter\Integer1Deserializer;
+use Tebru\Gson\Test\Mock\TypeAdapter\Integer1Serializer;
+use Tebru\Gson\Test\Mock\TypeAdapter\Integer1SerializerDeserializer;
 use Tebru\Gson\Test\Mock\TypeAdapter\Integer1TypeAdapter;
 use Tebru\Gson\Test\Mock\TypeAdapter\Integer1TypeAdapterFactory;
 
@@ -273,6 +277,37 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
+    public function testDeserializeCustomDeserializerBoth()
+    {
+        $gson = Gson::builder()
+            ->registerType(GsonMock::class, new Integer1SerializerDeserializer())
+            ->build();
+
+        /** @var GsonMock $gsonMock */
+        $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
+
+        self::assertSame(2, $gsonMock->getInteger());
+        self::assertSame(3.2, $gsonMock->getFloat());
+        self::assertSame('foo', $gsonMock->getString());
+        self::assertSame(false, $gsonMock->getBoolean());
+        self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
+        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
+        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
+        self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
+        self::assertSame('public', $gsonMock->public);
+        self::assertAttributeSame(null, 'protected', $gsonMock);
+        self::assertSame('since', $gsonMock->getSince());
+        self::assertSame('until', $gsonMock->getUntil());
+        self::assertSame('accessor', $gsonMock->getMyAccessor());
+        self::assertSame('serializedname', $gsonMock->getSerializedname());
+        self::assertSame([2, 3, 4], $gsonMock->getType());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getJsonAdapter());
+        self::assertSame(false, $gsonMock->getExpose());
+        self::assertSame(null, $gsonMock->getExclude());
+        self::assertSame(true, $gsonMock->getExcludeFromStrategy());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
+    }
+
     public function testDeserializeWithExclusionStrategy()
     {
         $gson = Gson::builder()
@@ -310,8 +345,33 @@ class GsonTest extends PHPUnit_Framework_TestCase
             ->setPropertyNamingStrategy(new TwoPropertyNamingStrategy())
             ->build();
 
+        $array = [
+            'integer2' => 1,
+            'float2' => 3.2,
+            'string2' => 'foo',
+            'boolean2' => false,
+            'array2' => ['foo' => 'bar'],
+            'arrayList2' => [1.1, 1.2],
+            'hashMap2' => ['key' => 'value'],
+            'date2' => '2017-01-01T12:01:23-06:00',
+            'public2' => 'public',
+            'protected2' => 'protected',
+            'since2' => 'since',
+            'until2' => 'until',
+            'accessor2' => 'accessor',
+            'serialized_name' => 'serializedname',
+            'type2' => [1, 2, 3],
+            'jsonAdapter2' => 'bar',
+            'expose2' => false,
+            'exclude2' => true,
+            'excludeFromStrategy2' => true,
+            'gsonObjectMock2' => ['foo2' => 'bar'],
+        ];
+
+        $json = json_encode($array);
+
         /** @var GsonMock $gsonMock */
-        $gsonMock = $gson->fromJson($this->json2(), GsonMock::class);
+        $gsonMock = $gson->fromJson($json, GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
         self::assertSame(3.2, $gsonMock->getFloat());
@@ -379,7 +439,168 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame(false, $gsonMock->getExclude());
     }
 
-    private function json()
+    public function testSerializeSimple()
+    {
+        $gson = Gson::builder()->build();
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        unset($json['exclude']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeNulls()
+    {
+        $gson = Gson::builder()
+            ->serializeNull()
+            ->build();
+        $result = $gson->toJson(new GsonMock());
+        
+        $expected = '{
+            "integer": null,
+            "float": null,
+            "string": null,
+            "boolean": null,
+            "array": null,
+            "array_list": null,
+            "hash_map": null,
+            "date": null,
+            "public": null,
+            "protected": null,
+            "since": null,
+            "until": null,
+            "accessor": null,
+            "serialized_name": null,
+            "type": null,
+            "json_adapter": null,
+            "expose": null,
+            "exclude_from_strategy": null,
+            "gson_object_mock": null
+        }';
+
+        self::assertJsonStringEqualsJsonString($expected, $result);
+    }
+
+    public function testSerializeNotSince()
+    {
+        $gson = Gson::builder()
+            ->setVersion(1)
+            ->build();
+
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        unset($json['exclude']);
+        unset($json['since']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeNotUntil()
+    {
+        $gson = Gson::builder()
+            ->setVersion(2)
+            ->build();
+
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        unset($json['exclude']);
+        unset($json['until']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeNotProtected()
+    {
+        $gson = Gson::builder()
+            ->setExcludedModifier(ReflectionProperty::IS_PROTECTED)
+            ->build();
+
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        unset($json['exclude']);
+        unset($json['protected']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeRequireExpose()
+    {
+        $gson = Gson::builder()
+            ->requireExposeAnnotation()
+            ->build();
+
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        unset($json['exclude']);
+        unset($json['date']);
+        unset($json['json_adapter']);
+        unset($json['gson_object_mock']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeCustomTypeAdapter()
+    {
+        $gson = Gson::builder()
+            ->registerType('int', new Integer1TypeAdapter())
+            ->build();
+
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        unset($json['exclude']);
+        $json['integer'] = 2;
+        $json['type'] = [2, 3, 4];
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeCustomTypeAdapterFactory()
+    {
+        $gson = Gson::builder()
+            ->addTypeAdapterFactory(new Integer1TypeAdapterFactory())
+            ->build();
+
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        unset($json['exclude']);
+        $json['integer'] = 2;
+        $json['type'] = [2, 3, 4];
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeCustomSerializer()
+    {
+        $this->markTestSkipped('Remove when JsonElementWriter is finished');
+
+        $gson = Gson::builder()
+            ->registerType(GsonMock::class, new Integer1Serializer())
+            ->build();
+
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        unset($json['exclude']);
+        $json['integer'] = 2;
+        $json['type'] = [2, 3, 4];
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeWithExclusionStrategy()
+    {
+        $gson = Gson::builder()
+            ->addExclusionStrategy(new GsonMockExclusionStrategyMock(), true, true)
+            ->build();
+
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        unset($json['exclude']);
+        unset($json['exclude_from_strategy']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    private function json(): string
     {
         $array = [
             'integer' => 1,
@@ -407,31 +628,30 @@ class GsonTest extends PHPUnit_Framework_TestCase
         return json_encode($array);
     }
 
-    private function json2()
+    private function gsonMock(): GsonMock
     {
-        $array = [
-            'integer2' => 1,
-            'float2' => 3.2,
-            'string2' => 'foo',
-            'boolean2' => false,
-            'array2' => ['foo' => 'bar'],
-            'arrayList2' => [1.1, 1.2],
-            'hashMap2' => ['key' => 'value'],
-            'date2' => '2017-01-01T12:01:23-06:00',
-            'public2' => 'public',
-            'protected2' => 'protected',
-            'since2' => 'since',
-            'until2' => 'until',
-            'accessor2' => 'accessor',
-            'serialized_name' => 'serializedname',
-            'type2' => [1, 2, 3],
-            'jsonAdapter2' => 'bar',
-            'expose2' => false,
-            'exclude2' => true,
-            'excludeFromStrategy2' => true,
-            'gsonObjectMock2' => ['foo2' => 'bar'],
-        ];
+        $gsonMock = new GsonMock();
+        $gsonMock->setInteger(1);
+        $gsonMock->setFloat(3.2);
+        $gsonMock->setString('foo');
+        $gsonMock->setBoolean(false);
+        $gsonMock->setArray(['foo' => 'bar']);
+        $gsonMock->setArrayList(new ArrayList([1.1, 1.2]));
+        $gsonMock->setHashMap(new HashMap(['key' => 'value']));
+        $gsonMock->setDate(DateTime::createFromFormat(DateTime::ATOM, '2017-01-01T12:01:23-06:00'));
+        $gsonMock->public = 'public';
+        $gsonMock->setProtectedHidden('protected');
+        $gsonMock->setSince('since');
+        $gsonMock->setUntil('until');
+        $gsonMock->setMyAccessor('accessor');
+        $gsonMock->setSerializedname('serializedname');
+        $gsonMock->setType([1, 2, 3]);
+        $gsonMock->setJsonAdapter(new GsonObjectMock('bar'));
+        $gsonMock->setExpose(false);
+        $gsonMock->setExclude(true);
+        $gsonMock->setExcludeFromStrategy(true);
+        $gsonMock->setGsonObjectMock(new GsonObjectMock('bar'));
 
-        return json_encode($array);
+        return $gsonMock;
     }
 }

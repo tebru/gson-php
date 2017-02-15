@@ -297,4 +297,14 @@ class GsonMock
 
         return $this;
     }
+
+    public function getProtectedHidden()
+    {
+        return $this->protected;
+    }
+
+    public function setProtectedHidden($protected)
+    {
+        $this->protected = $protected;
+    }
 }

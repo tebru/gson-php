@@ -72,9 +72,15 @@ class Gson
      *
      * @param object $object
      * @return string
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      */
     public function toJson($object): string
     {
+        $phpType = PhpType::createFromVariable($object);
+        $typeAdapter = $this->typeAdapterProvider->getAdapter($phpType);
+
+        return $typeAdapter->writeToJson($object, $this->serializeNull);
     }
 
     /**
