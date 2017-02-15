@@ -92,6 +92,18 @@ final class PhpType
     }
 
     /**
+     * Create a new instance from a variable
+     *
+     * @param mixed $variable
+     * @return PhpType
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     */
+    public static function createFromVariable($variable): PhpType
+    {
+        return is_object($variable) ? new self(get_class($variable)) : new self(gettype($variable));
+    }
+
+    /**
      * Recursively parse type.  If generics are found, this will create
      * new PhpTypes.
      *

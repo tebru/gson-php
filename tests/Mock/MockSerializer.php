@@ -24,16 +24,27 @@ class MockSerializer implements JsonSerializer
      * be serialized.  Delegate serialization using the provided context.  Method should
      * return a JsonElement.
      *
-     * @param mixed $object
+     * @param UserMock $object
      * @param PhpType $type
      * @param JsonSerializationContext $context
      * @return JsonElement
      */
     public function serialize($object, PhpType $type, JsonSerializationContext $context): JsonElement
     {
-        $jsonObject = new JsonObject();
-        $jsonObject->addString('foo', 'bar');
+        $jsonUser = new JsonObject();
+        $jsonUser->addInteger('id', $object->getId());
+        $jsonUser->addString('email', $object->getEmail());
+        $jsonUser->addString('name', $object->getName());
+        $jsonUser->addString('phone', $object->getPhone());
+        $jsonUser->addBoolean('enabled', $object->isEnabled());
 
-        return $jsonObject;
+        $address = $object->getAddress();
+
+        $jsonUser->addString('city', $address->getCity());
+        $jsonUser->addString('state', $address->getState());
+        $jsonUser->addString('street', $address->getStreet());
+        $jsonUser->addInteger('zip', $address->getZip());
+
+        return $jsonUser;
     }
 }

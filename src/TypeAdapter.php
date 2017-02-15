@@ -9,7 +9,8 @@ namespace Tebru\Gson;
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\Internal\JsonElementReader;
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\Internal\JsonElementWriter;
+use Tebru\Gson\Internal\JsonEncodeWriter;
 
 /**
  * Class TypeAdapter
@@ -66,10 +67,17 @@ abstract class TypeAdapter
      * Constructs a JsonWriter and passes it to ::write().  Returns the written json.
      *
      * @param mixed $var
+     * @param bool $serializeNull
      * @return string
      */
-    public function writeToJson($var): string
+    public function writeToJson($var, bool $serializeNull): string
     {
+        $writer = new JsonEncodeWriter();
+        $writer->setSerializeNull($serializeNull);
+
+        $this->write($writer, $var);
+
+        return (string) $writer;
     }
 
     /**
@@ -80,5 +88,9 @@ abstract class TypeAdapter
      */
     public function writeToJsonElement($var): JsonElement
     {
+        $writer = new JsonElementWriter();
+        $this->write($writer, $var);
+
+        return $writer->toJsonElement();
     }
 }

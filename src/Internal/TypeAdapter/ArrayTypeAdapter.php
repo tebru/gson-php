@@ -9,7 +9,7 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 use LogicException;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\Internal\JsonDecodeReader;
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Internal\TypeToken;
@@ -155,10 +155,86 @@ final class ArrayTypeAdapter extends TypeAdapter
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param mixed $value
+     * @param array $value
      * @return void
+     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \LogicException If the wrong number of generics exist
      */
     public function write(JsonWritable $writer, $value): void
     {
+        if (null === $value) {
+            $writer->writeNull();
+
+            return;
+        }
+
+        $generics = $this->phpType->getGenerics();
+        if (count($generics) > 2) {
+            throw new LogicException('Array may not have more than 2 generic types');
+        }
+
+        $numberOfGenerics = count($generics);
+        $arrayIsObject = $this->isArrayObject($value, $numberOfGenerics);
+
+        if ($arrayIsObject) {
+            $writer->beginObject();
+        } else {
+            $writer->beginArray();
+        }
+
+        foreach ($value as $key => $item) {
+            switch ($numberOfGenerics) {
+                // no generics specified
+                case 0:
+                    if ($arrayIsObject) {
+                        $writer->name((string)$key);
+                    }
+
+                    $adapter = $this->typeAdapterProvider->getAdapter(PhpType::createFromVariable($item));
+                    $adapter->write($writer, $item);
+
+                    break;
+                // generic for value specified
+                case 1:
+                    if ($arrayIsObject) {
+                        $writer->name((string)$key);
+                    }
+
+                    $adapter = $this->typeAdapterProvider->getAdapter($generics[0]);
+                    $adapter->write($writer, $item);
+
+                    break;
+                // generic for key and value specified
+                case 2:
+                    $writer->name($key);
+
+                    $valueAdapter = $this->typeAdapterProvider->getAdapter($generics[1]);
+                    $valueAdapter->write($writer, $item);
+
+                    break;
+            }
+        }
+
+        if ($arrayIsObject) {
+            $writer->endObject();
+        } else {
+            $writer->endArray();
+        }
+    }
+
+    /**
+     * Returns true if the array is acting like an object
+     * @param array $array
+     * @param int $numberOfGenerics
+     * @return bool
+     */
+    private function isArrayObject(array $array, int $numberOfGenerics): bool
+    {
+        if (2 === $numberOfGenerics) {
+            return true;
+        }
+
+        return is_string(key($array));
     }
 }

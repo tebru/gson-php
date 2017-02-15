@@ -111,13 +111,21 @@ final class TypeAdapterProvider
 
         if ($object instanceof TypeAdapter) {
             return $object;
-        } elseif ($object instanceof TypeAdapterFactory) {
+        }
+
+        if ($object instanceof TypeAdapterFactory) {
             return $object->create($phpType, $this);
-        } elseif ($object instanceof JsonSerializer && $object instanceof JsonDeserializer) {
+        }
+
+        if ($object instanceof JsonSerializer && $object instanceof JsonDeserializer) {
             return new CustomWrappedTypeAdapter($phpType, $this, $object, $object);
-        } elseif ($object instanceof JsonSerializer) {
+        }
+
+        if ($object instanceof JsonSerializer) {
             return new CustomWrappedTypeAdapter($phpType, $this, $object);
-        } elseif ($object instanceof JsonDeserializer) {
+        }
+
+        if ($object instanceof JsonDeserializer) {
             return new CustomWrappedTypeAdapter($phpType, $this, null, $object);
         }
 

@@ -13,6 +13,7 @@ use Tebru\Gson\Internal\JsonEncodeWriter;
  * Class JsonEncodeWriterTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\JsonEncodeWriter
  */
 class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
 {

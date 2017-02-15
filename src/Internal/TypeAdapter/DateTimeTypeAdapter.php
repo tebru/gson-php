@@ -8,7 +8,7 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 
 use DateTime;
 use DateTimeZone;
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
@@ -68,10 +68,24 @@ final class DateTimeTypeAdapter extends TypeAdapter
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param mixed $value
+     * @param DateTime $value
      * @return void
      */
     public function write(JsonWritable $writer, $value): void
     {
+        if (null === $value) {
+            $writer->writeNull();
+
+            return;
+        }
+
+        $format = $this->phpType->getOptions()['format'] ?? null;
+
+        if (null === $format) {
+            $format = DateTime::ATOM;
+        }
+
+        $dateTime = $value->format($format);
+        $writer->writeString($dateTime);
     }
 }

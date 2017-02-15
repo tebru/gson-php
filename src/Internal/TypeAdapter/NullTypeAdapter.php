@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter;
 
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\TypeAdapter;
 
@@ -37,5 +37,6 @@ final class NullTypeAdapter extends TypeAdapter
      */
     public function write(JsonWritable $writer, $value): void
     {
+        $writer->writeNull();
     }
 }

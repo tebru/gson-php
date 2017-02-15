@@ -13,7 +13,7 @@ use Tebru\Gson\Internal\SetterStrategy;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class SetByNull implements SetterStrategy
+final class SetByNull implements SetterStrategy
 {
     /**
      * Set value to object

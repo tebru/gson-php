@@ -7,7 +7,8 @@
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\Internal\DefaultJsonSerializationContext;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
@@ -95,7 +96,7 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
         return $this->deserializer->deserialize(
             $jsonElement,
             $this->phpType,
-            new DefaultJsonDeserializationContext($this->typeAdapterProvider, $this->phpType)
+            new DefaultJsonDeserializationContext($this->typeAdapterProvider)
         );
     }
 
@@ -105,8 +106,32 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param mixed $value
      * @return void
+     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \LogicException If the token can not be handled
+     * @throws \Tebru\Gson\Exception\UnsupportedMethodException
      */
     public function write(JsonWritable $writer, $value): void
     {
+        if (null === $this->serializer) {
+            $adapter = $this->typeAdapterProvider->getAdapter($this->phpType, $this->skip);
+            $adapter->write($writer, $value);
+
+            return;
+        }
+
+        if (null === $value) {
+            $writer->writeNull();
+
+            return;
+        }
+
+        $jsonElement = $this->serializer->serialize(
+            $value,
+            $this->phpType,
+            new DefaultJsonSerializationContext($this->typeAdapterProvider)
+        );
+
+        $jsonElementTypeAdapter = new JsonElementTypeAdapter();
+        $jsonElementTypeAdapter->write($writer, $jsonElement);
     }
 }

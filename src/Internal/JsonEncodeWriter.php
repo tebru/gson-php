@@ -294,7 +294,7 @@ final class JsonEncodeWriter implements JsonWritable
      */
     private function pop(): void
     {
-        unset($this->stack[$this->last()]);
+        array_splice($this->stack, $this->last(), 1);
     }
 
     /**

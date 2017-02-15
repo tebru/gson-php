@@ -16,6 +16,8 @@ use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayListTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\FloatTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\HashMapTypeAdapterFactory;
+use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
+use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -28,7 +30,7 @@ use Tebru\Gson\Internal\TypeAdapterProvider;
  */
 class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
-    public function testNull()
+    public function testDeserializeNull()
     {
         $typeAdapterProvider = new TypeAdapterProvider([
             new ArrayListTypeAdapterFactory(),
@@ -42,7 +44,7 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertNull($result);
     }
 
-    public function testSimpleArray()
+    public function testDeserializeSimpleArray()
     {
         $typeAdapterProvider = new TypeAdapterProvider([
             new FloatTypeAdapterFactory(),
@@ -63,7 +65,7 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(3.0, $result->get(2));
     }
 
-    public function testNestedArray()
+    public function testDeserializeNestedArray()
     {
         $typeAdapterProvider = new TypeAdapterProvider([
             new FloatTypeAdapterFactory(),
@@ -84,7 +86,7 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(ArrayList::class, $result->get(2));
     }
 
-    public function testNestedObject()
+    public function testDeserializeNestedObject()
     {
         $typeAdapterProvider = new TypeAdapterProvider([
             new StringTypeAdapterFactory(),
@@ -109,7 +111,7 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('value', $object->get('key'));
     }
 
-    public function testNestedObjectExplicit()
+    public function testDeserializeNestedObjectExplicit()
     {
         $typeAdapterProvider = new TypeAdapterProvider([
             new StringTypeAdapterFactory(),
@@ -134,12 +136,97 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('value', $object->get('key'));
     }
 
-    public function testTooManyGenerics()
+    public function testDeserializeTooManyGenerics()
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('ArrayList expected to have exactly one generic type');
 
         $adapter = new ArrayListTypeAdapter(new PhpType('ArrayList<Foo, Bar>'), new TypeAdapterProvider([]));
         $adapter->readFromJson('[1]');
+    }
+
+    public function testSerializeNull()
+    {
+        $typeAdapterProvider = new TypeAdapterProvider([
+            new ArrayListTypeAdapterFactory(),
+        ]);
+
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
+
+        self::assertSame('null', $adapter->writeToJson(null, false));
+    }
+
+    public function testSerializeInts()
+    {
+        $typeAdapterProvider = new TypeAdapterProvider([
+            new IntegerTypeAdapterFactory(),
+            new ArrayListTypeAdapterFactory(),
+        ]);
+
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
+
+        $arrayList = new ArrayList([1, 2, 3]);
+
+        self::assertSame('[1,2,3]', $adapter->writeToJson($arrayList, false));
+    }
+
+    public function testSerializeVariableTypes()
+    {
+        $typeAdapterProvider = new TypeAdapterProvider([
+            new StringTypeAdapterFactory(),
+            new IntegerTypeAdapterFactory(),
+            new NullTypeAdapterFactory(),
+            new ArrayListTypeAdapterFactory(),
+        ]);
+
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
+
+        $arrayList = new ArrayList([1, 'foo', null]);
+
+        self::assertSame('[1,"foo"]', $adapter->writeToJson($arrayList, false));
+    }
+
+    public function testSerializeVariableTypesWithNull()
+    {
+        $typeAdapterProvider = new TypeAdapterProvider([
+            new StringTypeAdapterFactory(),
+            new IntegerTypeAdapterFactory(),
+            new NullTypeAdapterFactory(),
+            new ArrayListTypeAdapterFactory(),
+        ]);
+
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
+
+        $arrayList = new ArrayList([1, 'foo', null]);
+
+        self::assertSame('[1,"foo",null]', $adapter->writeToJson($arrayList, true));
+    }
+
+    public function testSerializeIntsGenericType()
+    {
+        $typeAdapterProvider = new TypeAdapterProvider([
+            new IntegerTypeAdapterFactory(),
+            new ArrayListTypeAdapterFactory(),
+        ]);
+
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType('List<int>'));
+
+        $arrayList = new ArrayList([1, 2, 3]);
+
+        self::assertSame('[1,2,3]', $adapter->writeToJson($arrayList, false));
+    }
+
+    public function testSerializeTooManyGenerics()
+    {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('ArrayList expected to have exactly one generic type');
+
+        $adapter = new ArrayListTypeAdapter(new PhpType('ArrayList<Foo, Bar>'), new TypeAdapterProvider([]));
+        $adapter->writeToJson(new ArrayList(), false);
     }
 }

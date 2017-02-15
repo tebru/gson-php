@@ -30,4 +30,18 @@ class IntegerTypeAdapterTest extends PHPUnit_Framework_TestCase
 
         self::assertSame(1, $adapter->readFromJson('1'));
     }
+
+    public function testSerializeNull()
+    {
+        $adapter = new IntegerTypeAdapter();
+
+        self::assertSame('null', $adapter->writeToJson(null, false));
+    }
+
+    public function testSerializeFloat()
+    {
+        $adapter = new IntegerTypeAdapter();
+
+        self::assertSame('1', $adapter->writeToJson(1, false));
+    }
 }

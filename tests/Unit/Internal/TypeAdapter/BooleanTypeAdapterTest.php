@@ -17,24 +17,45 @@ use Tebru\Gson\Internal\TypeAdapter\BooleanTypeAdapter;
  */
 class BooleanTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
-    public function testNull()
+    public function testDeserializeNull()
     {
         $adapter = new BooleanTypeAdapter();
 
         self::assertNull($adapter->readFromJson('null'));
     }
 
-    public function testReadTrue()
+    public function testDeserializeReadTrue()
     {
         $adapter = new BooleanTypeAdapter();
 
         self::assertTrue($adapter->readFromJson('true'));
     }
 
-    public function testReadFalse()
+    public function testDeserializeReadFalse()
     {
         $adapter = new BooleanTypeAdapter();
 
         self::assertFalse($adapter->readFromJson('false'));
+    }
+
+    public function testSerializeNull()
+    {
+        $adapter = new BooleanTypeAdapter();
+
+        self::assertSame('null', $adapter->writeToJson(null, false));
+    }
+
+    public function testSerializeTrue()
+    {
+        $adapter = new BooleanTypeAdapter();
+
+        self::assertSame('true', $adapter->writeToJson(true, false));
+    }
+
+    public function testSerializeFalse()
+    {
+        $adapter = new BooleanTypeAdapter();
+
+        self::assertSame('false', $adapter->writeToJson(false, false));
     }
 }

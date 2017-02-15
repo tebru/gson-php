@@ -7,15 +7,28 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
+use Tebru\Gson\Internal\AccessorMethodProvider;
+use Tebru\Gson\Internal\AccessorStrategyFactory;
+use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
+use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
+use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\Naming\PropertyNamer;
+use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
+use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\HashMapTypeAdapterFactory;
+use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\Test\Mock\ExcluderVersionMock;
+use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcludeClassMockExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooExclusionStrategy;
 use Tebru\Gson\Test\Mock\Foo;
 use Tebru\Gson\Test\Mock\TypeAdapter\FooTypeAdapterFactory;
@@ -57,5 +70,45 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Foo'));
 
         self::assertEquals(new Foo(), $adapter->readFromJson('{}'));
+    }
+
+    public function testSerializeSkips()
+    {
+        $excluder = new Excluder(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+        $excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), true, false);
+
+        $typeAdapterProvider = new TypeAdapterProvider([
+            new ExcluderTypeAdapterFactory($excluder),
+            new HashMapTypeAdapterFactory(),
+        ]);
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType(ExcluderVersionMock::class));
+
+        self::assertSame('null', $adapter->writeToJson(new ExcluderVersionMock(), false));
+    }
+
+    public function testSerializeDelegates()
+    {
+        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $excluder = new Excluder(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+        $excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), false, true);
+        $propertyCollectionFactory = new PropertyCollectionFactory(
+            new ReflectionPropertySetFactory(),
+            $annotationCollectionFactory,
+            new PropertyNamer(new SnakePropertyNamingStrategy()),
+            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
+            new AccessorStrategyFactory(),
+            new PhpTypeFactory(),
+            $excluder,
+            new ArrayCache()
+        );
+
+        $typeAdapterProvider = new TypeAdapterProvider([
+            new ExcluderTypeAdapterFactory($excluder),
+            new HashMapTypeAdapterFactory(),
+            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
+        ]);
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType(ExcluderVersionMock::class));
+
+        self::assertSame('{}', $adapter->writeToJson(new ExcluderVersionMock(), false));
     }
 }

@@ -18,7 +18,7 @@ use Tebru\Gson\TypeAdapterFactory;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class JsonTypeAdapterFactory implements TypeAdapterFactory
+final class JsonTypeAdapterFactory implements TypeAdapterFactory
 {
     /**
      * @var AnnotationCollectionFactory

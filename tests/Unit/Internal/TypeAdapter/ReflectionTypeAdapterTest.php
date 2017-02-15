@@ -31,6 +31,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\Test\Mock\AddressMock;
 use Tebru\Gson\Test\Mock\UserMock;
 
 /**
@@ -41,7 +42,7 @@ use Tebru\Gson\Test\Mock\UserMock;
  */
 class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
-    public function testNull()
+    public function testDeserializeNull()
     {
         $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
         $excluder = new Excluder($annotationCollectionFactory);
@@ -126,5 +127,87 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('My City', $address->getCity());
         self::assertSame('MN', $address->getState());
         self::assertSame(12345, $address->getZip());
+    }
+
+    public function testSerializeNull()
+    {
+        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $excluder = new Excluder($annotationCollectionFactory);
+        $propertyCollectionFactory = new PropertyCollectionFactory(
+            new ReflectionPropertySetFactory(),
+            $annotationCollectionFactory,
+            new PropertyNamer(new SnakePropertyNamingStrategy()),
+            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
+            new AccessorStrategyFactory(),
+            new PhpTypeFactory(),
+            $excluder,
+            new ArrayCache()
+        );
+        $typeAdapterProvider = new TypeAdapterProvider([
+            new StringTypeAdapterFactory(),
+            new IntegerTypeAdapterFactory(),
+            new BooleanTypeAdapterFactory(),
+            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
+        ]);
+
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+
+        self::assertSame('null', $adapter->writeToJson(null, false));
+    }
+
+    public function testSerialize()
+    {
+        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $excluder = new Excluder($annotationCollectionFactory);
+        $propertyCollectionFactory = new PropertyCollectionFactory(
+            new ReflectionPropertySetFactory(),
+            $annotationCollectionFactory,
+            new PropertyNamer(new SnakePropertyNamingStrategy()),
+            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
+            new AccessorStrategyFactory(),
+            new PhpTypeFactory(),
+            $excluder,
+            new ArrayCache()
+        );
+        $typeAdapterProvider = new TypeAdapterProvider([
+            new StringTypeAdapterFactory(),
+            new IntegerTypeAdapterFactory(),
+            new BooleanTypeAdapterFactory(),
+            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
+        ]);
+
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+
+        $user = new UserMock();
+        $user->setId(1);
+        $user->setEmail('test@example.com');
+        $user->setPassword('password1');
+        $user->setName('John Doe');
+        $user->setPhone('(123) 456-7890');
+        $user->setEnabled(true);
+
+        $address = new AddressMock();
+        $address->setStreet('123 ABC St');
+        $address->setCity('Foo');
+        $address->setState('MN');
+        $address->setZip(12345);
+
+        $user->setAddress($address);
+
+        $expectedJson = '{
+            "id": 1,
+            "email": "test@example.com",
+            "name": "John Doe",
+            "address": {
+                "street": "123 ABC St",
+                "city": "Foo",
+                "state": "MN",
+                "zip": 12345
+            },
+            "phone": "(123) 456-7890",
+            "enabled": true
+        }';
+
+        self::assertJsonStringEqualsJsonString($expectedJson, $adapter->writeToJson($user, false));
     }
 }

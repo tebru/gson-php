@@ -12,7 +12,7 @@ use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonNull;
 use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\Element\JsonPrimitive;
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
 use Tebru\Gson\TypeAdapter;
@@ -72,10 +72,57 @@ final class JsonElementTypeAdapter extends TypeAdapter
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param mixed $value
+     * @param JsonElement $value
      * @return void
+     * @throws \Tebru\Gson\Exception\UnsupportedMethodException
      */
     public function write(JsonWritable $writer, $value): void
     {
+        if (null === $value || $value->isJsonNull()) {
+            $writer->writeNull();
+
+            return;
+        }
+
+        if ($value->isJsonObject()) {
+            $writer->beginObject();
+            foreach ($value->asJsonObject() as $key => $element) {
+                $writer->name($key);
+                $this->write($writer, $element);
+            }
+            $writer->endObject();
+
+            return;
+        }
+
+        if ($value->isJsonArray()) {
+            $writer->beginArray();
+            foreach ($value->asJsonArray() as $element) {
+                $this->write($writer, $element);
+            }
+            $writer->endArray();
+
+            return;
+        }
+
+        if ($value->isInteger()) {
+            $writer->writeInteger($value->asInteger());
+
+            return;
+        }
+
+        if ($value->isFloat()) {
+            $writer->writeFloat($value->asFloat());
+
+            return;
+        }
+
+        if ($value->isBoolean()) {
+            $writer->writeBoolean($value->asBoolean());
+
+            return;
+        }
+
+        $writer->writeString($value->asString());
     }
 }

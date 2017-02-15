@@ -23,4 +23,11 @@ class NullTypeAdapterTest extends PHPUnit_Framework_TestCase
 
         self::assertNull($adapter->readFromJson('null'));
     }
+
+    public function testWrite()
+    {
+        $adapter = new NullTypeAdapter();
+
+        self::assertSame('null', $adapter->writeToJson(null, false));
+    }
 }

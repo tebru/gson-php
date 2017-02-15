@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Internal\TypeToken;
@@ -85,8 +85,12 @@ final class WildcardTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param mixed $value
      * @return void
+     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function write(JsonWritable $writer, $value): void
     {
+        $adapter = $this->typeAdapterProvider->getAdapter(PhpType::createFromVariable($value));
+        $adapter->write($writer, $value);
     }
 }

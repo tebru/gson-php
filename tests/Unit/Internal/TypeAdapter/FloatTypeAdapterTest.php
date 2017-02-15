@@ -17,14 +17,14 @@ use Tebru\Gson\Internal\TypeAdapter\FloatTypeAdapter;
  */
 class FloatTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
-    public function testNull()
+    public function testDeserializeNull()
     {
         $adapter = new FloatTypeAdapter();
 
         self::assertNull($adapter->readFromJson('null'));
     }
 
-    public function testRead()
+    public function testDeserializeRead()
     {
         $adapter = new FloatTypeAdapter();
         $result = $adapter->readFromJson('1.1');
@@ -32,11 +32,32 @@ class FloatTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(1.1, $result);
     }
 
-    public function testReadIntegerToFloat()
+    public function testDeserializeReadIntegerToFloat()
     {
         $adapter = new FloatTypeAdapter();
         $result = $adapter->readFromJson('1');
 
         self::assertSame(1.0, $result);
+    }
+
+    public function testSerializeNull()
+    {
+        $adapter = new FloatTypeAdapter();
+
+        self::assertSame('null', $adapter->writeToJson(null, false));
+    }
+
+    public function testSerializeFloat()
+    {
+        $adapter = new FloatTypeAdapter();
+
+        self::assertSame('1.1', $adapter->writeToJson(1.1, false));
+    }
+
+    public function testSerializeFloatAsInt()
+    {
+        $adapter = new FloatTypeAdapter();
+
+        self::assertSame('1', $adapter->writeToJson(1, false));
     }
 }

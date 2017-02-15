@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Mock\TypeAdapter;
 
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\Test\Mock\Foo;
 use Tebru\Gson\TypeAdapter;

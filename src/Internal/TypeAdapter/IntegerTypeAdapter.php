@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use Tebru\Gson\JsonReadable;
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonToken;
 use Tebru\Gson\TypeAdapter;
 
@@ -37,10 +37,17 @@ final class IntegerTypeAdapter extends TypeAdapter
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param mixed $value
+     * @param int $value
      * @return void
      */
     public function write(JsonWritable $writer, $value): void
     {
+        if (null === $value) {
+            $writer->writeNull();
+
+            return;
+        }
+
+        $writer->writeInteger($value);
     }
 }

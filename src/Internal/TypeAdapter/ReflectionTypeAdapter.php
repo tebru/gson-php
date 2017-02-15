@@ -6,8 +6,9 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter;
 
+use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonReadable;
@@ -104,5 +105,27 @@ final class ReflectionTypeAdapter extends TypeAdapter
      */
     public function write(JsonWritable $writer, $value): void
     {
+        if (null === $value) {
+            $writer->writeNull();
+
+            return;
+        }
+
+        $writer->beginObject();
+
+        /** @var Property $property */
+        foreach ($this->properties as $property) {
+            $writer->name($property->getSerializedName());
+
+            if ($property->skipSerialize() || $this->excluder->excludePropertyByStrategy($property, true)) {
+                $writer->writeNull();
+
+                continue;
+            }
+
+            $property->write($writer, $value);
+        }
+
+        $writer->endObject();
     }
 }

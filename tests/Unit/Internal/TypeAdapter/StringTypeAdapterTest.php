@@ -37,4 +37,18 @@ class StringTypeAdapterTest extends PHPUnit_Framework_TestCase
 
         self::assertSame('1', $adapter->readFromJson('"1"'));
     }
+
+    public function testSerializeNull()
+    {
+        $adapter = new StringTypeAdapter();
+
+        self::assertSame('null', $adapter->writeToJson(null, false));
+    }
+
+    public function testSerializeFloat()
+    {
+        $adapter = new StringTypeAdapter();
+
+        self::assertSame('"foo"', $adapter->writeToJson('foo', false));
+    }
 }

@@ -13,6 +13,7 @@ use Tebru\Gson\Test\Mock\UserMock;
  * Class SetByNullTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\AccessorStrategy\SetByNull
  */
 class SetByNullTest extends PHPUnit_Framework_TestCase
 {

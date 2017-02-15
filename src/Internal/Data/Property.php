@@ -10,6 +10,7 @@ use Tebru\Gson\Internal\GetterStrategy;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\SetterStrategy;
 use Tebru\Gson\JsonReadable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\TypeAdapter;
 
 /**
@@ -247,6 +248,18 @@ final class Property
     {
         $value = $this->typeAdapter->read($reader);
         $this->set($object, $value);
+    }
+
+    /**
+     * Read the next value using the type adapter registered to property
+     * and set it to the object
+     *
+     * @param JsonWritable $writer
+     * @param mixed $object
+     */
+    public function write(JsonWritable $writer, $object)
+    {
+        $this->typeAdapter->write($writer, $this->get($object));
     }
 
     /**

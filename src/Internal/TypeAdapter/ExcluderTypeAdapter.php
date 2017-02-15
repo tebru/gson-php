@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter;
 
-use Tebru\Gson\Internal\JsonWritable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonReadable;
@@ -98,8 +98,17 @@ final class ExcluderTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param mixed $value
      * @return void
+     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      */
     public function write(JsonWritable $writer, $value): void
     {
+        if ($this->skipSerialize) {
+            $writer->writeNull();
+
+            return;
+        }
+
+        $delegateAdapter = $this->typeAdapterProvider->getAdapter($this->phpType, $this->skip);
+        $delegateAdapter->write($writer, $value);
     }
 }
