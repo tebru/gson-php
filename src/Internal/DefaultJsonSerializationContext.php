@@ -36,14 +36,13 @@ final class DefaultJsonSerializationContext implements JsonSerializationContext
      * as doing so will result in an infinite loop.  Will return a JsonElement.
      *
      * @param mixed $object
-     * @param string $type
      * @return JsonElement
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
-    public function serialize($object, string $type): JsonElement
+    public function serialize($object): JsonElement
     {
-        $typeAdapter = $this->typeAdapterProvider->getAdapter(new PhpType($type));
+        $typeAdapter = $this->typeAdapterProvider->getAdapter(PhpType::createFromVariable($object));
 
         return $typeAdapter->writeToJsonElement($object);
     }

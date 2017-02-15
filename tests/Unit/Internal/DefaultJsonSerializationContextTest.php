@@ -67,7 +67,7 @@ class DefaultJsonSerializationContextTest extends PHPUnit_Framework_TestCase
         $context = new DefaultJsonSerializationContext($typeAdapterProvider);
 
         /** @var JsonObject $addressElement */
-        $addressElement = $context->serialize($address, new PhpType(AddressMock::class));
+        $addressElement = $context->serialize($address);
 
         self::assertSame('123 ABC St', $addressElement->getAsString('street'));
         self::assertSame('Foo', $addressElement->getAsString('city'));

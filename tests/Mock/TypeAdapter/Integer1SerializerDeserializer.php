@@ -84,10 +84,10 @@ class Integer1SerializerDeserializer implements JsonDeserializer, JsonSerializer
         $jsonObject->addFloat('float', $object->getFloat());
         $jsonObject->addString('string', $object->getString());
         $jsonObject->addBoolean('string', $object->getBoolean());
-        $jsonObject->add('array', $context->serialize($object->getArray(), 'array'));
-        $jsonObject->add('array_list', $context->serialize($object->getArrayList(), ListInterface::class));
-        $jsonObject->add('hash_map', $context->serialize($object->getHashMap(), MapInterface::class));
-        $jsonObject->add('date', $context->serialize($object->getDate(), DateTime::class));
+        $jsonObject->add('array', $context->serialize($object->getArray()));
+        $jsonObject->add('array_list', $context->serialize($object->getArrayList()));
+        $jsonObject->add('hash_map', $context->serialize($object->getHashMap()));
+        $jsonObject->add('date', $context->serialize($object->getDate()));
         $jsonObject->add('public', $object->public);
         $jsonObject->addString('since', $object->getSince());
         $jsonObject->addString('until', $object->getUntil());
@@ -106,6 +106,6 @@ class Integer1SerializerDeserializer implements JsonDeserializer, JsonSerializer
 
         $jsonObject->addBoolean('expose', $object->getExpose());
         $jsonObject->addBoolean('exclude_from_strategy', $object->getExcludeFromStrategy());
-        $jsonObject->add('gson_object_mock', $context->serialize($object->getGsonObjectMock(), GsonObjectMock::class));
+        $jsonObject->add('gson_object_mock', $context->serialize($object->getGsonObjectMock()));
     }
 }

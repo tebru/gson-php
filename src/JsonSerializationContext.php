@@ -23,8 +23,7 @@ interface JsonSerializationContext
      * as doing so will result in an infinite loop.  Will return a JsonElement.
      *
      * @param mixed $object
-     * @param string $type
      * @return JsonElement
      */
-    public function serialize($object, string $type): JsonElement;
+    public function serialize($object): JsonElement;
 }
