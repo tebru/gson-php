@@ -121,4 +121,14 @@ class JsonPrimitive extends JsonElement
     {
         return (bool) $this->value;
     }
+
+    /**
+     * Return whatever the current value is
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
 }

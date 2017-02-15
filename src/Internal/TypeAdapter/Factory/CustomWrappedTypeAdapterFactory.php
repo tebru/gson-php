@@ -76,6 +76,6 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        return new CustomWrappedTypeAdapter($type, $typeAdapterProvider, $this->serializer, $this->deserializer);
+        return new CustomWrappedTypeAdapter($type, $typeAdapterProvider, $this->serializer, $this->deserializer, $this);
     }
 }

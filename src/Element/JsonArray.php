@@ -22,7 +22,7 @@ class JsonArray extends JsonElement implements IteratorAggregate, Countable
     /**
      * Array values
      *
-     * @var array
+     * @var JsonElement[]
      */
     private $values = [];
 
@@ -86,6 +86,16 @@ class JsonArray extends JsonElement implements IteratorAggregate, Countable
         foreach ($jsonArray as $jsonElement) {
             $this->addJsonElement($jsonElement);
         }
+    }
+
+    /**
+     * Get the value as a JsonArray
+     *
+     * @return JsonArray
+     */
+    public function asJsonArray(): JsonArray
+    {
+        return $this;
     }
 
     /**
@@ -154,6 +164,25 @@ class JsonArray extends JsonElement implements IteratorAggregate, Countable
         }
 
         return false;
+    }
+
+    /**
+     * Return as array
+     *
+     * @return array
+     */
+    public function asArray(): array
+    {
+        $array = [];
+        foreach ($this->values as $value) {
+            if ($value->isJsonPrimitive()) {
+                $array[] = $value->getValue();
+            } else {
+                $array[] = $value->asArray();
+            }
+        }
+
+        return $array;
     }
 
     /**

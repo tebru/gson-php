@@ -144,6 +144,33 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
 
         self::assertCount(1, $jsonArray);
     }
+
+    public function testAsJsonArray()
+    {
+        $jsonArray = new JsonArray();
+        $result = $jsonArray->asJsonArray();
+
+        self::assertSame($jsonArray, $result);
+    }
+
+    public function testAsArray()
+    {
+        $object = new JsonObject();
+        $object->addFloat('float', 2);
+
+        $array = new JsonArray();
+        $array->addInteger(1);
+        $array->addBoolean(true);
+        $array->addJsonElement($object);
+
+        $jsonArray = new JsonArray();
+        $jsonArray->addInteger(1);
+        $jsonArray->addJsonElement($array);
+
+        $expected = [1, [1, true, ['float' => 2.0]]];
+
+        self::assertSame($expected, $jsonArray->asArray());
+    }
 }
 
 

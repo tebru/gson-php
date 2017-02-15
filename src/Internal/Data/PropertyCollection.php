@@ -8,7 +8,6 @@ namespace Tebru\Gson\Internal\Data;
 
 use ArrayIterator;
 use IteratorAggregate;
-use Traversable;
 
 /**
  * Class PropertyCollection

@@ -150,4 +150,48 @@ abstract class JsonElement
     {
         throw new UnsupportedMethodException(sprintf('This method "asBoolean" is not supported on "%s"', get_called_class()));
     }
+
+    /**
+     * Get the value as an array
+     *
+     * @return array
+     * @throws \Tebru\Gson\Exception\UnsupportedMethodException
+     */
+    public function asArray(): array
+    {
+        throw new UnsupportedMethodException(sprintf('This method "asArray" is not supported on "%s"', get_called_class()));
+    }
+
+    /**
+     * Get the value as a JsonObject
+     *
+     * @return JsonObject
+     * @throws \Tebru\Gson\Exception\UnsupportedMethodException
+     */
+    public function asJsonObject(): JsonObject
+    {
+        throw new UnsupportedMethodException(sprintf('This method "asJsonObject" is not supported on "%s"', get_called_class()));
+    }
+
+    /**
+     * Get the value as a JsonArray
+     *
+     * @return JsonArray
+     * @throws \Tebru\Gson\Exception\UnsupportedMethodException
+     */
+    public function asJsonArray(): JsonArray
+    {
+        throw new UnsupportedMethodException(sprintf('This method "asJsonArray" is not supported on "%s"', get_called_class()));
+    }
+
+    /**
+     * Get the current value
+     *
+     * @return mixed
+     * @throws \Tebru\Gson\Exception\UnsupportedMethodException
+     */
+    public function getValue()
+    {
+        throw new UnsupportedMethodException(sprintf('This method "getValue" is not supported on "%s"', get_called_class()));
+    }
 }

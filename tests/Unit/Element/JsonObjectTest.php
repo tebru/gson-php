@@ -95,15 +95,15 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
         self::assertSame('bar', $jsonObject->get('foo')->asString());
     }
 
-    public function testAsPrimitive()
+    public function testGetAsPrimitive()
     {
         $jsonObject = new JsonObject();
         $jsonObject->addString('foo', 'bar');
 
-        self::assertSame('bar', $jsonObject->asJsonPrimitive('foo')->asString());
+        self::assertSame('bar', $jsonObject->getAsJsonPrimitive('foo')->asString());
     }
 
-    public function testAsPrimitiveException()
+    public function testGetAsPrimitiveException()
     {
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('This value is not a primitive');
@@ -111,10 +111,10 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
         $jsonObject = new JsonObject();
         $jsonObject->add('foo', new JsonObject());
 
-        $jsonObject->asJsonPrimitive('foo');
+        $jsonObject->getAsJsonPrimitive('foo');
     }
 
-    public function testAsArray()
+    public function testGetAsJsonArray()
     {
         $array = new JsonArray();
         $array->addInteger(1);
@@ -122,10 +122,10 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
         $jsonObject = new JsonObject();
         $jsonObject->add('foo', $array);
 
-        self::assertSame(1, $jsonObject->asJsonArray('foo')->get(0)->asInteger());
+        self::assertSame(1, $jsonObject->getAsJsonArray('foo')->get(0)->asInteger());
     }
 
-    public function testAsArrayException()
+    public function testGetAsJsonArrayException()
     {
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('This value is not an array');
@@ -133,10 +133,10 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
         $jsonObject = new JsonObject();
         $jsonObject->add('foo', new JsonObject());
 
-        $jsonObject->asJsonArray('foo');
+        $jsonObject->getAsJsonArray('foo');
     }
 
-    public function testAsObject()
+    public function testGetAsJsonObject()
     {
         $object = new JsonObject();
         $object->addInteger('bar', 1);
@@ -144,10 +144,10 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
         $jsonObject = new JsonObject();
         $jsonObject->add('foo', $object);
 
-        self::assertSame(1, $jsonObject->asJsonObject('foo')->get('bar')->asInteger());
+        self::assertSame(1, $jsonObject->getAsJsonObject('foo')->get('bar')->asInteger());
     }
 
-    public function testAsObjectException()
+    public function testGetAsJsonObjectException()
     {
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('This value is not an object');
@@ -155,7 +155,69 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
         $jsonObject = new JsonObject();
         $jsonObject->add('foo', new JsonArray());
 
-        $jsonObject->asJsonObject('foo');
+        $jsonObject->getAsJsonObject('foo');
+    }
+
+    public function testGetAsString()
+    {
+        $jsonObject = new JsonObject();
+        $jsonObject->addString('foo', 'bar');
+
+        self::assertSame('bar', $jsonObject->getAsString('foo'));
+    }
+
+    public function testGetAsInteger()
+    {
+        $jsonObject = new JsonObject();
+        $jsonObject->addInteger('foo', 1);
+
+        self::assertSame(1, $jsonObject->getAsInteger('foo'));
+    }
+
+    public function testGetAsFloat()
+    {
+        $jsonObject = new JsonObject();
+        $jsonObject->addFloat('foo', 1);
+
+        self::assertSame(1.0, $jsonObject->getAsFloat('foo'));
+    }
+
+    public function testGetAsBoolean()
+    {
+        $jsonObject = new JsonObject();
+        $jsonObject->addBoolean('foo', false);
+
+        self::assertSame(false, $jsonObject->getAsBoolean('foo'));
+    }
+
+    public function testGetAsArray()
+    {
+        $object = new JsonObject();
+        $object->addString('foo', 'bar');
+        $jsonObject = new JsonObject();
+        $jsonObject->add('foo', $object);
+
+        self::assertSame(['foo' => 'bar'], $jsonObject->getAsArray('foo'));
+    }
+
+    public function testAsJsonObject()
+    {
+        $jsonObject = new JsonObject();
+        $jsonObject->addBoolean('foo', false);
+
+        self::assertSame($jsonObject, $jsonObject->asJsonObject());
+    }
+
+    public function testAsArray()
+    {
+        $array = new JsonArray();
+        $array->addInteger(1);
+        $object = new JsonObject();
+        $object->add('bar', $array);
+        $jsonObject = new JsonObject();
+        $jsonObject->add('foo', $object);
+
+        self::assertSame(['foo' => ['bar' => [1]]], $jsonObject->asArray());
     }
 
     public function testRemove()

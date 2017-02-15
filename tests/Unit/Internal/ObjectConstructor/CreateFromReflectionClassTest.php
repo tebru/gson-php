@@ -7,7 +7,6 @@
 namespace Tebru\Gson\Test\Unit\Internal\ObjectConstructor;
 
 use PHPUnit_Framework_TestCase;
-use ReflectionClass;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromReflectionClass;
 use Tebru\Gson\Test\Mock\ClassWithParameters;
 
@@ -21,7 +20,7 @@ class CreateFromReflectionClassTest extends PHPUnit_Framework_TestCase
 {
     public function testConstruct()
     {
-        $instanceCreator = new CreateFromReflectionClass(new ReflectionClass(ClassWithParameters::class));
+        $instanceCreator = new CreateFromReflectionClass(ClassWithParameters::class);
         $object = $instanceCreator->construct();
 
         self::assertInstanceOf(ClassWithParameters::class, $object);

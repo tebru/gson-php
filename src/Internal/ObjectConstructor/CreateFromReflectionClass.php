@@ -21,18 +21,18 @@ use Tebru\Gson\Internal\ObjectConstructor;
 final class CreateFromReflectionClass implements ObjectConstructor
 {
     /**
-     * @var ReflectionClass
+     * @var string
      */
-    private $reflectionClass;
+    private $className;
 
     /**
      * Constructor
      *
-     * @param ReflectionClass $reflectionClass
+     * @param string $className
      */
-    public function __construct(ReflectionClass $reflectionClass)
+    public function __construct(string $className)
     {
-        $this->reflectionClass = $reflectionClass;
+        $this->className = $className;
     }
 
     /**
@@ -42,6 +42,8 @@ final class CreateFromReflectionClass implements ObjectConstructor
      */
     public function construct()
     {
-        return $this->reflectionClass->newInstanceWithoutConstructor();
+        $reflectionClass = new ReflectionClass($this->className);
+
+        return $reflectionClass->newInstanceWithoutConstructor();
     }
 }

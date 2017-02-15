@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Internal;
 
-use ReflectionClass;
 use Tebru\Gson\InstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromReflectionClass;
@@ -25,6 +24,9 @@ use Throwable;
 final class ConstructorConstructor
 {
     /**
+     * An array of [@see InstanceCreator] objects that can be used
+     * for custom instantiation of a class
+     *
      * @var InstanceCreator[]
      */
     private $instanceCreators;
@@ -58,7 +60,7 @@ final class ConstructorConstructor
 
             return new CreateWithoutArguments($class);
         } catch (Throwable $throwable) {
-            return new CreateFromReflectionClass(new ReflectionClass($class));
+            return new CreateFromReflectionClass($class);
         }
     }
 }

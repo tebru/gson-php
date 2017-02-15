@@ -27,6 +27,14 @@ use Tebru\Gson\Test\Mock\TypeAdapterMock;
  */
 class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 {
+    public function testAddTypeAdapter()
+    {
+        $provider = new TypeAdapterProvider([new TypeAdapterMock()]);
+        $provider->addTypeAdapter('string', new TypeAdapterMock());
+        $adapter = $provider->getAdapter(new PhpType('string'));
+
+        self::assertInstanceOf(TypeAdapterMock::class, $adapter);
+    }
     public function testGetTypeAdapter()
     {
         $provider = new TypeAdapterProvider([new TypeAdapterMock()]);
@@ -49,8 +57,9 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The type "string" could not be handled by any of the registered type adapters');
 
-        $provider = new TypeAdapterProvider([new TypeAdapterMock()]);
-        $provider->getAdapter(new PhpType('string'), TypeAdapterMock::class);
+        $mock = new TypeAdapterMock();
+        $provider = new TypeAdapterProvider([$mock]);
+        $provider->getAdapter(new PhpType('string'), $mock);
     }
 
     public function testGetTypeAdapterUsesCache()
@@ -70,14 +79,15 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The type "string" could not be handled by any of the registered type adapters');
 
-        $provider = new TypeAdapterProvider([new TypeAdapterMock()]);
+        $mock = new TypeAdapterMock();
+        $provider = new TypeAdapterProvider([$mock]);
         $provider->getAdapter(new PhpType('string'));
 
         $reflectionProperty = new ReflectionProperty(TypeAdapterProvider::class, 'typeAdapterFactories');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($provider, []);
 
-        self::assertInstanceOf(TypeAdapterMock::class, $provider->getAdapter(new PhpType('string'), TypeAdapterMock::class));
+        self::assertInstanceOf(TypeAdapterMock::class, $provider->getAdapter(new PhpType('string'), $mock));
     }
 
     public function testGetTypeAdapterFromAnnotation()

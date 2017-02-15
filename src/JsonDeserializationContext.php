@@ -7,7 +7,6 @@
 namespace Tebru\Gson;
 
 use Tebru\Gson\Element\JsonElement;
-use Tebru\Gson\Internal\PhpType;
 
 /**
  * Interface JsonDeserializationContext
@@ -25,8 +24,8 @@ interface JsonDeserializationContext
      * object.
      *
      * @param JsonElement $jsonElement
-     * @param PhpType $type
+     * @param string $type
      * @return mixed
      */
-    public function deserialize(JsonElement $jsonElement, PhpType $type);
+    public function deserialize(JsonElement $jsonElement, string $type);
 }

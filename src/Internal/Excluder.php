@@ -84,7 +84,7 @@ final class Excluder
      * @param string $version
      * @return Excluder
      */
-    public function setVersion(string $version): Excluder
+    public function setVersion(?string $version): Excluder
     {
         $this->version = $version;
 

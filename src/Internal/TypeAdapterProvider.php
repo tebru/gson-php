@@ -46,24 +46,35 @@ final class TypeAdapterProvider
     }
 
     /**
+     * Add type adapter directly into cache
+     *
+     * @param string $type
+     * @param TypeAdapter $typeAdapter
+     */
+    public function addTypeAdapter(string $type, TypeAdapter $typeAdapter): void
+    {
+        $this->typeAdapterCache[$type] = $typeAdapter;
+    }
+
+    /**
      * Creates a key based on the type, and optionally the class that should be skipped.
      * Returns the [@see TypeAdapter] if it has already been created, otherwise loops
      * over all of the factories and finds a type adapter that supports the type.
      *
      * @param PhpType $type
-     * @param string $skipClass
+     * @param TypeAdapterFactory $skip
      * @return TypeAdapter
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      */
-    public function getAdapter(PhpType $type, string $skipClass = null): TypeAdapter
+    public function getAdapter(PhpType $type, TypeAdapterFactory $skip = null): TypeAdapter
     {
         $fullType = (string) $type;
-        if (null === $skipClass && array_key_exists($fullType, $this->typeAdapterCache)) {
+        if (null === $skip && array_key_exists($fullType, $this->typeAdapterCache)) {
             return $this->typeAdapterCache[$fullType];
         }
 
         foreach ($this->typeAdapterFactories as $typeAdapterFactory) {
-            if (get_class($typeAdapterFactory) === $skipClass) {
+            if ($typeAdapterFactory === $skip) {
                 continue;
             }
 
@@ -102,6 +113,8 @@ final class TypeAdapterProvider
             return $object;
         } elseif ($object instanceof TypeAdapterFactory) {
             return $object->create($phpType, $this);
+        } elseif ($object instanceof JsonSerializer && $object instanceof JsonDeserializer) {
+            return new CustomWrappedTypeAdapter($phpType, $this, $object, $object);
         } elseif ($object instanceof JsonSerializer) {
             return new CustomWrappedTypeAdapter($phpType, $this, $object);
         } elseif ($object instanceof JsonDeserializer) {

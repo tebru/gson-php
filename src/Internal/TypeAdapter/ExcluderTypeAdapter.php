@@ -8,10 +8,10 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 
 use Tebru\Gson\Internal\JsonWritable;
 use Tebru\Gson\Internal\PhpType;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\TypeAdapter;
+use Tebru\Gson\TypeAdapterFactory;
 
 /**
  * Class ExcluderTypeAdapter
@@ -45,19 +45,31 @@ final class ExcluderTypeAdapter extends TypeAdapter
     private $skipDeserialize;
 
     /**
+     * @var TypeAdapterFactory
+     */
+    private $skip;
+
+    /**
      * Constructor
      *
      * @param PhpType $phpType
      * @param TypeAdapterProvider $typeAdapterProvider
      * @param bool $skipSerialize
      * @param bool $skipDeserialize
+     * @param TypeAdapterFactory $skip
      */
-    public function __construct(PhpType $phpType, TypeAdapterProvider $typeAdapterProvider, bool $skipSerialize, bool $skipDeserialize)
-    {
+    public function __construct(
+        PhpType $phpType,
+        TypeAdapterProvider $typeAdapterProvider,
+        bool $skipSerialize,
+        bool $skipDeserialize,
+        TypeAdapterFactory $skip
+    ) {
         $this->phpType = $phpType;
         $this->typeAdapterProvider = $typeAdapterProvider;
         $this->skipSerialize = $skipSerialize;
         $this->skipDeserialize = $skipDeserialize;
+        $this->skip = $skip;
     }
 
     /**
@@ -75,7 +87,7 @@ final class ExcluderTypeAdapter extends TypeAdapter
             return null;
         }
 
-        $delegateAdapter = $this->typeAdapterProvider->getAdapter($this->phpType, ExcluderTypeAdapterFactory::class);
+        $delegateAdapter = $this->typeAdapterProvider->getAdapter($this->phpType, $this->skip);
 
         return $delegateAdapter->read($reader);
     }

@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Exception;
 
-use JMS\Serializer\Exception\RuntimeException;
+use RuntimeException;
 use Throwable;
 
 /**

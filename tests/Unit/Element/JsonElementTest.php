@@ -69,4 +69,40 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
         $element = new JsonNull();
         $element->asBoolean();
     }
+
+    public function testAsArray()
+    {
+        $this->expectException(UnsupportedMethodException::class);
+        $this->expectExceptionMessage('This method "asArray" is not supported on "Tebru\Gson\Element\JsonNull"');
+
+        $element = new JsonNull();
+        $element->asArray();
+    }
+
+    public function testAsJsonObject()
+    {
+        $this->expectException(UnsupportedMethodException::class);
+        $this->expectExceptionMessage('This method "asJsonObject" is not supported on "Tebru\Gson\Element\JsonNull"');
+
+        $element = new JsonNull();
+        $element->asJsonObject();
+    }
+
+    public function testAsJsonArray()
+    {
+        $this->expectException(UnsupportedMethodException::class);
+        $this->expectExceptionMessage('This method "asJsonArray" is not supported on "Tebru\Gson\Element\JsonNull"');
+
+        $element = new JsonNull();
+        $element->asJsonArray();
+    }
+
+    public function testGetValue()
+    {
+        $this->expectException(UnsupportedMethodException::class);
+        $this->expectExceptionMessage('This method "getValue" is not supported on "Tebru\Gson\Element\JsonNull"');
+
+        $element = new JsonNull();
+        $element->getValue();
+    }
 }

@@ -68,6 +68,6 @@ final class ExcluderTypeAdapterFactory implements TypeAdapterFactory
         $skipSerialize = $this->excluder->excludeClass($type->getClass(), true);
         $skipDeserialize = $this->excluder->excludeClass($type->getClass(), false);
 
-        return new ExcluderTypeAdapter($type, $typeAdapterProvider, $skipSerialize, $skipDeserialize);
+        return new ExcluderTypeAdapter($type, $typeAdapterProvider, $skipSerialize, $skipDeserialize, $this);
     }
 }

@@ -9,12 +9,12 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
 use Tebru\Gson\Internal\JsonWritable;
 use Tebru\Gson\Internal\PhpType;
-use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\TypeAdapter;
+use Tebru\Gson\TypeAdapterFactory;
 
 /**
  * Class CustomWrappedTypeAdapter
@@ -46,23 +46,31 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
     private $deserializer;
 
     /**
+     * @var TypeAdapterFactory
+     */
+    private $skip;
+
+    /**
      * Constructor
      *
-     * @param JsonDeserializer $deserializer
-     * @param JsonSerializer $serializer
      * @param PhpType $phpType
      * @param TypeAdapterProvider $typeAdapterProvider
+     * @param JsonSerializer $serializer
+     * @param JsonDeserializer $deserializer
+     * @param TypeAdapterFactory $skip
      */
     public function __construct(
         PhpType $phpType,
         TypeAdapterProvider $typeAdapterProvider,
         JsonSerializer $serializer = null,
-        JsonDeserializer $deserializer = null
+        JsonDeserializer $deserializer = null,
+        TypeAdapterFactory $skip = null
     ) {
         $this->phpType = $phpType;
         $this->typeAdapterProvider = $typeAdapterProvider;
         $this->serializer = $serializer;
         $this->deserializer = $deserializer;
+        $this->skip = $skip;
     }
 
     /**
@@ -76,7 +84,7 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
     public function read(JsonReadable $reader)
     {
         if (null === $this->deserializer) {
-            $adapter = $this->typeAdapterProvider->getAdapter($this->phpType, CustomWrappedTypeAdapterFactory::class);
+            $adapter = $this->typeAdapterProvider->getAdapter($this->phpType, $this->skip);
 
             return $adapter->read($reader);
         }
