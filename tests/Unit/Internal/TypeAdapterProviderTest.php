@@ -17,6 +17,7 @@ use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\MockDeserializer;
 use Tebru\Gson\Test\Mock\MockSerializer;
+use Tebru\Gson\Test\Mock\MockSerializerDeserializer;
 use Tebru\Gson\Test\Mock\TypeAdapterMock;
 
 /**
@@ -133,5 +134,15 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 
         $provider = new TypeAdapterProvider([new TypeAdapterMock()]);
         $provider->getAdapterFromAnnotation(new PhpType('string'), new JsonAdapter(['value' => ChildClass::class]));
+    }
+
+    public function testGetJsonSerializerAndDeserializerFromAnnotation()
+    {
+        $provider = new TypeAdapterProvider([new TypeAdapterMock()]);
+        $adapter = $provider->getAdapterFromAnnotation(new PhpType('string'), new JsonAdapter(['value' => MockSerializerDeserializer::class]));
+
+        self::assertInstanceOf(CustomWrappedTypeAdapter::class, $adapter);
+        self::assertAttributeInstanceOf(MockSerializerDeserializer::class, 'serializer', $adapter);
+        self::assertAttributeInstanceOf(MockSerializerDeserializer::class, 'deserializer', $adapter);
     }
 }

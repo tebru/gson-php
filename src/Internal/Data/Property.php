@@ -251,8 +251,8 @@ final class Property
     }
 
     /**
-     * Read the next value using the type adapter registered to property
-     * and set it to the object
+     * Write the next value using the type adapter registered to property by
+     * getting it from the property
      *
      * @param JsonWritable $writer
      * @param mixed $object

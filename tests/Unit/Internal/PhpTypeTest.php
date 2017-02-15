@@ -8,6 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal;
 
 use DateTime;
 use PHPUnit_Framework_TestCase;
+use stdClass;
 use Tebru\Gson\Exception\MalformedTypeException;
 use Tebru\Gson\Internal\PhpType;
 
@@ -211,5 +212,45 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
         $phpType = new PhpType('int');
 
         self::assertSame('integer', (string) $phpType);
+    }
+
+    public function testCreateFromVariableObject()
+    {
+        self::assertSame(stdClass::class, (string) PhpType::createFromVariable(new stdClass()));
+    }
+
+    public function testCreateFromVariableInteger()
+    {
+        self::assertSame('integer', (string) PhpType::createFromVariable(1));
+    }
+
+    public function testCreateFromVariableFloat()
+    {
+        self::assertSame('float', (string) PhpType::createFromVariable(1.1));
+    }
+
+    public function testCreateFromVariableString()
+    {
+        self::assertSame('string', (string) PhpType::createFromVariable('foo'));
+    }
+
+    public function testCreateFromVariableBooleanTrue()
+    {
+        self::assertSame('boolean', (string) PhpType::createFromVariable(true));
+    }
+
+    public function testCreateFromVariableBooleanFalse()
+    {
+        self::assertSame('boolean', (string) PhpType::createFromVariable(false));
+    }
+
+    public function testCreateFromVariableArray()
+    {
+        self::assertSame('array', (string) PhpType::createFromVariable([]));
+    }
+
+    public function testCreateFromVariableNull()
+    {
+        self::assertSame('null', (string) PhpType::createFromVariable(null));
     }
 }

@@ -16,6 +16,7 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\JsonDecodeReader;
+use Tebru\Gson\Internal\JsonEncodeWriter;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ChildClassParent;
@@ -225,6 +226,30 @@ class PropertyTest extends PHPUnit_Framework_TestCase
 
         $property->read(new JsonDecodeReader('"foo"'), $mock);
         self::assertSame('foo', $property->get($mock));
+    }
+
+    public function testWrite()
+    {
+        $mock = new class { public $foo = 'bar'; };
+        $realName = 'foo';
+        $serializedName = 'foo_bar';
+        $type = new PhpType('Foo');
+
+        $property = new Property(
+            'foo',
+            $realName,
+            $serializedName,
+            $type,
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
+            new AnnotationSet(),
+            0,
+            new TypeAdapterMock()
+        );
+
+        $writer = new JsonEncodeWriter();
+        $property->write($writer, $mock);
+        self::assertSame('"bar"', (string) $writer);
     }
 
     public function testSetNull()

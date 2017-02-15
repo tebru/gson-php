@@ -40,6 +40,7 @@ class TypeAdapterMock extends TypeAdapter implements TypeAdapterFactory
      */
     public function write(JsonWritable $writer, $value): void
     {
+        $writer->writeString($value);
     }
 
     /**
