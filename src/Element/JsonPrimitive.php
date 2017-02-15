@@ -27,9 +27,24 @@ class JsonPrimitive extends JsonElement
      *
      * @param mixed $value
      */
-    public function __construct($value)
+    private function __construct($value)
     {
         $this->value = $value;
+    }
+
+    /**
+     * Factory constructor that handles nulls
+     *
+     * @param mixed $value
+     * @return JsonNull|JsonPrimitive
+     */
+    public static function create($value)
+    {
+        if (null === $value) {
+            return new JsonNull();
+        }
+
+        return new self($value);
     }
 
     /**

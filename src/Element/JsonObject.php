@@ -33,9 +33,9 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      * @param string $property
      * @param string $value
      */
-    public function addString(string $property, string $value)
+    public function addString(string $property, ?string $value)
     {
-        $this->add($property, new JsonPrimitive($value));
+        $this->add($property, JsonPrimitive::create($value));
     }
 
     /**
@@ -44,9 +44,9 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      * @param string $property
      * @param int $value
      */
-    public function addInteger(string $property, int $value)
+    public function addInteger(string $property, ?int $value)
     {
-        $this->add($property, new JsonPrimitive($value));
+        $this->add($property, JsonPrimitive::create($value));
     }
 
     /**
@@ -55,9 +55,9 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      * @param string $property
      * @param float $value
      */
-    public function addFloat(string $property, float $value)
+    public function addFloat(string $property, ?float $value)
     {
-        $this->add($property, new JsonPrimitive($value));
+        $this->add($property, JsonPrimitive::create($value));
     }
 
     /**
@@ -66,9 +66,9 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      * @param string $property
      * @param bool $value
      */
-    public function addBoolean(string $property, bool $value)
+    public function addBoolean(string $property, ?bool $value)
     {
-        $this->add($property, new JsonPrimitive($value));
+        $this->add($property, JsonPrimitive::create($value));
     }
 
     /**

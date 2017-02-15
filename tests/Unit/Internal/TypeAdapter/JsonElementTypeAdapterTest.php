@@ -160,35 +160,35 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
-        self::assertSame('"foo"', $typeAdapter->writeToJson(new JsonPrimitive('foo'), false));
+        self::assertSame('"foo"', $typeAdapter->writeToJson(JsonPrimitive::create('foo'), false));
     }
 
     public function testSerializeInteger()
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
-        self::assertSame('1', $typeAdapter->writeToJson(new JsonPrimitive(1), false));
+        self::assertSame('1', $typeAdapter->writeToJson(JsonPrimitive::create(1), false));
     }
 
     public function testSerializeFloat()
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
-        self::assertSame('1.1', $typeAdapter->writeToJson(new JsonPrimitive(1.1), false));
+        self::assertSame('1.1', $typeAdapter->writeToJson(JsonPrimitive::create(1.1), false));
     }
 
     public function testSerializeBooleanTrue()
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
-        self::assertSame('true', $typeAdapter->writeToJson(new JsonPrimitive(true), false));
+        self::assertSame('true', $typeAdapter->writeToJson(JsonPrimitive::create(true), false));
     }
 
     public function testSerializeBooleanFalse()
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
-        self::assertSame('false', $typeAdapter->writeToJson(new JsonPrimitive(false), false));
+        self::assertSame('false', $typeAdapter->writeToJson(JsonPrimitive::create(false), false));
     }
 
     public function testSerializeNested()

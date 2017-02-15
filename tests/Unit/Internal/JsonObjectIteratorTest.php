@@ -50,7 +50,7 @@ class JsonObjectIteratorTest extends PHPUnit_Framework_TestCase
         $iterator = new JsonObjectIterator($jsonObject);
         $iterator->next();
 
-        self::assertEquals(['bar', new JsonPrimitive(2)], $iterator->current());
+        self::assertEquals(['bar', JsonPrimitive::create(2)], $iterator->current());
     }
 
     public function testValid()

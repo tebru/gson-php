@@ -179,14 +179,14 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextBooleanTrue()
     {
-        $reader = new JsonElementReader(new JsonPrimitive(true));
+        $reader = new JsonElementReader(JsonPrimitive::create(true));
 
         self::assertTrue($reader->nextBoolean());
     }
 
     public function testNextBooleanFalse()
     {
-        $reader = new JsonElementReader(new JsonPrimitive(false));
+        $reader = new JsonElementReader(JsonPrimitive::create(false));
 
         self::assertFalse($reader->nextBoolean());
     }
@@ -196,20 +196,20 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Expected "boolean", but found "string"');
 
-        $reader = new JsonElementReader(new JsonPrimitive('test'));
+        $reader = new JsonElementReader(JsonPrimitive::create('test'));
         $reader->nextBoolean();
     }
 
     public function testNextDouble()
     {
-        $reader = new JsonElementReader(new JsonPrimitive(1.1));
+        $reader = new JsonElementReader(JsonPrimitive::create(1.1));
 
         self::assertSame(1.1, $reader->nextDouble());
     }
 
     public function testNextDoubleAsInt()
     {
-        $reader = new JsonElementReader(new JsonPrimitive(1));
+        $reader = new JsonElementReader(JsonPrimitive::create(1));
 
         self::assertSame(1.0, $reader->nextDouble());
     }
@@ -219,13 +219,13 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Expected "number", but found "string"');
 
-        $reader = new JsonElementReader(new JsonPrimitive('1.1'));
+        $reader = new JsonElementReader(JsonPrimitive::create('1.1'));
         $reader->nextDouble();
     }
 
     public function testNextInteger()
     {
-        $reader = new JsonElementReader(new JsonPrimitive(1));
+        $reader = new JsonElementReader(JsonPrimitive::create(1));
 
         self::assertSame(1, $reader->nextInteger());
     }
@@ -235,48 +235,48 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Expected "number", but found "string"');
 
-        $reader = new JsonElementReader(new JsonPrimitive('1'));
+        $reader = new JsonElementReader(JsonPrimitive::create('1'));
         $reader->nextInteger();
     }
 
     public function testNextString()
     {
-        $reader = new JsonElementReader(new JsonPrimitive('test'));
+        $reader = new JsonElementReader(JsonPrimitive::create('test'));
 
         self::assertSame('test', $reader->nextString());
     }
 
     public function testNextStringIntType()
     {
-        $reader = new JsonElementReader(new JsonPrimitive('1'));
+        $reader = new JsonElementReader(JsonPrimitive::create('1'));
 
         self::assertSame('1', $reader->nextString());
     }
 
     public function testNextStringDoubleType()
     {
-        $reader = new JsonElementReader(new JsonPrimitive('1.1'));
+        $reader = new JsonElementReader(JsonPrimitive::create('1.1'));
 
         self::assertSame('1.1', $reader->nextString());
     }
 
     public function testNextStringBooleanTrueType()
     {
-        $reader = new JsonElementReader(new JsonPrimitive('true'));
+        $reader = new JsonElementReader(JsonPrimitive::create('true'));
 
         self::assertSame('true', $reader->nextString());
     }
 
     public function testNextStringBooleanFalseType()
     {
-        $reader = new JsonElementReader(new JsonPrimitive('false'));
+        $reader = new JsonElementReader(JsonPrimitive::create('false'));
 
         self::assertSame('false', $reader->nextString());
     }
 
     public function testNextStringNullType()
     {
-        $reader = new JsonElementReader(new JsonPrimitive('null'));
+        $reader = new JsonElementReader(JsonPrimitive::create('null'));
 
         self::assertSame('null', $reader->nextString());
     }
@@ -284,14 +284,14 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
     public function testNextStringIgnoresDoubleQuote()
     {
         $string = 'te"st';
-        $reader = new JsonElementReader(new JsonPrimitive($string));
+        $reader = new JsonElementReader(JsonPrimitive::create($string));
 
         self::assertSame('te"st', $reader->nextString());
     }
 
     public function testNextStringIgnoresOtherTerminationCharacters()
     {
-        $reader = new JsonElementReader(new JsonPrimitive('te]},st'));
+        $reader = new JsonElementReader(JsonPrimitive::create('te]},st'));
 
         self::assertSame('te]},st', $reader->nextString());
     }
@@ -299,14 +299,14 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
     public function testNextStringWithEscapedCharacters()
     {
         $string = 'te\\\/\b\f\n\r\t\u1234st';
-        $reader = new JsonElementReader(new JsonPrimitive($string));
+        $reader = new JsonElementReader(JsonPrimitive::create($string));
 
         self::assertSame($string, $reader->nextString());
     }
 
     public function testNextStringWithEmoji()
     {
-        $reader = new JsonElementReader(new JsonPrimitive('te👍st'));
+        $reader = new JsonElementReader(JsonPrimitive::create('te👍st'));
 
         self::assertSame('te👍st', $reader->nextString());
     }
@@ -316,7 +316,7 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Expected "string", but found "number"');
 
-        $reader = new JsonElementReader(new JsonPrimitive(1));
+        $reader = new JsonElementReader(JsonPrimitive::create(1));
         $reader->nextString();
     }
 
@@ -342,7 +342,7 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Expected "null", but found "string"');
 
-        $reader = new JsonElementReader(new JsonPrimitive('test'));
+        $reader = new JsonElementReader(JsonPrimitive::create('test'));
         $reader->nextNull();
     }
 
@@ -509,21 +509,21 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testValueString()
     {
-        $reader = new JsonElementReader(new JsonPrimitive('test'));
+        $reader = new JsonElementReader(JsonPrimitive::create('test'));
 
         self::assertEquals(JsonToken::STRING, $reader->peek());
     }
 
     public function testValueTrue()
     {
-        $reader = new JsonElementReader(new JsonPrimitive(true));
+        $reader = new JsonElementReader(JsonPrimitive::create(true));
 
         self::assertEquals(JsonToken::BOOLEAN, $reader->peek());
     }
 
     public function testValueFalse()
     {
-        $reader = new JsonElementReader(new JsonPrimitive(false));
+        $reader = new JsonElementReader(JsonPrimitive::create(false));
 
         self::assertEquals(JsonToken::BOOLEAN, $reader->peek());
     }
@@ -540,7 +540,7 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
      */
     public function testValueNumber($number)
     {
-        $reader = new JsonElementReader(new JsonPrimitive((int)sprintf('%d', $number)));
+        $reader = new JsonElementReader(JsonPrimitive::create((int)sprintf('%d', $number)));
 
         self::assertEquals(JsonToken::NUMBER, $reader->peek());
     }

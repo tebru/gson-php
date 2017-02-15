@@ -31,9 +31,9 @@ class JsonArray extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $value
      */
-    public function addString(string $value): void
+    public function addString(?string $value): void
     {
-        $this->addJsonElement(new JsonPrimitive($value));
+        $this->addJsonElement(JsonPrimitive::create($value));
     }
 
     /**
@@ -41,9 +41,9 @@ class JsonArray extends JsonElement implements IteratorAggregate, Countable
      *
      * @param int $value
      */
-    public function addInteger(int $value): void
+    public function addInteger(?int $value): void
     {
-        $this->addJsonElement(new JsonPrimitive($value));
+        $this->addJsonElement(JsonPrimitive::create($value));
     }
 
     /**
@@ -51,9 +51,9 @@ class JsonArray extends JsonElement implements IteratorAggregate, Countable
      *
      * @param float $value
      */
-    public function addFloat(float $value): void
+    public function addFloat(?float $value): void
     {
-        $this->addJsonElement(new JsonPrimitive($value));
+        $this->addJsonElement(JsonPrimitive::create($value));
     }
 
     /**
@@ -61,9 +61,9 @@ class JsonArray extends JsonElement implements IteratorAggregate, Countable
      *
      * @param bool $value
      */
-    public function addBoolean(bool $value): void
+    public function addBoolean(?bool $value): void
     {
-        $this->addJsonElement(new JsonPrimitive($value));
+        $this->addJsonElement(JsonPrimitive::create($value));
     }
 
     /**

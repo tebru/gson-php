@@ -54,11 +54,11 @@ final class JsonElementTypeAdapter extends TypeAdapter
 
                 return $array;
             case JsonToken::STRING:
-                return new JsonPrimitive($reader->nextString());
+                return JsonPrimitive::create($reader->nextString());
             case JsonToken::NUMBER:
-                return new JsonPrimitive($reader->nextDouble());
+                return JsonPrimitive::create($reader->nextDouble());
             case JsonToken::BOOLEAN:
-                return new JsonPrimitive($reader->nextBoolean());
+                return JsonPrimitive::create($reader->nextBoolean());
             case JsonToken::NULL:
                 $reader->nextNull();
 

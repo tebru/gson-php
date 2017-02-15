@@ -6,6 +6,7 @@
 namespace Tebru\Gson\Test\Unit\Element;
 
 use PHPUnit_Framework_TestCase;
+use Tebru\Gson\Element\JsonNull;
 use Tebru\Gson\Element\JsonPrimitive;
 
 /**
@@ -16,9 +17,14 @@ use Tebru\Gson\Element\JsonPrimitive;
  */
 class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
 {
+    public function testNull()
+    {
+        self::assertInstanceOf(JsonNull::class, JsonPrimitive::create(null));
+    }
+
     public function testString()
     {
-        $primitive = new JsonPrimitive('test');
+        $primitive = JsonPrimitive::create('test');
 
         self::assertTrue($primitive->isString());
         self::assertFalse($primitive->isBoolean());
@@ -35,7 +41,7 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
 
     public function testBooleanTrue()
     {
-        $primitive = new JsonPrimitive(true);
+        $primitive = JsonPrimitive::create(true);
 
         self::assertFalse($primitive->isString());
         self::assertTrue($primitive->isBoolean());
@@ -52,7 +58,7 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
 
     public function testBooleanFalse()
     {
-        $primitive = new JsonPrimitive(false);
+        $primitive = JsonPrimitive::create(false);
 
         self::assertFalse($primitive->isString());
         self::assertTrue($primitive->isBoolean());
@@ -69,7 +75,7 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
 
     public function testInteger()
     {
-        $primitive = new JsonPrimitive(1);
+        $primitive = JsonPrimitive::create(1);
 
         self::assertFalse($primitive->isString());
         self::assertFalse($primitive->isBoolean());
@@ -86,7 +92,7 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
 
     public function testFloat()
     {
-        $primitive = new JsonPrimitive(1.1);
+        $primitive = JsonPrimitive::create(1.1);
 
         self::assertFalse($primitive->isString());
         self::assertFalse($primitive->isBoolean());
@@ -103,7 +109,7 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
 
     public function testIntegerAsFloat()
     {
-        $primitive = new JsonPrimitive(1);
+        $primitive = JsonPrimitive::create(1);
 
         self::assertSame(1.0, $primitive->asFloat());
     }

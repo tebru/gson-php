@@ -48,6 +48,6 @@ class GsonObjectMockSerializerMock implements JsonSerializer, JsonDeserializer
      */
     public function serialize($object, PhpType $type, JsonSerializationContext $context): JsonElement
     {
-        return new JsonPrimitive($object->getFoo());
+        return JsonPrimitive::create($object->getFoo());
     }
 }

@@ -118,7 +118,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
 
     public function testSet()
     {
-        $primitive = new JsonPrimitive(2);
+        $primitive = JsonPrimitive::create(2);
         $jsonArray = new JsonArray();
         $jsonArray->addInteger(1);
         $jsonArray->set(0, $primitive);
