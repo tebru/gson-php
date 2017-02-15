@@ -446,6 +446,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         $gson = Gson::builder()->build();
         $result = $gson->toJson($this->gsonMock());
         $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
         unset($json['exclude']);
 
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
@@ -477,7 +478,8 @@ class GsonTest extends PHPUnit_Framework_TestCase
             "json_adapter": null,
             "expose": null,
             "exclude_from_strategy": null,
-            "gson_object_mock": null
+            "gson_object_mock": null,
+            "virtual": 2
         }';
 
         self::assertJsonStringEqualsJsonString($expected, $result);
@@ -491,6 +493,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
         $result = $gson->toJson($this->gsonMock());
         $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
         unset($json['exclude']);
         unset($json['since']);
 
@@ -505,6 +508,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
         $result = $gson->toJson($this->gsonMock());
         $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
         unset($json['exclude']);
         unset($json['until']);
 
@@ -519,6 +523,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
         $result = $gson->toJson($this->gsonMock());
         $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
         unset($json['exclude']);
         unset($json['protected']);
 
@@ -545,6 +550,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         $result = $gson->toJson($this->gsonMock());
         $json = json_decode($this->json(), true);
         unset($json['exclude']);
+        $json['virtual'] = 3;
         $json['integer'] = 2;
         $json['type'] = [2, 3, 4];
 
@@ -559,6 +565,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
         $result = $gson->toJson($this->gsonMock());
         $json = json_decode($this->json(), true);
+        $json['virtual'] = 3;
         unset($json['exclude']);
         $json['integer'] = 2;
         $json['type'] = [2, 3, 4];
@@ -599,6 +606,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
         $result = $gson->toJson($this->gsonMock());
         $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
         unset($json['exclude']);
         unset($json['exclude_from_strategy']);
 

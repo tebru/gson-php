@@ -17,6 +17,7 @@ use Tebru\Gson\Annotation\SerializedName;
 use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Annotation\Type;
 use Tebru\Gson\Annotation\Until;
+use Tebru\Gson\Annotation\VirtualProperty;
 
 /**
  * Class GsonMock
@@ -306,5 +307,14 @@ class GsonMock
     public function setProtectedHidden($protected)
     {
         $this->protected = $protected;
+    }
+
+    /**
+     * @VirtualProperty()
+     * @SerializedName("virtual")
+     */
+    public function myVirtualProperty(): int
+    {
+        return 2;
     }
 }
