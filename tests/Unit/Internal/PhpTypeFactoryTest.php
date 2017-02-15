@@ -25,9 +25,11 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromAnnotation()
     {
         $type = new Type(['value' => ChildClass::class]);
-        $annotations = new AnnotationSet([$type]);
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation($type, AnnotationSet::TYPE_PROPERTY);
+
         $factory = new PhpTypeFactory();
-        $phpType = $factory->create($annotations);
+        $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY);
 
         self::assertSame(ChildClass::class, $phpType->getClass());
     }
@@ -37,7 +39,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $factory = new PhpTypeFactory();
         $setter = new ReflectionMethod(ChildClass::class, 'setWithTypehint');
-        $phpType = $factory->create($annotations, null, $setter);
+        $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY, null, $setter);
 
         self::assertSame(UserMock::class, $phpType->getClass());
     }
@@ -48,7 +50,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $factory = new PhpTypeFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'getWithReturnType');
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
-        $phpType = $factory->create($annotations, $getter, $setter);
+        $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY, $getter, $setter);
 
         self::assertSame(UserMock::class, $phpType->getClass());
     }
@@ -59,7 +61,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $factory = new PhpTypeFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'isFoo');
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
-        $phpType = $factory->create($annotations, $getter, $setter);
+        $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY, $getter, $setter);
 
         self::assertSame('string', (string) $phpType);
     }
@@ -70,7 +72,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $factory = new PhpTypeFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'isFoo');
         $setter = new ReflectionMethod(ChildClass::class, 'set_baz');
-        $phpType = $factory->create($annotations, $getter, $setter);
+        $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY, $getter, $setter);
 
         self::assertSame('?', (string) $phpType);
     }

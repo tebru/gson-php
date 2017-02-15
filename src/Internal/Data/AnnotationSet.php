@@ -6,8 +6,7 @@
 
 namespace Tebru\Gson\Internal\Data;
 
-use ArrayIterator;
-use Tebru\Collection\AbstractSet;
+use InvalidArgumentException;
 
 /**
  * Class ClassNameSet
@@ -16,22 +15,67 @@ use Tebru\Collection\AbstractSet;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class AnnotationSet extends AbstractSet
+final class AnnotationSet
 {
-    /**
-     * @var array
-     */
-    private $elements = [];
+    const TYPE_CLASS = 1;
+    const TYPE_PROPERTY = 2;
+    const TYPE_METHOD = 4;
 
     /**
-     * Constructor
+     * Class annotations
      *
-     * @param array $elements
+     * @var array
      */
-    public function __construct(array $elements = [])
+    private $classAnnotations = [];
+
+    /**
+     * Property annotations
+     *
+     * @var array
+     */
+    private $propertyAnnotations = [];
+
+    /**
+     * Method annotations
+     *
+     * @var array
+     */
+    private $methodAnnotations = [];
+
+    /**
+     * Add an annotation by type
+     *
+     * @param $annotation
+     * @param int $type
+     * @throws \InvalidArgumentException If the type does not exist
+     */
+    public function addAnnotation($annotation, int $type)
     {
-        foreach ($elements as $element) {
-            $this->add($element);
+        $class = get_class($annotation);
+        switch ($type) {
+            case self::TYPE_CLASS:
+                if (array_key_exists($class, $this->classAnnotations)) {
+                    return;
+                }
+
+                $this->classAnnotations[$class] = $annotation;
+                break;
+            case self::TYPE_PROPERTY:
+                if (array_key_exists($class, $this->propertyAnnotations)) {
+                    return;
+                }
+
+                $this->propertyAnnotations[$class] = $annotation;
+                break;
+            case self::TYPE_METHOD:
+                if (array_key_exists($class, $this->methodAnnotations)) {
+                    return;
+                }
+
+                $this->methodAnnotations[$class] = $annotation;
+                break;
+            default:
+                throw new InvalidArgumentException('Type not supported');
         }
     }
 
@@ -39,100 +83,47 @@ final class AnnotationSet extends AbstractSet
      * Get an annotation by class name
      *
      * @param string $annotationClass
-     * @return object|null
+     * @param int $filter
+     * @return null|object
      */
-    public function getAnnotation(string $annotationClass)
+    public function getAnnotation(string $annotationClass, $filter)
     {
-        if (!array_key_exists($annotationClass, $this->elements)) {
-            return null;
+        if (self::TYPE_PROPERTY & $filter && array_key_exists($annotationClass, $this->propertyAnnotations)) {
+            return $this->propertyAnnotations[$annotationClass];
         }
 
-        return $this->elements[$annotationClass];
-    }
-
-    /**
-     * Ensure the element exists in the collection
-     *
-     * Returns true if the collection can contain duplicates,
-     * and false if it cannot.
-     *
-     * @param mixed $element
-     * @return bool
-     */
-    public function add($element): bool
-    {
-        if ($this->contains($element)) {
-            return false;
+        if (self::TYPE_CLASS & $filter && array_key_exists($annotationClass, $this->classAnnotations)) {
+            return $this->classAnnotations[$annotationClass];
         }
 
-        $key = get_class($element);
-        $this->elements[$key] = $element;
-
-        return true;
-    }
-
-    /**
-     * Removes all elements from a collection
-     *
-     * @return void
-     */
-    public function clear(): void
-    {
-        $this->elements = [];
-    }
-
-    /**
-     * Returns true if the element exists
-     *
-     * @param object $element
-     * @return bool
-     */
-    public function contains($element): bool
-    {
-        $key = get_class($element);
-
-        return array_key_exists($key, $this->elements);
-    }
-
-    /**
-     * Removes object if it exists
-     *
-     * Returns true if the element was removed
-     *
-     * @param mixed $element
-     * @return bool
-     */
-    public function remove($element): bool
-    {
-        $key = get_class($element);
-
-        if (!array_key_exists($key, $this->elements)) {
-            return false;
+        if (self::TYPE_METHOD & $filter && array_key_exists($annotationClass, $this->methodAnnotations)) {
+            return $this->methodAnnotations[$annotationClass];
         }
 
-        unset($this->elements[$key]);
-
-        return true;
+        return null;
     }
 
-
     /**
-     * Returns an array of all elements in the collection
+     * Get an array of a specific type of annotation
      *
+     * @param int $type
      * @return array
+     * @throws \InvalidArgumentException If the type does not exist
      */
-    public function toArray(): array
+    public function toArray(int $type)
     {
-        return array_values($this->elements);
-    }
+        if (self::TYPE_CLASS === $type) {
+            return array_values($this->classAnnotations);
+        }
 
-    /**
-     * Retrieve an external iterator
-     *
-     * @return ArrayIterator
-     */
-    public function getIterator(): ArrayIterator
-    {
-        return new ArrayIterator($this->toArray());
+        if (self::TYPE_PROPERTY === $type) {
+            return array_values($this->propertyAnnotations);
+        }
+
+        if (self::TYPE_METHOD === $type) {
+            return array_values($this->methodAnnotations);
+        }
+
+        throw new InvalidArgumentException('Type not supported');
     }
 }

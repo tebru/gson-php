@@ -8,6 +8,7 @@ namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
+use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;
@@ -41,6 +42,7 @@ final class JsonTypeAdapterFactory implements TypeAdapterFactory
      *
      * @param PhpType $type
      * @return bool
+     * @throws \InvalidArgumentException If the type does not exist
      */
     public function supports(PhpType $type): bool
     {
@@ -50,7 +52,7 @@ final class JsonTypeAdapterFactory implements TypeAdapterFactory
 
         $annotations = $this->annotationCollectionFactory->createClassAnnotations($type->getClass());
 
-        return null !== $annotations->getAnnotation(JsonAdapter::class);
+        return null !== $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_CLASS);
     }
 
     /**
@@ -67,7 +69,7 @@ final class JsonTypeAdapterFactory implements TypeAdapterFactory
         $annotations = $this->annotationCollectionFactory->createClassAnnotations($type->getClass());
 
         /** @var JsonAdapter $annotation */
-        $annotation = $annotations->getAnnotation(JsonAdapter::class);
+        $annotation = $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_CLASS);
 
         return $typeAdapterProvider->getAdapterFromAnnotation($type, $annotation);
     }

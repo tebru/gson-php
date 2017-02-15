@@ -144,13 +144,14 @@ final class Excluder
      * @param string $className
      * @param bool $serialize
      * @return bool
+     * @throws \InvalidArgumentException If the type does not exist
      */
     public function excludeClass(string $className, bool $serialize): bool
     {
         if (class_exists($className)) {
             $annotations = $this->annotationCollectionFactory->createClassAnnotations($className);
 
-            if ($this->excludeByAnnotation($annotations, $serialize)) {
+            if ($this->excludeByAnnotation($annotations, $serialize, AnnotationSet::TYPE_CLASS)) {
                 return true;
             }
         }
@@ -180,7 +181,7 @@ final class Excluder
         }
 
         $annotations = $property->getAnnotations();
-        if ($this->excludeByAnnotation($annotations, $serialize)) {
+        if ($this->excludeByAnnotation($annotations, $serialize, AnnotationSet::TYPE_PROPERTY)) {
             return true;
         }
 
@@ -217,16 +218,17 @@ final class Excluder
      *
      * @param AnnotationSet $annotations
      * @param bool $serialize
+     * @param int $filter
      * @return bool
      */
-    private function excludeByAnnotation(AnnotationSet $annotations, bool $serialize): bool
+    private function excludeByAnnotation(AnnotationSet $annotations, bool $serialize, int $filter): bool
     {
-        if (!$this->validVersion($annotations)) {
+        if (!$this->validVersion($annotations, $filter)) {
             return true;
         }
 
         /** @var Exclude $exclude */
-        $exclude = $annotations->getAnnotation(Exclude::class);
+        $exclude = $annotations->getAnnotation(Exclude::class, $filter);
         if (null !== $exclude && $exclude->shouldExclude($serialize)) {
             return true;
         }
@@ -234,7 +236,7 @@ final class Excluder
         // if we need an expose annotation
         if ($this->requireExpose) {
             /** @var Expose $expose */
-            $expose = $annotations->getAnnotation(Expose::class);
+            $expose = $annotations->getAnnotation(Expose::class, $filter);
             if (null === $expose || !$expose->shouldExpose($serialize)) {
                 return true;
             }
@@ -247,23 +249,25 @@ final class Excluder
      * Returns true if the set version is valid for [@see Since] and [@see Until] annotations
      *
      * @param AnnotationSet $annotations
+     * @param int $filter
      * @return bool
      */
-    private function validVersion(AnnotationSet $annotations): bool
+    private function validVersion(AnnotationSet $annotations, int $filter): bool
     {
-        return !$this->shouldSkipSince($annotations) && !$this->shouldSkipUntil($annotations);
+        return !$this->shouldSkipSince($annotations, $filter) && !$this->shouldSkipUntil($annotations, $filter);
     }
 
     /**
      * Returns true if we should skip based on the [@see Since] annotation
      *
      * @param AnnotationSet $annotations
+     * @param int $filter
      * @return bool
      */
-    private function shouldSkipSince(AnnotationSet $annotations): bool
+    private function shouldSkipSince(AnnotationSet $annotations, int $filter): bool
     {
         /** @var Since $sinceAnnotation */
-        $sinceAnnotation = $annotations->getAnnotation(Since::class);
+        $sinceAnnotation = $annotations->getAnnotation(Since::class, $filter);
 
         return
             null !== $sinceAnnotation
@@ -275,12 +279,13 @@ final class Excluder
      * Returns true if we should skip based on the [@see Until] annotation
      *
      * @param AnnotationSet $annotations
+     * @param int $filter
      * @return bool
      */
-    private function shouldSkipUntil(AnnotationSet $annotations): bool
+    private function shouldSkipUntil(AnnotationSet $annotations, int $filter): bool
     {
         /** @var Until $sinceAnnotation */
-        $untilAnnotation = $annotations->getAnnotation(Until::class);
+        $untilAnnotation = $annotations->getAnnotation(Until::class, $filter);
 
         return
             null !== $untilAnnotation

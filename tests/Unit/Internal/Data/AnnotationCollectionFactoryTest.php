@@ -37,10 +37,9 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
         $expected = [
             new FooAnnotation(['value' => 'foo']),
             new BarAnnotation(['value' => 'bar']),
-            new BazAnnotation(['value' => 'baz']),
         ];
 
-        self::assertEquals($expected, $annotations->toArray());
+        self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_PROPERTY));
     }
 
     public function testCreateWithParents()
@@ -51,11 +50,10 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
         $expected = [
             new FooAnnotation(['value' => 'foo']),
             new BarAnnotation(['value' => 'bar']),
-            new BazAnnotation(['value' => 'baz']),
             new QuxAnnotation(['value' => 'qux']),
         ];
 
-        self::assertEquals($expected, $annotations->toArray());
+        self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_PROPERTY));
     }
 
     public function testCreateTwoLevels()
@@ -67,12 +65,14 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
             new QuxAnnotation(['value' => 'qux']),
         ];
 
-        self::assertEquals($expected, $annotations->toArray());
+        self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_PROPERTY));
     }
 
     public function testCreatePropertyAnnotationsUsesCache()
     {
-        $cachedAnnotations = new AnnotationSet([new FooAnnotation([])]);
+        $cachedAnnotations = new AnnotationSet();
+        $cachedAnnotations->addAnnotation(new FooAnnotation([]), AnnotationSet::TYPE_PROPERTY);
+
         $cache = new ArrayCache();
 
         $cache->save(ChildClass::class.':'.'foo', $cachedAnnotations);
@@ -93,12 +93,14 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
             new BarAnnotation(['value' => 'bar2']),
         ];
 
-        self::assertEquals($expected, $annotations->toArray());
+        self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_CLASS));
     }
 
     public function testCreateClassAnnotationsUsesCache()
     {
-        $cachedAnnotations = new AnnotationSet([new FooAnnotation([])]);
+        $cachedAnnotations = new AnnotationSet();
+        $cachedAnnotations->addAnnotation(new FooAnnotation([]), AnnotationSet::TYPE_CLASS);
+
         $cache = new ArrayCache();
 
         $cache->save(ChildClass::class, $cachedAnnotations);
@@ -118,12 +120,14 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
             new SerializedName(['value' => 'new_virtual_property']),
         ];
 
-        self::assertEquals($expected, $annotations->toArray());
+        self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_METHOD));
     }
 
     public function testCreateMethodAnnotationsUsesCache()
     {
-        $cachedAnnotations = new AnnotationSet([new VirtualProperty()]);
+        $cachedAnnotations = new AnnotationSet();
+        $cachedAnnotations->addAnnotation(new VirtualProperty(), AnnotationSet::TYPE_METHOD);
+
         $cache = new ArrayCache();
         $cache->save(ChildClass::class.':'.'virtualProperty', $cachedAnnotations);
 

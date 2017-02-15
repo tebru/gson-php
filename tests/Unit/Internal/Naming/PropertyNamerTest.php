@@ -11,6 +11,7 @@ use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
+use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Test\Mock\AnnotatedMock;
@@ -30,7 +31,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
         $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
         $annotations = $factory->createPropertyAnnotations($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getName());
 
-        self::assertSame('foobar', $namer->serializedName($reflectionProperty->getName(), $annotations));
+        self::assertSame('foobar', $namer->serializedName($reflectionProperty->getName(), $annotations, AnnotationSet::TYPE_PROPERTY));
     }
 
     public function testGetNameUsingStrategy()
@@ -40,6 +41,6 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
         $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
         $annotations = $factory->createPropertyAnnotations($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getName());
 
-        self::assertSame('foo_bar_baz', $namer->serializedName($reflectionProperty->getName(), $annotations));
+        self::assertSame('foo_bar_baz', $namer->serializedName($reflectionProperty->getName(), $annotations, AnnotationSet::TYPE_PROPERTY));
     }
 }

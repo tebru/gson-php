@@ -112,6 +112,7 @@ final class PropertyCollectionFactory
      * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \InvalidArgumentException If the type does not exist
      */
     public function create(PhpType $phpType, TypeAdapterProvider $typeAdapterProvider): PropertyCollection
     {
@@ -129,15 +130,15 @@ final class PropertyCollectionFactory
         /** @var ReflectionProperty $reflectionProperty */
         foreach ($reflectionProperties as $reflectionProperty) {
             $annotations = $this->annotationCollectionFactory->createPropertyAnnotations($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getName());
-            $serializedName = $this->propertyNamer->serializedName($reflectionProperty->getName(), $annotations);
+            $serializedName = $this->propertyNamer->serializedName($reflectionProperty->getName(), $annotations, AnnotationSet::TYPE_PROPERTY);
             $getterMethod = $this->accessorMethodProvider->getterMethod($reflectionClass, $reflectionProperty, $annotations);
             $setterMethod = $this->accessorMethodProvider->setterMethod($reflectionClass, $reflectionProperty, $annotations);
             $getterStrategy = $this->accessorStrategyFactory->getterStrategy($reflectionProperty, $getterMethod);
             $setterStrategy = $this->accessorStrategyFactory->setterStrategy($reflectionProperty, $setterMethod);
-            $type = $this->phpTypeFactory->create($annotations, $getterMethod, $setterMethod);
+            $type = $this->phpTypeFactory->create($annotations, AnnotationSet::TYPE_PROPERTY, $getterMethod, $setterMethod);
 
             /** @var JsonAdapter $jsonAdapterAnnotation */
-            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class);
+            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_PROPERTY);
             $adapter = null !== $jsonAdapterAnnotation
                 ? $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation)
                 : $typeAdapterProvider->getAdapter($type);
@@ -172,17 +173,17 @@ final class PropertyCollectionFactory
         // add virtual properties
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
             $annotations = $this->annotationCollectionFactory->createMethodAnnotations($reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getName());
-            if (null === $annotations->getAnnotation(VirtualProperty::class)) {
+            if (null === $annotations->getAnnotation(VirtualProperty::class, AnnotationSet::TYPE_METHOD)) {
                 continue;
             }
 
-            $serializedName = $this->propertyNamer->serializedName($reflectionMethod->getName(), $annotations);
-            $type = $this->phpTypeFactory->create($annotations, $reflectionMethod);
+            $serializedName = $this->propertyNamer->serializedName($reflectionMethod->getName(), $annotations, AnnotationSet::TYPE_METHOD);
+            $type = $this->phpTypeFactory->create($annotations, AnnotationSet::TYPE_METHOD, $reflectionMethod);
             $getterStrategy = new GetByMethod($reflectionMethod->getName());
             $setterStrategy = new SetByNull();
 
             /** @var JsonAdapter $jsonAdapterAnnotation */
-            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class);
+            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_METHOD);
             $adapter = null !== $jsonAdapterAnnotation
                 ? $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation)
                 : $typeAdapterProvider->getAdapter($type);

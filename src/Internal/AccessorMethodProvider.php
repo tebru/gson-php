@@ -49,7 +49,7 @@ final class AccessorMethodProvider
     public function getterMethod(ReflectionClass $reflectionClass, ReflectionProperty $reflectionProperty, AnnotationSet $annotations): ?ReflectionMethod
     {
         /** @var Accessor $accessorAnnotation */
-        $accessorAnnotation = $annotations->getAnnotation(Accessor::class);
+        $accessorAnnotation = $annotations->getAnnotation(Accessor::class, AnnotationSet::TYPE_PROPERTY);
         $getters = null !== $accessorAnnotation && null !== $accessorAnnotation->getter()
             ? [$accessorAnnotation->getter()]
             : $this->methodNamingStrategy->translateToGetter($reflectionProperty->getName());
@@ -69,7 +69,7 @@ final class AccessorMethodProvider
     public function setterMethod(ReflectionClass $reflectionClass, ReflectionProperty $reflectionProperty, AnnotationSet $annotations): ?ReflectionMethod
     {
         /** @var Accessor $accessorAnnotation */
-        $accessorAnnotation = $annotations->getAnnotation(Accessor::class);
+        $accessorAnnotation = $annotations->getAnnotation(Accessor::class, AnnotationSet::TYPE_PROPERTY);
         $setters = null !== $accessorAnnotation && null !== $accessorAnnotation->setter()
             ? [$accessorAnnotation->setter()]
             : $this->methodNamingStrategy->translateToSetter($reflectionProperty->getName());

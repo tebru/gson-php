@@ -29,16 +29,17 @@ final class PhpTypeFactory
      * - Defaults to wildcard type
      *
      * @param AnnotationSet $annotations
+     * @param int $filter
      * @param ReflectionMethod|null $getterMethod
      * @param ReflectionMethod|null $setterMethod
      * @return PhpType
      * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
-    public function create(AnnotationSet $annotations, ReflectionMethod $getterMethod = null, ReflectionMethod $setterMethod = null): PhpType
+    public function create(AnnotationSet $annotations, int $filter, ReflectionMethod $getterMethod = null, ReflectionMethod $setterMethod = null): PhpType
     {
         /** @var Type $typeAnnotation */
-        $typeAnnotation = $annotations->getAnnotation(Type::class);
+        $typeAnnotation = $annotations->getAnnotation(Type::class, $filter);
 
         if (null !== $typeAnnotation) {
             return $typeAnnotation->getType();

@@ -51,6 +51,7 @@ final class AnnotationCollectionFactory
      * @param string $className
      * @param string $propertyName
      * @return AnnotationSet
+     * @throws \InvalidArgumentException If the type does not exist
      */
     public function createPropertyAnnotations(string $className, string $propertyName): AnnotationSet
     {
@@ -61,24 +62,34 @@ final class AnnotationCollectionFactory
 
         $reflectionProperty = new ReflectionProperty($className, $propertyName);
 
+        $annotations = new AnnotationSet();
+
         // start with with all property annotations
-        $annotations = new AnnotationSet($this->reader->getPropertyAnnotations($reflectionProperty));
+        foreach ($this->reader->getPropertyAnnotations($reflectionProperty) as $defaultAnnotation) {
+            $annotations->addAnnotation($defaultAnnotation, AnnotationSet::TYPE_PROPERTY);
+        }
 
         $reflectionClass = $reflectionProperty->getDeclaringClass();
         $parentClass = $reflectionClass->getParentClass();
 
         // add all new parent annotations
-        $annotations->addAllArray($this->reader->getClassAnnotations($reflectionClass));
+        foreach ($this->reader->getClassAnnotations($reflectionClass) as $parentAnnotation) {
+            $annotations->addAnnotation($parentAnnotation, AnnotationSet::TYPE_CLASS);
+        }
 
         while (false !== $parentClass) {
             // add parent property annotations if they exist
             if ($parentClass->hasProperty($reflectionProperty->getName())) {
                 $parentProperty = $parentClass->getProperty($reflectionProperty->getName());
-                $annotations->addAllArray($this->reader->getPropertyAnnotations($parentProperty));
+                foreach ($this->reader->getPropertyAnnotations($parentProperty) as $parentPropertyAnnotation) {
+                    $annotations->addAnnotation($parentPropertyAnnotation, AnnotationSet::TYPE_PROPERTY);
+                }
             }
 
             // add all parent class annotations
-            $annotations->addAllArray($this->reader->getClassAnnotations($parentClass));
+            foreach ($this->reader->getClassAnnotations($parentClass) as $parentClassAnnotation) {
+                $annotations->addAnnotation($parentClassAnnotation, AnnotationSet::TYPE_CLASS);
+            }
 
             // reset $parentClass
             $parentClass = $parentClass->getParentClass();
@@ -94,6 +105,7 @@ final class AnnotationCollectionFactory
      *
      * @param string $className
      * @return AnnotationSet
+     * @throws \InvalidArgumentException If the type does not exist
      */
     public function createClassAnnotations(string $className): AnnotationSet
     {
@@ -103,11 +115,16 @@ final class AnnotationCollectionFactory
 
         $reflectionClass = new ReflectionClass($className);
 
-        $annotations = new AnnotationSet($this->reader->getClassAnnotations($reflectionClass));
+        $annotations = new AnnotationSet();
+        foreach ($this->reader->getClassAnnotations($reflectionClass) as $annotation) {
+            $annotations->addAnnotation($annotation, AnnotationSet::TYPE_CLASS);
+        }
         $parentClass = $reflectionClass->getParentClass();
 
         while (false !== $parentClass) {
-            $annotations->addAllArray($this->reader->getClassAnnotations($parentClass));
+            foreach ($this->reader->getClassAnnotations($parentClass) as $parentAnnotation) {
+                $annotations->addAnnotation($parentAnnotation, AnnotationSet::TYPE_CLASS);
+            }
             $parentClass = $parentClass->getParentClass();
         }
 
@@ -122,6 +139,7 @@ final class AnnotationCollectionFactory
      * @param string $className
      * @param string $methodName
      * @return AnnotationSet
+     * @throws \InvalidArgumentException If the type does not exist
      */
     public function createMethodAnnotations(string $className, string $methodName): AnnotationSet
     {
@@ -133,7 +151,9 @@ final class AnnotationCollectionFactory
         $annotations = new AnnotationSet();
 
         $reflectionMethod = new ReflectionMethod($className, $methodName);
-        $annotations->addAllArray($this->reader->getMethodAnnotations($reflectionMethod));
+        foreach ($this->reader->getMethodAnnotations($reflectionMethod) as $annotation) {
+            $annotations->addAnnotation($annotation, AnnotationSet::TYPE_METHOD);
+        }
 
         $this->cache->save($key, $annotations);
 

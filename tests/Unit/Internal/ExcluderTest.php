@@ -218,6 +218,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $excluder = $this->excluder();
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Until(['value' => '2']), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -225,7 +228,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Until(['value' => '2'])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -239,6 +242,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setVersion('1.0.0');
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -246,7 +252,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Since(['value' => '1.0.1'])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -260,6 +266,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setVersion('1.0.1');
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -267,7 +276,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Since(['value' => '1.0.1'])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -281,6 +290,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setVersion('1.0.2');
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -288,7 +300,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Since(['value' => '1.0.1'])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -302,6 +314,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setVersion('1');
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -309,7 +324,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Until(['value' => '2.0.0'])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -323,6 +338,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setVersion('2.0.0');
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -330,7 +348,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Until(['value' => '2.0.0'])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -344,6 +362,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setVersion('2.0.1');
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -351,7 +372,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Until(['value' => '2.0.0'])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -364,6 +385,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $excluder = $this->excluder();
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Exclude([]), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -371,7 +395,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Exclude([])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -384,6 +408,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $excluder = $this->excluder();
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Exclude(['deserialize' => false]), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -391,7 +418,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Exclude(['deserialize' => false])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -404,6 +431,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $excluder = $this->excluder();
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Exclude(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -411,7 +441,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Exclude(['serialize' => false])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -425,6 +455,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setRequireExpose(true);
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Expose([]), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -432,7 +465,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Expose([])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -446,6 +479,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setRequireExpose(true);
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Expose(['deserialize' => false]), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -453,7 +489,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Expose(['deserialize' => false])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -467,6 +503,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setRequireExpose(true);
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Expose(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -474,7 +513,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Expose(['serialize' => false])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );
@@ -487,6 +526,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $excluder = $this->excluder();
 
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Expose(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
+
         $property = new Property(
             Foo::class,
             'foo',
@@ -494,7 +536,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             new PhpType('string'),
             new GetByMethod('getFoo'),
             new SetByMethod('setFoo'),
-            new AnnotationSet([new Expose(['serialize' => false])]),
+            $annotations,
             ReflectionProperty::IS_PRIVATE,
             new TypeAdapterMock()
         );

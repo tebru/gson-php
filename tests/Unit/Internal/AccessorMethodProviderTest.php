@@ -37,7 +37,9 @@ class AccessorMethodProviderTest extends PHPUnit_Framework_TestCase
         $reflectionClass = new ReflectionClass(ChildClass::class);
         $reflectionProperty = $reflectionClass->getProperty('baz');
         $methodProvider = new AccessorMethodProvider(new UpperCaseMethodNamingStrategy());
-        $method = $methodProvider->getterMethod($reflectionClass, $reflectionProperty, new AnnotationSet([new Accessor(['get' => 'baz'])]));
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Accessor(['get' => 'baz']), AnnotationSet::TYPE_PROPERTY);
+        $method = $methodProvider->getterMethod($reflectionClass, $reflectionProperty, $annotations);
 
         self::assertSame('baz', $method->getName());
     }
@@ -67,7 +69,9 @@ class AccessorMethodProviderTest extends PHPUnit_Framework_TestCase
         $reflectionClass = new ReflectionClass(ChildClass::class);
         $reflectionProperty = $reflectionClass->getProperty('baz');
         $methodProvider = new AccessorMethodProvider(new UpperCaseMethodNamingStrategy());
-        $method = $methodProvider->setterMethod($reflectionClass, $reflectionProperty, new AnnotationSet([new Accessor(['set' => 'set_baz'])]));
+        $annotations = new AnnotationSet();
+        $annotations->addAnnotation(new Accessor(['set' => 'set_baz']), AnnotationSet::TYPE_PROPERTY);
+        $method = $methodProvider->setterMethod($reflectionClass, $reflectionProperty, $annotations);
 
         self::assertSame('set_baz', $method->getName());
     }
