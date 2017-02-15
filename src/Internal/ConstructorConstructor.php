@@ -49,7 +49,7 @@ final class ConstructorConstructor
      */
     public function get(PhpType $type): ObjectConstructor
     {
-        $class = $type->getClass();
+        $class = (string) $type;
         if (array_key_exists($class, $this->instanceCreators)) {
             return new CreateFromInstanceCreator($this->instanceCreators[$class], $type);
         }

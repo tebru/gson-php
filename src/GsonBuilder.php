@@ -64,6 +64,11 @@ class GsonBuilder
     private $typeAdapters = [];
 
     /**
+     * @var InstanceCreator[]
+     */
+    private $instanceCreators = [];
+
+    /**
      * Strategy for converting property names to serialized names
      *
      * @var PropertyNamingStrategy
@@ -170,6 +175,21 @@ class GsonBuilder
         }
 
         throw new BadMethodCallException(sprintf('Handler of type "%s" is not supported', get_class($handler)));
+    }
+
+    /**
+     * Add an [@see InstanceCreator] for a given type
+     *
+     * @param string $type
+     * @param InstanceCreator $instanceCreator
+     * @return GsonBuilder
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     */
+    public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
+    {
+        $this->instanceCreators[(string) new PhpType($type)] = $instanceCreator;
+
+        return $this;
     }
 
     /**
@@ -360,7 +380,7 @@ class GsonBuilder
                 new ArrayListTypeAdapterFactory(),
                 new HashMapTypeAdapterFactory(),
                 new JsonElementTypeAdapterFactory(),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor($this->instanceCreators), $propertyCollectionFactory, $excluder),
                 new WildcardTypeAdapterFactory(),
             ]
         );

@@ -17,6 +17,7 @@ use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\GsonMockExclusionStrategyMock;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
 use Tebru\Gson\Test\Mock\GsonMock;
+use Tebru\Gson\Test\Mock\GsonObjectMockInstanceCreatorMock;
 use Tebru\Gson\Test\Mock\Strategy\TwoPropertyNamingStrategy;
 use Tebru\Gson\Test\Mock\TypeAdapter\Integer1Deserializer;
 use Tebru\Gson\Test\Mock\TypeAdapter\Integer1Serializer;
@@ -303,6 +304,37 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('accessor', $gsonMock->getMyAccessor());
         self::assertSame('serializedname', $gsonMock->getSerializedname());
         self::assertSame([2, 3, 4], $gsonMock->getType());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getJsonAdapter());
+        self::assertSame(false, $gsonMock->getExpose());
+        self::assertSame(null, $gsonMock->getExclude());
+        self::assertSame(true, $gsonMock->getExcludeFromStrategy());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
+    }
+
+    public function testDeserializeUsingInstanceCreator()
+    {
+        $gson = Gson::builder()
+            ->addInstanceCreator(GsonObjectMock::class, new GsonObjectMockInstanceCreatorMock())
+            ->build();
+
+        /** @var GsonMock $gsonMock */
+        $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
+
+        self::assertSame(1, $gsonMock->getInteger());
+        self::assertSame(3.2, $gsonMock->getFloat());
+        self::assertSame('foo', $gsonMock->getString());
+        self::assertSame(false, $gsonMock->getBoolean());
+        self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
+        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
+        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
+        self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
+        self::assertSame('public', $gsonMock->public);
+        self::assertAttributeSame('protected', 'protected', $gsonMock);
+        self::assertSame('since', $gsonMock->getSince());
+        self::assertSame('until', $gsonMock->getUntil());
+        self::assertSame('accessor', $gsonMock->getMyAccessor());
+        self::assertSame('serializedname', $gsonMock->getSerializedname());
+        self::assertSame([1, 2, 3], $gsonMock->getType());
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getJsonAdapter());
         self::assertSame(false, $gsonMock->getExpose());
         self::assertSame(null, $gsonMock->getExclude());
