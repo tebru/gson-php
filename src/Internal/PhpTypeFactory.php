@@ -9,6 +9,7 @@ namespace Tebru\Gson\Internal;
 use ReflectionMethod;
 use Tebru\Gson\Annotation\Type;
 use Tebru\Gson\Internal\Data\AnnotationSet;
+use Tebru\Gson\PhpType;
 
 /**
  * Class PhpTypeFactory

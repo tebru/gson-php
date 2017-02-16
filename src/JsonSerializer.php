@@ -7,7 +7,6 @@
 namespace Tebru\Gson;
 
 use Tebru\Gson\Element\JsonElement;
-use Tebru\Gson\Internal\PhpType;
 
 /**
  * Interface JsonSerializer

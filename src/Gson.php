@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson;
 
-use Tebru\Gson\Internal\PhpType;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;

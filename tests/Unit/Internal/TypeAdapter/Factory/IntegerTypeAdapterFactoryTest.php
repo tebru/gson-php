@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;

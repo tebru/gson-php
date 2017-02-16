@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use DateTime;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
 
 /**

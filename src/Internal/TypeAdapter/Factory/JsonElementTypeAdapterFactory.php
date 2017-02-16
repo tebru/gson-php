@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use Tebru\Gson\Element\JsonElement;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\JsonElementTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;

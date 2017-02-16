@@ -10,7 +10,7 @@ use PHPUnit_Framework_TestCase;
 use Tebru\Collection\AbstractMap;
 use Tebru\Collection\HashMap;
 use Tebru\Collection\MapInterface;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\HashMapTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\HashMapTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;

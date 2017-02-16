@@ -6,8 +6,6 @@
 
 namespace Tebru\Gson;
 
-use Tebru\Gson\Internal\PhpType;
-
 /**
  * Interface InstanceCreator
  *

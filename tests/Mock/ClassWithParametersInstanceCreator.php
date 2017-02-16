@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Mock;
 
 use Tebru\Gson\InstanceCreator;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 
 /**
  * Class ClassWithParametersInstanceCreator

@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use DateTime;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;

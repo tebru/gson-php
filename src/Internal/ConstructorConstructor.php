@@ -10,6 +10,7 @@ use Tebru\Gson\InstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromReflectionClass;
 use Tebru\Gson\Internal\ObjectConstructor\CreateWithoutArguments;
+use Tebru\Gson\PhpType;
 use Throwable;
 
 /**

@@ -10,7 +10,7 @@ use LogicException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Collection\ArrayList;
 use Tebru\Collection\HashMap;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\ArrayListTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayListTypeAdapterFactory;

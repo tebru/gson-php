@@ -9,7 +9,7 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 use DateTime;
 use DateTimeZone;
 use Tebru\Gson\JsonWritable;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
 use Tebru\Gson\TypeAdapter;

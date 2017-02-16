@@ -4,19 +4,19 @@
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
 
-namespace Tebru\Gson\Test\Unit\Internal;
+namespace Tebru\Gson\Test\Unit;
 
 use DateTime;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 use Tebru\Gson\Exception\MalformedTypeException;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 
 /**
  * Class PhpTypeTest
  *
  * @author Nate Brunette <n@tebru.net>
- * @covers \Tebru\Gson\Internal\PhpType
+ * @covers \Tebru\Gson\PhpType
  * @covers \Tebru\Gson\Internal\TypeToken
  */
 class PhpTypeTest extends PHPUnit_Framework_TestCase

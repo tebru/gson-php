@@ -22,7 +22,7 @@ use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Test\Mock\ExcluderVersionMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\BarPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcludeClassMockExclusionStrategy;

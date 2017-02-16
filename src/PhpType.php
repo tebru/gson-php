@@ -4,10 +4,11 @@
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
 
-namespace Tebru\Gson\Internal;
+namespace Tebru\Gson;
 
 use stdClass;
 use Tebru\Gson\Exception\MalformedTypeException;
+use Tebru\Gson\Internal\TypeToken;
 
 /**
  * Class PhpType

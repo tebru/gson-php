@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Internal\Data;
 
 use Tebru\Gson\Internal\GetterStrategy;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\SetterStrategy;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonWritable;

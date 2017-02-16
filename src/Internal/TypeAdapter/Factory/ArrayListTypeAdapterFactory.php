@@ -11,7 +11,7 @@ use Tebru\Collection\AbstractList;
 use Tebru\Collection\ArrayList;
 use Tebru\Collection\CollectionInterface;
 use Tebru\Collection\ListInterface;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\ArrayListTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;

@@ -9,7 +9,7 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
 use Tebru\Gson\Internal\DefaultJsonSerializationContext;
 use Tebru\Gson\JsonWritable;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonReadable;

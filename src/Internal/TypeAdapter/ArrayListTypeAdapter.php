@@ -10,7 +10,7 @@ use LogicException;
 use Tebru\Collection\ArrayList;
 use Tebru\Collection\ListInterface;
 use Tebru\Gson\JsonWritable;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Internal\TypeToken;
 use Tebru\Gson\JsonReadable;

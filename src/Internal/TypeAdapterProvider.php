@@ -11,6 +11,7 @@ use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 

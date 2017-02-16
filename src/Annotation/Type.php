@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Annotation;
 
 use LogicException;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 
 /**
  * Class Type

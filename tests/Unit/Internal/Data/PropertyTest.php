@@ -17,7 +17,7 @@ use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\Internal\JsonEncodeWriter;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ChildClassParent;
 use Tebru\Gson\Test\Mock\TypeAdapterMock;

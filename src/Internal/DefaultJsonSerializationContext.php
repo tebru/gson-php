@@ -8,6 +8,7 @@ namespace Tebru\Gson\Internal;
 
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\JsonSerializationContext;
+use Tebru\Gson\PhpType;
 
 /**
  * Class DefaultJsonSerializationContext

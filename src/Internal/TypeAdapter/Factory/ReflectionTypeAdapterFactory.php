@@ -8,7 +8,7 @@ namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;

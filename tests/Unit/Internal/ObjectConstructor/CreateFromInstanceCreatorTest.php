@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\ObjectConstructor;
 
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstanceCreator;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ClassWithParameters;
 use Tebru\Gson\Test\Mock\ClassWithParametersInstanceCreator;

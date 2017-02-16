@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;

@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Mock;
 
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonObject;
-use Tebru\Gson\Internal\PhpType;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\JsonSerializationContext;
 use Tebru\Gson\JsonSerializer;
 
