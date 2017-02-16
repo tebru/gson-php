@@ -10,7 +10,6 @@ use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\Data\PropertyCollection;
-use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\Internal\ObjectConstructor;
 use Tebru\Gson\JsonToken;
