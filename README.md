@@ -1,6 +1,10 @@
 Gson PHP
 ========
 
+[![Build Status](https://scrutinizer-ci.com/g/tebru/gson-php/badges/build.png?b=master)](https://scrutinizer-ci.com/g/tebru/gson-php/build-status/master)
+[![Code Coverage](https://scrutinizer-ci.com/g/tebru/gson-php/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tebru/gson-php/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tebru/gson-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tebru/gson-php/?branch=master)
+
 This library is a port of [google/gson](https://github.com/google/gson)
 written in PHP.  Its purpose is to easily handle the conversion
 between PHP objects and JSON.  It shares some of google/gson's goals
