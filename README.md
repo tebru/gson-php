@@ -1,7 +1,7 @@
 Gson PHP
 ========
 
-[![Build Status](https://scrutinizer-ci.com/g/tebru/gson-php/badges/build.png?b=master)](https://scrutinizer-ci.com/g/tebru/gson-php/build-status/master)
+[![Build Status](https://travis-ci.org/tebru/gson-php.svg?branch=master)](https://travis-ci.org/tebru/gson-php)
 [![Code Coverage](https://scrutinizer-ci.com/g/tebru/gson-php/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tebru/gson-php/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tebru/gson-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tebru/gson-php/?branch=master)
 
