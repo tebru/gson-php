@@ -7,7 +7,6 @@
 namespace Tebru\Gson\Internal\ObjectConstructor;
 
 use ReflectionClass;
-use Tebru\Gson\InstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor;
 
 /**

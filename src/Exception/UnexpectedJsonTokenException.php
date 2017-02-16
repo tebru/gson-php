@@ -7,7 +7,6 @@
 namespace Tebru\Gson\Exception;
 
 use RuntimeException;
-use Tebru\Gson\JsonToken;
 
 /**
  * Class UnexpectedJsonTokenException

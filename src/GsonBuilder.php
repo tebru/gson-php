@@ -13,8 +13,6 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\ChainCache;
 use Doctrine\Common\Cache\FilesystemCache;
 use ReflectionProperty;
-use Tebru\Gson\Annotation\Expose;
-use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\ConstructorConstructor;

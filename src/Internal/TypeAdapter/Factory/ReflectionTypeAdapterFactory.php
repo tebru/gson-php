@@ -80,6 +80,6 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
         $properties = $this->propertyCollectionFactory->create($type, $typeAdapterProvider);
         $objectConstructor = $this->constructorConstructor->get($type);
 
-        return new ReflectionTypeAdapter($typeAdapterProvider, $this->excluder, $objectConstructor, $properties);
+        return new ReflectionTypeAdapter($this->excluder, $objectConstructor, $properties);
     }
 }

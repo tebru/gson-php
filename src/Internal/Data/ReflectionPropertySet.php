@@ -9,7 +9,6 @@ namespace Tebru\Gson\Internal\Data;
 use ArrayIterator;
 use ReflectionProperty;
 use Tebru\Collection\AbstractSet;
-use Tebru\Collection\HashSet;
 
 /**
  * Class ReflectionPropertySet

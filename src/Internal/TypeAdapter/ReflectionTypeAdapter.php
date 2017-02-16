@@ -26,11 +26,6 @@ use Tebru\Gson\TypeAdapter;
 final class ReflectionTypeAdapter extends TypeAdapter
 {
     /**
-     * @var TypeAdapterProvider
-     */
-    private $typeAdapterProvider;
-
-    /**
      * @var Excluder
      */
     private $excluder;
@@ -48,19 +43,16 @@ final class ReflectionTypeAdapter extends TypeAdapter
     /**
      * Constructor
      *
-     * @param TypeAdapterProvider $typeAdapterProvider
      * @param Excluder $excluder
      * @param ObjectConstructor $objectConstructor
      * @param PropertyCollection $properties
      */
     public function __construct(
-        TypeAdapterProvider $typeAdapterProvider,
         Excluder $excluder,
         ObjectConstructor $objectConstructor,
         PropertyCollection $properties
     )
     {
-        $this->typeAdapterProvider = $typeAdapterProvider;
         $this->excluder = $excluder;
         $this->objectConstructor = $objectConstructor;
         $this->properties = $properties;
