@@ -181,11 +181,8 @@ final class Excluder
         }
 
         $annotations = $property->getAnnotations();
-        if ($this->excludeByAnnotation($annotations, $serialize, AnnotationSet::TYPE_PROPERTY)) {
-            return true;
-        }
 
-        return false;
+        return $this->excludeByAnnotation($annotations, $serialize, AnnotationSet::TYPE_PROPERTY);
     }
 
     /**

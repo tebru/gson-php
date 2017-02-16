@@ -304,13 +304,8 @@ final class JsonDecodeReader implements JsonReadable
                         $token = JsonToken::BEGIN_OBJECT;
                         break;
                     case StdClassIterator::class:
-                        if ($element->valid()) {
-                            $token = JsonToken::NAME;
-                            break;
-                        } else {
-                            $token = JsonToken::END_OBJECT;
-                            break;
-                        }
+                        $token = $element->valid() ? JsonToken::NAME : JsonToken::END_OBJECT;
+                        break;
                     case ArrayIterator::class:
                         if ($element->valid()) {
                             $this->stack->push($element->current());

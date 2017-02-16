@@ -63,7 +63,7 @@ final class PropertyCollection implements IteratorAggregate
     /**
      * Array of Property objects
      *
-     * @return array
+     * @return Property[]
      */
     public function toArray()
     {

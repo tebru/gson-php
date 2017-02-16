@@ -306,13 +306,7 @@ final class JsonElementReader implements JsonReadable
 
                 break;
             case JsonObjectIterator::class:
-                if ($element->valid()) {
-                    $token = JsonToken::NAME;
-                    break;
-                } else {
-                    $token = JsonToken::END_OBJECT;
-                    break;
-                }
+                $token = $element->valid() ? JsonToken::NAME : JsonToken::END_OBJECT;
 
                 break;
             case ArrayIterator::class:
