@@ -1,0 +1,12 @@
+sudo: false
+
+language: php
+php:
+  - 7.1
+
+before_script:
+  - composer install --no-interaction -o
+
+script:
+  - mkdir -p build/logs
+  - vendor/bin/phpunit
