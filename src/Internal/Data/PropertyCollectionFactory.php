@@ -129,7 +129,20 @@ final class PropertyCollectionFactory
 
         /** @var ReflectionProperty $reflectionProperty */
         foreach ($reflectionProperties as $reflectionProperty) {
-            $annotations = $this->annotationCollectionFactory->createPropertyAnnotations($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getName());
+            $annotations = $this->annotationCollectionFactory->createPropertyAnnotations(
+                $reflectionProperty->getDeclaringClass()->getName(),
+                $reflectionProperty->getName()
+            );
+
+            $skipSerialize = $this->excludeProperty($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getModifiers(), $annotations, true);
+            $skipDeserialize = $this->excludeProperty($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getModifiers(), $annotations, false);
+
+            // if we're skipping serialization and deserialization, we don't need
+            // to add the property to the collection
+            if ($skipSerialize && $skipDeserialize) {
+                continue;
+            }
+
             $serializedName = $this->propertyNamer->serializedName($reflectionProperty->getName(), $annotations, AnnotationSet::TYPE_PROPERTY);
             $getterMethod = $this->accessorMethodProvider->getterMethod($reflectionClass, $reflectionProperty, $annotations);
             $setterMethod = $this->accessorMethodProvider->setterMethod($reflectionClass, $reflectionProperty, $annotations);
@@ -155,15 +168,6 @@ final class PropertyCollectionFactory
                 $adapter
             );
 
-            $skipSerialize = $this->excludeProperty($property, true);
-            $skipDeserialize = $this->excludeProperty($property, false);
-
-            // if we're skipping serialization and deserialization, we don't need
-            // to add the property to the collection
-            if ($skipSerialize && $skipDeserialize) {
-                continue;
-            }
-
             $property->setSkipSerialize($skipSerialize);
             $property->setSkipDeserialize($skipDeserialize);
 
@@ -174,6 +178,15 @@ final class PropertyCollectionFactory
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
             $annotations = $this->annotationCollectionFactory->createMethodAnnotations($reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getName());
             if (null === $annotations->getAnnotation(VirtualProperty::class, AnnotationSet::TYPE_METHOD)) {
+                continue;
+            }
+
+            $skipSerialize = $this->excludeProperty($reflectionMethod->getDeclaringClass()->getName(), ReflectionProperty::IS_PUBLIC, $annotations, true);
+            $skipDeserialize = $this->excludeProperty($reflectionMethod->getDeclaringClass()->getName(), ReflectionProperty::IS_PUBLIC, $annotations, false);
+
+            // if we're skipping serialization and deserialization, we don't need
+            // to add the property to the collection
+            if ($skipSerialize && $skipDeserialize) {
                 continue;
             }
 
@@ -200,15 +213,6 @@ final class PropertyCollectionFactory
                 $adapter
             );
 
-            $skipSerialize = $this->excludeProperty($property, true);
-            $skipDeserialize = $this->excludeProperty($property, false);
-
-            // if we're skipping serialization and deserialization, we don't need
-            // to add the property to the collection
-            if ($skipSerialize && $skipDeserialize) {
-                continue;
-            }
-
             $property->setSkipSerialize($skipSerialize);
             $property->setSkipDeserialize($skipDeserialize);
 
@@ -225,19 +229,21 @@ final class PropertyCollectionFactory
      *
      * Asks the excluder if we should skip the property or class
      *
-     * @param Property $property
+     * @param string $propertyClassName
+     * @param int $propertyModifiers
+     * @param AnnotationSet $annotations
      * @param bool $serialize
      * @return bool
+     * @throws \InvalidArgumentException If the type does not exist
      */
-    private function excludeProperty(Property $property, bool $serialize): bool
+    private function excludeProperty(string $propertyClassName, int $propertyModifiers, AnnotationSet $annotations, bool $serialize): bool
     {
         $excludeClass = false;
-        $class = $property->getType()->getClass();
-        if (null !== $class) {
-            $excludeClass = $this->excluder->excludeClass($class, $serialize);
+        if (null !== $propertyClassName) {
+            $excludeClass = $this->excluder->excludeClass($propertyClassName, $serialize);
         }
 
-        $excludeProperty = $this->excluder->excludeProperty($property, $serialize);
+        $excludeProperty = $this->excluder->excludeProperty($propertyModifiers, $annotations, $serialize);
 
         return $excludeClass || $excludeProperty;
     }

@@ -41,6 +41,7 @@ final class ExcluderTypeAdapterFactory implements TypeAdapterFactory
      *
      * @param PhpType $type
      * @return bool
+     * @throws \InvalidArgumentException If the type does not exist
      */
     public function supports(PhpType $type): bool
     {
@@ -62,6 +63,7 @@ final class ExcluderTypeAdapterFactory implements TypeAdapterFactory
      * @param PhpType $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
+     * @throws \InvalidArgumentException If the type does not exist
      */
     public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {

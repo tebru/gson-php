@@ -145,36 +145,36 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         self::assertCount(0, $collection->toArray());
     }
 
-    public function testCreateExcludesWillNotUsePropertyExclusionStrategy()
-    {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder($annotationCollectionFactory);
-        $excluder->addExclusionStrategy(new FooPropertyExclusionStrategy(), true, true);
-        $excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), true, true);
-
-        $factory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $excluder,
-            new VoidCache()
-        );
-
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $factory, $excluder),
-            new WildcardTypeAdapterFactory(),
-        ]);
-
-        $collection = $factory->create(new PhpType(PropertyCollectionExclusionMock::class), $typeAdapterProvider);
-
-        /** @var Property[] $elements */
-        $elements = $collection->toArray();
-
-        self::assertCount(1, $elements);
-    }
+//    public function testCreateExcludesWillNotUsePropertyExclusionStrategy()
+//    {
+//        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+//        $excluder = new Excluder($annotationCollectionFactory);
+//        $excluder->addExclusionStrategy(new FooPropertyExclusionStrategy(), true, true);
+//        $excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), true, true);
+//
+//        $factory = new PropertyCollectionFactory(
+//            new ReflectionPropertySetFactory(),
+//            $annotationCollectionFactory,
+//            new PropertyNamer(new SnakePropertyNamingStrategy()),
+//            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
+//            new AccessorStrategyFactory(),
+//            new PhpTypeFactory(),
+//            $excluder,
+//            new VoidCache()
+//        );
+//
+//        $typeAdapterProvider = new TypeAdapterProvider([
+//            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $factory, $excluder),
+//            new WildcardTypeAdapterFactory(),
+//        ]);
+//
+//        $collection = $factory->create(new PhpType(PropertyCollectionExclusionMock::class), $typeAdapterProvider);
+//
+//        /** @var Property[] $elements */
+//        $elements = $collection->toArray();
+//
+//        self::assertCount(1, $elements);
+//    }
 
     public function testCreateUsesJsonAdapter()
     {

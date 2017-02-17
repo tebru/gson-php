@@ -83,6 +83,17 @@ class GsonMock
 
     private $gsonObjectMock;
 
+    /**
+     * @Type("Tebru\Gson\Test\Mock\GsonMock")
+     * @Exclude()
+     */
+    private $circular;
+
+    /**
+     * @Type("Tebru\Gson\Test\Mock\ExcludedClassMock")
+     */
+    private $excludedClass;
+
     public function getInteger(): ?int
     {
         return $this->integer;

@@ -135,20 +135,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $excluder = $this->excluder();
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByPublicProperty('foo'),
-            new SetByPublicProperty('foo'),
-            new AnnotationSet(),
-            ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_STATIC,
-            new TypeAdapterMock()
-        );
-
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_STATIC;
+        self::assertTrue($excluder->excludeProperty($modifiers, new AnnotationSet(), true));
+        self::assertTrue($excluder->excludeProperty($modifiers, new AnnotationSet(), false));
     }
 
     public function testExcludePrivateProperties()
@@ -156,20 +145,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setExcludedModifiers(ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByPublicProperty('foo'),
-            new SetByPublicProperty('foo'),
-            new AnnotationSet(),
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertTrue($excluder->excludeProperty($modifiers, new AnnotationSet(), true));
+        self::assertTrue($excluder->excludeProperty($modifiers, new AnnotationSet(), false));
     }
 
     public function testExcludeProtectedProperties()
@@ -177,20 +155,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setExcludedModifiers(ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByPublicProperty('foo'),
-            new SetByPublicProperty('foo'),
-            new AnnotationSet(),
-            ReflectionProperty::IS_PROTECTED,
-            new TypeAdapterMock()
-        );
-
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PROTECTED;
+        self::assertTrue($excluder->excludeProperty($modifiers, new AnnotationSet(), true));
+        self::assertTrue($excluder->excludeProperty($modifiers, new AnnotationSet(), false));
     }
 
     public function testDoNotExcludeWithoutSinceUntilAnnotations()
@@ -198,20 +165,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setVersion(1);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            new AnnotationSet(),
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertFalse($excluder->excludeProperty($property, true));
-        self::assertFalse($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertFalse($excluder->excludeProperty($modifiers, new AnnotationSet(), true));
+        self::assertFalse($excluder->excludeProperty($modifiers, new AnnotationSet(), false));
     }
 
     public function testDoNotExcludeWithoutVersion()
@@ -221,20 +177,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Until(['value' => '2']), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertFalse($excluder->excludeProperty($property, true));
-        self::assertFalse($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testExcludeBeforeSince()
@@ -245,20 +190,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testDoNotExcludeEqualToSince()
@@ -269,20 +203,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertFalse($excluder->excludeProperty($property, true));
-        self::assertFalse($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testDoNotExcludeAfterSince()
@@ -293,20 +216,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertFalse($excluder->excludeProperty($property, true));
-        self::assertFalse($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testDoNotExcludeBeforeUntil()
@@ -317,20 +229,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertFalse($excluder->excludeProperty($property, true));
-        self::assertFalse($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testExcludeEqualToUntil()
@@ -341,20 +242,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testExcludeGreaterThanUntil()
@@ -365,20 +255,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testExcludeWithExcludeAnnotation()
@@ -388,20 +267,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Exclude([]), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testExcludeWithExcludeAnnotationOnlySerialize()
@@ -411,20 +279,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Exclude(['deserialize' => false]), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertFalse($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testExcludeWithExcludeAnnotationOnlyDeserialize()
@@ -434,20 +291,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Exclude(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertFalse($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testDoNotExcludeWithExposeAnnotation()
@@ -458,20 +304,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Expose([]), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertFalse($excluder->excludeProperty($property, true));
-        self::assertFalse($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testDoNotExcludeWithExposeAnnotationOnlySerialize()
@@ -482,20 +317,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Expose(['deserialize' => false]), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertFalse($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testDoNotExcludeWithExposeAnnotationOnlyDeserialize()
@@ -506,20 +330,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Expose(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertFalse($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertTrue($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testDoNotExcludeWithExposeAnnotationWithoutRequireExpose()
@@ -529,20 +342,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Expose(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            $annotations,
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertFalse($excluder->excludeProperty($property, true));
-        self::assertFalse($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, true));
+        self::assertFalse($excluder->excludeProperty($modifiers, $annotations, false));
     }
 
     public function testExcludeWithoutExposeAnnotationWithRequireExpose()
@@ -550,20 +352,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $excluder = $this->excluder();
         $excluder->setRequireExpose(true);
 
-        $property = new Property(
-            Foo::class,
-            'foo',
-            'foo',
-            new PhpType('string'),
-            new GetByMethod('getFoo'),
-            new SetByMethod('setFoo'),
-            new AnnotationSet(),
-            ReflectionProperty::IS_PRIVATE,
-            new TypeAdapterMock()
-        );
-
-        self::assertTrue($excluder->excludeProperty($property, true));
-        self::assertTrue($excluder->excludeProperty($property, false));
+        $modifiers = ReflectionProperty::IS_PRIVATE;
+        self::assertTrue($excluder->excludeProperty($modifiers, new AnnotationSet(), true));
+        self::assertTrue($excluder->excludeProperty($modifiers, new AnnotationSet(), false));
     }
 
     public function testExcludeFromStrategy()

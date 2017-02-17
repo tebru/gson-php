@@ -511,7 +511,8 @@ class GsonTest extends PHPUnit_Framework_TestCase
             "expose": null,
             "exclude_from_strategy": null,
             "gson_object_mock": null,
-            "virtual": 2
+            "virtual": 2,
+            "excluded_class": null
         }';
 
         self::assertJsonStringEqualsJsonString($expected, $result);

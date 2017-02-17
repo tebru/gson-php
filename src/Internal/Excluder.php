@@ -169,18 +169,17 @@ final class Excluder
     /**
      * Returns true if we should exclude the class for a given serialization direction
      *
-     * @param Property $property
+     * @param int $propertyModifiers
+     * @param AnnotationSet $annotations
      * @param bool $serialize
      * @return bool
      */
-    public function excludeProperty(Property $property, bool $serialize): bool
+    public function excludeProperty(int $propertyModifiers, AnnotationSet $annotations, bool $serialize): bool
     {
         // exclude the property if the property modifiers are found in the excluded modifiers
-        if (0 !== ($this->excludedModifiers & $property->getModifiers())) {
+        if (0 !== ($this->excludedModifiers & $propertyModifiers)) {
             return true;
         }
-
-        $annotations = $property->getAnnotations();
 
         return $this->excludeByAnnotation($annotations, $serialize, AnnotationSet::TYPE_PROPERTY);
     }

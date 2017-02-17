@@ -6,18 +6,20 @@
 
 namespace Tebru\Gson\Test\Mock;
 
+use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Type;
 
 /**
- * Class PropertyCollectionExclusionMock
+ * Class ExcludedClassMock
  *
  * @author Nate Brunette <n@tebru.net>
+ * @Exclude()
  */
-class PropertyCollectionExclusionMock
+class ExcludedClassMock
 {
     /**
-     * @Type("Tebru\Gson\Test\Mock\ExcluderVersionMock")
+     * @Type("Tebru\Gson\Test\Mock\GsonMock")
      */
-    private $excluderVersionMock;
-    public $foo;
+    private $foo;
+    private $bar;
 }
