@@ -32,6 +32,13 @@ final class JsonEncodeWriter implements JsonWritable
     private $stack = [];
 
     /**
+     * Size of the stack array
+     *
+     * @var int
+     */
+    private $stackSize = 0;
+
+    /**
      * When serializing an object, store the name that should be serialized
      *
      * @var
@@ -60,6 +67,7 @@ final class JsonEncodeWriter implements JsonWritable
         $array = [];
         $this->push($array);
         $this->stack[] = &$array;
+        $this->stackSize++;
 
         return $this;
     }
@@ -96,6 +104,7 @@ final class JsonEncodeWriter implements JsonWritable
         $class = new stdClass();
         $this->push($class);
         $this->stack[] = $class;
+        $this->stackSize++;
 
         return $this;
     }
@@ -253,7 +262,7 @@ final class JsonEncodeWriter implements JsonWritable
      */
     private function last(): int
     {
-        return $this->stackSize() - 1;
+        return $this->stackSize - 1;
     }
 
     /**
@@ -265,7 +274,7 @@ final class JsonEncodeWriter implements JsonWritable
      */
     private function push(&$value): JsonWritable
     {
-        if (0 === $this->stackSize()) {
+        if (0 === $this->stackSize) {
             if (null !== $this->result) {
                 throw new BadMethodCallException('Attempting to write two different types');
             }
@@ -293,6 +302,7 @@ final class JsonEncodeWriter implements JsonWritable
     private function pop(): void
     {
         array_splice($this->stack, $this->last(), 1);
+        $this->stackSize--;
     }
 
     /**
@@ -302,7 +312,7 @@ final class JsonEncodeWriter implements JsonWritable
      */
     private function topIsObjectStart(): bool
     {
-        if (0 === $this->stackSize()) {
+        if (0 === $this->stackSize) {
             return false;
         }
 
@@ -316,7 +326,7 @@ final class JsonEncodeWriter implements JsonWritable
      */
     private function topIsObject()
     {
-        if (0 === $this->stackSize()) {
+        if (0 === $this->stackSize) {
             return false;
         }
 
@@ -330,20 +340,10 @@ final class JsonEncodeWriter implements JsonWritable
      */
     private function topIsArray()
     {
-        if (0 === $this->stackSize()) {
+        if (0 === $this->stackSize) {
             return false;
         }
 
         return is_array($this->stack[$this->last()]);
-    }
-
-    /**
-     * Return the stack size
-     *
-     * @return int
-     */
-    private function stackSize(): int
-    {
-        return count($this->stack);
     }
 }

@@ -35,6 +35,13 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      * @var array
      */
     private $stack = [];
+    
+    /**
+     * Size of the stack array
+     *
+     * @var int
+     */
+    private $stackSize = 0;
 
     /**
      * When serializing an object, store the name that should be serialized
@@ -65,6 +72,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
         $array = new JsonArray();
         $this->push($array);
         $this->stack[] = $array;
+        $this->stackSize++;
 
         return $this;
     }
@@ -101,6 +109,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
         $class = new JsonObject();
         $this->push($class);
         $this->stack[] = $class;
+        $this->stackSize++;
 
         return $this;
     }
@@ -271,7 +280,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     private function last(): int
     {
-        return $this->stackSize() - 1;
+        return $this->stackSize - 1;
     }
 
     /**
@@ -283,7 +292,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     private function push(JsonElement $value): JsonWritable
     {
-        if (0 === $this->stackSize()) {
+        if (0 === $this->stackSize) {
             if (null !== $this->result) {
                 throw new BadMethodCallException('Attempting to write two different types');
             }
@@ -311,6 +320,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
     private function pop(): void
     {
         array_splice($this->stack, $this->last(), 1);
+        $this->stackSize--;
     }
 
     /**
@@ -320,7 +330,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     private function topIsObjectStart(): bool
     {
-        if (0 === $this->stackSize()) {
+        if (0 === $this->stackSize) {
             return false;
         }
 
@@ -334,7 +344,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     private function topIsObject()
     {
-        if (0 === $this->stackSize()) {
+        if (0 === $this->stackSize) {
             return false;
         }
 
@@ -348,20 +358,10 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     private function topIsArray()
     {
-        if (0 === $this->stackSize()) {
+        if (0 === $this->stackSize) {
             return false;
         }
 
         return $this->stack[$this->last()] instanceof JsonArray;
-    }
-
-    /**
-     * Return the stack size
-     *
-     * @return int
-     */
-    private function stackSize(): int
-    {
-        return count($this->stack);
     }
 }
