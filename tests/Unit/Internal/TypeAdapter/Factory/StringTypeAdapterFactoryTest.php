@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
+use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
@@ -37,7 +38,7 @@ class StringTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $factory = new StringTypeAdapterFactory();
-        $adapter = $factory->create(new PhpType('string'), new TypeAdapterProvider([]));
+        $adapter = $factory->create(new PhpType('string'), new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(StringTypeAdapter::class, $adapter);
     }

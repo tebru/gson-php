@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
+use Doctrine\Common\Cache\ArrayCache;
 use LogicException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Collection\ArrayList;
@@ -32,9 +33,12 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
     public function testDeserializeNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map'));
 
@@ -45,11 +49,14 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeSimpleObject()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map'));
@@ -63,11 +70,14 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeObjectMultipleKeys()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map'));
@@ -82,11 +92,14 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNestedObject()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map'));
@@ -101,13 +114,16 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNestedArray()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new FloatTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new FloatTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map'));
@@ -122,11 +138,14 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeOneGenericType()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map<string>'));
@@ -140,11 +159,14 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeTwoGenericTypes()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map<string, string>'));
@@ -161,11 +183,14 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('HashMap must have one or two generic types');
 
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map<string, string, string>'));
@@ -175,13 +200,16 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNestedGenerics()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map<List<Map<string, integer>>>'));
@@ -197,9 +225,12 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map'));
@@ -209,11 +240,14 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeSimple()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map'));
@@ -227,12 +261,15 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeNestedObjects()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map'));
@@ -247,11 +284,14 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeOneGeneric()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map<string>'));
@@ -264,11 +304,14 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeTwoGenerics()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map<string, string>'));
@@ -281,12 +324,15 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeNestedGenerics()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map<string, array<int>>'));
@@ -302,9 +348,12 @@ class HashMapTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('HashMap must have one or two generic types');
 
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var HashMapTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Map<string, array, int>'));

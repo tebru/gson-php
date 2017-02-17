@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
+use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\BooleanTypeAdapter;
@@ -37,7 +38,7 @@ class BooleanTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $factory = new BooleanTypeAdapterFactory();
-        $adapter = $factory->create(new PhpType('boolean'), new TypeAdapterProvider([]));
+        $adapter = $factory->create(new PhpType('boolean'), new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(BooleanTypeAdapter::class, $adapter);
     }

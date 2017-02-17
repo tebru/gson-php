@@ -44,9 +44,12 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
     public function testUsesDeserializer()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), null, new MockDeserializer()),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), null, new MockDeserializer()),
+            ],
+            new ArrayCache()
+        );
 
         /** @var CustomWrappedTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
@@ -82,13 +85,16 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
             $excluder,
             new ArrayCache()
         );
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new BooleanTypeAdapterFactory(),
-            new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class)),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new BooleanTypeAdapterFactory(),
+                new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class)),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
 
@@ -106,9 +112,12 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testUsesSerializerNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer()),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer()),
+            ],
+            new ArrayCache()
+        );
 
         /** @var CustomWrappedTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
@@ -118,9 +127,12 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testUsesSerializer()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer()),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer()),
+            ],
+            new ArrayCache()
+        );
 
         /** @var CustomWrappedTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
@@ -145,13 +157,16 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
             $excluder,
             new ArrayCache()
         );
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new BooleanTypeAdapterFactory(),
-            new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class)),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new BooleanTypeAdapterFactory(),
+                new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class)),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
+            ],
+            new ArrayCache()
+        );
 
         /** @var CustomWrappedTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));

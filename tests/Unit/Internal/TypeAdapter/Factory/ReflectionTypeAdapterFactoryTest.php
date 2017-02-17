@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\AccessorMethodProvider;
@@ -50,13 +51,16 @@ class ReflectionTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new BooleanTypeAdapterFactory(),
-            $this->factory(),
-            new WildcardTypeAdapterFactory()
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new BooleanTypeAdapterFactory(),
+                $this->factory(),
+                new WildcardTypeAdapterFactory()
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(ChildClass::class));
 

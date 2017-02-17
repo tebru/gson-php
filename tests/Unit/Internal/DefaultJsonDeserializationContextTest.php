@@ -58,11 +58,14 @@ class DefaultJsonDeserializationContextTest extends PHPUnit_Framework_TestCase
             $excluder,
             new ArrayCache()
         );
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
+            ],
+            new ArrayCache()
+        );
 
         $context = new DefaultJsonDeserializationContext($typeAdapterProvider);
 

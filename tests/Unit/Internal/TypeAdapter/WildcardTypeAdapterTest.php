@@ -5,6 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
+use Doctrine\Common\Cache\ArrayCache;
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
@@ -31,10 +32,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
     public function testDeserializeArray()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ArrayTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ArrayTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -45,10 +49,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeObject()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ArrayTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ArrayTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -59,10 +66,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeString()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -73,10 +83,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeName()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $reader = new JsonDecodeReader('{"key": "value"}');
         $reader->beginObject();
@@ -88,10 +101,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeBoolean()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new BooleanTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new BooleanTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -102,10 +118,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeBooleanFalse()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new BooleanTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new BooleanTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -116,10 +135,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNumberInt()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new FloatTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new FloatTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -130,10 +152,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNumberFloat()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new FloatTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new FloatTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -144,10 +169,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNumberNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new NullTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new NullTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -161,10 +189,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Could not parse token "end-object"');
 
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $reader = new JsonDecodeReader('{"key": "value"}');
         $reader->beginObject();
@@ -178,10 +209,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeArray()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ArrayTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ArrayTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -190,11 +224,14 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeObject()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -203,10 +240,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeString()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -215,10 +255,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeBooleanTrue()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new BooleanTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new BooleanTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -227,10 +270,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeBooleanFalse()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new BooleanTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new BooleanTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -239,10 +285,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeInteger()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new IntegerTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new IntegerTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -251,10 +300,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new NullTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new NullTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 
@@ -266,10 +318,13 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The type "resource" could not be handled by any of the registered type adapters');
 
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new NullTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new NullTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
 

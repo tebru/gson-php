@@ -319,6 +319,9 @@ class GsonBuilder
         $annotationCache = null === $this->cacheDir ? new ArrayCache(): new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
         $annotationCache->setNamespace('annotation_cache');
 
+        $typeAdapterCache = null === $this->cacheDir ? new ArrayCache(): new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
+        $typeAdapterCache->setNamespace('type_adapter_cache');
+
         $annotationCollectionFactory = new AnnotationCollectionFactory($reader, $annotationCache);
         $excluder = new Excluder($annotationCollectionFactory);
         $excluder->setVersion($this->version);
@@ -338,7 +341,10 @@ class GsonBuilder
             $excluder,
             $cache
         );
-        $typeAdapterProvider = new TypeAdapterProvider($this->getTypeAdapterFactories($propertyCollectionFactory, $excluder, $annotationCollectionFactory));
+        $typeAdapterProvider = new TypeAdapterProvider(
+            $this->getTypeAdapterFactories($propertyCollectionFactory, $excluder, $annotationCollectionFactory),
+            $typeAdapterCache
+        );
 
         foreach ($this->typeAdapters as $type => $typeAdapter) {
             $typeAdapterProvider->addTypeAdapter($type, $typeAdapter);

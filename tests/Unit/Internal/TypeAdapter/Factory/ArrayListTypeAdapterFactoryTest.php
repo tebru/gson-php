@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
+use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Collection\AbstractCollection;
 use Tebru\Collection\AbstractList;
@@ -54,7 +55,7 @@ class ArrayListTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new ArrayListTypeAdapterFactory();
         $phpType = new PhpType(ListInterface::class);
-        $typeAdapterProvider = new TypeAdapterProvider([]);
+        $typeAdapterProvider = new TypeAdapterProvider([], new ArrayCache());
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
         self::assertInstanceOf(ArrayListTypeAdapter::class, $adapter);

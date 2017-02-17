@@ -57,12 +57,15 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
             $excluder,
             new ArrayCache()
         );
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new BooleanTypeAdapterFactory(),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new BooleanTypeAdapterFactory(),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
 
@@ -85,15 +88,18 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
             $excluder,
             new ArrayCache()
         );
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ExcluderTypeAdapterFactory($excluder),
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new FloatTypeAdapterFactory(),
-            new BooleanTypeAdapterFactory(),
-            new NullTypeAdapterFactory(),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ExcluderTypeAdapterFactory($excluder),
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new FloatTypeAdapterFactory(),
+                new BooleanTypeAdapterFactory(),
+                new NullTypeAdapterFactory(),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
+            ],
+            new ArrayCache()
+        );
 
         /** @var ReflectionTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
@@ -144,12 +150,15 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
             $excluder,
             new ArrayCache()
         );
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new BooleanTypeAdapterFactory(),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new BooleanTypeAdapterFactory(),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
 
@@ -170,12 +179,15 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
             $excluder,
             new ArrayCache()
         );
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new BooleanTypeAdapterFactory(),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new BooleanTypeAdapterFactory(),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
 

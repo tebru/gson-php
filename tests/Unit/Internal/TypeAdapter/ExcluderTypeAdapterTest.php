@@ -47,10 +47,13 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
         $excluder = new Excluder(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
         $excluder->addExclusionStrategy(new FooExclusionStrategy(), false, true);
 
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ExcluderTypeAdapterFactory($excluder),
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ExcluderTypeAdapterFactory($excluder),
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Foo'));
 
         self::assertNull($adapter->readFromJson('{}'));
@@ -61,11 +64,14 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
         $excluder = new Excluder(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
         $excluder->addExclusionStrategy(new FooExclusionStrategy(), true, false);
 
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ExcluderTypeAdapterFactory($excluder),
-            new FooTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ExcluderTypeAdapterFactory($excluder),
+                new FooTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ExcluderTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('Foo'));
@@ -78,10 +84,13 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
         $excluder = new Excluder(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
         $excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), true, false);
 
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ExcluderTypeAdapterFactory($excluder),
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ExcluderTypeAdapterFactory($excluder),
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(ExcluderVersionMock::class));
 
         self::assertSame('null', $adapter->writeToJson(new ExcluderVersionMock(), false));
@@ -103,11 +112,14 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ExcluderTypeAdapterFactory($excluder),
-            new HashMapTypeAdapterFactory(),
-            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ExcluderTypeAdapterFactory($excluder),
+                new HashMapTypeAdapterFactory(),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
+            ],
+            new ArrayCache()
+        );
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(ExcluderVersionMock::class));
 
         self::assertSame('{}', $adapter->writeToJson(new ExcluderVersionMock(), false));

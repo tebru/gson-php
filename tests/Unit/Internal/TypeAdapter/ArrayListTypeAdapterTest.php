@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
+use Doctrine\Common\Cache\ArrayCache;
 use LogicException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Collection\ArrayList;
@@ -33,9 +34,12 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
     public function testDeserializeNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ArrayListTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ArrayListTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
 
@@ -47,11 +51,14 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeSimpleArray()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new FloatTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new FloatTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
@@ -68,11 +75,14 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNestedArray()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new FloatTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new FloatTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
@@ -89,13 +99,16 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNestedObject()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new FloatTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new FloatTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
@@ -114,13 +127,16 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNestedObjectExplicit()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new FloatTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new FloatTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('List<Map>'));
@@ -142,15 +158,18 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('ArrayList expected to have exactly one generic type');
 
-        $adapter = new ArrayListTypeAdapter(new PhpType('ArrayList<Foo, Bar>'), new TypeAdapterProvider([]));
+        $adapter = new ArrayListTypeAdapter(new PhpType('ArrayList<Foo, Bar>'), new TypeAdapterProvider([], new ArrayCache()));
         $adapter->readFromJson('[1]');
     }
 
     public function testSerializeNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ArrayListTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ArrayListTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
@@ -160,10 +179,13 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeInts()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new IntegerTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new IntegerTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
@@ -175,12 +197,15 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeVariableTypes()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new NullTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new NullTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
@@ -192,12 +217,15 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeVariableTypesWithNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new NullTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new NullTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('List'));
@@ -209,10 +237,13 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeIntsGenericType()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new IntegerTypeAdapterFactory(),
-            new ArrayListTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new IntegerTypeAdapterFactory(),
+                new ArrayListTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('List<int>'));
@@ -227,7 +258,7 @@ class ArrayListTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('ArrayList expected to have exactly one generic type');
 
-        $adapter = new ArrayListTypeAdapter(new PhpType('ArrayList<Foo, Bar>'), new TypeAdapterProvider([]));
+        $adapter = new ArrayListTypeAdapter(new PhpType('ArrayList<Foo, Bar>'), new TypeAdapterProvider([], new ArrayCache()));
         $adapter->writeToJson(new ArrayList(), false);
     }
 }

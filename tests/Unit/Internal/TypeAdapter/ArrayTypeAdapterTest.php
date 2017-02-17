@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
+use Doctrine\Common\Cache\ArrayCache;
 use LogicException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Collection\HashMap;
@@ -32,9 +33,12 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
     public function testDeserializeNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ArrayTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ArrayTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array'));
 
@@ -45,11 +49,14 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeSimpleArray()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new FloatTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new FloatTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array'));
@@ -60,11 +67,14 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeSimpleArrayAsInteger()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new IntegerTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new IntegerTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<int>'));
@@ -75,11 +85,14 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNestedArray()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new IntegerTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new IntegerTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<array<int>>'));
@@ -90,11 +103,14 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeSimpleObject()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array'));
@@ -105,11 +121,14 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNestedObject()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array'));
@@ -120,12 +139,15 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNestedObjectWithGeneric()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<Map>'));
@@ -141,13 +163,16 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNestedObjectWithKeyAndValueTypes()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new IntegerTypeAdapterFactory(),
-            new StringTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new HashMapTypeAdapterFactory(),
-            new WildcardTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new IntegerTypeAdapterFactory(),
+                new StringTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new HashMapTypeAdapterFactory(),
+                new WildcardTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<string, Map<string, string>>'));
@@ -166,7 +191,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Array may not have more than 2 generic types');
 
-        $adapter = new ArrayTypeAdapter(new PhpType('array<string, string, string>'), new TypeAdapterProvider([]));
+        $adapter = new ArrayTypeAdapter(new PhpType('array<string, string, string>'), new TypeAdapterProvider([], new ArrayCache()));
         $adapter->readFromJson('{}');
     }
 
@@ -175,7 +200,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('An array may only specify a generic type for the value');
 
-        $adapter = new ArrayTypeAdapter(new PhpType('array<string, string>'), new TypeAdapterProvider([]));
+        $adapter = new ArrayTypeAdapter(new PhpType('array<string, string>'), new TypeAdapterProvider([], new ArrayCache()));
         $adapter->readFromJson('[1]');
     }
 
@@ -184,15 +209,18 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->expectException(UnexpectedJsonTokenException::class);
         $this->expectExceptionMessage('Could not parse json, expected array or object but found "number"');
 
-        $adapter = new ArrayTypeAdapter(new PhpType('array'), new TypeAdapterProvider([]));
+        $adapter = new ArrayTypeAdapter(new PhpType('array'), new TypeAdapterProvider([], new ArrayCache()));
         $adapter->readFromJson('1');
     }
 
     public function testSerializeNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new ArrayTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new ArrayTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array'));
@@ -202,10 +230,13 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeArrayInts()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new IntegerTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new IntegerTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array'));
@@ -215,12 +246,15 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeArrayVariableTypes()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new NullTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new NullTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array'));
@@ -230,12 +264,15 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeArrayVariableTypesNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-            new NullTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+                new NullTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array'));
@@ -245,11 +282,14 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeArrayAsObject()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array'));
@@ -259,11 +299,14 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeArrayOneGenericType()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<int>'));
@@ -273,11 +316,14 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeArrayAsObjectOneGenericType()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<string>'));
@@ -287,11 +333,14 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeArrayTwoGenericTypes()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([
-            new StringTypeAdapterFactory(),
-            new IntegerTypeAdapterFactory(),
-            new ArrayTypeAdapterFactory(),
-        ]);
+        $typeAdapterProvider = new TypeAdapterProvider(
+            [
+                new StringTypeAdapterFactory(),
+                new IntegerTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory(),
+            ],
+            new ArrayCache()
+        );
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<string, string>'));
@@ -304,7 +353,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Array may not have more than 2 generic types');
 
-        $adapter = new ArrayTypeAdapter(new PhpType('array<int, string, int>'), new TypeAdapterProvider([]));
+        $adapter = new ArrayTypeAdapter(new PhpType('array<int, string, int>'), new TypeAdapterProvider([], new ArrayCache()));
         $adapter->writeToJson([], false);
     }
 }

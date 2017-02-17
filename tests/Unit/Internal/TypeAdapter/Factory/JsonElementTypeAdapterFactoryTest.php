@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
+use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Element\JsonArray;
 use Tebru\Gson\Element\JsonElement;
@@ -53,7 +54,7 @@ class JsonElementTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $factory = new JsonElementTypeAdapterFactory();
-        $adapter = $factory->create(new PhpType('JsonElement'), new TypeAdapterProvider([]));
+        $adapter = $factory->create(new PhpType('JsonElement'), new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(JsonElementTypeAdapter::class, $adapter);
     }

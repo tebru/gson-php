@@ -6,6 +6,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
@@ -49,6 +50,6 @@ class JsonTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
 
-        self::assertInstanceOf(StringTypeAdapter::class, $factory->create(new PhpType(JsonAdapterClassMock::class), new TypeAdapterProvider([])));
+        self::assertInstanceOf(StringTypeAdapter::class, $factory->create(new PhpType(JsonAdapterClassMock::class), new TypeAdapterProvider([], new ArrayCache())));
     }
 }

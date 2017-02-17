@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 use DateTime;
+use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
@@ -50,7 +51,7 @@ class DateTimeTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new DateTimeTypeAdapterFactory();
         $phpType = new PhpType('DateTime');
-        $adapter = $factory->create($phpType, new TypeAdapterProvider([]));
+        $adapter = $factory->create($phpType, new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(DateTimeTypeAdapter::class, $adapter);
         self::assertAttributeSame($phpType, 'phpType', $adapter);

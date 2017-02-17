@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
+use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\FloatTypeAdapter;
@@ -37,7 +38,7 @@ class FloatTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $factory = new FloatTypeAdapterFactory();
-        $adapter = $factory->create(new PhpType('float'), new TypeAdapterProvider([]));
+        $adapter = $factory->create(new PhpType('float'), new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(FloatTypeAdapter::class, $adapter);
     }

@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Internal;
 
+use Doctrine\Common\Cache\CacheProvider;
 use InvalidArgumentException;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
@@ -25,9 +26,9 @@ final class TypeAdapterProvider
     /**
      * A cache of mapped factories
      *
-     * @var TypeAdapter[]
+     * @var CacheProvider
      */
-    private $typeAdapterCache = [];
+    private $typeAdapterCache;
 
     /**
      * All registered [@see TypeAdapter]s
@@ -40,10 +41,12 @@ final class TypeAdapterProvider
      * Constructor
      *
      * @param array $typeAdapterFactories
+     * @param CacheProvider $cache
      */
-    public function __construct(array $typeAdapterFactories)
+    public function __construct(array $typeAdapterFactories, CacheProvider $cache)
     {
         $this->typeAdapterFactories = $typeAdapterFactories;
+        $this->typeAdapterCache = $cache;
     }
 
     /**
@@ -54,7 +57,7 @@ final class TypeAdapterProvider
      */
     public function addTypeAdapter(string $type, TypeAdapter $typeAdapter): void
     {
-        $this->typeAdapterCache[$type] = $typeAdapter;
+        $this->typeAdapterCache->save($type, $typeAdapter);
     }
 
     /**
@@ -70,8 +73,9 @@ final class TypeAdapterProvider
     public function getAdapter(PhpType $type, TypeAdapterFactory $skip = null): TypeAdapter
     {
         $fullType = (string) $type;
-        if (null === $skip && array_key_exists($fullType, $this->typeAdapterCache)) {
-            return $this->typeAdapterCache[$fullType];
+        $typeAdapter = $this->typeAdapterCache->fetch($fullType);
+        if (null === $skip && false !== $typeAdapter) {
+            return $typeAdapter;
         }
 
         foreach ($this->typeAdapterFactories as $typeAdapterFactory) {
@@ -84,7 +88,7 @@ final class TypeAdapterProvider
             }
 
             $adapter = $typeAdapterFactory->create($type, $this);
-            $this->typeAdapterCache[$fullType] = $adapter;
+            $this->typeAdapterCache->save($fullType, $adapter);
 
             return $adapter;
         }

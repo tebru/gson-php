@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
+use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Collection\AbstractMap;
 use Tebru\Collection\HashMap;
@@ -52,7 +53,7 @@ class HashMapTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new HashMapTypeAdapterFactory();
         $phpType = new PhpType(MapInterface::class);
-        $typeAdapterProvider = new TypeAdapterProvider([]);
+        $typeAdapterProvider = new TypeAdapterProvider([], new ArrayCache());
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
         self::assertInstanceOf(HashMapTypeAdapter::class, $adapter);
