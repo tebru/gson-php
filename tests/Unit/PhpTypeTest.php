@@ -211,6 +211,28 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
         self::assertSame('integer', (string) $phpType);
     }
 
+    public function testUniqueKey()
+    {
+        $phpType = new PhpType('array');
+
+        self::assertSame('array', $phpType->getUniqueKey());
+    }
+
+    public function testUniqueKeyWithGenerics()
+    {
+        $phpType = new PhpType('array<int>');
+
+        self::assertSame('array<int>', $phpType->getUniqueKey());
+    }
+
+    public function testUniqueKeyWithOptions()
+    {
+        $phpType = new PhpType('array');
+        $phpType->setOptions(['foo' => 'bar']);
+
+        self::assertSame('arraya:1:{s:3:"foo";s:3:"bar";}', $phpType->getUniqueKey());
+    }
+
     public function testCreateFromVariableObject()
     {
         self::assertSame(stdClass::class, (string) PhpType::createFromVariable(new stdClass()));

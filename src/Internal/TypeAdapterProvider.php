@@ -72,8 +72,8 @@ final class TypeAdapterProvider
      */
     public function getAdapter(PhpType $type, TypeAdapterFactory $skip = null): TypeAdapter
     {
-        $fullType = (string) $type;
-        $typeAdapter = $this->typeAdapterCache->fetch($fullType);
+        $key = $type->getUniqueKey();
+        $typeAdapter = $this->typeAdapterCache->fetch($key);
         if (null === $skip && false !== $typeAdapter) {
             return $typeAdapter;
         }
@@ -88,7 +88,7 @@ final class TypeAdapterProvider
             }
 
             $adapter = $typeAdapterFactory->create($type, $this);
-            $this->typeAdapterCache->save($fullType, $adapter);
+            $this->typeAdapterCache->save($key, $adapter);
 
             return $adapter;
         }

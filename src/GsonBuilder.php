@@ -146,7 +146,8 @@ class GsonBuilder
     public function registerType(string $type, $handler): GsonBuilder
     {
         if ($handler instanceof TypeAdapter) {
-            $this->typeAdapters[(string) new PhpType($type)] = $handler;
+            $phpType = new PhpType($type);
+            $this->typeAdapters[$phpType->getUniqueKey()] = $handler;
 
             return $this;
         }
@@ -182,7 +183,8 @@ class GsonBuilder
      */
     public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
     {
-        $this->instanceCreators[(string) new PhpType($type)] = $instanceCreator;
+        $phpType = new PhpType($type);
+        $this->instanceCreators[$phpType->getUniqueKey()] = $instanceCreator;
 
         return $this;
     }

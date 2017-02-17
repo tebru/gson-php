@@ -315,6 +315,19 @@ final class PhpType
     }
 
     /**
+     * Returns a unique identifying key for this type based on
+     * the full type and options
+     *
+     * @return string
+     */
+    public function getUniqueKey(): string
+    {
+        return [] === $this->options
+            ? $this->fullType
+            : $this->fullType.serialize($this->options);
+    }
+
+    /**
      * Return the initial type including generics
      *
      * @return string
