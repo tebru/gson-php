@@ -9,8 +9,6 @@ use BadMethodCallException;
 use DateTime;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
-use Tebru\Collection\ArrayList;
-use Tebru\Collection\HashMap;
 use Tebru\Gson\Gson;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Test\Mock\ChildClass;
@@ -46,8 +44,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame('protected', 'protected', $gsonMock);
@@ -77,8 +73,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame('protected', 'protected', $gsonMock);
@@ -108,8 +102,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame('protected', 'protected', $gsonMock);
@@ -139,8 +131,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame(null, 'protected', $gsonMock);
@@ -170,8 +160,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame(null, $gsonMock->getString());
         self::assertSame(null, $gsonMock->getBoolean());
         self::assertSame(null, $gsonMock->getArray());
-        self::assertSame(null, $gsonMock->getArrayList());
-        self::assertSame(null, $gsonMock->getHashMap());
         self::assertSame(null, $gsonMock->getDate());
         self::assertSame(null, $gsonMock->public);
         self::assertAttributeSame(null, 'protected', $gsonMock);
@@ -201,8 +189,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame('protected', 'protected', $gsonMock);
@@ -232,8 +218,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame('protected', 'protected', $gsonMock);
@@ -263,8 +247,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame(null, 'protected', $gsonMock);
@@ -294,8 +276,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame(null, 'protected', $gsonMock);
@@ -325,8 +305,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame('protected', 'protected', $gsonMock);
@@ -356,8 +334,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame('protected', 'protected', $gsonMock);
@@ -385,8 +361,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
             'string2' => 'foo',
             'boolean2' => false,
             'array2' => ['foo' => 'bar'],
-            'arrayList2' => [1.1, 1.2],
-            'hashMap2' => ['key' => 'value'],
             'date2' => '2017-01-01T12:01:23-06:00',
             'public2' => 'public',
             'protected2' => 'protected',
@@ -412,8 +386,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame('protected', 'protected', $gsonMock);
@@ -443,8 +415,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $gsonMock->getString());
         self::assertSame(false, $gsonMock->getBoolean());
         self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
-        self::assertSame([1.1, 1.2], $gsonMock->getArrayList()->toArray());
-        self::assertSame('value', $gsonMock->getHashMap()->get('key'));
         self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
         self::assertSame('public', $gsonMock->public);
         self::assertAttributeSame('protected', 'protected', $gsonMock);
@@ -497,8 +467,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
             "string": null,
             "boolean": null,
             "array": null,
-            "array_list": null,
-            "hash_map": null,
             "date": null,
             "public": null,
             "protected": null,
@@ -654,8 +622,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
             'string' => 'foo',
             'boolean' => false,
             'array' => ['foo' => 'bar'],
-            'array_list' => [1.1, 1.2],
-            'hash_map' => ['key' => 'value'],
             'date' => '2017-01-01T12:01:23-06:00',
             'public' => 'public',
             'protected' => 'protected',
@@ -682,8 +648,6 @@ class GsonTest extends PHPUnit_Framework_TestCase
         $gsonMock->setString('foo');
         $gsonMock->setBoolean(false);
         $gsonMock->setArray(['foo' => 'bar']);
-        $gsonMock->setArrayList(new ArrayList([1.1, 1.2]));
-        $gsonMock->setHashMap(new HashMap(['key' => 'value']));
         $gsonMock->setDate(DateTime::createFromFormat(DateTime::ATOM, '2017-01-01T12:01:23-06:00'));
         $gsonMock->public = 'public';
         $gsonMock->setProtectedHidden('protected');

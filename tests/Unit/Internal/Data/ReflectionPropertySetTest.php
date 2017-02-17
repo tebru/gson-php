@@ -39,54 +39,11 @@ class ReflectionPropertySetTest extends PHPUnit_Framework_TestCase
         self::assertSame([$property], $set->toArray());
     }
 
-    public function testClear()
-    {
-        $set = new ReflectionPropertySet([new ReflectionProperty(ChildClass::class, 'foo')]);
-        $set->clear();
-
-        self::assertCount(0, $set);
-    }
-
-    public function testContainsTrue()
-    {
-        $property = new ReflectionProperty(ChildClass::class, 'foo');
-        $set = new ReflectionPropertySet([$property]);
-
-        self::assertTrue($set->contains(new ReflectionProperty(ChildClass::class, 'foo')));
-    }
-
-    public function testContainsFalse()
-    {
-        $property = new ReflectionProperty(ChildClass::class, 'foo');
-        $set = new ReflectionPropertySet([$property]);
-
-        self::assertFalse($set->contains(new ReflectionProperty(ChildClass::class, 'overridden')));
-    }
-
-    public function testRemove()
-    {
-        $property = new ReflectionProperty(ChildClass::class, 'foo');
-        $set = new ReflectionPropertySet([$property]);
-        $removed = $set->remove($property);
-
-        self::assertTrue($removed);
-        self::assertCount(0, $set);
-    }
-
-    public function testRemoveFalse()
-    {
-        $property = new ReflectionProperty(ChildClass::class, 'foo');
-        $set = new ReflectionPropertySet([$property]);
-        $removed = $set->remove(new ReflectionProperty(ChildClass::class, 'overridden'));
-
-        self::assertFalse($removed);
-        self::assertCount(1, $set);
-    }
-
     public function testToArray()
     {
         $property = new ReflectionProperty(ChildClass::class, 'foo');
-        $set = new ReflectionPropertySet([$property]);
+        $set = new ReflectionPropertySet();
+        $set->add($property);
 
         self::assertSame([$property], $set->toArray());
     }

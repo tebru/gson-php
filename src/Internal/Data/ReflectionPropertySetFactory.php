@@ -27,12 +27,18 @@ final class ReflectionPropertySetFactory
      */
     public function create(ReflectionClass $reflectionClass): ReflectionPropertySet
     {
-        $properties = new ReflectionPropertySet($reflectionClass->getProperties());
+        $properties = new ReflectionPropertySet();
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            $properties->add($reflectionProperty);
+        }
+
         $parentClass = $reflectionClass->getParentClass();
 
         while (false !== $parentClass) {
             // add all private properties from parent
-            $properties->addAllArray($parentClass->getProperties(ReflectionProperty::IS_PRIVATE));
+            foreach ($parentClass->getProperties(ReflectionProperty::IS_PRIVATE) as $property) {
+                $properties->add($property);
+            }
 
             // reset $parentClass
             $parentClass = $parentClass->getParentClass();

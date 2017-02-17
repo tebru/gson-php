@@ -7,15 +7,10 @@
 namespace Tebru\Gson\Test\Mock\TypeAdapter;
 
 use DateTime;
-use Tebru\Collection\ListInterface;
-use Tebru\Collection\MapInterface;
-use Tebru\Gson\Element\JsonArray;
 use Tebru\Gson\Element\JsonElement;
-use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\JsonDeserializationContext;
 use Tebru\Gson\JsonDeserializer;
-use Tebru\Gson\JsonSerializationContext;
 use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
 
@@ -45,8 +40,6 @@ class Integer1Deserializer implements JsonDeserializer
         $mock->setString($json->getAsString('string'));
         $mock->setBoolean($json->getAsBoolean('boolean'));
         $mock->setArray($json->getAsArray('array'));
-        $mock->setArrayList($context->deserialize($json->get('array_list'), ListInterface::class));
-        $mock->setHashMap($context->deserialize($json->get('hash_map'), MapInterface::class));
         $mock->setDate($context->deserialize($json->get('date'), DateTime::class));
         $mock->public = $json->getAsString('public');
         $mock->setSince($json->getAsString('since'));

@@ -24,19 +24,19 @@ use Tebru\Gson\Internal\TypeToken;
  *
  * For example:
  *
- *     ArrayList<int>
+ *     array<int>
  *
- * Would represent an ArrayList of ints.
+ * Would represent an array of ints.
  *
- *     HashMap<string, int>
+ *     array<string, int>
  *
- * Would represent a HashMap using string keys and int values.
+ * Would represent an array using string keys and int values.
  *
  * They can be combined, like so
  *
- *     HashMap<string, ArrayList<int>>
+ *     array<string, array<int>>
  *
- * To represent a HashMap with string keys and an ArrayList of ints as values.
+ * To represent a array with string keys and an array of ints as values.
  *
  * @author Nate Brunette <n@tebru.net>
  */

@@ -9,13 +9,11 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 use Doctrine\Common\Cache\ArrayCache;
 use LogicException;
 use PHPUnit_Framework_TestCase;
-use Tebru\Collection\HashMap;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\FloatTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\HashMapTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
@@ -143,22 +141,16 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
             [
                 new StringTypeAdapterFactory(),
                 new ArrayTypeAdapterFactory(),
-                new HashMapTypeAdapterFactory(),
                 new WildcardTypeAdapterFactory(),
             ],
             new ArrayCache()
         );
 
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<Map>'));
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<array>'));
         $result = $adapter->readFromJson('{"key": {"nestedKey": "nestedValue", "nestedKey2": "nestedValue2"}}');
 
-        /** @var HashMap $map */
-        $map = $result['key'];
-
-        self::assertInstanceOf(HashMap::class, $map);
-        self::assertSame('nestedValue', $map->get('nestedKey'));
-        self::assertSame('nestedValue2', $map->get('nestedKey2'));
+        self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
     }
 
     public function testDeserializeNestedObjectWithKeyAndValueTypes()
@@ -168,22 +160,16 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
                 new IntegerTypeAdapterFactory(),
                 new StringTypeAdapterFactory(),
                 new ArrayTypeAdapterFactory(),
-                new HashMapTypeAdapterFactory(),
                 new WildcardTypeAdapterFactory(),
             ],
             new ArrayCache()
         );
 
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<string, Map<string, string>>'));
+        $adapter = $typeAdapterProvider->getAdapter(new PhpType('array<string, array<string, string>>'));
         $result = $adapter->readFromJson('{"key": {"nestedKey": "nestedValue", "nestedKey2": "nestedValue2"}}');
 
-        /** @var HashMap $map */
-        $map = $result['key'];
-
-        self::assertInstanceOf(HashMap::class, $map);
-        self::assertSame('nestedValue', $map->get('nestedKey'));
-        self::assertSame('nestedValue2', $map->get('nestedKey2'));
+        self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
     }
 
     public function testDeserializeMoreThanTwoGenericTypes()

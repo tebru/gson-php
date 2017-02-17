@@ -24,14 +24,12 @@ use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Internal\PhpTypeFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayListTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\FloatTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\HashMapTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\JsonElementTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\JsonTypeAdapterFactory;
@@ -380,8 +378,6 @@ class GsonBuilder
                 new NullTypeAdapterFactory(),
                 new DateTimeTypeAdapterFactory(),
                 new ArrayTypeAdapterFactory(),
-                new ArrayListTypeAdapterFactory(),
-                new HashMapTypeAdapterFactory(),
                 new JsonElementTypeAdapterFactory(),
                 new ReflectionTypeAdapterFactory(new ConstructorConstructor($this->instanceCreators), $propertyCollectionFactory, $excluder),
                 new WildcardTypeAdapterFactory(),

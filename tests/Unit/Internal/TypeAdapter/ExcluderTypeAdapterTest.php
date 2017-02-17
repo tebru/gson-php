@@ -24,7 +24,6 @@ use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\HashMapTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\ExcluderVersionMock;
@@ -50,7 +49,6 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
         $typeAdapterProvider = new TypeAdapterProvider(
             [
                 new ExcluderTypeAdapterFactory($excluder),
-                new HashMapTypeAdapterFactory(),
             ],
             new ArrayCache()
         );
@@ -68,7 +66,6 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
             [
                 new ExcluderTypeAdapterFactory($excluder),
                 new FooTypeAdapterFactory(),
-                new HashMapTypeAdapterFactory(),
             ],
             new ArrayCache()
         );
@@ -87,7 +84,6 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
         $typeAdapterProvider = new TypeAdapterProvider(
             [
                 new ExcluderTypeAdapterFactory($excluder),
-                new HashMapTypeAdapterFactory(),
             ],
             new ArrayCache()
         );
@@ -115,7 +111,6 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
         $typeAdapterProvider = new TypeAdapterProvider(
             [
                 new ExcluderTypeAdapterFactory($excluder),
-                new HashMapTypeAdapterFactory(),
                 new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
             ],
             new ArrayCache()

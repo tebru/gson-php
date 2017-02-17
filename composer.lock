@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2116c7170e15c1b4bb75672fd2ab82c7",
+    "content-hash": "f38fe64c5a4eae67075731932720dd0d",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -197,45 +197,6 @@
                 "parser"
             ],
             "time": "2014-09-09T13:34:57+00:00"
-        },
-        {
-            "name": "tebru/php-collections",
-            "version": "v0.3.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/tebru/php-collections.git",
-                "reference": "e5d322bedbd9d500ba900e1404eebd3a80d6fed7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tebru/php-collections/zipball/e5d322bedbd9d500ba900e1404eebd3a80d6fed7",
-                "reference": "e5d322bedbd9d500ba900e1404eebd3a80d6fed7",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">= 7.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Tebru\\Collection\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nate Brunette",
-                    "email": "n@tebru.net"
-                }
-            ],
-            "description": "Data structures for PHP based on Java Collection Framework",
-            "time": "2017-01-15T18:14:38+00:00"
         }
     ],
     "packages-dev": [

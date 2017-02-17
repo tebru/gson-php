@@ -6,9 +6,6 @@
 
 namespace Tebru\Gson\Test\Mock\TypeAdapter;
 
-use DateTime;
-use Tebru\Collection\ListInterface;
-use Tebru\Collection\MapInterface;
 use Tebru\Gson\Element\JsonArray;
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonObject;
@@ -16,7 +13,6 @@ use Tebru\Gson\PhpType;
 use Tebru\Gson\JsonSerializationContext;
 use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\Test\Mock\GsonMock;
-use Tebru\Gson\Test\Mock\GsonObjectMock;
 
 /**
  * Class Integer1Serializer
@@ -43,8 +39,6 @@ class Integer1Serializer implements JsonSerializer
         $jsonObject->addString('string', $object->getString());
         $jsonObject->addBoolean('boolean', $object->getBoolean());
         $jsonObject->add('array', $context->serialize($object->getArray()));
-        $jsonObject->add('array_list', $context->serialize($object->getArrayList()));
-        $jsonObject->add('hash_map', $context->serialize($object->getHashMap()));
         $jsonObject->add('date', $context->serialize($object->getDate()));
         $jsonObject->addString('public', $object->public);
         $jsonObject->addString('since', $object->getSince());

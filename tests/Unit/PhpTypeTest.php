@@ -137,20 +137,18 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
 
     public function testOneGeneric()
     {
-        $phpType = new PhpType('ArrayList<int>');
+        $phpType = new PhpType('array<int>');
 
-        self::assertTrue($phpType->isObject());
-        self::assertSame('ArrayList', $phpType->getClass());
+        self::assertTrue($phpType->isArray());
         self::assertCount(1, $phpType->getGenerics());
         self::assertSame('integer', (string) $phpType->getGenerics()[0]);
     }
 
     public function testTwoGeneric()
     {
-        $phpType = new PhpType('HashMap<string, int>');
+        $phpType = new PhpType('array<string, int>');
 
-        self::assertTrue($phpType->isObject());
-        self::assertSame('HashMap', $phpType->getClass());
+        self::assertTrue($phpType->isArray());
         self::assertCount(2, $phpType->getGenerics());
         self::assertSame('string', (string) $phpType->getGenerics()[0]);
         self::assertSame('integer', (string) $phpType->getGenerics()[1]);
@@ -170,12 +168,11 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
 
     public function testNestedGeneric()
     {
-        $phpType = new PhpType('ArrayList<HashMap<string, Bar<string, bool>>>');
+        $phpType = new PhpType('array<array<string, Bar<string, bool>>>');
 
-        self::assertTrue($phpType->isObject());
-        self::assertSame('ArrayList', $phpType->getClass());
+        self::assertTrue($phpType->isArray());
         self::assertCount(1, $phpType->getGenerics());
-        self::assertSame('HashMap', (string) $phpType->getGenerics()[0]->getClass());
+        self::assertTrue($phpType->getGenerics()[0]->isArray());
         self::assertCount(2, $phpType->getGenerics()[0]->getGenerics());
         self::assertSame('string', (string) $phpType->getGenerics()[0]->getGenerics()[0]);
         self::assertSame('Bar', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getClass());
@@ -189,7 +186,7 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedTypeException::class);
         $this->expectExceptionMessage('Could not find ending ">" for generic type');
 
-        new PhpType('ArrayList<string');
+        new PhpType('array<string');
     }
 
     public function testOptions()
@@ -202,9 +199,9 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
 
     public function testToString()
     {
-        $phpType = new PhpType('ArrayList<HashMap<string, Bar<string, bool>>>');
+        $phpType = new PhpType('array<array<string, Bar<string, bool>>>');
 
-        self::assertSame('ArrayList<HashMap<string,Bar<string,bool>>>', (string) $phpType);
+        self::assertSame('array<array<string,Bar<string,bool>>>', (string) $phpType);
     }
 
     public function testToStringReturnsCanonicalType()

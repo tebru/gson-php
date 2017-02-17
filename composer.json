@@ -12,7 +12,6 @@
     "require": {
         "php": ">= 7.1",
         "doctrine/annotations": "^1.2",
-        "tebru/php-collections": "0.3.*",
         "doctrine/cache": "^1.0"
     },
     "require-dev": {

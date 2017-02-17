@@ -7,8 +7,6 @@
 namespace Tebru\Gson\Test\Mock;
 
 use DateTime;
-use Tebru\Collection\ListInterface;
-use Tebru\Collection\MapInterface;
 use Tebru\Gson\Annotation\Accessor;
 use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
@@ -32,8 +30,6 @@ class GsonMock
     private $string;
     private $boolean;
     private $array;
-    private $arrayList;
-    private $hashMap;
     private $date;
 
     public $public;
@@ -150,30 +146,6 @@ class GsonMock
     public function setArray(array $array)
     {
         $this->array = $array;
-
-        return $this;
-    }
-
-    public function getArrayList(): ?ListInterface
-    {
-        return $this->arrayList;
-    }
-
-    public function setArrayList(ListInterface $arrayList)
-    {
-        $this->arrayList = $arrayList;
-
-        return $this;
-    }
-
-    public function getHashMap(): ?MapInterface
-    {
-        return $this->hashMap;
-    }
-
-    public function setHashMap(MapInterface $hashMap)
-    {
-        $this->hashMap = $hashMap;
 
         return $this;
     }
