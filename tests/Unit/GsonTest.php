@@ -614,6 +614,17 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
+    public function testToJsonElement()
+    {
+        $gson = Gson::builder()->build();
+        $result = $gson->toJsonElement($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
+        unset($json['exclude']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), json_encode($result));
+    }
+
     public function testCanSetCacheDirectory()
     {
         $gsonBuilder = Gson::builder()->setCacheDir('/tmp');

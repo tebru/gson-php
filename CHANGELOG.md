@@ -13,6 +13,7 @@ Master
 * FIXED: Infinite loop on circular references when excluding property
 * ADDED: Type Adapter caching
 * ADDED: Support for subclasses of DateTime
+* ADDED: toJsonElement() method on Gson
 
 v0.1.0
 ------

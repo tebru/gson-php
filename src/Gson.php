@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson;
 
+use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -69,7 +70,7 @@ class Gson
     /**
      * Converts an object to a json string
      *
-     * @param object $object
+     * @param mixed $object
      * @return string
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
@@ -83,11 +84,11 @@ class Gson
     }
 
     /**
-     * Converts a json string to an object
+     * Converts a json string to a valid json type
      *
      * @param string $json
      * @param object|string $type
-     * @return object
+     * @return mixed
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      * @throws \RuntimeException If the value is not valid
@@ -112,5 +113,25 @@ class Gson
         }
 
         return $type;
+    }
+
+    /**
+     * Converts an object to a [@see JsonElement]
+     *
+     * This is a convenience method that first converts an object to json utilizing all of the
+     * type adapters, then converts that json to a JsonElement.  From here you can modify the
+     * JsonElement and call json_encode() on it to get json.
+     *
+     * @param mixed $object
+     * @return JsonElement
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \RuntimeException If the value is not valid
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     */
+    public function toJsonElement($object): JsonElement
+    {
+        return $this->fromJson($this->toJson($object), JsonElement::class);
     }
 }
