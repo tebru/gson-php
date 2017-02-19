@@ -39,12 +39,8 @@ final class MetadataPropertyCollection
      * @param string $name
      * @return PropertyMetadata
      */
-    public function get(string $name): ?PropertyMetadata
+    public function get(string $name): PropertyMetadata
     {
-        if (!array_key_exists($name, $this->properties)) {
-            return null;
-        }
-
         return $this->properties[$name];
     }
 }

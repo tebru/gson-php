@@ -52,16 +52,4 @@ class MetadataPropertyCollectionTest extends PHPUnit_Framework_TestCase
 
         self::assertSame($this->defaultPropertyMetadata, $this->metadataPropertyCollection->get('foo'));
     }
-
-    public function testGetPropertyInvalidName()
-    {
-        $this->metadataPropertyCollection->add($this->defaultPropertyMetadata);
-
-        self::assertNull($this->metadataPropertyCollection->get('foo2'));
-    }
-
-    public function testGetPropertyEmptyCollection()
-    {
-        self::assertNull($this->metadataPropertyCollection->get('foo'));
-    }
 }
