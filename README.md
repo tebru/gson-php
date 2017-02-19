@@ -17,7 +17,7 @@ such as:
 And in addition:
 
 * Utilize PHP 7 scalar type hints to be intelligent about property types
-* Limit annotation the number of annotations required to use
+* Limit the number of annotations required to use
 
 Overview
 --------
