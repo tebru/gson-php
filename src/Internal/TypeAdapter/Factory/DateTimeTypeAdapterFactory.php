@@ -35,7 +35,8 @@ final class DateTimeTypeAdapterFactory implements TypeAdapterFactory
 
         $class = $type->getClass();
 
-        return 'DateTime' === $class || DateTime::class === $class;
+        return DateTime::class === $class
+            || is_subclass_of($class, DateTime::class);
     }
 
     /**

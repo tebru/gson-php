@@ -10,6 +10,7 @@ use DateTime;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
+use Tebru\Gson\Test\Mock\DateTimeMock;
 
 /**
  * Class DateTimeTypeAdapterTest
@@ -83,5 +84,16 @@ class DateTimeTypeAdapterTest extends PHPUnit_Framework_TestCase
         $dateTime = DateTime::createFromFormat(DateTime::ATOM, '2016-01-02T12:23:53-06:00');
 
         self::assertSame('"01\/02\/2016 12:23:53"', $adapter->writeToJson($dateTime, false));
+    }
+
+    public function testDeserializeCreateDatetimeFormatAndTimezoneWithSubclass()
+    {
+        $type = new PhpType(DateTimeMock::class);
+        $type->setOptions(['format' => 'm/d/Y H:i:s', 'timezone' => 'America/Chicago']);
+        $adapter = new DateTimeTypeAdapter($type);
+        $result = $adapter->readFromJson('"1/2/2016 12:23:53"');
+
+        self::assertInstanceOf(DateTimeMock::class, $result);
+        self::assertSame('2016-01-02T12:23:53-06:00', $result->format(DateTime::ATOM));
     }
 }

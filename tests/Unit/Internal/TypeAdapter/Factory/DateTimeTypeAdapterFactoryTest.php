@@ -14,6 +14,7 @@ use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\ChildClass;
+use Tebru\Gson\Test\Mock\DateTimeMock;
 
 /**
  * Class DateTimeTypeAdapterFactoryTest
@@ -50,7 +51,7 @@ class DateTimeTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $factory = new DateTimeTypeAdapterFactory();
-        $phpType = new PhpType('DateTime');
+        $phpType = new PhpType(DateTime::class);
         $adapter = $factory->create($phpType, new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(DateTimeTypeAdapter::class, $adapter);
@@ -60,8 +61,8 @@ class DateTimeTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function getValidSupports()
     {
         return [
-            ['DateTime'],
             [DateTime::class],
+            [DateTimeMock::class],
         ];
     }
 }

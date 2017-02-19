@@ -35,8 +35,7 @@ final class JsonElementTypeAdapterFactory implements TypeAdapterFactory
 
         $class = $type->getClass();
 
-        return 'JsonElement' === (string) $class
-            || JsonElement::class === (string) $class
+        return JsonElement::class === (string) $class
             || is_subclass_of($class, JsonElement::class);
     }
 

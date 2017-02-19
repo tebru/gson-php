@@ -62,7 +62,6 @@ class JsonElementTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function getValidSupports()
     {
         return [
-            ['JsonElement'],
             [JsonElement::class],
             [JsonPrimitive::class],
             [JsonNull::class],

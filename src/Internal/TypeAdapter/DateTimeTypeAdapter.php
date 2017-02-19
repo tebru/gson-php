@@ -61,7 +61,10 @@ final class DateTimeTypeAdapter extends TypeAdapter
             $timezone = new DateTimeZone($timezone);
         }
 
-        return DateTime::createFromFormat($format, $formattedDateTime, $timezone);
+        /** @var DateTime $class */
+        $class = $this->phpType->getClass();
+
+        return $class::createFromFormat($format, $formattedDateTime, $timezone);
     }
 
     /**
