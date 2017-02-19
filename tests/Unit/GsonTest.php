@@ -614,6 +614,23 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
+    public function testCanSetCacheDirectory()
+    {
+        $gsonBuilder = Gson::builder()->setCacheDir('/tmp');
+
+        self::assertAttributeSame('/tmp/gson', 'cacheDir', $gsonBuilder);
+    }
+
+    public function testEnableCacheWithoutDirectoryThrowsException()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Cannot enable cache without a cache directory');
+
+        Gson::builder()
+            ->enableCache(true)
+            ->build();
+    }
+
     private function json(): string
     {
         $array = [

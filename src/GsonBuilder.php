@@ -12,6 +12,7 @@ use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\ChainCache;
 use Doctrine\Common\Cache\FilesystemCache;
+use LogicException;
 use ReflectionProperty;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
@@ -112,6 +113,13 @@ class GsonBuilder
      * @var bool
      */
     private $serializeNull = false;
+
+    /**
+     * True if we should be caching
+     *
+     * @var bool
+     */
+    private $enableCache = false;
 
     /**
      * Cache directory, if set this enabled filesystem caching
@@ -286,9 +294,21 @@ class GsonBuilder
     }
 
     /**
+     * Set whether caching is enabled
+     *
+     * @param bool $enableCache
+     * @return GsonBuilder
+     */
+    public function enableCache(bool $enableCache): GsonBuilder
+    {
+        $this->enableCache = $enableCache;
+
+        return $this;
+    }
+
+    /**
      * Setting a cache directory will turn on filesystem caching
      *
-     * @codeCoverageIgnore
      * @param string $cacheDir
      * @return GsonBuilder
      */
@@ -304,9 +324,14 @@ class GsonBuilder
      *
      * @return Gson
      * @throws \InvalidArgumentException If there was a problem creating the cache
+     * @throws \LogicException If trying to cache without a cache directory
      */
     public function build(): Gson
     {
+        if (null === $this->cacheDir && true === $this->enableCache) {
+            throw new LogicException('Cannot enable cache without a cache directory');
+        }
+
         $propertyNamingStrategy = $this->propertyNamingStrategy ?? new SnakePropertyNamingStrategy();
         $methodNamingStrategy = $this->methodNamingStrategy ?? new UpperCaseMethodNamingStrategy();
 

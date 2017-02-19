@@ -95,11 +95,12 @@ Gson::builder()
 Enable Cache
 ------------
 
-Setting the cache director will enable filesystem caching.  `/gson` will
-be appended to the directory.
+To enable the cache, set a cache directory and set the enable cache flag
+to true.
 
 ```php
 Gson::builder()
+    ->enableCache(true)
     ->setCacheDir('/tmp')
     ->build();
 ```
