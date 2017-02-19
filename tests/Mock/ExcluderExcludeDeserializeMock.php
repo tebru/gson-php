@@ -9,9 +9,9 @@ namespace Tebru\Gson\Test\Mock;
 use Tebru\Gson\Annotation\Exclude;
 
 /**
- * @Exclude(deserialize=false)
+ * @Exclude(serialize=false)
  */
-class ExcluderExcludeMock
+class ExcluderExcludeDeserializeMock
 {
 
 }

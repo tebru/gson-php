@@ -16,6 +16,7 @@ use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
@@ -74,10 +75,12 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDelegatesDeserializer()
     {
         $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder($annotationCollectionFactory);
+        $metadataFactory = new MetadataFactory($annotationCollectionFactory);
+        $excluder = new Excluder();
         $propertyCollectionFactory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationCollectionFactory,
+            $metadataFactory,
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
@@ -91,7 +94,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
                 new IntegerTypeAdapterFactory(),
                 new BooleanTypeAdapterFactory(),
                 new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class)),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $metadataFactory),
             ],
             new ArrayCache()
         );
@@ -146,10 +149,12 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDelegatesSerialization()
     {
         $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder($annotationCollectionFactory);
+        $metadataFactory = new MetadataFactory($annotationCollectionFactory);
+        $excluder = new Excluder();
         $propertyCollectionFactory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationCollectionFactory,
+            $metadataFactory,
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
@@ -163,7 +168,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
                 new IntegerTypeAdapterFactory(),
                 new BooleanTypeAdapterFactory(),
                 new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class)),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder),
+                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $metadataFactory),
             ],
             new ArrayCache()
         );

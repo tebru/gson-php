@@ -17,6 +17,7 @@ use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
@@ -70,10 +71,12 @@ class ReflectionTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     private function factory(): ReflectionTypeAdapterFactory
     {
         $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder($annotationCollectionFactory);
+        $metadataFactory = new MetadataFactory($annotationCollectionFactory);
+        $excluder = new Excluder();
         $propertyCollectionFactory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationCollectionFactory,
+            $metadataFactory,
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
@@ -82,6 +85,6 @@ class ReflectionTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
             new VoidCache()
         );
 
-        return new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder);
+        return new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $metadataFactory);
     }
 }

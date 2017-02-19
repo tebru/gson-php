@@ -7,7 +7,9 @@
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
+use Tebru\Gson\Internal\Data\Property;
+use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
@@ -33,24 +35,25 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
     private $propertyCollectionFactory;
 
     /**
-     * @var Excluder
+     * @var MetadataFactory
      */
-    private $excluder;
+    private $metadataFactory;
 
     /**
      * Constructor
      *
      * @param ConstructorConstructor $constructorConstructor
      * @param PropertyCollectionFactory $propertyCollectionFactory
+     * @param MetadataFactory $metadataFactory
      */
     public function __construct(
         ConstructorConstructor $constructorConstructor,
         PropertyCollectionFactory $propertyCollectionFactory,
-        Excluder $excluder
+        MetadataFactory $metadataFactory
     ) {
         $this->constructorConstructor = $constructorConstructor;
         $this->propertyCollectionFactory = $propertyCollectionFactory;
-        $this->excluder = $excluder;
+        $this->metadataFactory = $metadataFactory;
     }
 
     /**
@@ -80,6 +83,14 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
         $properties = $this->propertyCollectionFactory->create($type, $typeAdapterProvider);
         $objectConstructor = $this->constructorConstructor->get($type);
 
-        return new ReflectionTypeAdapter($this->excluder, $objectConstructor, $properties);
+        $classMetadata = $this->metadataFactory->createClassMetadata($type->getClass());
+        $metadataPropertyCollection = new MetadataPropertyCollection();
+
+        /** @var Property $property */
+        foreach ($properties as $property) {
+            $metadataPropertyCollection->add($this->metadataFactory->createPropertyMetadata($property, $classMetadata));
+        }
+
+        return new ReflectionTypeAdapter($objectConstructor, $properties, $metadataPropertyCollection, $classMetadata);
     }
 }

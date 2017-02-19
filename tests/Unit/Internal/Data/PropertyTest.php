@@ -32,14 +32,12 @@ class PropertyTest extends PHPUnit_Framework_TestCase
 {
     public function testGetters()
     {
-        $className = 'foo';
         $realName = 'foo';
         $serializedName = 'foo_bar';
         $type = new PhpType('Foo');
         $annotationSet = new AnnotationSet();
 
         $property = new Property(
-            $className,
             $realName,
             $serializedName,
             $type,
@@ -47,10 +45,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             $annotationSet,
             0,
-            new TypeAdapterMock()
+            false
         );
 
-        self::assertSame($className, $property->getClassName());
         self::assertSame($realName, $property->getRealName());
         self::assertSame($serializedName, $property->getSerializedName());
         self::assertSame($type, $property->getType());
@@ -58,6 +55,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         self::assertSame($annotationSet, $property->getAnnotations());
         self::assertFalse($property->skipSerialize());
         self::assertFalse($property->skipDeserialize());
+        self::assertFalse($property->isVirtual());
     }
 
     public function testSetSkipSerializeAndDeserialize()
@@ -68,7 +66,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $annotationSet = new AnnotationSet();
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -76,7 +73,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             $annotationSet,
             0,
-            new TypeAdapterMock()
+            false
         );
 
         $property->setSkipSerialize(true);
@@ -94,7 +91,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -102,7 +98,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
 
         $property->set($mock, 'bar');
@@ -117,7 +113,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -125,7 +120,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByMethod('setOverridden'),
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
 
         $property->set($mock, 'bar');
@@ -140,7 +135,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -148,7 +142,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('qux'),
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
 
         $property->set($mock, 'bar');
@@ -165,7 +159,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $setter = new SetByClosure('bar', ChildClassParent::class);
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -173,7 +166,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $setter,
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
 
         $property->set($mock, 'bar');
@@ -190,7 +183,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $setter = new SetByClosure('bar', ChildClass::class);
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -198,7 +190,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $setter,
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
 
         $property->set($mock, 'bar');
@@ -213,7 +205,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -221,8 +212,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
+        $property->setTypeAdapter(new TypeAdapterMock());
 
         $property->read(new JsonDecodeReader('"foo"'), $mock);
         self::assertSame('foo', $property->get($mock));
@@ -236,7 +228,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -244,8 +235,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
+        $property->setTypeAdapter(new TypeAdapterMock());
 
         $writer = new JsonEncodeWriter();
         $property->write($writer, $mock);
@@ -260,7 +252,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -268,7 +259,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
 
         $property->set($mock, null);

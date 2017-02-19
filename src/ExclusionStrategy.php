@@ -18,17 +18,16 @@ interface ExclusionStrategy
     /**
      * Return true if the class should be ignored
      *
-     * @param string $className
+     * @param ClassMetadata $classMetadata
      * @return bool
      */
-    public function shouldSkipClass(string $className): bool;
+    public function shouldSkipClass(ClassMetadata $classMetadata): bool;
 
     /**
      * Return true if the property should be ignored
      *
-     * @param string $className
-     * @param string $propertyName
+     * @param PropertyMetadata $propertyMetadata
      * @return bool
      */
-    public function shouldSkipProperty(string $className, string $propertyName): bool;
+    public function shouldSkipProperty(PropertyMetadata $propertyMetadata): bool;
 }

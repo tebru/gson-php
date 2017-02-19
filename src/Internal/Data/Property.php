@@ -24,13 +24,6 @@ use Tebru\Gson\TypeAdapter;
 final class Property
 {
     /**
-     * The class name of the property
-     *
-     * @var string
-     */
-    private $className;
-
-    /**
      * The actual name of the property
      *
      * @var string
@@ -103,9 +96,14 @@ final class Property
     private $typeAdapter;
 
     /**
+     * If the property is a virtual property
+     * @var bool
+     */
+    private $virtual;
+
+    /**
      * Constructor
      *
-     * @param string $className
      * @param string $realName
      * @param string $serializedName
      * @param PhpType $type
@@ -113,10 +111,9 @@ final class Property
      * @param SetterStrategy $setterStrategy
      * @param AnnotationSet $annotations
      * @param int $modifiers
-     * @param TypeAdapter $typeAdapter
+     * @param bool $virtual
      */
     public function __construct(
-        string $className,
         string $realName,
         string $serializedName,
         PhpType $type,
@@ -124,9 +121,9 @@ final class Property
         SetterStrategy $setterStrategy,
         AnnotationSet $annotations,
         int $modifiers,
-        TypeAdapter $typeAdapter
-    ) {
-        $this->className = $className;
+        bool $virtual
+    )
+    {
         $this->realName = $realName;
         $this->serializedName = $serializedName;
         $this->type = $type;
@@ -134,17 +131,7 @@ final class Property
         $this->setterStrategy = $setterStrategy;
         $this->annotations = $annotations;
         $this->modifiers = $modifiers;
-        $this->typeAdapter = $typeAdapter;
-    }
-
-    /**
-     * Get the class name of the property
-     *
-     * @return string
-     */
-    public function getClassName(): string
-    {
-        return $this->className;
+        $this->virtual = $virtual;
     }
 
     /**
@@ -195,6 +182,30 @@ final class Property
     public function getModifiers(): int
     {
         return $this->modifiers;
+    }
+
+    /**
+     * Returns true if the property is virtual
+     *
+     * @return bool
+     */
+    public function isVirtual(): bool
+    {
+        return $this->virtual;
+    }
+
+    /**
+     * Set the type adapter
+     *
+     * This method exists so we can create a Property object and use it as a data bag to determine
+     * if the property should be excluded before trying to resolve the type adapter for the property.
+     * This avoids infinite loops on circular references.
+     *
+     * @param TypeAdapter $typeAdapter
+     */
+    public function setTypeAdapter(TypeAdapter $typeAdapter)
+    {
+        $this->typeAdapter = $typeAdapter;
     }
 
     /**

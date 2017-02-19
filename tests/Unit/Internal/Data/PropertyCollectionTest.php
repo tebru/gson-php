@@ -13,7 +13,6 @@ use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\Data\Property;
-use Tebru\Gson\Test\Mock\TypeAdapterMock;
 
 /**
  * Class PropertyCollectionTest
@@ -30,7 +29,6 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -38,7 +36,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
         $propertyCollection = new PropertyCollection([$property]);
 
@@ -52,7 +50,6 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -60,7 +57,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
         $propertyCollection = new PropertyCollection([$property]);
 
@@ -74,7 +71,6 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -82,7 +78,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
         $propertyCollection = new PropertyCollection([$property]);
 
@@ -96,7 +92,6 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         $type = new PhpType('Foo');
 
         $property = new Property(
-            'foo',
             $realName,
             $serializedName,
             $type,
@@ -104,7 +99,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationSet(),
             0,
-            new TypeAdapterMock()
+            false
         );
         $propertyCollection = new PropertyCollection([$property]);
 

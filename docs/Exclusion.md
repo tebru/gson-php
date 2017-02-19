@@ -17,14 +17,15 @@ on this interface.
 ```php
 class FooExclusionStrategy implements ExclusionStrategy
 {
-    public function shouldSkipClass(string $className): bool
+    public function shouldSkipClass(ClassMetadata $classMetadata): bool
     {
-        return Foo::class === $className;
+        return Foo::class === $classMetadata->getName();
     }
 
-    public function shouldSkipProperty(string $className, string $propertyName): bool
+    public function shouldSkipProperty(PropertyMetadata $propertyMetadata): bool
     {
-        return Foo2::class === $className && 'bar' === $propertyName;
+        return Foo2::class === $propertyMetadata->getDeclaringClassMetadata->getName()
+            && 'bar' === $propertyMetadata->getName();
     }
 }
 ```

@@ -11,10 +11,10 @@ use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Annotation\Until;
+use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\ExclusionStrategy;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\AnnotationSet;
-use Tebru\Gson\Internal\Data\Property;
+use Tebru\Gson\PropertyMetadata;
 
 /**
  * Class Excluder
@@ -23,13 +23,6 @@ use Tebru\Gson\Internal\Data\Property;
  */
 final class Excluder
 {
-    /**
-     * Factory used to create a collection of annotations
-     *
-     * @var AnnotationCollectionFactory
-     */
-    private $annotationCollectionFactory;
-
     /**
      * Version, if set, will be used with [@see Since] and [@see Until] annotations
      *
@@ -59,24 +52,24 @@ final class Excluder
      *
      * @var ExclusionStrategy[]
      */
-    private $serializationStrategies = [];
+    private static $serializationStrategies = [];
 
     /**
      * Exclusion strategies during deserialization
      *
      * @var ExclusionStrategy[]
      */
-    private $deserializationStrategies = [];
+    private static $deserializationStrategies = [];
 
     /**
      * Constructor
-     *
-     * @param AnnotationCollectionFactory $annotationCollectionFactory
      */
-    public function __construct(AnnotationCollectionFactory $annotationCollectionFactory)
+    public function __construct()
     {
-        $this->annotationCollectionFactory = $annotationCollectionFactory;
+        self::$serializationStrategies = [];
+        self::$deserializationStrategies = [];
     }
+
 
     /**
      * Set the version to test against
@@ -123,42 +116,41 @@ final class Excluder
      * @param ExclusionStrategy $strategy
      * @param bool $serialization
      * @param bool $deserialization
-     * @return Excluder
      */
-    public function addExclusionStrategy(ExclusionStrategy $strategy, bool $serialization, bool $deserialization): Excluder
+    public static function addExclusionStrategy(ExclusionStrategy $strategy, bool $serialization, bool $deserialization)
     {
         if ($serialization) {
-            $this->serializationStrategies[] = $strategy;
+            self::$serializationStrategies[] = $strategy;
         }
 
         if ($deserialization) {
-            $this->deserializationStrategies[] = $strategy;
+            self::$deserializationStrategies[] = $strategy;
         }
-
-        return $this;
     }
 
     /**
      * Returns true if we should exclude the class for a given serialization direction
      *
-     * @param string $className
+     * @param ClassMetadata $classMetadata
      * @param bool $serialize
      * @return bool
      * @throws \InvalidArgumentException If the type does not exist
      */
-    public function excludeClass(string $className, bool $serialize): bool
+    public function excludeClass(ClassMetadata $classMetadata, bool $serialize): bool
     {
-        if (class_exists($className)) {
-            $annotations = $this->annotationCollectionFactory->createClassAnnotations($className);
+        return $this->excludeByAnnotation($classMetadata->getAnnotations(), $serialize, AnnotationSet::TYPE_CLASS);
+    }
 
-            if ($this->excludeByAnnotation($annotations, $serialize, AnnotationSet::TYPE_CLASS)) {
-                return true;
-            }
-        }
-
-        $strategies = $serialize ? $this->serializationStrategies : $this->deserializationStrategies;
+    /**
+     * @param ClassMetadata $classMetadata
+     * @param bool $serialize
+     * @return bool
+     */
+    public static function excludeClassByStrategy(ClassMetadata $classMetadata, bool $serialize): bool
+    {
+        $strategies = $serialize ? self::$serializationStrategies : self::$deserializationStrategies;
         foreach ($strategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipClass($className)) {
+            if ($exclusionStrategy->shouldSkipClass($classMetadata)) {
                 return true;
             }
         }
@@ -169,19 +161,18 @@ final class Excluder
     /**
      * Returns true if we should exclude the class for a given serialization direction
      *
-     * @param int $propertyModifiers
-     * @param AnnotationSet $annotations
+     * @param PropertyMetadata $propertyMetadata
      * @param bool $serialize
      * @return bool
      */
-    public function excludeProperty(int $propertyModifiers, AnnotationSet $annotations, bool $serialize): bool
+    public function excludeProperty(PropertyMetadata $propertyMetadata, bool $serialize): bool
     {
         // exclude the property if the property modifiers are found in the excluded modifiers
-        if (0 !== ($this->excludedModifiers & $propertyModifiers)) {
+        if (0 !== ($this->excludedModifiers & $propertyMetadata->getModifiers())) {
             return true;
         }
 
-        return $this->excludeByAnnotation($annotations, $serialize, AnnotationSet::TYPE_PROPERTY);
+        return $this->excludeByAnnotation($propertyMetadata->getAnnotations(), $serialize, AnnotationSet::TYPE_PROPERTY);
     }
 
     /**
@@ -189,15 +180,15 @@ final class Excluder
      *
      * Uses user-defined strategies
      *
-     * @param Property $property
+     * @param PropertyMetadata $property
      * @param bool $serialize
      * @return bool
      */
-    public function excludePropertyByStrategy(Property $property, bool $serialize): bool
+    public static function excludePropertyByStrategy(PropertyMetadata $property, bool $serialize): bool
     {
-        $strategies = $serialize ? $this->serializationStrategies : $this->deserializationStrategies;
+        $strategies = $serialize ? self::$serializationStrategies : self::$deserializationStrategies;
         foreach ($strategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipProperty($property->getClassName(), $property->getRealName())) {
+            if ($exclusionStrategy->shouldSkipProperty($property)) {
                 return true;
             }
         }

@@ -7,7 +7,6 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\AccessorMethodProvider;
@@ -17,6 +16,7 @@ use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
@@ -32,6 +32,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\AddressMock;
+use Tebru\Gson\Test\Mock\ExclusionStrategies\UserMockExclusionStrategy;
 use Tebru\Gson\Test\Mock\UserMock;
 
 /**
@@ -43,32 +44,48 @@ use Tebru\Gson\Test\Mock\UserMock;
  */
 class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
-    public function testDeserializeNull()
+    /**
+     * @var TypeAdapterProvider
+     */
+    private $typeAdapterProvider;
+
+    public function setUp()
     {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder($annotationCollectionFactory);
+        $annotationCollectionFactory = $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $metadataFactory = new MetadataFactory($annotationCollectionFactory);
+        $excluder = new Excluder();
         $propertyCollectionFactory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationCollectionFactory,
+            $metadataFactory,
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
             new PhpTypeFactory(),
             $excluder,
-            new ArrayCache()
+            new VoidCache()
         );
-        $typeAdapterProvider = new TypeAdapterProvider(
+        $this->typeAdapterProvider = $typeAdapterProvider = new TypeAdapterProvider(
             [
+                new ExcluderTypeAdapterFactory($excluder, $metadataFactory),
                 new StringTypeAdapterFactory(),
                 new IntegerTypeAdapterFactory(),
+                new FloatTypeAdapterFactory(),
                 new BooleanTypeAdapterFactory(),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
+                new NullTypeAdapterFactory(),
+                new ReflectionTypeAdapterFactory(
+                    new ConstructorConstructor(),
+                    $propertyCollectionFactory,
+                    $metadataFactory
+                )
             ],
-            new ArrayCache()
+            new VoidCache()
         );
+    }
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
-
+    public function testDeserializeNull()
+    {
+        $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
         $result = $adapter->readFromJson('null');
 
         self::assertNull($result);
@@ -76,33 +93,8 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserialize()
     {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder($annotationCollectionFactory);
-        $propertyCollectionFactory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $excluder,
-            new ArrayCache()
-        );
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new ExcluderTypeAdapterFactory($excluder),
-                new StringTypeAdapterFactory(),
-                new IntegerTypeAdapterFactory(),
-                new FloatTypeAdapterFactory(),
-                new BooleanTypeAdapterFactory(),
-                new NullTypeAdapterFactory(),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
-            ],
-            new ArrayCache()
-        );
-
         /** @var ReflectionTypeAdapter $adapter */
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
 
         /** @var UserMock $user */
         $user = $adapter->readFromJson('
@@ -136,60 +128,44 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(12345, $address->getZip());
     }
 
+    public function testDeserializeExcludeClass()
+    {
+        Excluder::addExclusionStrategy(new UserMockExclusionStrategy(), false, true);
+
+        /** @var ReflectionTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+
+        /** @var UserMock $user */
+        $user = $adapter->readFromJson('
+            {
+                "id": 1,
+                "name": "Test User",
+                "email": "test@example.com",
+                "password": "password1",
+                "address": {
+                    "street": "123 ABC St.",
+                    "city": "My City",
+                    "state": "MN",
+                    "zip": 12345
+                },
+                "phone": null,
+                "enabled": true
+            }
+        ');
+
+        self::assertNull($user);
+    }
+
     public function testSerializeNull()
     {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder($annotationCollectionFactory);
-        $propertyCollectionFactory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $excluder,
-            new ArrayCache()
-        );
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new StringTypeAdapterFactory(),
-                new IntegerTypeAdapterFactory(),
-                new BooleanTypeAdapterFactory(),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
-            ],
-            new ArrayCache()
-        );
-
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
 
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
 
     public function testSerialize()
     {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder($annotationCollectionFactory);
-        $propertyCollectionFactory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $excluder,
-            new ArrayCache()
-        );
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new StringTypeAdapterFactory(),
-                new IntegerTypeAdapterFactory(),
-                new BooleanTypeAdapterFactory(),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $excluder)
-            ],
-            new ArrayCache()
-        );
-
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
 
         $user = new UserMock();
         $user->setId(1);
@@ -222,5 +198,30 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         }';
 
         self::assertJsonStringEqualsJsonString($expectedJson, $adapter->writeToJson($user, false));
+    }
+
+    public function testSerializeExcludeClass()
+    {
+        Excluder::addExclusionStrategy(new UserMockExclusionStrategy(), true, false);
+
+        $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+
+        $user = new UserMock();
+        $user->setId(1);
+        $user->setEmail('test@example.com');
+        $user->setPassword('password1');
+        $user->setName('John Doe');
+        $user->setPhone('(123) 456-7890');
+        $user->setEnabled(true);
+
+        $address = new AddressMock();
+        $address->setStreet('123 ABC St');
+        $address->setCity('Foo');
+        $address->setState('MN');
+        $address->setZip(12345);
+
+        $user->setAddress($address);
+
+        self::assertSame('null', $adapter->writeToJson($user, false));
     }
 }

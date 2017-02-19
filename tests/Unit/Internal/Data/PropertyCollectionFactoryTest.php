@@ -25,6 +25,7 @@ use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
@@ -55,11 +56,12 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         $factory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationCollectionFactory,
+            new MetadataFactory($annotationCollectionFactory),
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
             new PhpTypeFactory(),
-            new Excluder($annotationCollectionFactory),
+            new Excluder(),
             new VoidCache()
         );
 
@@ -116,11 +118,12 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         $factory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationCollectionFactory,
+            new MetadataFactory($annotationCollectionFactory),
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
             new PhpTypeFactory(),
-            new Excluder($annotationCollectionFactory),
+            new Excluder(),
             $cache
         );
 
@@ -146,46 +149,16 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         self::assertCount(0, $collection->toArray());
     }
 
-//    public function testCreateExcludesWillNotUsePropertyExclusionStrategy()
-//    {
-//        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-//        $excluder = new Excluder($annotationCollectionFactory);
-//        $excluder->addExclusionStrategy(new FooPropertyExclusionStrategy(), true, true);
-//        $excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), true, true);
-//
-//        $factory = new PropertyCollectionFactory(
-//            new ReflectionPropertySetFactory(),
-//            $annotationCollectionFactory,
-//            new PropertyNamer(new SnakePropertyNamingStrategy()),
-//            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-//            new AccessorStrategyFactory(),
-//            new PhpTypeFactory(),
-//            $excluder,
-//            new VoidCache()
-//        );
-//
-//        $typeAdapterProvider = new TypeAdapterProvider([
-//            new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $factory, $excluder),
-//            new WildcardTypeAdapterFactory(),
-//        ]);
-//
-//        $collection = $factory->create(new PhpType(PropertyCollectionExclusionMock::class), $typeAdapterProvider);
-//
-//        /** @var Property[] $elements */
-//        $elements = $collection->toArray();
-//
-//        self::assertCount(1, $elements);
-//    }
-
     public function testCreateUsesJsonAdapter()
     {
         $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder($annotationCollectionFactory);
+        $excluder = new Excluder();
         $excluder->setExcludedModifiers(\ReflectionProperty::IS_PUBLIC);
 
         $factory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationCollectionFactory,
+            new MetadataFactory($annotationCollectionFactory),
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
@@ -209,12 +182,13 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateVirtualUsesJsonAdapter()
     {
         $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder($annotationCollectionFactory);
+        $excluder = new Excluder();
         $excluder->setExcludedModifiers(\ReflectionProperty::IS_PRIVATE);
 
         $factory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationCollectionFactory,
+            new MetadataFactory($annotationCollectionFactory),
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),

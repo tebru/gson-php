@@ -72,11 +72,6 @@ final class AnnotationCollectionFactory
         $reflectionClass = $reflectionProperty->getDeclaringClass();
         $parentClass = $reflectionClass->getParentClass();
 
-        // add all new parent annotations
-        foreach ($this->reader->getClassAnnotations($reflectionClass) as $parentAnnotation) {
-            $annotations->addAnnotation($parentAnnotation, AnnotationSet::TYPE_CLASS);
-        }
-
         while (false !== $parentClass) {
             // add parent property annotations if they exist
             if ($parentClass->hasProperty($reflectionProperty->getName())) {
@@ -84,11 +79,6 @@ final class AnnotationCollectionFactory
                 foreach ($this->reader->getPropertyAnnotations($parentProperty) as $parentPropertyAnnotation) {
                     $annotations->addAnnotation($parentPropertyAnnotation, AnnotationSet::TYPE_PROPERTY);
                 }
-            }
-
-            // add all parent class annotations
-            foreach ($this->reader->getClassAnnotations($parentClass) as $parentClassAnnotation) {
-                $annotations->addAnnotation($parentClassAnnotation, AnnotationSet::TYPE_CLASS);
             }
 
             // reset $parentClass

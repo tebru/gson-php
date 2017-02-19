@@ -6,6 +6,8 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter;
 
+use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\JsonWritable;
@@ -25,11 +27,6 @@ use Tebru\Gson\TypeAdapter;
 final class ReflectionTypeAdapter extends TypeAdapter
 {
     /**
-     * @var Excluder
-     */
-    private $excluder;
-
-    /**
      * @var ObjectConstructor
      */
     private $objectConstructor;
@@ -40,21 +37,33 @@ final class ReflectionTypeAdapter extends TypeAdapter
     private $properties;
 
     /**
+     * @var MetadataPropertyCollection
+     */
+    private $metadataPropertyCollection;
+
+    /**
+     * @var ClassMetadata
+     */
+    private $classMetadata;
+
+    /**
      * Constructor
      *
-     * @param Excluder $excluder
      * @param ObjectConstructor $objectConstructor
      * @param PropertyCollection $properties
+     * @param MetadataPropertyCollection $metadataPropertyCollection
+     * @param ClassMetadata $classMetadata
      */
     public function __construct(
-        Excluder $excluder,
         ObjectConstructor $objectConstructor,
-        PropertyCollection $properties
-    )
-    {
-        $this->excluder = $excluder;
+        PropertyCollection $properties,
+        MetadataPropertyCollection $metadataPropertyCollection,
+        ClassMetadata $classMetadata
+    ) {
         $this->objectConstructor = $objectConstructor;
         $this->properties = $properties;
+        $this->metadataPropertyCollection = $metadataPropertyCollection;
+        $this->classMetadata = $classMetadata;
     }
     /**
      * Read the next value, convert it to its type and return it
@@ -69,13 +78,23 @@ final class ReflectionTypeAdapter extends TypeAdapter
             return $reader->nextNull();
         }
 
+        if (Excluder::excludeClassByStrategy($this->classMetadata, false)) {
+            $reader->skipValue();
+
+            return null;
+        }
+
         $object = $this->objectConstructor->construct();
 
         $reader->beginObject();
         while ($reader->hasNext()) {
             $name = $reader->nextName();
             $property = $this->properties->getBySerializedName($name);
-            if (null === $property || $property->skipDeserialize() || $this->excluder->excludePropertyByStrategy($property, false)) {
+            if (
+                null === $property
+                || $property->skipDeserialize()
+                || Excluder::excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), false)
+            ) {
                 $reader->skipValue();
                 continue;
             }
@@ -102,13 +121,22 @@ final class ReflectionTypeAdapter extends TypeAdapter
             return;
         }
 
+        if (Excluder::excludeClassByStrategy($this->classMetadata, true)) {
+            $writer->writeNull();
+
+            return;
+        }
+
         $writer->beginObject();
 
         /** @var Property $property */
         foreach ($this->properties as $property) {
             $writer->name($property->getSerializedName());
 
-            if ($property->skipSerialize() || $this->excluder->excludePropertyByStrategy($property, true)) {
+            if (
+                $property->skipSerialize()
+                || Excluder::excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), true)
+            ) {
                 $writer->writeNull();
 
                 continue;

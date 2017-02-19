@@ -16,10 +16,12 @@ use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\SetByNull;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PropertyMetadata;
 
 /**
  * Class PropertyCollectionFactory
@@ -40,6 +42,11 @@ final class PropertyCollectionFactory
      * @var AnnotationCollectionFactory
      */
     private $annotationCollectionFactory;
+
+    /**
+     * @var MetadataFactory
+     */
+    private $metadataFactory;
 
     /**
      * @var PropertyNamer
@@ -76,6 +83,7 @@ final class PropertyCollectionFactory
      *
      * @param ReflectionPropertySetFactory $reflectionPropertySetFactory
      * @param AnnotationCollectionFactory $annotationCollectionFactory
+     * @param MetadataFactory $metadataFactory
      * @param PropertyNamer $propertyNamer
      * @param AccessorMethodProvider $accessorMethodProvider
      * @param AccessorStrategyFactory $accessorStrategyFactory
@@ -86,6 +94,7 @@ final class PropertyCollectionFactory
     public function __construct(
         ReflectionPropertySetFactory $reflectionPropertySetFactory,
         AnnotationCollectionFactory $annotationCollectionFactory,
+        MetadataFactory $metadataFactory,
         PropertyNamer $propertyNamer,
         AccessorMethodProvider $accessorMethodProvider,
         AccessorStrategyFactory $accessorStrategyFactory,
@@ -95,6 +104,7 @@ final class PropertyCollectionFactory
     ) {
         $this->reflectionPropertySetFactory = $reflectionPropertySetFactory;
         $this->annotationCollectionFactory = $annotationCollectionFactory;
+        $this->metadataFactory = $metadataFactory;
         $this->propertyNamer = $propertyNamer;
         $this->accessorMethodProvider = $accessorMethodProvider;
         $this->accessorStrategyFactory = $accessorStrategyFactory;
@@ -134,15 +144,6 @@ final class PropertyCollectionFactory
                 $reflectionProperty->getName()
             );
 
-            $skipSerialize = $this->excludeProperty($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getModifiers(), $annotations, true);
-            $skipDeserialize = $this->excludeProperty($reflectionProperty->getDeclaringClass()->getName(), $reflectionProperty->getModifiers(), $annotations, false);
-
-            // if we're skipping serialization and deserialization, we don't need
-            // to add the property to the collection
-            if ($skipSerialize && $skipDeserialize) {
-                continue;
-            }
-
             $serializedName = $this->propertyNamer->serializedName($reflectionProperty->getName(), $annotations, AnnotationSet::TYPE_PROPERTY);
             $getterMethod = $this->accessorMethodProvider->getterMethod($reflectionClass, $reflectionProperty, $annotations);
             $setterMethod = $this->accessorMethodProvider->setterMethod($reflectionClass, $reflectionProperty, $annotations);
@@ -150,14 +151,7 @@ final class PropertyCollectionFactory
             $setterStrategy = $this->accessorStrategyFactory->setterStrategy($reflectionProperty, $setterMethod);
             $type = $this->phpTypeFactory->create($annotations, AnnotationSet::TYPE_PROPERTY, $getterMethod, $setterMethod);
 
-            /** @var JsonAdapter $jsonAdapterAnnotation */
-            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_PROPERTY);
-            $adapter = null !== $jsonAdapterAnnotation
-                ? $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation)
-                : $typeAdapterProvider->getAdapter($type);
-
             $property = new Property(
-                $reflectionProperty->getDeclaringClass()->getName(),
                 $reflectionProperty->getName(),
                 $serializedName,
                 $type,
@@ -165,9 +159,28 @@ final class PropertyCollectionFactory
                 $setterStrategy,
                 $annotations,
                 $reflectionProperty->getModifiers(),
-                $adapter
+                false
             );
 
+            $classMetadata = $this->metadataFactory->createClassMetadata($reflectionProperty->getDeclaringClass()->getName());
+            $propertyMetadata = $this->metadataFactory->createPropertyMetadata($property, $classMetadata);
+
+            $skipSerialize = $this->excludeProperty($propertyMetadata, true);
+            $skipDeserialize = $this->excludeProperty($propertyMetadata, false);
+
+            // if we're skipping serialization and deserialization, we don't need
+            // to add the property to the collection
+            if ($skipSerialize && $skipDeserialize) {
+                continue;
+            }
+
+            /** @var JsonAdapter $jsonAdapterAnnotation */
+            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_PROPERTY);
+            $adapter = null !== $jsonAdapterAnnotation
+                ? $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation)
+                : $typeAdapterProvider->getAdapter($type);
+
+            $property->setTypeAdapter($adapter);
             $property->setSkipSerialize($skipSerialize);
             $property->setSkipDeserialize($skipDeserialize);
 
@@ -181,28 +194,12 @@ final class PropertyCollectionFactory
                 continue;
             }
 
-            $skipSerialize = $this->excludeProperty($reflectionMethod->getDeclaringClass()->getName(), ReflectionProperty::IS_PUBLIC, $annotations, true);
-            $skipDeserialize = $this->excludeProperty($reflectionMethod->getDeclaringClass()->getName(), ReflectionProperty::IS_PUBLIC, $annotations, false);
-
-            // if we're skipping serialization and deserialization, we don't need
-            // to add the property to the collection
-            if ($skipSerialize && $skipDeserialize) {
-                continue;
-            }
-
             $serializedName = $this->propertyNamer->serializedName($reflectionMethod->getName(), $annotations, AnnotationSet::TYPE_METHOD);
             $type = $this->phpTypeFactory->create($annotations, AnnotationSet::TYPE_METHOD, $reflectionMethod);
             $getterStrategy = new GetByMethod($reflectionMethod->getName());
             $setterStrategy = new SetByNull();
 
-            /** @var JsonAdapter $jsonAdapterAnnotation */
-            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_METHOD);
-            $adapter = null !== $jsonAdapterAnnotation
-                ? $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation)
-                : $typeAdapterProvider->getAdapter($type);
-
             $property = new Property(
-                $reflectionMethod->getDeclaringClass()->getName(),
                 $reflectionMethod->getName(),
                 $serializedName,
                 $type,
@@ -210,9 +207,28 @@ final class PropertyCollectionFactory
                 $setterStrategy,
                 $annotations,
                 $reflectionMethod->getModifiers(),
-                $adapter
+                true
             );
 
+            $classMetadata = $this->metadataFactory->createClassMetadata($reflectionMethod->getDeclaringClass()->getName());
+            $propertyMetadata = $this->metadataFactory->createPropertyMetadata($property, $classMetadata);
+
+            $skipSerialize = $this->excludeProperty($propertyMetadata, true);
+            $skipDeserialize = $this->excludeProperty($propertyMetadata, false);
+
+            // if we're skipping serialization and deserialization, we don't need
+            // to add the property to the collection
+            if ($skipSerialize && $skipDeserialize) {
+                continue;
+            }
+
+            /** @var JsonAdapter $jsonAdapterAnnotation */
+            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_METHOD);
+            $adapter = null !== $jsonAdapterAnnotation
+                ? $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation)
+                : $typeAdapterProvider->getAdapter($type);
+
+            $property->setTypeAdapter($adapter);
             $property->setSkipSerialize($skipSerialize);
             $property->setSkipDeserialize($skipDeserialize);
 
@@ -229,21 +245,15 @@ final class PropertyCollectionFactory
      *
      * Asks the excluder if we should skip the property or class
      *
-     * @param string $propertyClassName
-     * @param int $propertyModifiers
-     * @param AnnotationSet $annotations
+     * @param PropertyMetadata $propertyMetadata
      * @param bool $serialize
      * @return bool
      * @throws \InvalidArgumentException If the type does not exist
      */
-    private function excludeProperty(string $propertyClassName, int $propertyModifiers, AnnotationSet $annotations, bool $serialize): bool
+    private function excludeProperty(PropertyMetadata $propertyMetadata, bool $serialize): bool
     {
-        $excludeClass = false;
-        if (null !== $propertyClassName) {
-            $excludeClass = $this->excluder->excludeClass($propertyClassName, $serialize);
-        }
-
-        $excludeProperty = $this->excluder->excludeProperty($propertyModifiers, $annotations, $serialize);
+        $excludeClass = $this->excluder->excludeClass($propertyMetadata->getDeclaringClassMetadata(), $serialize);
+        $excludeProperty = $this->excluder->excludeProperty($propertyMetadata, $serialize);
 
         return $excludeClass || $excludeProperty;
     }

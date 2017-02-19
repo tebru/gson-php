@@ -216,7 +216,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
     /**
      * Write a null value if we are serializing nulls, otherwise
      * skip the value.  If this is a property value, that property
-     * should be skippped as well.
+     * should be skipped as well.
      *
      * @return JsonWritable
      * @throws \BadMethodCallException

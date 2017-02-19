@@ -9,14 +9,14 @@ namespace Tebru\Gson\Test\Mock\ExclusionStrategies;
 use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\ExclusionStrategy;
 use Tebru\Gson\PropertyMetadata;
-use Tebru\Gson\Test\Mock\Foo;
+use Tebru\Gson\Test\Mock\UserMock;
 
 /**
- * Class FooExclusionStrategy
+ * Class UserMockExclusionStrategy
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class FooExclusionStrategy implements ExclusionStrategy
+class UserMockExclusionStrategy implements ExclusionStrategy
 {
     /**
      * Return true if the class should be ignored
@@ -26,7 +26,7 @@ class FooExclusionStrategy implements ExclusionStrategy
      */
     public function shouldSkipClass(ClassMetadata $classMetadata): bool
     {
-        return Foo::class === $classMetadata->getName();
+        return UserMock::class === $classMetadata->getName();
     }
 
     /**
