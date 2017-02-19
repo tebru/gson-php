@@ -72,7 +72,7 @@ final class PropertyMetadata
      * @param string $name
      * @param string $serializedName
      * @param PhpType $type
-     * @param string $modifiers
+     * @param int $modifiers
      * @param ClassMetadata $classMetadata
      * @param AnnotationSet $annotations
      * @param bool $virtual
@@ -81,7 +81,7 @@ final class PropertyMetadata
         string $name,
         string $serializedName,
         PhpType $type,
-        string $modifiers,
+        int $modifiers,
         ClassMetadata $classMetadata,
         AnnotationSet $annotations,
         bool $virtual
