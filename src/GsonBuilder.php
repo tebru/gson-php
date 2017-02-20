@@ -335,14 +335,14 @@ class GsonBuilder
         $propertyNamingStrategy = $this->propertyNamingStrategy ?? new SnakePropertyNamingStrategy();
         $methodNamingStrategy = $this->methodNamingStrategy ?? new UpperCaseMethodNamingStrategy();
 
-        $doctrineAnnotationCache = null === $this->cacheDir ? new ArrayCache(): new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
+        $doctrineAnnotationCache = false === $this->enableCache ? new ArrayCache(): new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
         $doctrineAnnotationCache->setNamespace('doctrine_annotation_cache');
         $reader = new CachedReader(new AnnotationReader(), $doctrineAnnotationCache);
 
-        $cache = null === $this->cacheDir ? new ArrayCache() : new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
+        $cache = false === $this->enableCache ? new ArrayCache() : new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
         $cache->setNamespace('property_collection_cache');
 
-        $annotationCache = null === $this->cacheDir ? new ArrayCache(): new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
+        $annotationCache = false === $this->enableCache ? new ArrayCache(): new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
         $annotationCache->setNamespace('annotation_cache');
 
         $typeAdapterCache = new ArrayCache();
