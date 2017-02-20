@@ -12,7 +12,7 @@ use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Annotation\Until;
-use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
@@ -152,7 +152,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_STATIC,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
             false
         );
@@ -170,7 +170,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
             false
         );
@@ -188,7 +188,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PROTECTED,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
             false
         );
@@ -206,7 +206,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
             false
         );
@@ -225,7 +225,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -246,7 +246,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -267,7 +267,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -288,7 +288,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -309,7 +309,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -330,7 +330,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -351,7 +351,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -370,7 +370,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -389,7 +389,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -408,7 +408,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -429,7 +429,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -450,7 +450,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -471,7 +471,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -490,7 +490,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
             false
         );
@@ -508,7 +508,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
             false
         );
@@ -527,7 +527,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
             false
         );
@@ -543,7 +543,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
             false
         );

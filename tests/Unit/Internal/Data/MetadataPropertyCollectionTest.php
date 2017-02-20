@@ -7,7 +7,7 @@ namespace Tebru\Gson\Test\Unit\Internal\Data;
 
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
-use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\PhpType;
@@ -40,7 +40,7 @@ class MetadataPropertyCollectionTest extends PHPUnit_Framework_TestCase
             'foo',
             new PhpType('string'),
             ReflectionProperty::IS_PRIVATE,
-            new ClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
             false
         );

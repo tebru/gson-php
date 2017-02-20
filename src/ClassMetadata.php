@@ -3,10 +3,10 @@
  * Copyright (c) Nate Brunette.
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
-
 namespace Tebru\Gson;
 
 use Tebru\Gson\Internal\Data\AnnotationSet;
+
 
 /**
  * Class ClassMetadata
@@ -15,53 +15,21 @@ use Tebru\Gson\Internal\Data\AnnotationSet;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class ClassMetadata
+interface ClassMetadata
 {
-    /**
-     * The class name
-     *
-     * @var string
-     */
-    private $name;
-
-    /**
-     * The class annotations
-     *
-     * @var AnnotationSet
-     */
-    private $annotations;
-
-    /**
-     * Constructor
-     *
-     * @param string $name
-     * @param AnnotationSet $annotations
-     */
-    public function __construct(string $name, AnnotationSet $annotations)
-    {
-        $this->name = $name;
-        $this->annotations = $annotations;
-    }
-
     /**
      * Get the class name as a string
      *
      * @return string
      */
-    public function getName(): string
-    {
-        return $this->name;
-    }
+    public function getName(): string;
 
     /**
      * Get all class annotations
      *
      * @return AnnotationSet
      */
-    public function getAnnotations(): AnnotationSet
-    {
-        return $this->annotations;
-    }
+    public function getAnnotations(): AnnotationSet;
 
     /**
      * Get a specific annotation by class name, returns null if the annotation
@@ -70,8 +38,5 @@ final class ClassMetadata
      * @param string $annotationClass
      * @return null|object
      */
-    public function getAnnotation(string $annotationClass)
-    {
-        return $this->annotations->getAnnotation($annotationClass, AnnotationSet::TYPE_CLASS);
-    }
+    public function getAnnotation(string $annotationClass);
 }

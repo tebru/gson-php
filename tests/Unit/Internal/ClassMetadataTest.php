@@ -3,20 +3,20 @@
  * Copyright (c) Nate Brunette.
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
-namespace Tebru\Gson\Test\Unit;
+namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
+use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Test\Mock\Annotation\FooAnnotation;
 use Tebru\Gson\Test\Mock\Foo;
 
 /**
- * Class ClassMetadataTest
+ * Class DefaultClassMetadataTest
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class ClassMetadataTest extends PHPUnit_Framework_TestCase
+class DefaultClassMetadataTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var AnnotationSet
@@ -24,14 +24,14 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
     private $annotations;
 
     /**
-     * @var ClassMetadata
+     * @var DefaultClassMetadata
      */
     private $metadata;
 
     public function setUp()
     {
         $this->annotations = new AnnotationSet();
-        $this->metadata = new ClassMetadata(Foo::class, $this->annotations);
+        $this->metadata = new DefaultClassMetadata(Foo::class, $this->annotations);
     }
 
     public function testClassMetadata()
