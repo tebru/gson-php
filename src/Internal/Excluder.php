@@ -163,7 +163,9 @@ final class Excluder
             return true;
         }
 
-        return $this->excludeByAnnotation($propertyMetadata->getAnnotations(), $serialize, AnnotationSet::TYPE_PROPERTY);
+        $filter = $propertyMetadata->isVirtual() ? AnnotationSet::TYPE_METHOD : AnnotationSet::TYPE_PROPERTY;
+
+        return $this->excludeByAnnotation($propertyMetadata->getAnnotations(), $serialize, $filter);
     }
 
     /**

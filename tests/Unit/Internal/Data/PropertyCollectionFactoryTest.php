@@ -31,15 +31,9 @@ use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
-use Tebru\Gson\Internal\TypeAdapter\BooleanTypeAdapter;
-use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\Test\Mock\JsonAdapterMock;
 use Tebru\Gson\Test\Mock\PropertyCollectionMock;
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class PropertyCollectionFactoryTest
@@ -49,33 +43,30 @@ use Tebru\Gson\Test\Mock\PropertyCollectionMock;
  */
 class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Excluder
+     */
+    private $excluder;
+
+    /**
+     * @var PropertyCollectionFactory
+     */
+    private $propertyCollectionFactory;
+
+    /**
+     * @var TypeAdapterProvider
+     */
+    private $typeAdapterProvider;
+
+    public function setUp()
+    {
+        $this->excluder = MockProvider::excluder();
+        $this->propertyCollectionFactory = MockProvider::propertyCollectionFactory($this->excluder);
+        $this->typeAdapterProvider = MockProvider::typeAdapterProvider($this->excluder);
+    }
     public function testCreate()
     {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-
-        $factory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            new MetadataFactory($annotationCollectionFactory),
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            new Excluder(),
-            new VoidCache()
-        );
-
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new StringTypeAdapterFactory(),
-                new BooleanTypeAdapterFactory(),
-                new IntegerTypeAdapterFactory(),
-                new WildcardTypeAdapterFactory(),
-            ],
-            new ArrayCache()
-        );
-
-        $collection = $factory->create(new PhpType(PropertyCollectionMock::class), $typeAdapterProvider);
+        $collection = $this->propertyCollectionFactory->create(new PhpType(PropertyCollectionMock::class));
 
         /** @var Property[] $elements */
         $elements = $collection->toArray();
@@ -127,85 +118,15 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
             $cache
         );
 
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new StringTypeAdapterFactory(),
-                new BooleanTypeAdapterFactory(),
-                new IntegerTypeAdapterFactory(),
-                new WildcardTypeAdapterFactory(),
-            ],
-            new ArrayCache()
-        );
-
         // assert data is stored in cache
-        $factory->create(new PhpType(PropertyCollectionMock::class), $typeAdapterProvider);
+        $factory->create(new PhpType(PropertyCollectionMock::class));
         self::assertCount(4, $cache->fetch(PropertyCollectionMock::class)->toArray());
 
         // overwrite cache
         $cache->save(PropertyCollectionMock::class, new PropertyCollection());
 
         // assert we use the new cache
-        $collection = $factory->create(new PhpType(PropertyCollectionMock::class), $typeAdapterProvider);
+        $collection = $factory->create(new PhpType(PropertyCollectionMock::class));
         self::assertCount(0, $collection->toArray());
-    }
-
-    public function testCreateUsesJsonAdapter()
-    {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder();
-        $excluder->setExcludedModifiers(\ReflectionProperty::IS_PUBLIC);
-
-        $factory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            new MetadataFactory($annotationCollectionFactory),
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $excluder,
-            new VoidCache()
-        );
-
-        $typeAdapterProvider = new TypeAdapterProvider([], new ArrayCache());
-
-        $collection = $factory->create(new PhpType(JsonAdapterMock::class), $typeAdapterProvider);
-
-        /** @var Property[] $elements */
-        $elements = $collection->toArray();
-
-        self::assertCount(1, $elements);
-
-        self::assertAttributeInstanceOf(StringTypeAdapter::class, 'typeAdapter', $elements[0]);
-    }
-
-    public function testCreateVirtualUsesJsonAdapter()
-    {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $excluder = new Excluder();
-        $excluder->setExcludedModifiers(\ReflectionProperty::IS_PRIVATE);
-
-        $factory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            new MetadataFactory($annotationCollectionFactory),
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $excluder,
-            new VoidCache()
-        );
-
-        $typeAdapterProvider = new TypeAdapterProvider([], new ArrayCache());
-
-        $collection = $factory->create(new PhpType(JsonAdapterMock::class), $typeAdapterProvider);
-
-        /** @var Property[] $elements */
-        $elements = $collection->toArray();
-
-        self::assertCount(1, $elements);
-
-        self::assertAttributeInstanceOf(BooleanTypeAdapter::class, 'typeAdapter', $elements[0]);
     }
 }

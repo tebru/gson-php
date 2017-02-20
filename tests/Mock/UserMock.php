@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Mock;
 
+use Tebru\Gson\Annotation as Gson;
 use Tebru\Gson\Annotation\Exclude;
 
 /**
@@ -49,6 +50,8 @@ class UserMock
 
     /**
      * @var bool
+     *
+     * @Exclude(deserialize=false)
      */
     private $enabled = false;
 

@@ -6,10 +6,7 @@
 
 namespace Tebru\Gson\Test\Mock;
 
-use Tebru\Gson\Annotation\Accessor;
-use Tebru\Gson\Annotation\SerializedName;
-use Tebru\Gson\Annotation\Type;
-use Tebru\Gson\Annotation\VirtualProperty;
+use Tebru\Gson\Annotation as Gson;
 
 /**
  * Class PropertyCollectionMock
@@ -19,17 +16,22 @@ use Tebru\Gson\Annotation\VirtualProperty;
 class PropertyCollectionMock
 {
     /**
-     * @Accessor(get="getChanged", set="setChanged")
+     * @Gson\Accessor(get="getChanged", set="setChanged")
      */
     private $changedAccessors;
 
     /**
-     * @SerializedName("changedname")
+     * @Gson\SerializedName("changedname")
      */
     public $changedName;
 
     /**
-     * @Type("int")
+     * @Gson\Exclude()
+     */
+    private $exclude;
+
+    /**
+     * @Gson\Type("int")
      */
     private $type;
 
@@ -44,10 +46,19 @@ class PropertyCollectionMock
     }
 
     /**
-     * @VirtualProperty()
-     * @SerializedName("new_virtual_property")
+     * @Gson\VirtualProperty()
+     * @Gson\SerializedName("new_virtual_property")
      */
     public function virtualProperty(): string
+    {
+        return 'foo'.'bar';
+    }
+
+    /**
+     * @Gson\VirtualProperty()
+     * @Gson\Exclude
+     */
+    public function virtualProperty2(): string
     {
         return 'foo'.'bar';
     }

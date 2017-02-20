@@ -5,28 +5,8 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Element\JsonObject;
-use Tebru\Gson\Internal\AccessorMethodProvider;
-use Tebru\Gson\Internal\AccessorStrategyFactory;
-use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
-use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
-use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
-use Tebru\Gson\Internal\DefaultJsonSerializationContext;
-use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\Internal\Naming\PropertyNamer;
-use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
-use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
-use Tebru\Gson\Internal\PhpTypeFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\AddressMock;
 use Tebru\Gson\Test\MockProvider;
 

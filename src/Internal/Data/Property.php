@@ -9,9 +9,6 @@ namespace Tebru\Gson\Internal\Data;
 use Tebru\Gson\Internal\GetterStrategy;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\SetterStrategy;
-use Tebru\Gson\JsonReadable;
-use Tebru\Gson\JsonWritable;
-use Tebru\Gson\TypeAdapter;
 
 /**
  * Class Property
@@ -87,13 +84,6 @@ final class Property
      * @var bool
      */
     private $skipDeserialize = false;
-
-    /**
-     * The type adapter that should be used for this property
-     *
-     * @var TypeAdapter
-     */
-    private $typeAdapter;
 
     /**
      * If the property is a virtual property
@@ -195,20 +185,6 @@ final class Property
     }
 
     /**
-     * Set the type adapter
-     *
-     * This method exists so we can create a Property object and use it as a data bag to determine
-     * if the property should be excluded before trying to resolve the type adapter for the property.
-     * This avoids infinite loops on circular references.
-     *
-     * @param TypeAdapter $typeAdapter
-     */
-    public function setTypeAdapter(TypeAdapter $typeAdapter)
-    {
-        $this->typeAdapter = $typeAdapter;
-    }
-
-    /**
      * Returns should if we should skip during serialization
      *
      * @return bool
@@ -246,31 +222,6 @@ final class Property
     public function setSkipDeserialize(bool $skipDeserialize): void
     {
         $this->skipDeserialize = $skipDeserialize;
-    }
-
-    /**
-     * Read the next value using the type adapter registered to property
-     * and set it to the object
-     *
-     * @param JsonReadable $reader
-     * @param mixed $object
-     */
-    public function read(JsonReadable $reader, $object)
-    {
-        $value = $this->typeAdapter->read($reader);
-        $this->set($object, $value);
-    }
-
-    /**
-     * Write the next value using the type adapter registered to property by
-     * getting it from the property
-     *
-     * @param JsonWritable $writer
-     * @param mixed $object
-     */
-    public function write(JsonWritable $writer, $object)
-    {
-        $this->typeAdapter->write($writer, $this->get($object));
     }
 
     /**

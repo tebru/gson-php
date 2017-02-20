@@ -15,12 +15,9 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\Property;
-use Tebru\Gson\Internal\JsonDecodeReader;
-use Tebru\Gson\Internal\JsonEncodeWriter;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ChildClassParent;
-use Tebru\Gson\Test\Mock\TypeAdapterMock;
 
 /**
  * Class PropertyTest
@@ -195,53 +192,6 @@ class PropertyTest extends PHPUnit_Framework_TestCase
 
         $property->set($mock, 'bar');
         self::assertSame('bar', $property->get($mock));
-    }
-
-    public function testRead()
-    {
-        $mock = new class { public $foo; };
-        $realName = 'foo';
-        $serializedName = 'foo_bar';
-        $type = new PhpType('Foo');
-
-        $property = new Property(
-            $realName,
-            $serializedName,
-            $type,
-            new GetByPublicProperty('foo'),
-            new SetByPublicProperty('foo'),
-            new AnnotationSet(),
-            0,
-            false
-        );
-        $property->setTypeAdapter(new TypeAdapterMock());
-
-        $property->read(new JsonDecodeReader('"foo"'), $mock);
-        self::assertSame('foo', $property->get($mock));
-    }
-
-    public function testWrite()
-    {
-        $mock = new class { public $foo = 'bar'; };
-        $realName = 'foo';
-        $serializedName = 'foo_bar';
-        $type = new PhpType('Foo');
-
-        $property = new Property(
-            $realName,
-            $serializedName,
-            $type,
-            new GetByPublicProperty('foo'),
-            new SetByPublicProperty('foo'),
-            new AnnotationSet(),
-            0,
-            false
-        );
-        $property->setTypeAdapter(new TypeAdapterMock());
-
-        $writer = new JsonEncodeWriter();
-        $property->write($writer, $mock);
-        self::assertSame('"bar"', (string) $writer);
     }
 
     public function testSetNull()

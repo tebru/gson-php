@@ -9,7 +9,6 @@ namespace Tebru\Gson\Internal\Data;
 use Doctrine\Common\Cache\Cache;
 use ReflectionClass;
 use ReflectionProperty;
-use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
@@ -20,7 +19,6 @@ use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
-use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\PropertyMetadata;
 
 /**
@@ -117,14 +115,13 @@ final class PropertyCollectionFactory
      * Create a [@see PropertyCollection] based on the properties of the provided type
      *
      * @param PhpType $phpType
-     * @param TypeAdapterProvider $typeAdapterProvider
      * @return PropertyCollection
      * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      * @throws \InvalidArgumentException If the type does not exist
      */
-    public function create(PhpType $phpType, TypeAdapterProvider $typeAdapterProvider): PropertyCollection
+    public function create(PhpType $phpType): PropertyCollection
     {
         $class = $phpType->getClass();
 
@@ -174,13 +171,6 @@ final class PropertyCollectionFactory
                 continue;
             }
 
-            /** @var JsonAdapter $jsonAdapterAnnotation */
-            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_PROPERTY);
-            $adapter = null !== $jsonAdapterAnnotation
-                ? $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation)
-                : $typeAdapterProvider->getAdapter($type);
-
-            $property->setTypeAdapter($adapter);
             $property->setSkipSerialize($skipSerialize);
             $property->setSkipDeserialize($skipDeserialize);
 
@@ -222,13 +212,6 @@ final class PropertyCollectionFactory
                 continue;
             }
 
-            /** @var JsonAdapter $jsonAdapterAnnotation */
-            $jsonAdapterAnnotation = $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_METHOD);
-            $adapter = null !== $jsonAdapterAnnotation
-                ? $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation)
-                : $typeAdapterProvider->getAdapter($type);
-
-            $property->setTypeAdapter($adapter);
             $property->setSkipSerialize($skipSerialize);
             $property->setSkipDeserialize($skipDeserialize);
 

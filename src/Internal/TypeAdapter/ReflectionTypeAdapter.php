@@ -6,10 +6,13 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter;
 
+use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\JsonReadable;
@@ -52,6 +55,11 @@ final class ReflectionTypeAdapter extends TypeAdapter
     private $excluder;
 
     /**
+     * @var TypeAdapterProvider
+     */
+    private $typeAdapterProvider;
+
+    /**
      * Constructor
      *
      * @param ObjectConstructor $objectConstructor
@@ -59,19 +67,22 @@ final class ReflectionTypeAdapter extends TypeAdapter
      * @param MetadataPropertyCollection $metadataPropertyCollection
      * @param ClassMetadata $classMetadata
      * @param Excluder $excluder
+     * @param TypeAdapterProvider $typeAdapterProvider
      */
     public function __construct(
         ObjectConstructor $objectConstructor,
         PropertyCollection $properties,
         MetadataPropertyCollection $metadataPropertyCollection,
         ClassMetadata $classMetadata,
-        Excluder $excluder
+        Excluder $excluder,
+        TypeAdapterProvider $typeAdapterProvider
     ) {
         $this->objectConstructor = $objectConstructor;
         $this->properties = $properties;
         $this->metadataPropertyCollection = $metadataPropertyCollection;
         $this->classMetadata = $classMetadata;
         $this->excluder = $excluder;
+        $this->typeAdapterProvider = $typeAdapterProvider;
     }
     /**
      * Read the next value, convert it to its type and return it
@@ -79,6 +90,7 @@ final class ReflectionTypeAdapter extends TypeAdapter
      * @param JsonReadable $reader
      * @return mixed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function read(JsonReadable $reader)
     {
@@ -107,7 +119,13 @@ final class ReflectionTypeAdapter extends TypeAdapter
                 continue;
             }
 
-            $property->read($reader, $object);
+            /** @var JsonAdapter $jsonAdapterAnnotation */
+            $jsonAdapterAnnotation = $property->getAnnotations()->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_PROPERTY);
+            $adapter = null === $jsonAdapterAnnotation
+                ? $this->typeAdapterProvider->getAdapter($property->getType())
+                : $this->typeAdapterProvider->getAdapterFromAnnotation($property->getType(), $jsonAdapterAnnotation);
+
+            $property->set($object, $adapter->read($reader));
         }
         $reader->endObject();
 
@@ -120,6 +138,8 @@ final class ReflectionTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param mixed $value
      * @return void
+     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function write(JsonWritable $writer, $value): void
     {
@@ -150,7 +170,12 @@ final class ReflectionTypeAdapter extends TypeAdapter
                 continue;
             }
 
-            $property->write($writer, $value);
+            /** @var JsonAdapter $jsonAdapterAnnotation */
+            $jsonAdapterAnnotation = $property->getAnnotations()->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_PROPERTY);
+            $adapter = null === $jsonAdapterAnnotation
+                ? $this->typeAdapterProvider->getAdapter($property->getType())
+                : $this->typeAdapterProvider->getAdapterFromAnnotation($property->getType(), $jsonAdapterAnnotation);
+            $adapter->write($writer, $property->get($value));
         }
 
         $writer->endObject();

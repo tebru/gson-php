@@ -151,8 +151,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
                 "state": "MN",
                 "zip": 12345
             },
-            "phone": "(123) 456-7890",
-            "enabled": true
+            "phone": "(123) 456-7890"
         }';
 
         self::assertJsonStringEqualsJsonString($expectedJson, $adapter->writeToJson($user, false));

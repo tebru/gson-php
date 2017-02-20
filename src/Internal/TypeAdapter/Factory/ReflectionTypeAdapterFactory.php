@@ -89,7 +89,7 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        $properties = $this->propertyCollectionFactory->create($type, $typeAdapterProvider);
+        $properties = $this->propertyCollectionFactory->create($type);
         $objectConstructor = $this->constructorConstructor->get($type);
 
         $classMetadata = $this->metadataFactory->createClassMetadata($type->getClass());
@@ -100,6 +100,13 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
             $metadataPropertyCollection->add($this->metadataFactory->createPropertyMetadata($property, $classMetadata));
         }
 
-        return new ReflectionTypeAdapter($objectConstructor, $properties, $metadataPropertyCollection, $classMetadata, $this->excluder);
+        return new ReflectionTypeAdapter(
+            $objectConstructor,
+            $properties,
+            $metadataPropertyCollection,
+            $classMetadata,
+            $this->excluder,
+            $typeAdapterProvider
+        );
     }
 }

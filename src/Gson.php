@@ -105,7 +105,7 @@ class Gson
             return $instance;
         }
 
-        $properties = $this->propertyCollectionFactory->create($phpType, $this->typeAdapterProvider);
+        $properties = $this->propertyCollectionFactory->create($phpType);
 
         /** @var Property $property */
         foreach ($properties as $property) {
