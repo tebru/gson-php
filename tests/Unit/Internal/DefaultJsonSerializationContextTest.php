@@ -28,6 +28,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\AddressMock;
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class DefaultJsonSerializationContextTest
@@ -46,30 +47,7 @@ class DefaultJsonSerializationContextTest extends PHPUnit_Framework_TestCase
         $address->setState('MN');
         $address->setZip('12345');
 
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $metadataFactory = new MetadataFactory($annotationCollectionFactory);
-        $excluder = new Excluder();
-        $propertyCollectionFactory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            $metadataFactory,
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $excluder,
-            new ArrayCache()
-        );
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new StringTypeAdapterFactory(),
-                new IntegerTypeAdapterFactory(),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $metadataFactory)
-            ],
-            new ArrayCache()
-        );
-
-        $context = new DefaultJsonSerializationContext($typeAdapterProvider);
+        $context = MockProvider::serializationContext(MockProvider::excluder());
 
         /** @var JsonObject $addressElement */
         $addressElement = $context->serialize($address);

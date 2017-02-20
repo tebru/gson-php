@@ -6,8 +6,6 @@
 
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
 use Tebru\Gson\Annotation\Exclude;
@@ -15,7 +13,6 @@ use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Annotation\Until;
 use Tebru\Gson\ClassMetadata;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
@@ -29,6 +26,7 @@ use Tebru\Gson\Test\Mock\ExcluderExposeMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\Foo;
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class ExcluderTest
@@ -53,8 +51,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->excluder = new Excluder();
-        $this->metadataFactory = new MetadataFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+        $this->excluder = MockProvider::excluder();
+        $this->metadataFactory = MockProvider::metadataFactory();
     }
 
     public function testExcludeClassWithoutVersion()
@@ -129,22 +127,22 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     public function testExcludeClassWithStrategySerialization()
     {
-       Excluder::addExclusionStrategy(new FooExclusionStrategy(), true, false);
-       Excluder::addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), true, false);
+        $this->excluder->addExclusionStrategy(new FooExclusionStrategy(), true, false);
+        $this->excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), true, false);
         $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
 
-        self::assertTrue(Excluder::excludeClassByStrategy($classMetadata, true));
-        self::assertFalse(Excluder::excludeClassByStrategy($classMetadata, false));
+        self::assertTrue($this->excluder->excludeClassByStrategy($classMetadata, true));
+        self::assertFalse($this->excluder->excludeClassByStrategy($classMetadata, false));
     }
 
     public function testExcludeClassWithStrategyDeserialization()
     {
-       Excluder::addExclusionStrategy(new FooExclusionStrategy(), false, true);
-       Excluder::addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), false, true);
+        $this->excluder->addExclusionStrategy(new FooExclusionStrategy(), false, true);
+        $this->excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), false, true);
         $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
 
-        self::assertFalse(Excluder::excludeClassByStrategy($classMetadata, true));
-        self::assertTrue(Excluder::excludeClassByStrategy($classMetadata, false));
+        self::assertFalse($this->excluder->excludeClassByStrategy($classMetadata, true));
+        self::assertTrue($this->excluder->excludeClassByStrategy($classMetadata, false));
     }
 
     public function testExcludePropertyDefaultModifiers()
@@ -521,8 +519,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     public function testExcludeFromStrategy()
     {
-       Excluder::addExclusionStrategy(new BarPropertyExclusionStrategy(), true, true);
-       Excluder::addExclusionStrategy(new FooPropertyExclusionStrategy(), true, true);
+        $this->excluder->addExclusionStrategy(new BarPropertyExclusionStrategy(), true, true);
+        $this->excluder->addExclusionStrategy(new FooPropertyExclusionStrategy(), true, true);
 
         $propertyMetadata = new PropertyMetadata(
             'foo',
@@ -534,8 +532,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             false
         );
 
-        self::assertTrue(Excluder::excludePropertyByStrategy($propertyMetadata, true));
-        self::assertTrue(Excluder::excludePropertyByStrategy($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludePropertyByStrategy($propertyMetadata, true));
+        self::assertTrue($this->excluder->excludePropertyByStrategy($propertyMetadata, false));
     }
 
     public function testExcludeFromStrategyFalse()
@@ -550,7 +548,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             false
         );
 
-        self::assertFalse(Excluder::excludePropertyByStrategy($propertyMetadata, true));
-        self::assertFalse(Excluder::excludePropertyByStrategy($propertyMetadata, false));
+        self::assertFalse($this->excluder->excludePropertyByStrategy($propertyMetadata, true));
+        self::assertFalse($this->excluder->excludePropertyByStrategy($propertyMetadata, false));
     }
 }

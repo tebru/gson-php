@@ -6,33 +6,14 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Internal\AccessorMethodProvider;
-use Tebru\Gson\Internal\AccessorStrategyFactory;
-use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
-use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
-use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\Internal\Naming\PropertyNamer;
-use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
-use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
-use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
 use Tebru\Gson\PhpType;
-use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\ExcluderExcludeDeserializeMock;
 use Tebru\Gson\Test\Mock\ExcluderExcludeSerializeMock;
-use Tebru\Gson\Test\Mock\TypeAdapter\FooTypeAdapterFactory;
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class ExcluderTypeAdapterTest
@@ -59,39 +40,7 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->excluder = new Excluder();
-
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $metadataFactory = new MetadataFactory($annotationCollectionFactory);
-        
-        $propertyCollectionFactory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            $metadataFactory,
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $this->excluder,
-            new ArrayCache()
-        );
-
-        $reflectionTypeAdadpterFactory = new ReflectionTypeAdapterFactory(
-            new ConstructorConstructor(),
-            $propertyCollectionFactory,
-            $metadataFactory
-        );
-
-        $this->typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new ExcluderTypeAdapterFactory($this->excluder, $metadataFactory),
-                new StringTypeAdapterFactory(),
-                new NullTypeAdapterFactory(),
-                new FooTypeAdapterFactory(),
-                $reflectionTypeAdadpterFactory,
-                new WildcardTypeAdapterFactory(),
-            ],
-            new ArrayCache()
-        );
+        $this->typeAdapterProvider = MockProvider::typeAdapterProvider($this->excluder);
     }
 
     public function testDeserializeSkips()

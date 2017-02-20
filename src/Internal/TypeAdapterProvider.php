@@ -88,7 +88,11 @@ final class TypeAdapterProvider
             }
 
             $adapter = $typeAdapterFactory->create($type, $this);
-            $this->typeAdapterCache->save($key, $adapter);
+
+            // do not save skipped adapters
+            if (null === $skip) {
+                $this->typeAdapterCache->save($key, $adapter);
+            }
 
             return $adapter;
         }

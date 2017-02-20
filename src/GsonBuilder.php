@@ -345,7 +345,7 @@ class GsonBuilder
         $annotationCache = null === $this->cacheDir ? new ArrayCache(): new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
         $annotationCache->setNamespace('annotation_cache');
 
-        $typeAdapterCache = null === $this->cacheDir ? new ArrayCache(): new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
+        $typeAdapterCache = new ArrayCache();
         $typeAdapterCache->setNamespace('type_adapter_cache');
 
         $annotationCollectionFactory = new AnnotationCollectionFactory($reader, $annotationCache);
@@ -354,7 +354,7 @@ class GsonBuilder
         $excluder->setExcludedModifiers($this->excludedModifiers);
         $excluder->setRequireExpose($this->requireExpose);
         foreach ($this->exclusionStrategies as $strategy) {
-            Excluder::addExclusionStrategy($strategy[0], $strategy[1], $strategy[2]);
+            $excluder->addExclusionStrategy($strategy[0], $strategy[1], $strategy[2]);
         }
 
         $metadataFactory = new MetadataFactory($annotationCollectionFactory);
@@ -415,7 +415,8 @@ class GsonBuilder
                 new ReflectionTypeAdapterFactory(
                     new ConstructorConstructor($this->instanceCreators),
                     $propertyCollectionFactory,
-                    $metadataFactory
+                    $metadataFactory,
+                    $excluder
                 ),
                 new WildcardTypeAdapterFactory(),
             ]

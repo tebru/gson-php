@@ -625,6 +625,26 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), json_encode($result));
     }
 
+    public function testDifferentInstancesWillUseDifferentTypeAdapterCaches()
+    {
+        $exclusionStrategy = new GsonMockExclusionStrategyMock();
+        $gson = Gson::builder()
+            ->addExclusionStrategy($exclusionStrategy, true, true)
+            ->build();
+        $result = $gson->toJsonElement($this->gsonMock());
+
+        // stop excluding
+        $exclusionStrategy->skipProperty = false;
+
+        $gson = Gson::builder()
+            ->addExclusionStrategy($exclusionStrategy, true, true)
+            ->build();
+        $result2 = $gson->toJsonElement($this->gsonMock());
+
+        // excluder is not cached
+        self::assertNotEquals($result, $result2);
+    }
+
     public function testCanSetCacheDirectory()
     {
         $gsonBuilder = Gson::builder()->setCacheDir('/tmp');

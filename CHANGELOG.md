@@ -11,7 +11,6 @@ Master
 * BC BREAK: Removed ArrayList/HashMap type adapters
 * BC BREAK: Removed support for 'JsonElement' type, must use full class name
 * FIXED: Infinite loop on circular references when excluding property
-* ADDED: Type Adapter caching
 * ADDED: Support for subclasses of DateTime
 * ADDED: toJsonElement() method on Gson
 

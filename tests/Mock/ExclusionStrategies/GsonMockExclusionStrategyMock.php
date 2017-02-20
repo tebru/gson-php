@@ -18,6 +18,7 @@ use Tebru\Gson\Test\Mock\GsonMock;
  */
 class GsonMockExclusionStrategyMock implements ExclusionStrategy
 {
+    public $skipProperty = true;
     /**
      * Return true if the class should be ignored
      *
@@ -37,6 +38,10 @@ class GsonMockExclusionStrategyMock implements ExclusionStrategy
      */
     public function shouldSkipProperty(PropertyMetadata $propertyMetadata): bool
     {
+        if (false === $this->skipProperty) {
+            return false;
+        }
+
         return $propertyMetadata->getDeclaringClassName() === GsonMock::class
             && $propertyMetadata->getName() === 'excludeFromStrategy';
     }

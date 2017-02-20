@@ -47,23 +47,31 @@ final class ReflectionTypeAdapter extends TypeAdapter
     private $classMetadata;
 
     /**
+     * @var Excluder
+     */
+    private $excluder;
+
+    /**
      * Constructor
      *
      * @param ObjectConstructor $objectConstructor
      * @param PropertyCollection $properties
      * @param MetadataPropertyCollection $metadataPropertyCollection
      * @param ClassMetadata $classMetadata
+     * @param Excluder $excluder
      */
     public function __construct(
         ObjectConstructor $objectConstructor,
         PropertyCollection $properties,
         MetadataPropertyCollection $metadataPropertyCollection,
-        ClassMetadata $classMetadata
+        ClassMetadata $classMetadata,
+        Excluder $excluder
     ) {
         $this->objectConstructor = $objectConstructor;
         $this->properties = $properties;
         $this->metadataPropertyCollection = $metadataPropertyCollection;
         $this->classMetadata = $classMetadata;
+        $this->excluder = $excluder;
     }
     /**
      * Read the next value, convert it to its type and return it
@@ -78,7 +86,7 @@ final class ReflectionTypeAdapter extends TypeAdapter
             return $reader->nextNull();
         }
 
-        if (Excluder::excludeClassByStrategy($this->classMetadata, false)) {
+        if ($this->excluder->excludeClassByStrategy($this->classMetadata, false)) {
             $reader->skipValue();
 
             return null;
@@ -93,7 +101,7 @@ final class ReflectionTypeAdapter extends TypeAdapter
             if (
                 null === $property
                 || $property->skipDeserialize()
-                || Excluder::excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), false)
+                || $this->excluder->excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), false)
             ) {
                 $reader->skipValue();
                 continue;
@@ -121,7 +129,7 @@ final class ReflectionTypeAdapter extends TypeAdapter
             return;
         }
 
-        if (Excluder::excludeClassByStrategy($this->classMetadata, true)) {
+        if ($this->excluder->excludeClassByStrategy($this->classMetadata, true)) {
             $writer->writeNull();
 
             return;
@@ -135,7 +143,7 @@ final class ReflectionTypeAdapter extends TypeAdapter
 
             if (
                 $property->skipSerialize()
-                || Excluder::excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), true)
+                || $this->excluder->excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), true)
             ) {
                 $writer->writeNull();
 

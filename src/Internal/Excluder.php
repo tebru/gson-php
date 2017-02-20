@@ -52,23 +52,14 @@ final class Excluder
      *
      * @var ExclusionStrategy[]
      */
-    private static $serializationStrategies = [];
+    private $serializationStrategies = [];
 
     /**
      * Exclusion strategies during deserialization
      *
      * @var ExclusionStrategy[]
      */
-    private static $deserializationStrategies = [];
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        self::$serializationStrategies = [];
-        self::$deserializationStrategies = [];
-    }
+    private $deserializationStrategies = [];
 
 
     /**
@@ -117,14 +108,14 @@ final class Excluder
      * @param bool $serialization
      * @param bool $deserialization
      */
-    public static function addExclusionStrategy(ExclusionStrategy $strategy, bool $serialization, bool $deserialization)
+    public function addExclusionStrategy(ExclusionStrategy $strategy, bool $serialization, bool $deserialization)
     {
         if ($serialization) {
-            self::$serializationStrategies[] = $strategy;
+            $this->serializationStrategies[] = $strategy;
         }
 
         if ($deserialization) {
-            self::$deserializationStrategies[] = $strategy;
+            $this->deserializationStrategies[] = $strategy;
         }
     }
 
@@ -146,9 +137,9 @@ final class Excluder
      * @param bool $serialize
      * @return bool
      */
-    public static function excludeClassByStrategy(ClassMetadata $classMetadata, bool $serialize): bool
+    public function excludeClassByStrategy(ClassMetadata $classMetadata, bool $serialize): bool
     {
-        $strategies = $serialize ? self::$serializationStrategies : self::$deserializationStrategies;
+        $strategies = $serialize ? $this->serializationStrategies : $this->deserializationStrategies;
         foreach ($strategies as $exclusionStrategy) {
             if ($exclusionStrategy->shouldSkipClass($classMetadata)) {
                 return true;
@@ -184,9 +175,9 @@ final class Excluder
      * @param bool $serialize
      * @return bool
      */
-    public static function excludePropertyByStrategy(PropertyMetadata $property, bool $serialize): bool
+    public function excludePropertyByStrategy(PropertyMetadata $property, bool $serialize): bool
     {
-        $strategies = $serialize ? self::$serializationStrategies : self::$deserializationStrategies;
+        $strategies = $serialize ? $this->serializationStrategies : $this->deserializationStrategies;
         foreach ($strategies as $exclusionStrategy) {
             if ($exclusionStrategy->shouldSkipProperty($property)) {
                 return true;

@@ -9,6 +9,7 @@ namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
+use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
@@ -40,20 +41,28 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
     private $metadataFactory;
 
     /**
+     * @var Excluder
+     */
+    private $excluder;
+
+    /**
      * Constructor
      *
      * @param ConstructorConstructor $constructorConstructor
      * @param PropertyCollectionFactory $propertyCollectionFactory
      * @param MetadataFactory $metadataFactory
+     * @param Excluder $excluder
      */
     public function __construct(
         ConstructorConstructor $constructorConstructor,
         PropertyCollectionFactory $propertyCollectionFactory,
-        MetadataFactory $metadataFactory
+        MetadataFactory $metadataFactory,
+        Excluder $excluder
     ) {
         $this->constructorConstructor = $constructorConstructor;
         $this->propertyCollectionFactory = $propertyCollectionFactory;
         $this->metadataFactory = $metadataFactory;
+        $this->excluder = $excluder;
     }
 
     /**
@@ -91,6 +100,6 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
             $metadataPropertyCollection->add($this->metadataFactory->createPropertyMetadata($property, $classMetadata));
         }
 
-        return new ReflectionTypeAdapter($objectConstructor, $properties, $metadataPropertyCollection, $classMetadata);
+        return new ReflectionTypeAdapter($objectConstructor, $properties, $metadataPropertyCollection, $classMetadata, $this->excluder);
     }
 }

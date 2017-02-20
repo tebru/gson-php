@@ -5,34 +5,15 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Internal\AccessorMethodProvider;
-use Tebru\Gson\Internal\AccessorStrategyFactory;
-use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
-use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
-use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
-use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\Internal\Naming\PropertyNamer;
-use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
-use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
-use Tebru\Gson\PhpType;
-use Tebru\Gson\Internal\PhpTypeFactory;
-use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
-use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Test\Mock\AddressMock;
 use Tebru\Gson\Test\Mock\MockDeserializer;
 use Tebru\Gson\Test\Mock\MockSerializer;
 use Tebru\Gson\Test\Mock\UserMock;
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class CustomWrappedTypeAdapterTest
@@ -45,11 +26,9 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
     public function testUsesDeserializer()
     {
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), null, new MockDeserializer()),
-            ],
-            new ArrayCache()
+        $typeAdapterProvider = MockProvider::typeAdapterProvider(
+            MockProvider::excluder(),
+            [new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), null, new MockDeserializer())]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */
@@ -74,29 +53,9 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDelegatesDeserializer()
     {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $metadataFactory = new MetadataFactory($annotationCollectionFactory);
-        $excluder = new Excluder();
-        $propertyCollectionFactory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            $metadataFactory,
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $excluder,
-            new ArrayCache()
-        );
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new StringTypeAdapterFactory(),
-                new IntegerTypeAdapterFactory(),
-                new BooleanTypeAdapterFactory(),
-                new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class)),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $metadataFactory),
-            ],
-            new ArrayCache()
+        $typeAdapterProvider = MockProvider::typeAdapterProvider(
+            MockProvider::excluder(),
+            [new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class))]
         );
 
         $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
@@ -115,11 +74,9 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testUsesSerializerNull()
     {
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer()),
-            ],
-            new ArrayCache()
+        $typeAdapterProvider = MockProvider::typeAdapterProvider(
+            MockProvider::excluder(),
+            [new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer())]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */
@@ -130,11 +87,9 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testUsesSerializer()
     {
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer()),
-            ],
-            new ArrayCache()
+        $typeAdapterProvider = MockProvider::typeAdapterProvider(
+            MockProvider::excluder(),
+            [new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer())]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */
@@ -148,29 +103,9 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDelegatesSerialization()
     {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $metadataFactory = new MetadataFactory($annotationCollectionFactory);
-        $excluder = new Excluder();
-        $propertyCollectionFactory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            $metadataFactory,
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $excluder,
-            new ArrayCache()
-        );
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new StringTypeAdapterFactory(),
-                new IntegerTypeAdapterFactory(),
-                new BooleanTypeAdapterFactory(),
-                new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class)),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $metadataFactory),
-            ],
-            new ArrayCache()
+        $typeAdapterProvider = MockProvider::typeAdapterProvider(
+            MockProvider::excluder(),
+            [new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class))]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */

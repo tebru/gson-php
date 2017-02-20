@@ -5,30 +5,11 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Element\JsonObject;
-use Tebru\Gson\Internal\AccessorMethodProvider;
-use Tebru\Gson\Internal\AccessorStrategyFactory;
-use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
-use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
-use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
-use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
-use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\Internal\Naming\PropertyNamer;
-use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
-use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\PhpType;
-use Tebru\Gson\Internal\PhpTypeFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\AddressMock;
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class DefaultJsonDeserializationContextTest
@@ -47,30 +28,7 @@ class DefaultJsonDeserializationContextTest extends PHPUnit_Framework_TestCase
         $jsonObject->addString('state', 'MN');
         $jsonObject->addInteger('zip', 12345);
 
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $metadataFactory = new MetadataFactory($annotationCollectionFactory);
-        $excluder = new Excluder();
-        $propertyCollectionFactory = new PropertyCollectionFactory(
-            new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            $metadataFactory,
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
-            new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
-            new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
-            $excluder,
-            new ArrayCache()
-        );
-        $typeAdapterProvider = new TypeAdapterProvider(
-            [
-                new StringTypeAdapterFactory(),
-                new IntegerTypeAdapterFactory(),
-                new ReflectionTypeAdapterFactory(new ConstructorConstructor(), $propertyCollectionFactory, $metadataFactory)
-            ],
-            new ArrayCache()
-        );
-
-        $context = new DefaultJsonDeserializationContext($typeAdapterProvider);
+        $context = MockProvider::deserializationContext(MockProvider::excluder());
 
         /** @var AddressMock $address */
         $address = $context->deserialize($jsonObject, new PhpType(AddressMock::class));
