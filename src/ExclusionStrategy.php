@@ -6,6 +6,8 @@
 
 namespace Tebru\Gson;
 
+use Tebru\Gson\Internal\DefaultPropertyMetadata;
+
 /**
  * Interface ExclusionStrategy
  *

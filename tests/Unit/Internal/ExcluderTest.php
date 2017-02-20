@@ -17,7 +17,7 @@ use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\PhpType;
-use Tebru\Gson\PropertyMetadata;
+use Tebru\Gson\Internal\DefaultPropertyMetadata;
 use Tebru\Gson\Test\Mock\ExcluderVersionMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\BarPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcludeClassMockExclusionStrategy;
@@ -147,7 +147,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     public function testExcludePropertyDefaultModifiers()
     {
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -165,7 +165,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setExcludedModifiers(ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -183,7 +183,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setExcludedModifiers(ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -201,7 +201,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setVersion(1);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -220,7 +220,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Until(['value' => '2']), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -241,7 +241,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -262,7 +262,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -283,7 +283,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -304,7 +304,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -325,7 +325,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -346,7 +346,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -365,7 +365,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Exclude([]), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -384,7 +384,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Exclude(['deserialize' => false]), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -403,7 +403,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Exclude(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -424,7 +424,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Expose([]), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -445,7 +445,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Expose(['deserialize' => false]), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -466,7 +466,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Expose(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -485,7 +485,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationSet();
         $annotations->addAnnotation(new Expose(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -503,7 +503,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setRequireExpose(true);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -522,7 +522,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $this->excluder->addExclusionStrategy(new BarPropertyExclusionStrategy(), true, true);
         $this->excluder->addExclusionStrategy(new FooPropertyExclusionStrategy(), true, true);
 
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
@@ -538,7 +538,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     public function testExcludeFromStrategyFalse()
     {
-        $propertyMetadata = new PropertyMetadata(
+        $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),

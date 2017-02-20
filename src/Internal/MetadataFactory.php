@@ -57,7 +57,7 @@ final class MetadataFactory
      */
     public function createPropertyMetadata(Property $property, DefaultClassMetadata $classMetadata): PropertyMetadata
     {
-        return new PropertyMetadata(
+        return new DefaultPropertyMetadata(
             $property->getRealName(),
             $property->getSerializedName(),
             $property->getType(),

@@ -11,6 +11,7 @@ use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPropertyMetadata;
 use Tebru\Gson\PropertyMetadata;
 use Tebru\Gson\Test\Mock\Foo;
 
@@ -35,7 +36,7 @@ class MetadataPropertyCollectionTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->metadataPropertyCollection = new MetadataPropertyCollection();
-        $this->defaultPropertyMetadata = new PropertyMetadata(
+        $this->defaultPropertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new PhpType('string'),
