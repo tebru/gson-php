@@ -9,11 +9,11 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
 use Tebru\Gson\Internal\DefaultJsonSerializationContext;
 use Tebru\Gson\JsonWritable;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonSerializer;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 
@@ -29,7 +29,7 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
     /**
      * @var PhpType
      */
-    private $phpType;
+    private $type;
 
     /**
      * @var TypeAdapterProvider
@@ -54,20 +54,20 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
     /**
      * Constructor
      *
-     * @param PhpType $phpType
+     * @param PhpType $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @param JsonSerializer $serializer
      * @param JsonDeserializer $deserializer
      * @param TypeAdapterFactory $skip
      */
     public function __construct(
-        PhpType $phpType,
+        PhpType $type,
         TypeAdapterProvider $typeAdapterProvider,
         JsonSerializer $serializer = null,
         JsonDeserializer $deserializer = null,
         TypeAdapterFactory $skip = null
     ) {
-        $this->phpType = $phpType;
+        $this->type = $type;
         $this->typeAdapterProvider = $typeAdapterProvider;
         $this->serializer = $serializer;
         $this->deserializer = $deserializer;
@@ -85,7 +85,7 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
     public function read(JsonReadable $reader)
     {
         if (null === $this->deserializer) {
-            $adapter = $this->typeAdapterProvider->getAdapter($this->phpType, $this->skip);
+            $adapter = $this->typeAdapterProvider->getAdapter($this->type, $this->skip);
 
             return $adapter->read($reader);
         }
@@ -95,7 +95,7 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
 
         return $this->deserializer->deserialize(
             $jsonElement,
-            $this->phpType,
+            $this->type,
             new DefaultJsonDeserializationContext($this->typeAdapterProvider)
         );
     }
@@ -113,7 +113,7 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
     public function write(JsonWritable $writer, $value): void
     {
         if (null === $this->serializer) {
-            $adapter = $this->typeAdapterProvider->getAdapter($this->phpType, $this->skip);
+            $adapter = $this->typeAdapterProvider->getAdapter($this->type, $this->skip);
             $adapter->write($writer, $value);
 
             return;
@@ -127,7 +127,7 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
 
         $jsonElement = $this->serializer->serialize(
             $value,
-            $this->phpType,
+            $this->type,
             new DefaultJsonSerializationContext($this->typeAdapterProvider)
         );
 

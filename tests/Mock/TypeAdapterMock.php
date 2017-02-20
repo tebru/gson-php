@@ -7,9 +7,9 @@
 namespace Tebru\Gson\Test\Mock;
 
 use Tebru\Gson\JsonWritable;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonReadable;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 

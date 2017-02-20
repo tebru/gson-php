@@ -9,7 +9,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 use DateTime;
 use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -31,31 +31,31 @@ class DateTimeTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new DateTimeTypeAdapterFactory();
 
-        self::assertTrue($factory->supports(new PhpType($class)));
+        self::assertTrue($factory->supports(new DefaultPhpType($class)));
     }
 
     public function testInvalidSupports()
     {
         $factory = new DateTimeTypeAdapterFactory();
 
-        self::assertFalse($factory->supports(new PhpType(ChildClass::class)));
+        self::assertFalse($factory->supports(new DefaultPhpType(ChildClass::class)));
     }
 
     public function testNonClassSupports()
     {
         $factory = new DateTimeTypeAdapterFactory();
 
-        self::assertFalse($factory->supports(new PhpType('string')));
+        self::assertFalse($factory->supports(new DefaultPhpType('string')));
     }
 
     public function testCreate()
     {
         $factory = new DateTimeTypeAdapterFactory();
-        $phpType = new PhpType(DateTime::class);
+        $phpType = new DefaultPhpType(DateTime::class);
         $adapter = $factory->create($phpType, new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(DateTimeTypeAdapter::class, $adapter);
-        self::assertAttributeSame($phpType, 'phpType', $adapter);
+        self::assertAttributeSame($phpType, 'type', $adapter);
     }
 
     public function getValidSupports()

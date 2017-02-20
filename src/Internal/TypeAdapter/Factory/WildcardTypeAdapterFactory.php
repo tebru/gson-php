@@ -6,9 +6,9 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\WildcardTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 

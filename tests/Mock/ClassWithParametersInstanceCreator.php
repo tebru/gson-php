@@ -19,11 +19,11 @@ class ClassWithParametersInstanceCreator implements InstanceCreator
     /**
      * Accepts a [@see PhpType] and returns an instantiated object
      *
-     * @param PhpType $phpType
+     * @param PhpType $type
      * @return mixed
      */
-    public function createInstance(PhpType $phpType)
+    public function createInstance(PhpType $type)
     {
-        return new ClassWithParameters($phpType->getClass());
+        return new ClassWithParameters($type->getType());
     }
 }

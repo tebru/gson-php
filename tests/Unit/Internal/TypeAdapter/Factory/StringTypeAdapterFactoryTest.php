@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -25,20 +25,20 @@ class StringTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new StringTypeAdapterFactory();
 
-        self::assertTrue($factory->supports(new PhpType('string')));
+        self::assertTrue($factory->supports(new DefaultPhpType('string')));
     }
 
     public function testInvalidSupports()
     {
         $factory = new StringTypeAdapterFactory();
 
-        self::assertFalse($factory->supports(new PhpType('int')));
+        self::assertFalse($factory->supports(new DefaultPhpType('int')));
     }
 
     public function testCreate()
     {
         $factory = new StringTypeAdapterFactory();
-        $adapter = $factory->create(new PhpType('string'), new TypeAdapterProvider([], new ArrayCache()));
+        $adapter = $factory->create(new DefaultPhpType('string'), new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(StringTypeAdapter::class, $adapter);
     }

@@ -9,6 +9,7 @@ namespace Tebru\Gson;
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 
 /**
@@ -77,8 +78,8 @@ class Gson
      */
     public function toJson($object): string
     {
-        $phpType = PhpType::createFromVariable($object);
-        $typeAdapter = $this->typeAdapterProvider->getAdapter($phpType);
+        $type = DefaultPhpType::createFromVariable($object);
+        $typeAdapter = $this->typeAdapterProvider->getAdapter($type);
 
         return $typeAdapter->writeToJson($object, $this->serializeNull);
     }
@@ -97,7 +98,7 @@ class Gson
      */
     public function fromJson(string $json, $type)
     {
-        $phpType = is_object($type) ? new PhpType(get_class($type)) : new PhpType($type);
+        $phpType = is_object($type) ? new DefaultPhpType(get_class($type)) : new DefaultPhpType($type);
         $typeAdapter = $this->typeAdapterProvider->getAdapter($phpType);
         $instance = $typeAdapter->readFromJson($json);
 

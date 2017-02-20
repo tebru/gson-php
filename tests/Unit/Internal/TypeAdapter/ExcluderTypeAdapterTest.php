@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\ExcluderExcludeDeserializeMock;
@@ -45,7 +45,7 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeSkips()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(ExcluderExcludeDeserializeMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(ExcluderExcludeDeserializeMock::class));
 
         self::assertNull($adapter->readFromJson('{}'));
     }
@@ -55,21 +55,21 @@ class ExcluderTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->excluder->setVersion('2');
 
         /** @var ExcluderTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(ExcluderExcludeSerializeMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(ExcluderExcludeSerializeMock::class));
 
         self::assertEquals(new ExcluderExcludeSerializeMock(), $adapter->readFromJson('{"foo": null}'));
     }
 
     public function testSerializeSkips()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(ExcluderExcludeSerializeMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(ExcluderExcludeSerializeMock::class));
 
         self::assertSame('null', $adapter->writeToJson(new ExcluderExcludeSerializeMock(), false));
     }
 
     public function testSerializeDelegates()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(ExcluderExcludeDeserializeMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(ExcluderExcludeDeserializeMock::class));
 
         self::assertSame('{}', $adapter->writeToJson(new ExcluderExcludeDeserializeMock(), false));
     }

@@ -7,9 +7,9 @@
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use Tebru\Gson\Element\JsonElement;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\JsonElementTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 
@@ -33,7 +33,7 @@ final class JsonElementTypeAdapterFactory implements TypeAdapterFactory
             return false;
         }
 
-        $class = $type->getClass();
+        $class = $type->getType();
 
         return JsonElement::class === (string) $class
             || is_subclass_of($class, JsonElement::class);

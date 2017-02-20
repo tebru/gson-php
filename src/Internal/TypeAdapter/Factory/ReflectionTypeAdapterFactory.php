@@ -11,10 +11,10 @@ use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 
@@ -92,7 +92,7 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
         $properties = $this->propertyCollectionFactory->create($type);
         $objectConstructor = $this->constructorConstructor->get($type);
 
-        $classMetadata = $this->metadataFactory->createClassMetadata($type->getClass());
+        $classMetadata = $this->metadataFactory->createClassMetadata($type->getType());
         $metadataPropertyCollection = new MetadataPropertyCollection();
 
         /** @var Property $property */

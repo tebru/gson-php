@@ -108,12 +108,12 @@ final class TypeAdapterProvider
      *
      * The class may be a TypeAdapter, TypeAdapterFactory, JsonSerializer, or JsonDeserializer
      *
-     * @param PhpType $phpType
+     * @param PhpType $type
      * @param JsonAdapter $jsonAdapterAnnotation
      * @return TypeAdapter
      * @throws \InvalidArgumentException if an invalid adapter is found
      */
-    public function getAdapterFromAnnotation(PhpType $phpType, JsonAdapter $jsonAdapterAnnotation): TypeAdapter
+    public function getAdapterFromAnnotation(PhpType $type, JsonAdapter $jsonAdapterAnnotation): TypeAdapter
     {
         $class = $jsonAdapterAnnotation->getClass();
         $object = new $class();
@@ -123,19 +123,19 @@ final class TypeAdapterProvider
         }
 
         if ($object instanceof TypeAdapterFactory) {
-            return $object->create($phpType, $this);
+            return $object->create($type, $this);
         }
 
         if ($object instanceof JsonSerializer && $object instanceof JsonDeserializer) {
-            return new CustomWrappedTypeAdapter($phpType, $this, $object, $object);
+            return new CustomWrappedTypeAdapter($type, $this, $object, $object);
         }
 
         if ($object instanceof JsonSerializer) {
-            return new CustomWrappedTypeAdapter($phpType, $this, $object);
+            return new CustomWrappedTypeAdapter($type, $this, $object);
         }
 
         if ($object instanceof JsonDeserializer) {
-            return new CustomWrappedTypeAdapter($phpType, $this, null, $object);
+            return new CustomWrappedTypeAdapter($type, $this, null, $object);
         }
 
         throw new InvalidArgumentException(sprintf(

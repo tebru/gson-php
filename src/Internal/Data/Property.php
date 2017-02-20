@@ -7,8 +7,8 @@
 namespace Tebru\Gson\Internal\Data;
 
 use Tebru\Gson\Internal\GetterStrategy;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\SetterStrategy;
+use Tebru\Gson\PhpType;
 
 /**
  * Class Property

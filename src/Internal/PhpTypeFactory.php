@@ -49,21 +49,21 @@ final class PhpTypeFactory
         if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
             $parameter = $setterMethod->getParameters()[0];
             if (null !== $parameter->getType()) {
-                return new PhpType((string) $parameter->getType());
+                return new DefaultPhpType((string) $parameter->getType());
             }
         }
 
         if (null !== $getterMethod && null !== $getterMethod->getReturnType()) {
-            return new PhpType((string) $getterMethod->getReturnType());
+            return new DefaultPhpType((string) $getterMethod->getReturnType());
         }
 
         if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
             $parameter = $setterMethod->getParameters()[0];
             if ($parameter->isDefaultValueAvailable() && null !== $parameter->getDefaultValue()) {
-                return new PhpType(gettype($parameter->getDefaultValue()));
+                return new DefaultPhpType(gettype($parameter->getDefaultValue()));
             }
         }
 
-        return new PhpType(TypeToken::WILDCARD);
+        return new DefaultPhpType(TypeToken::WILDCARD);
     }
 }

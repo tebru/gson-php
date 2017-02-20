@@ -7,9 +7,9 @@
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use DateTime;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 
@@ -33,7 +33,7 @@ final class DateTimeTypeAdapterFactory implements TypeAdapterFactory
             return false;
         }
 
-        $class = $type->getClass();
+        $class = $type->getType();
 
         return DateTime::class === $class
             || is_subclass_of($class, DateTime::class);

@@ -8,9 +8,9 @@ namespace Tebru\Gson\Test\Mock;
 
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonObject;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\JsonSerializationContext;
 use Tebru\Gson\JsonSerializer;
+use Tebru\Gson\PhpType;
 
 /**
  * Class MockSerializer

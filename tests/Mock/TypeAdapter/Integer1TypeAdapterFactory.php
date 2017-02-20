@@ -6,8 +6,8 @@
 
 namespace Tebru\Gson\Test\Mock\TypeAdapter;
 
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 

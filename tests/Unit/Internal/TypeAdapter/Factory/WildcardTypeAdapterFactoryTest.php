@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\WildcardTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -25,20 +25,20 @@ class WildcardTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new WildcardTypeAdapterFactory();
 
-        self::assertTrue($factory->supports(new PhpType('?')));
+        self::assertTrue($factory->supports(new DefaultPhpType('?')));
     }
 
     public function testInvalidSupports()
     {
         $factory = new WildcardTypeAdapterFactory();
 
-        self::assertFalse($factory->supports(new PhpType('string')));
+        self::assertFalse($factory->supports(new DefaultPhpType('string')));
     }
 
     public function testCreate()
     {
         $factory = new WildcardTypeAdapterFactory();
-        $adapter = $factory->create(new PhpType('?'), new TypeAdapterProvider([], new ArrayCache()));
+        $adapter = $factory->create(new DefaultPhpType('?'), new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(WildcardTypeAdapter::class, $adapter);
     }

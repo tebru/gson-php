@@ -29,7 +29,7 @@ use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\PropertyCollectionMock;
@@ -66,7 +66,7 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
     }
     public function testCreate()
     {
-        $collection = $this->propertyCollectionFactory->create(new PhpType(PropertyCollectionMock::class));
+        $collection = $this->propertyCollectionFactory->create(new DefaultPhpType(PropertyCollectionMock::class));
 
         /** @var Property[] $elements */
         $elements = $collection->toArray();
@@ -119,14 +119,14 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         );
 
         // assert data is stored in cache
-        $factory->create(new PhpType(PropertyCollectionMock::class));
+        $factory->create(new DefaultPhpType(PropertyCollectionMock::class));
         self::assertCount(4, $cache->fetch(PropertyCollectionMock::class)->toArray());
 
         // overwrite cache
         $cache->save(PropertyCollectionMock::class, new PropertyCollection());
 
         // assert we use the new cache
-        $collection = $factory->create(new PhpType(PropertyCollectionMock::class));
+        $collection = $factory->create(new DefaultPhpType(PropertyCollectionMock::class));
         self::assertCount(0, $collection->toArray());
     }
 }

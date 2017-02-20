@@ -7,7 +7,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -28,29 +28,29 @@ class CustomWrappedTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testSupportsObject()
     {
-        $factory = new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class, null, new MockDeserializer()));
+        $factory = new CustomWrappedTypeAdapterFactory(new DefaultPhpType(UserMock::class), null, new MockDeserializer());
 
-        self::assertTrue($factory->supports(new PhpType(UserMock::class)));
+        self::assertTrue($factory->supports(new DefaultPhpType(UserMock::class)));
     }
 
     public function testSupportsObjectFalse()
     {
-        $factory = new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class, null, new MockDeserializer()));
+        $factory = new CustomWrappedTypeAdapterFactory(new DefaultPhpType(UserMock::class), null, new MockDeserializer());
 
-        self::assertFalse($factory->supports(new PhpType(ChildClass::class)));
+        self::assertFalse($factory->supports(new DefaultPhpType(ChildClass::class)));
     }
 
     public function testSupportsMismatchType()
     {
-        $factory = new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class, null, new MockDeserializer()));
+        $factory = new CustomWrappedTypeAdapterFactory(new DefaultPhpType(UserMock::class), null, new MockDeserializer());
 
-        self::assertFalse($factory->supports(new PhpType('int')));
+        self::assertFalse($factory->supports(new DefaultPhpType('int')));
     }
 
     public function testCreate()
     {
-        $factory = new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer(), new MockDeserializer());
-        $adapter = $factory->create(new PhpType(UserMock::class), new TypeAdapterProvider([], new ArrayCache()));
+        $factory = new CustomWrappedTypeAdapterFactory(new DefaultPhpType(UserMock::class), new MockSerializer(), new MockDeserializer());
+        $adapter = $factory->create(new DefaultPhpType(UserMock::class), new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(CustomWrappedTypeAdapter::class, $adapter);
         self::assertAttributeInstanceOf(JsonSerializer::class, 'serializer', $adapter);

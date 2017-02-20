@@ -13,7 +13,7 @@ use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonNull;
 use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\Element\JsonPrimitive;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\JsonElementTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\JsonElementTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -34,27 +34,27 @@ class JsonElementTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new JsonElementTypeAdapterFactory();
 
-        self::assertTrue($factory->supports(new PhpType($class)));
+        self::assertTrue($factory->supports(new DefaultPhpType($class)));
     }
 
     public function testInvalidSupport()
     {
         $factory = new JsonElementTypeAdapterFactory();
 
-        self::assertFalse($factory->supports(new PhpType(ChildClass::class)));
+        self::assertFalse($factory->supports(new DefaultPhpType(ChildClass::class)));
     }
 
     public function testNonClassSupports()
     {
         $factory = new JsonElementTypeAdapterFactory();
 
-        self::assertFalse($factory->supports(new PhpType('string')));
+        self::assertFalse($factory->supports(new DefaultPhpType('string')));
     }
 
     public function testCreate()
     {
         $factory = new JsonElementTypeAdapterFactory();
-        $adapter = $factory->create(new PhpType('JsonElement'), new TypeAdapterProvider([], new ArrayCache()));
+        $adapter = $factory->create(new DefaultPhpType('JsonElement'), new TypeAdapterProvider([], new ArrayCache()));
 
         self::assertInstanceOf(JsonElementTypeAdapter::class, $adapter);
     }

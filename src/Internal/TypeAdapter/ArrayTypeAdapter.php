@@ -10,11 +10,12 @@ use LogicException;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\JsonWritable;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Internal\TypeToken;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 
 /**
@@ -27,7 +28,7 @@ final class ArrayTypeAdapter extends TypeAdapter
     /**
      * @var PhpType
      */
-    private $phpType;
+    private $type;
 
     /**
      * @var TypeAdapterProvider
@@ -37,12 +38,12 @@ final class ArrayTypeAdapter extends TypeAdapter
     /**
      * Constructor
      *
-     * @param PhpType $phpType
+     * @param PhpType $type
      * @param TypeAdapterProvider $typeAdapterProvider
      */
-    public function __construct(PhpType $phpType, TypeAdapterProvider $typeAdapterProvider)
+    public function __construct(PhpType $type, TypeAdapterProvider $typeAdapterProvider)
     {
-        $this->phpType = $phpType;
+        $this->type = $type;
         $this->typeAdapterProvider = $typeAdapterProvider;
     }
 
@@ -66,7 +67,7 @@ final class ArrayTypeAdapter extends TypeAdapter
 
         $array = [];
         $token = $reader->peek();
-        $generics = $this->phpType->getGenerics();
+        $generics = $this->type->getGenerics();
 
         if (count($generics) > 2) {
             throw new LogicException('Array may not have more than 2 generic types');
@@ -86,8 +87,8 @@ final class ArrayTypeAdapter extends TypeAdapter
                             // If there is a nested object, continue deserializing to an array,
                             // otherwise guess the type using the wildcard
                             $type = $reader->peek() === JsonToken::BEGIN_OBJECT
-                                ? new PhpType(TypeToken::ARRAY)
-                                : new PhpType(TypeToken::WILDCARD);
+                                ? new DefaultPhpType(TypeToken::ARRAY)
+                                : new DefaultPhpType(TypeToken::WILDCARD);
 
                             $adapter = $this->typeAdapterProvider->getAdapter($type);
                             $array[$name] = $adapter->read($reader);
@@ -127,7 +128,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                     switch (count($generics)) {
                         // no generics specified
                         case 0:
-                            $adapter = $this->typeAdapterProvider->getAdapter(new PhpType(TypeToken::WILDCARD));
+                            $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(TypeToken::WILDCARD));
                             $array[] = $adapter->read($reader);
 
                             break;
@@ -169,7 +170,7 @@ final class ArrayTypeAdapter extends TypeAdapter
             return;
         }
 
-        $generics = $this->phpType->getGenerics();
+        $generics = $this->type->getGenerics();
         if (count($generics) > 2) {
             throw new LogicException('Array may not have more than 2 generic types');
         }
@@ -191,7 +192,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                         $writer->name((string)$key);
                     }
 
-                    $adapter = $this->typeAdapterProvider->getAdapter(PhpType::createFromVariable($item));
+                    $adapter = $this->typeAdapterProvider->getAdapter(DefaultPhpType::createFromVariable($item));
                     $adapter->write($writer, $item);
 
                     break;

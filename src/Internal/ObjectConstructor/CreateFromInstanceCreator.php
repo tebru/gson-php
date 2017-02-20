@@ -7,8 +7,8 @@
 namespace Tebru\Gson\Internal\ObjectConstructor;
 
 use Tebru\Gson\InstanceCreator;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\ObjectConstructor;
+use Tebru\Gson\PhpType;
 
 /**
  * Class CreateFromInstanceCreator

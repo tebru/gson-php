@@ -19,8 +19,8 @@ interface InstanceCreator
     /**
      * Accepts a [@see PhpType] and returns an instantiated object
      *
-     * @param PhpType $phpType
+     * @param PhpType $type
      * @return object
      */
-    public function createInstance(PhpType $phpType);
+    public function createInstance(PhpType $type);
 }

@@ -17,8 +17,8 @@ use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\PropertyMetadata;
 
 /**
@@ -123,7 +123,7 @@ final class PropertyCollectionFactory
      */
     public function create(PhpType $phpType): PropertyCollection
     {
-        $class = $phpType->getClass();
+        $class = $phpType->getType();
 
         $data = $this->cache->fetch($class);
         if (false !== $data) {

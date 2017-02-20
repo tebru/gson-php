@@ -7,7 +7,7 @@ namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Element\JsonObject;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Test\Mock\AddressMock;
 use Tebru\Gson\Test\MockProvider;
 
@@ -31,7 +31,7 @@ class DefaultJsonDeserializationContextTest extends PHPUnit_Framework_TestCase
         $context = MockProvider::deserializationContext(MockProvider::excluder());
 
         /** @var AddressMock $address */
-        $address = $context->deserialize($jsonObject, new PhpType(AddressMock::class));
+        $address = $context->deserialize($jsonObject, new DefaultPhpType(AddressMock::class));
 
         self::assertSame('123 ABC St', $address->getStreet());
         self::assertSame('Foo', $address->getCity());

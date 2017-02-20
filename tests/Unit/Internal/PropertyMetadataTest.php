@@ -3,13 +3,13 @@
  * Copyright (c) Nate Brunette.
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
-namespace Tebru\Gson\Test\Unit;
+namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
 use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\DefaultPropertyMetadata;
 use Tebru\Gson\PropertyMetadata;
 use Tebru\Gson\Test\Mock\Annotation\FooAnnotation;
@@ -49,7 +49,7 @@ class PropertyMetadataTest extends PHPUnit_Framework_TestCase
         $this->propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new PhpType('string'),
+            new DefaultPhpType('string'),
             ReflectionProperty::IS_PUBLIC,
             $this->classMetadata,
             $this->annotations,
@@ -59,7 +59,7 @@ class PropertyMetadataTest extends PHPUnit_Framework_TestCase
         $this->virtualPropertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new PhpType('string'),
+            new DefaultPhpType('string'),
             ReflectionProperty::IS_PUBLIC,
             $this->classMetadata,
             $this->annotations,

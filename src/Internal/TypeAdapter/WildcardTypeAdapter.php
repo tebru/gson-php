@@ -8,7 +8,7 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\JsonWritable;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Internal\TypeToken;
 use Tebru\Gson\JsonReadable;
@@ -50,25 +50,25 @@ final class WildcardTypeAdapter extends TypeAdapter
     {
         switch ($reader->peek()) {
             case JsonToken::BEGIN_ARRAY:
-                $type = new PhpType(TypeToken::ARRAY);
+                $type = new DefaultPhpType(TypeToken::ARRAY);
                 break;
             case JsonToken::BEGIN_OBJECT:
-                $type = new PhpType(TypeToken::OBJECT);
+                $type = new DefaultPhpType(TypeToken::OBJECT);
                 break;
             case JsonToken::STRING:
-                $type = new PhpType(TypeToken::STRING);
+                $type = new DefaultPhpType(TypeToken::STRING);
                 break;
             case JsonToken::NAME:
-                $type = new PhpType(TypeToken::STRING);
+                $type = new DefaultPhpType(TypeToken::STRING);
                 break;
             case JsonToken::BOOLEAN:
-                $type = new PhpType(TypeToken::BOOLEAN);
+                $type = new DefaultPhpType(TypeToken::BOOLEAN);
                 break;
             case JsonToken::NUMBER:
-                $type = new PhpType(TypeToken::FLOAT);
+                $type = new DefaultPhpType(TypeToken::FLOAT);
                 break;
             case JsonToken::NULL:
-                $type = new PhpType(TypeToken::NULL);
+                $type = new DefaultPhpType(TypeToken::NULL);
                 break;
             default:
                 throw new UnexpectedJsonTokenException(
@@ -90,7 +90,7 @@ final class WildcardTypeAdapter extends TypeAdapter
      */
     public function write(JsonWritable $writer, $value): void
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(PhpType::createFromVariable($value));
+        $adapter = $this->typeAdapterProvider->getAdapter(DefaultPhpType::createFromVariable($value));
         $adapter->write($writer, $value);
     }
 }

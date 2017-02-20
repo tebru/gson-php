@@ -9,9 +9,9 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 use DateTime;
 use DateTimeZone;
 use Tebru\Gson\JsonWritable;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 
 /**
@@ -24,16 +24,16 @@ final class DateTimeTypeAdapter extends TypeAdapter
     /**
      * @var PhpType
      */
-    private $phpType;
+    private $type;
 
     /**
      * Constructor
      *
-     * @param PhpType $phpType
+     * @param PhpType $type
      */
-    public function __construct(PhpType $phpType)
+    public function __construct(PhpType $type)
     {
-        $this->phpType = $phpType;
+        $this->type = $type;
     }
 
     /**
@@ -50,8 +50,8 @@ final class DateTimeTypeAdapter extends TypeAdapter
         }
 
         $formattedDateTime = $reader->nextString();
-        $format = $this->phpType->getOptions()['format'] ?? null;
-        $timezone = $this->phpType->getOptions()['timezone'] ?? null;
+        $format = $this->type->getOptions()['format'] ?? null;
+        $timezone = $this->type->getOptions()['timezone'] ?? null;
 
         if (null === $format) {
             $format = DateTime::ATOM;
@@ -62,7 +62,7 @@ final class DateTimeTypeAdapter extends TypeAdapter
         }
 
         /** @var DateTime $class */
-        $class = $this->phpType->getClass();
+        $class = $this->type->getType();
 
         return $class::createFromFormat($format, $formattedDateTime, $timezone);
     }
@@ -82,7 +82,7 @@ final class DateTimeTypeAdapter extends TypeAdapter
             return;
         }
 
-        $format = $this->phpType->getOptions()['format'] ?? null;
+        $format = $this->type->getOptions()['format'] ?? null;
 
         if (null === $format) {
             $format = DateTime::ATOM;

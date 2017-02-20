@@ -4,140 +4,140 @@
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
 
-namespace Tebru\Gson\Test\Unit;
+namespace Tebru\Gson\Test\Unit\Internal;
 
 use DateTime;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 use Tebru\Gson\Exception\MalformedTypeException;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 
 /**
  * Class PhpTypeTest
  *
  * @author Nate Brunette <n@tebru.net>
- * @covers \Tebru\Gson\PhpType
+ * @covers \Tebru\Gson\Internal\DefaultPhpType
  * @covers \Tebru\Gson\Internal\TypeToken
  */
 class PhpTypeTest extends PHPUnit_Framework_TestCase
 {
     public function testConstructWithSpaces()
     {
-        $phpType = new PhpType(' string ');
+        $phpType = new DefaultPhpType(' string ');
 
         self::assertSame('string', (string) $phpType);
     }
     public function testString()
     {
-        $phpType = new PhpType('string');
+        $phpType = new DefaultPhpType('string');
 
         self::assertTrue($phpType->isString());
     }
 
     public function testInteger()
     {
-        $phpType = new PhpType('integer');
+        $phpType = new DefaultPhpType('integer');
 
         self::assertTrue($phpType->isInteger());
     }
 
     public function testInt()
     {
-        $phpType = new PhpType('int');
+        $phpType = new DefaultPhpType('int');
 
         self::assertTrue($phpType->isInteger());
     }
 
     public function testFloat()
     {
-        $phpType = new PhpType('float');
+        $phpType = new DefaultPhpType('float');
 
         self::assertTrue($phpType->isFloat());
     }
 
     public function testDouble()
     {
-        $phpType = new PhpType('double');
+        $phpType = new DefaultPhpType('double');
 
         self::assertTrue($phpType->isFloat());
     }
 
     public function testArray()
     {
-        $phpType = new PhpType('array');
+        $phpType = new DefaultPhpType('array');
 
         self::assertTrue($phpType->isArray());
     }
 
     public function testBoolean()
     {
-        $phpType = new PhpType('boolean');
+        $phpType = new DefaultPhpType('boolean');
 
         self::assertTrue($phpType->isBoolean());
     }
 
     public function testBool()
     {
-        $phpType = new PhpType('bool');
+        $phpType = new DefaultPhpType('bool');
 
         self::assertTrue($phpType->isBoolean());
     }
 
     public function testNull()
     {
-        $phpType = new PhpType('null');
+        $phpType = new DefaultPhpType('null');
 
         self::assertTrue($phpType->isNull());
     }
 
     public function testNullCaps()
     {
-        $phpType = new PhpType('NULL');
+        $phpType = new DefaultPhpType('NULL');
 
         self::assertTrue($phpType->isNull());
     }
 
     public function testResource()
     {
-        $phpType = new PhpType('resource');
+        $phpType = new DefaultPhpType('resource');
 
         self::assertTrue($phpType->isResource());
     }
 
     public function testWildcard()
     {
-        $phpType = new PhpType('?');
+        $phpType = new DefaultPhpType('?');
 
         self::assertTrue($phpType->isWildcard());
     }
 
     public function testObject()
     {
-        $phpType = new PhpType('object');
+        $phpType = new DefaultPhpType('object');
 
         self::assertTrue($phpType->isObject());
-        self::assertSame('stdClass', $phpType->getClass());
+        self::assertSame('stdClass', $phpType->getType());
     }
 
     public function testStdClass()
     {
-        $phpType = new PhpType('stdClass');
+        $phpType = new DefaultPhpType('stdClass');
 
         self::assertTrue($phpType->isObject());
-        self::assertSame('stdClass', $phpType->getClass());
+        self::assertSame('stdClass', $phpType->getType());
     }
 
     public function testCustomClass()
     {
-        $phpType = new PhpType('Foo');
+        $phpType = new DefaultPhpType('Foo');
 
         self::assertTrue($phpType->isObject());
-        self::assertSame('Foo', $phpType->getClass());
+        self::assertSame('Foo', $phpType->getType());
     }
 
     public function testOneGeneric()
     {
-        $phpType = new PhpType('array<int>');
+        $phpType = new DefaultPhpType('array<int>');
 
         self::assertTrue($phpType->isArray());
         self::assertCount(1, $phpType->getGenerics());
@@ -146,7 +146,7 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
 
     public function testTwoGeneric()
     {
-        $phpType = new PhpType('array<string, int>');
+        $phpType = new DefaultPhpType('array<string, int>');
 
         self::assertTrue($phpType->isArray());
         self::assertCount(2, $phpType->getGenerics());
@@ -156,26 +156,26 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
 
     public function testThreeGeneric()
     {
-        $phpType = new PhpType('Foo<string, int, Bar>');
+        $phpType = new DefaultPhpType('Foo<string, int, Bar>');
 
         self::assertTrue($phpType->isObject());
-        self::assertSame('Foo', $phpType->getClass());
+        self::assertSame('Foo', $phpType->getType());
         self::assertCount(3, $phpType->getGenerics());
         self::assertSame('string', (string) $phpType->getGenerics()[0]);
         self::assertSame('integer', (string) $phpType->getGenerics()[1]);
-        self::assertSame('Bar', (string) $phpType->getGenerics()[2]->getClass());
+        self::assertSame('Bar', (string) $phpType->getGenerics()[2]->getType());
     }
 
     public function testNestedGeneric()
     {
-        $phpType = new PhpType('array<array<string, Bar<string, bool>>>');
+        $phpType = new DefaultPhpType('array<array<string, Bar<string, bool>>>');
 
         self::assertTrue($phpType->isArray());
         self::assertCount(1, $phpType->getGenerics());
         self::assertTrue($phpType->getGenerics()[0]->isArray());
         self::assertCount(2, $phpType->getGenerics()[0]->getGenerics());
         self::assertSame('string', (string) $phpType->getGenerics()[0]->getGenerics()[0]);
-        self::assertSame('Bar', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getClass());
+        self::assertSame('Bar', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getType());
         self::assertCount(2, $phpType->getGenerics()[0]->getGenerics()[1]->getGenerics());
         self::assertSame('string', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getGenerics()[0]);
         self::assertSame('boolean', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getGenerics()[1]);
@@ -186,90 +186,88 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
         $this->expectException(MalformedTypeException::class);
         $this->expectExceptionMessage('Could not find ending ">" for generic type');
 
-        new PhpType('array<string');
+        new DefaultPhpType('array<string');
     }
 
     public function testOptions()
     {
-        $phpType = new PhpType('DateTime');
-        $phpType->setOptions(['format' => DateTime::ATOM]);
+        $phpType = new DefaultPhpType('DateTime', ['format' => DateTime::ATOM]);
 
         self::assertSame(DateTime::ATOM, $phpType->getOptions()['format']);
     }
 
     public function testToString()
     {
-        $phpType = new PhpType('array<array<string, Bar<string, bool>>>');
+        $phpType = new DefaultPhpType('array<array<string, Bar<string, bool>>>');
 
         self::assertSame('array<array<string,Bar<string,bool>>>', (string) $phpType);
     }
 
     public function testToStringReturnsCanonicalType()
     {
-        $phpType = new PhpType('int');
+        $phpType = new DefaultPhpType('int');
 
         self::assertSame('integer', (string) $phpType);
     }
 
     public function testUniqueKey()
     {
-        $phpType = new PhpType('array');
+        $phpType = new DefaultPhpType('array');
 
         self::assertSame('array', $phpType->getUniqueKey());
     }
 
     public function testUniqueKeyWithGenerics()
     {
-        $phpType = new PhpType('array<int>');
+        $phpType = new DefaultPhpType('array<int>');
 
         self::assertSame('array<int>', $phpType->getUniqueKey());
     }
 
     public function testUniqueKeyWithOptions()
     {
-        $phpType = new PhpType('array');
-        $phpType->setOptions(['foo' => 'bar']);
+        $phpType = new DefaultPhpType('array', ['foo' => 'bar']);
 
         self::assertSame('arraya:1:{s:3:"foo";s:3:"bar";}', $phpType->getUniqueKey());
     }
 
     public function testCreateFromVariableObject()
     {
-        self::assertSame(stdClass::class, (string) PhpType::createFromVariable(new stdClass()));
+        self::assertSame(stdClass::class, (string) DefaultPhpType::createFromVariable(new stdClass()));
     }
 
     public function testCreateFromVariableInteger()
     {
-        self::assertSame('integer', (string) PhpType::createFromVariable(1));
+        self::assertSame('integer', (string) DefaultPhpType::createFromVariable(1));
     }
 
     public function testCreateFromVariableFloat()
     {
-        self::assertSame('float', (string) PhpType::createFromVariable(1.1));
+        self::assertSame('float', (string) DefaultPhpType::createFromVariable(1.1));
     }
 
     public function testCreateFromVariableString()
     {
-        self::assertSame('string', (string) PhpType::createFromVariable('foo'));
+        self::assertSame('string', (string) DefaultPhpType::createFromVariable('foo'));
     }
 
     public function testCreateFromVariableBooleanTrue()
     {
-        self::assertSame('boolean', (string) PhpType::createFromVariable(true));
+        self::assertSame('boolean', (string) DefaultPhpType::createFromVariable(true));
     }
 
     public function testCreateFromVariableBooleanFalse()
     {
-        self::assertSame('boolean', (string) PhpType::createFromVariable(false));
+        self::assertSame('boolean', (string) DefaultPhpType::createFromVariable(false));
     }
 
     public function testCreateFromVariableArray()
     {
-        self::assertSame('array', (string) PhpType::createFromVariable([]));
+        self::assertSame('array', (string) DefaultPhpType::createFromVariable([]));
     }
 
     public function testCreateFromVariableNull()
     {
-        self::assertSame('null', (string) PhpType::createFromVariable(null));
+        self::assertSame('null', (string) DefaultPhpType::createFromVariable(null));
     }
 }

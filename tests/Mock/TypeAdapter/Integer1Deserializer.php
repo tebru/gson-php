@@ -8,9 +8,9 @@ namespace Tebru\Gson\Test\Mock\TypeAdapter;
 
 use DateTime;
 use Tebru\Gson\Element\JsonElement;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\JsonDeserializationContext;
 use Tebru\Gson\JsonDeserializer;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
 

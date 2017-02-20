@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\Internal\JsonDecodeReader;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\FloatTypeAdapterFactory;
@@ -40,7 +40,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         $result = $adapter->readFromJson('[]');
 
@@ -57,7 +57,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         $result = $adapter->readFromJson('{}');
 
@@ -74,7 +74,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         $result = $adapter->readFromJson('"foo"');
 
@@ -109,7 +109,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         $result = $adapter->readFromJson('true');
 
@@ -126,7 +126,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         $result = $adapter->readFromJson('false');
 
@@ -143,7 +143,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         $result = $adapter->readFromJson('1');
 
@@ -160,7 +160,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         $result = $adapter->readFromJson('1.1');
 
@@ -177,7 +177,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         $result = $adapter->readFromJson('null');
 
@@ -217,7 +217,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         self::assertSame('[]', $adapter->writeToJson([], false));
     }
@@ -233,7 +233,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         self::assertSame('{"foo":"bar"}', $adapter->writeToJson(['foo' => 'bar'], false));
     }
@@ -248,7 +248,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         self::assertSame('"foo"', $adapter->writeToJson('foo', false));
     }
@@ -263,7 +263,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         self::assertSame('true', $adapter->writeToJson(true, false));
     }
@@ -278,7 +278,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         self::assertSame('false', $adapter->writeToJson(false, false));
     }
@@ -293,7 +293,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         self::assertSame('1', $adapter->writeToJson(1, false));
     }
@@ -308,7 +308,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
@@ -326,7 +326,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             new ArrayCache()
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType('?'));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
         $adapter->writeToJson(fopen(__FILE__, 'rb'), false);
     }

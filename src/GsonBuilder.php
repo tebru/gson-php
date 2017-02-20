@@ -25,6 +25,7 @@ use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
@@ -155,26 +156,26 @@ class GsonBuilder
     public function registerType(string $type, $handler): GsonBuilder
     {
         if ($handler instanceof TypeAdapter) {
-            $phpType = new PhpType($type);
+            $phpType = new DefaultPhpType($type);
             $this->typeAdapters[$phpType->getUniqueKey()] = $handler;
 
             return $this;
         }
 
         if ($handler instanceof JsonSerializer && $handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new PhpType($type), $handler, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new DefaultPhpType($type), $handler, $handler);
 
             return $this;
         }
 
         if ($handler instanceof JsonSerializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new PhpType($type), $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new DefaultPhpType($type), $handler);
 
             return $this;
         }
 
         if ($handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new PhpType($type), null, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new DefaultPhpType($type), null, $handler);
 
             return $this;
         }
@@ -192,7 +193,7 @@ class GsonBuilder
      */
     public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
     {
-        $phpType = new PhpType($type);
+        $phpType = new DefaultPhpType($type);
         $this->instanceCreators[$phpType->getUniqueKey()] = $instanceCreator;
 
         return $this;

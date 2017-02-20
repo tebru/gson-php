@@ -11,7 +11,7 @@ use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromReflectionClass;
 use Tebru\Gson\Internal\ObjectConstructor\CreateWithoutArguments;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ClassWithParameters;
 use Tebru\Gson\Test\Mock\ClassWithParametersInstanceCreator;
@@ -28,7 +28,7 @@ class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
     {
         $instanceCreators = [ClassWithParameters::class => new ClassWithParametersInstanceCreator()];
         $constructorConstructor = new ConstructorConstructor($instanceCreators);
-        $object = $constructorConstructor->get(new PhpType(ClassWithParameters::class));
+        $object = $constructorConstructor->get(new DefaultPhpType(ClassWithParameters::class));
 
         self::assertInstanceOf(CreateFromInstanceCreator::class, $object);
     }
@@ -36,7 +36,7 @@ class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
     public function testCreateWithoutArguments()
     {
         $constructorConstructor = new ConstructorConstructor();
-        $object = $constructorConstructor->get(new PhpType(ChildClass::class));
+        $object = $constructorConstructor->get(new DefaultPhpType(ChildClass::class));
 
         self::assertInstanceOf(CreateWithoutArguments::class, $object);
     }
@@ -44,7 +44,7 @@ class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
     public function testCreateFromReflectionClass()
     {
         $constructorConstructor = new ConstructorConstructor();
-        $object = $constructorConstructor->get(new PhpType(ClassWithParameters::class));
+        $object = $constructorConstructor->get(new DefaultPhpType(ClassWithParameters::class));
 
         self::assertInstanceOf(CreateFromReflectionClass::class, $object);
     }

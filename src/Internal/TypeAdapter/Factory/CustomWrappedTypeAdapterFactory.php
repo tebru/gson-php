@@ -6,11 +6,11 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 
@@ -24,7 +24,7 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
     /**
      * @var PhpType
      */
-    private $phpType;
+    private $type;
 
     /**
      * @var JsonSerializer
@@ -39,13 +39,13 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
     /**
      * Constructor
      *
-     * @param PhpType $phpType
+     * @param PhpType $type
      * @param JsonSerializer $serializer
      * @param JsonDeserializer $deserializer
      */
-    public function __construct(PhpType $phpType, JsonSerializer $serializer = null, JsonDeserializer $deserializer = null)
+    public function __construct(PhpType $type, JsonSerializer $serializer = null, JsonDeserializer $deserializer = null)
     {
-        $this->phpType = $phpType;
+        $this->type = $type;
         $this->serializer = $serializer;
         $this->deserializer = $deserializer;
     }
@@ -59,11 +59,11 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
      */
     public function supports(PhpType $type): bool
     {
-        if ($this->phpType->isObject() && $type->isObject()) {
-            return $this->phpType->getClass() === $type->getClass();
+        if ($this->type->isObject() && $type->isObject()) {
+            return $this->type->getType() === $type->getType();
         }
 
-        return (string) $this->phpType === (string) $type;
+        return (string) $this->type === (string) $type;
     }
 
     /**

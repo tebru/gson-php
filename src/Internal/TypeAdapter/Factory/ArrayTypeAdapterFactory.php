@@ -7,9 +7,9 @@
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use stdClass;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 
@@ -33,7 +33,7 @@ final class ArrayTypeAdapterFactory implements TypeAdapterFactory
             return true;
         }
 
-        if ($type->isObject() && stdClass::class === $type->getClass()) {
+        if ($type->isObject() && stdClass::class === $type->getType()) {
             return true;
         }
 

@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Annotation;
 
 use LogicException;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\PhpType;
 
 /**
@@ -60,8 +61,7 @@ class Type
             $this->options = (array) $params['options'];
         }
 
-        $this->value = new PhpType($params['value']);
-        $this->value->setOptions($this->options);
+        $this->value = new DefaultPhpType($params['value'], $this->options);
     }
 
     /**

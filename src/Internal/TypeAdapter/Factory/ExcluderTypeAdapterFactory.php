@@ -8,9 +8,9 @@ namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 
@@ -57,7 +57,7 @@ final class ExcluderTypeAdapterFactory implements TypeAdapterFactory
             return false;
         }
 
-        $classMetadata = $this->metadataFactory->createClassMetadata($type->getClass());
+        $classMetadata = $this->metadataFactory->createClassMetadata($type->getType());
         $skipSerialize = $this->excluder->excludeClass($classMetadata, true);
         $skipDeserialize = $this->excluder->excludeClass($classMetadata, false);
 
@@ -76,7 +76,7 @@ final class ExcluderTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        $classMetadata = $this->metadataFactory->createClassMetadata($type->getClass());
+        $classMetadata = $this->metadataFactory->createClassMetadata($type->getType());
         $skipSerialize = $this->excluder->excludeClass($classMetadata, true);
         $skipDeserialize = $this->excluder->excludeClass($classMetadata, false);
 

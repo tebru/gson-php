@@ -7,7 +7,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Test\Mock\AddressMock;
 use Tebru\Gson\Test\Mock\MockDeserializer;
@@ -28,11 +28,11 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
-            [new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), null, new MockDeserializer())]
+            [new CustomWrappedTypeAdapterFactory(new DefaultPhpType(UserMock::class), null, new MockDeserializer())]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
 
         /** @var UserMock $user */
         $user = $adapter->readFromJson($this->json());
@@ -55,10 +55,10 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
-            [new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class))]
+            [new CustomWrappedTypeAdapterFactory(new DefaultPhpType(UserMock::class))]
         );
 
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
 
         /** @var UserMock $user */
         $user = $adapter->readFromJson($this->json());
@@ -76,11 +76,11 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
-            [new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer())]
+            [new CustomWrappedTypeAdapterFactory(new DefaultPhpType(UserMock::class), new MockSerializer())]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
 
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
@@ -89,11 +89,11 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
-            [new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class), new MockSerializer())]
+            [new CustomWrappedTypeAdapterFactory(new DefaultPhpType(UserMock::class), new MockSerializer())]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
 
         $expected = json_decode($this->json(), true);
         unset($expected['password']);
@@ -105,11 +105,11 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
-            [new CustomWrappedTypeAdapterFactory(new PhpType(UserMock::class))]
+            [new CustomWrappedTypeAdapterFactory(new DefaultPhpType(UserMock::class))]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */
-        $adapter = $typeAdapterProvider->getAdapter(new PhpType(UserMock::class));
+        $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
 
         $json = $adapter->writeToJson($this->user(), false);
 

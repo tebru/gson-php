@@ -8,7 +8,6 @@ namespace Tebru\Gson\Internal;
 
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\JsonSerializationContext;
-use Tebru\Gson\PhpType;
 
 /**
  * Class DefaultJsonSerializationContext
@@ -43,7 +42,7 @@ final class DefaultJsonSerializationContext implements JsonSerializationContext
      */
     public function serialize($object): JsonElement
     {
-        $typeAdapter = $this->typeAdapterProvider->getAdapter(PhpType::createFromVariable($object));
+        $typeAdapter = $this->typeAdapterProvider->getAdapter(DefaultPhpType::createFromVariable($object));
 
         return $typeAdapter->writeToJsonElement($object);
     }

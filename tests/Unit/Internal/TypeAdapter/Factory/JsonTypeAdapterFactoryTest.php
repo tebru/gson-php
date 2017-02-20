@@ -10,7 +10,7 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\Factory\JsonTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -29,27 +29,27 @@ class JsonTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
 
-        self::assertTrue($factory->supports(new PhpType(JsonAdapterClassMock::class)));
+        self::assertTrue($factory->supports(new DefaultPhpType(JsonAdapterClassMock::class)));
     }
 
     public function testSupportsFalse()
     {
         $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
 
-        self::assertFalse($factory->supports(new PhpType(ChildClass::class)));
+        self::assertFalse($factory->supports(new DefaultPhpType(ChildClass::class)));
     }
 
     public function testSupportsNonObject()
     {
         $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
 
-        self::assertFalse($factory->supports(new PhpType('string')));
+        self::assertFalse($factory->supports(new DefaultPhpType('string')));
     }
 
     public function testCreate()
     {
         $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
 
-        self::assertInstanceOf(StringTypeAdapter::class, $factory->create(new PhpType(JsonAdapterClassMock::class), new TypeAdapterProvider([], new ArrayCache())));
+        self::assertInstanceOf(StringTypeAdapter::class, $factory->create(new DefaultPhpType(JsonAdapterClassMock::class), new TypeAdapterProvider([], new ArrayCache())));
     }
 }

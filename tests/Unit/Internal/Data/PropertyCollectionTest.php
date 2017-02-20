@@ -11,7 +11,7 @@ use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\PropertyCollection;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\Data\Property;
 
 /**
@@ -26,7 +26,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new PhpType('Foo');
+        $type = new DefaultPhpType('Foo');
 
         $property = new Property(
             $realName,
@@ -47,7 +47,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new PhpType('Foo');
+        $type = new DefaultPhpType('Foo');
 
         $property = new Property(
             $realName,
@@ -68,7 +68,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new PhpType('Foo');
+        $type = new DefaultPhpType('Foo');
 
         $property = new Property(
             $realName,
@@ -89,7 +89,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new PhpType('Foo');
+        $type = new DefaultPhpType('Foo');
 
         $property = new Property(
             $realName,

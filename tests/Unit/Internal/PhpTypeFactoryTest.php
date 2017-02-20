@@ -31,7 +31,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $factory = new PhpTypeFactory();
         $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY);
 
-        self::assertSame(ChildClass::class, $phpType->getClass());
+        self::assertSame(ChildClass::class, $phpType->getType());
     }
 
     public function testCreateFromSetterTypehint()
@@ -41,7 +41,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $setter = new ReflectionMethod(ChildClass::class, 'setWithTypehint');
         $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY, null, $setter);
 
-        self::assertSame(UserMock::class, $phpType->getClass());
+        self::assertSame(UserMock::class, $phpType->getType());
     }
 
     public function testCreateFromGetterReturnType()
@@ -52,7 +52,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
         $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY, $getter, $setter);
 
-        self::assertSame(UserMock::class, $phpType->getClass());
+        self::assertSame(UserMock::class, $phpType->getType());
     }
 
     public function testCreateFromSetterDefault()

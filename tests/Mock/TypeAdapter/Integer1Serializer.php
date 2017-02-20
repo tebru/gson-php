@@ -9,9 +9,9 @@ namespace Tebru\Gson\Test\Mock\TypeAdapter;
 use Tebru\Gson\Element\JsonArray;
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonObject;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\JsonSerializationContext;
 use Tebru\Gson\JsonSerializer;
+use Tebru\Gson\PhpType;
 use Tebru\Gson\Test\Mock\GsonMock;
 
 /**

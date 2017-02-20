@@ -10,7 +10,7 @@ use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
 use Tebru\Gson\Annotation\JsonAdapter;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
@@ -33,14 +33,14 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
     {
         $provider = new TypeAdapterProvider([new TypeAdapterMock()], new ArrayCache());
         $provider->addTypeAdapter('string', new TypeAdapterMock());
-        $adapter = $provider->getAdapter(new PhpType('string'));
+        $adapter = $provider->getAdapter(new DefaultPhpType('string'));
 
         self::assertInstanceOf(TypeAdapterMock::class, $adapter);
     }
     public function testGetTypeAdapter()
     {
         $provider = new TypeAdapterProvider([new TypeAdapterMock()], new ArrayCache());
-        $adapter = $provider->getAdapter(new PhpType('string'));
+        $adapter = $provider->getAdapter(new DefaultPhpType('string'));
 
         self::assertInstanceOf(TypeAdapterMock::class, $adapter);
     }
@@ -51,7 +51,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('The type "foo" could not be handled by any of the registered type adapters');
 
         $provider = new TypeAdapterProvider([new TypeAdapterMock()], new ArrayCache());
-        $provider->getAdapter(new PhpType('foo'));
+        $provider->getAdapter(new DefaultPhpType('foo'));
     }
 
     public function testGetTypeAdapterSkipClass()
@@ -61,19 +61,19 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 
         $mock = new TypeAdapterMock();
         $provider = new TypeAdapterProvider([$mock], new ArrayCache());
-        $provider->getAdapter(new PhpType('string'), $mock);
+        $provider->getAdapter(new DefaultPhpType('string'), $mock);
     }
 
     public function testGetTypeAdapterUsesCache()
     {
         $provider = new TypeAdapterProvider([new TypeAdapterMock()], new ArrayCache());
-        $provider->getAdapter(new PhpType('string'));
+        $provider->getAdapter(new DefaultPhpType('string'));
 
         $reflectionProperty = new ReflectionProperty(TypeAdapterProvider::class, 'typeAdapterFactories');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($provider, []);
 
-        self::assertInstanceOf(TypeAdapterMock::class, $provider->getAdapter(new PhpType('string')));
+        self::assertInstanceOf(TypeAdapterMock::class, $provider->getAdapter(new DefaultPhpType('string')));
     }
 
     public function testGetTypeAdapterSkipsCache()
@@ -83,19 +83,19 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 
         $mock = new TypeAdapterMock();
         $provider = new TypeAdapterProvider([$mock], new ArrayCache());
-        $provider->getAdapter(new PhpType('string'));
+        $provider->getAdapter(new DefaultPhpType('string'));
 
         $reflectionProperty = new ReflectionProperty(TypeAdapterProvider::class, 'typeAdapterFactories');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($provider, []);
 
-        self::assertInstanceOf(TypeAdapterMock::class, $provider->getAdapter(new PhpType('string'), $mock));
+        self::assertInstanceOf(TypeAdapterMock::class, $provider->getAdapter(new DefaultPhpType('string'), $mock));
     }
 
     public function testGetTypeAdapterFromAnnotation()
     {
         $provider = new TypeAdapterProvider([new TypeAdapterMock()], new ArrayCache());
-        $adapter = $provider->getAdapterFromAnnotation(new PhpType('string'), new JsonAdapter(['value' => TypeAdapterMock::class]));
+        $adapter = $provider->getAdapterFromAnnotation(new DefaultPhpType('string'), new JsonAdapter(['value' => TypeAdapterMock::class]));
 
         self::assertInstanceOf(TypeAdapterMock::class, $adapter);
     }
@@ -103,7 +103,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
     public function testGetTypeAdapterFactoryFromAnnotation()
     {
         $provider = new TypeAdapterProvider([new TypeAdapterMock()], new ArrayCache());
-        $adapter = $provider->getAdapterFromAnnotation(new PhpType('string'), new JsonAdapter(['value' => StringTypeAdapterFactory::class]));
+        $adapter = $provider->getAdapterFromAnnotation(new DefaultPhpType('string'), new JsonAdapter(['value' => StringTypeAdapterFactory::class]));
 
         self::assertInstanceOf(StringTypeAdapter::class, $adapter);
     }
@@ -111,7 +111,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
     public function testGetJsonSerializerFromAnnotation()
     {
         $provider = new TypeAdapterProvider([new TypeAdapterMock()], new ArrayCache());
-        $adapter = $provider->getAdapterFromAnnotation(new PhpType('string'), new JsonAdapter(['value' => MockSerializer::class]));
+        $adapter = $provider->getAdapterFromAnnotation(new DefaultPhpType('string'), new JsonAdapter(['value' => MockSerializer::class]));
 
         self::assertInstanceOf(CustomWrappedTypeAdapter::class, $adapter);
         self::assertAttributeInstanceOf(MockSerializer::class, 'serializer', $adapter);
@@ -121,7 +121,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
     public function testGetJsonDeserializerFromAnnotation()
     {
         $provider = new TypeAdapterProvider([new TypeAdapterMock()], new ArrayCache());
-        $adapter = $provider->getAdapterFromAnnotation(new PhpType('string'), new JsonAdapter(['value' => MockDeserializer::class]));
+        $adapter = $provider->getAdapterFromAnnotation(new DefaultPhpType('string'), new JsonAdapter(['value' => MockDeserializer::class]));
 
         self::assertInstanceOf(CustomWrappedTypeAdapter::class, $adapter);
         self::assertAttributeSame(null, 'serializer', $adapter);
@@ -134,13 +134,13 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('The type adapter must be an instance of TypeAdapter, TypeAdapterFactory, JsonSerializer, or JsonDeserializer, but "Tebru\Gson\Test\Mock\ChildClass" was found');
 
         $provider = new TypeAdapterProvider([new TypeAdapterMock()], new ArrayCache());
-        $provider->getAdapterFromAnnotation(new PhpType('string'), new JsonAdapter(['value' => ChildClass::class]));
+        $provider->getAdapterFromAnnotation(new DefaultPhpType('string'), new JsonAdapter(['value' => ChildClass::class]));
     }
 
     public function testGetJsonSerializerAndDeserializerFromAnnotation()
     {
         $provider = new TypeAdapterProvider([new TypeAdapterMock()], new ArrayCache());
-        $adapter = $provider->getAdapterFromAnnotation(new PhpType('string'), new JsonAdapter(['value' => MockSerializerDeserializer::class]));
+        $adapter = $provider->getAdapterFromAnnotation(new DefaultPhpType('string'), new JsonAdapter(['value' => MockSerializerDeserializer::class]));
 
         self::assertInstanceOf(CustomWrappedTypeAdapter::class, $adapter);
         self::assertAttributeInstanceOf(MockSerializerDeserializer::class, 'serializer', $adapter);

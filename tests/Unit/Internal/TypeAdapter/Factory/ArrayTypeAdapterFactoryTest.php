@@ -9,7 +9,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 use Doctrine\Common\Cache\ArrayCache;
 use PHPUnit_Framework_TestCase;
 use stdClass;
-use Tebru\Gson\PhpType;
+use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -26,32 +26,32 @@ class ArrayTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new ArrayTypeAdapterFactory();
 
-        self::assertTrue($factory->supports(new PhpType('array')));
+        self::assertTrue($factory->supports(new DefaultPhpType('array')));
     }
 
     public function testValidSupportsStdClass()
     {
         $factory = new ArrayTypeAdapterFactory();
 
-        self::assertTrue($factory->supports(new PhpType(stdClass::class)));
+        self::assertTrue($factory->supports(new DefaultPhpType(stdClass::class)));
     }
 
     public function testInvalidSupports()
     {
         $factory = new ArrayTypeAdapterFactory();
 
-        self::assertFalse($factory->supports(new PhpType('string')));
+        self::assertFalse($factory->supports(new DefaultPhpType('string')));
     }
 
     public function testCreate()
     {
         $factory = new ArrayTypeAdapterFactory();
-        $phpType = new PhpType('array');
+        $phpType = new DefaultPhpType('array');
         $typeAdapterProvider = new TypeAdapterProvider([], new ArrayCache());
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
         self::assertInstanceOf(ArrayTypeAdapter::class, $adapter);
-        self::assertAttributeSame($phpType, 'phpType', $adapter);
+        self::assertAttributeSame($phpType, 'type', $adapter);
         self::assertAttributeSame($typeAdapterProvider, 'typeAdapterProvider', $adapter);
     }
 }
