@@ -3,6 +3,7 @@
  * Copyright (c) Nate Brunette.
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
+
 namespace Tebru\Gson\Test\Unit;
 
 use BadMethodCallException;

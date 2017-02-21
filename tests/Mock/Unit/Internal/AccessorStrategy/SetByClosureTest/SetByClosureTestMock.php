@@ -4,14 +4,14 @@
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
 
-namespace Tebru\Gson\Test\Mock;
+namespace Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\SetByClosureTest;
 
 /**
- * Class ClosureTestMock
+ * Class SetByClosureTestMock
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class ClosureTestMock
+class SetByClosureTestMock
 {
     private $foo = 'bar';
 }

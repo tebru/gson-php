@@ -9,7 +9,7 @@ namespace Tebru\Gson\Test\Unit\Internal\AccessorStrategy;
 use Closure;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\AccessorStrategy\GetByClosure;
-use Tebru\Gson\Test\Mock\ClosureTestMock;
+use Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\GetByClosureTest\GetByClosureTestMock;
 use Throwable;
 
 /**
@@ -22,17 +22,17 @@ class GetByClosureTest extends PHPUnit_Framework_TestCase
 {
     public function testGetter()
     {
-        $strategy = new GetByClosure('foo', ClosureTestMock::class);
+        $strategy = new GetByClosure('foo', GetByClosureTestMock::class);
 
-        self::assertSame('bar', $strategy->get(new ClosureTestMock()));
+        self::assertSame('bar', $strategy->get(new GetByClosureTestMock()));
     }
 
     public function testGetterNoProperty()
     {
-        $strategy = new GetByClosure('foobar', ClosureTestMock::class);
+        $strategy = new GetByClosure('foobar', GetByClosureTestMock::class);
 
         try {
-            $strategy->get(new ClosureTestMock());
+            $strategy->get(new GetByClosureTestMock());
 
             self::assertTrue(false);
         } catch (Throwable $throwable) {
@@ -42,9 +42,9 @@ class GetByClosureTest extends PHPUnit_Framework_TestCase
 
     public function testGetterUsesCache()
     {
-        $strategy = new GetByClosure('foo', ClosureTestMock::class);
+        $strategy = new GetByClosure('foo', GetByClosureTestMock::class);
 
-        $strategy->get(new ClosureTestMock());
+        $strategy->get(new GetByClosureTestMock());
 
         $closure = Closure::bind(function () {
             return $this->getter;
@@ -52,7 +52,7 @@ class GetByClosureTest extends PHPUnit_Framework_TestCase
 
         $getter = $closure();
 
-        $strategy->get(new ClosureTestMock());
+        $strategy->get(new GetByClosureTestMock());
 
         $getter2 = $closure();
 

@@ -6,11 +6,12 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\Data;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Annotation\SerializedName;
+use Tebru\Gson\Annotation\Since;
+use Tebru\Gson\Annotation\Type;
+use Tebru\Gson\Annotation\Until;
 use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\AnnotationSet;
@@ -20,6 +21,9 @@ use Tebru\Gson\Test\Mock\Annotation\FooAnnotation;
 use Tebru\Gson\Test\Mock\Annotation\QuxAnnotation;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ClassWithoutParent;
+use Tebru\Gson\Test\Mock\Unit\Internal\Data\AnnotationCollectionFactoryTest\AnnotationCollectionFactoryTestChildMock;
+use Tebru\Gson\Test\Mock\Unit\Internal\Data\AnnotationCollectionFactoryTest\AnnotationCollectionFactoryTestParentMock;
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class AnnotationCollectionFactoryTest
@@ -29,110 +33,125 @@ use Tebru\Gson\Test\Mock\ClassWithoutParent;
  */
 class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
 {
-    public function testCreateWithoutParents()
+    /**
+     * @var ArrayCache
+     */
+    private $cache;
+
+    /**
+     * @var AnnotationCollectionFactory
+     */
+    private $annotationCollectionFactory;
+
+    public function setUp()
     {
-        $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $annotations = $factory->createPropertyAnnotations(ClassWithoutParent::class, 'foo');
+        $this->cache = new ArrayCache();
+        $this->annotationCollectionFactory = MockProvider::annotationCollectionFactory($this->cache);
+    }
+
+    public function testGetPropertyAnnotationsWithoutParent()
+    {
+        $annotations = $this->annotationCollectionFactory->createPropertyAnnotations(AnnotationCollectionFactoryTestParentMock::class, 'noParents');
 
         $expected = [
-            new FooAnnotation(['value' => 'foo']),
-            new BarAnnotation(['value' => 'bar']),
+            new Type(['value' => 'int']),
+            new SerializedName(['value' => 'no_parents']),
         ];
 
         self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_PROPERTY));
     }
 
-    public function testCreateWithParents()
+    public function testGetPropertyAnnotationsWithParent()
     {
-        $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $annotations = $factory->createPropertyAnnotations(ChildClass::class, 'foo');
+        $annotations = $this->annotationCollectionFactory->createPropertyAnnotations(AnnotationCollectionFactoryTestChildMock::class, 'withParent');
 
         $expected = [
-            new FooAnnotation(['value' => 'foo']),
-            new BarAnnotation(['value' => 'bar']),
-            new QuxAnnotation(['value' => 'qux']),
+            new Type(['value' => 'int']),
+            new SerializedName(['value' => 'with_parents']),
+            new Since(['value' => '1'])
         ];
 
         self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_PROPERTY));
     }
 
-    public function testCreateTwoLevels()
+    public function testGetClassAnnotationsWithoutParent()
     {
-        $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $annotations = $factory->createPropertyAnnotations(ChildClass::class, 'qux');
+        $annotations = $this->annotationCollectionFactory->createClassAnnotations(AnnotationCollectionFactoryTestParentMock::class);
 
         $expected = [
-            new QuxAnnotation(['value' => 'qux']),
-        ];
-
-        self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_PROPERTY));
-    }
-
-    public function testCreatePropertyAnnotationsUsesCache()
-    {
-        $cachedAnnotations = new AnnotationSet();
-        $cachedAnnotations->addAnnotation(new FooAnnotation([]), AnnotationSet::TYPE_PROPERTY);
-
-        $cache = new ArrayCache();
-
-        $cache->save(ChildClass::class.':'.'foo', $cachedAnnotations);
-        $factory = new AnnotationCollectionFactory(new AnnotationReader(), $cache);
-        $annotations = $factory->createPropertyAnnotations(ChildClass::class, 'foo');
-
-        self::assertSame($cachedAnnotations, $annotations);
-    }
-
-    public function testCreateClassAnnotations()
-    {
-        $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $annotations = $factory->createClassAnnotations(ChildClass::class);
-
-        $expected = [
-            new FooAnnotation(['value' => 'foo3']),
-            new BazAnnotation(['value' => 'baz']),
-            new BarAnnotation(['value' => 'bar2']),
+            new Since(['value' => '1']),
+            new Until(['value' => '3']),
         ];
 
         self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_CLASS));
     }
 
-    public function testCreateClassAnnotationsUsesCache()
+    public function testGetClassAnnotationsWithParent()
     {
-        $cachedAnnotations = new AnnotationSet();
-        $cachedAnnotations->addAnnotation(new FooAnnotation([]), AnnotationSet::TYPE_CLASS);
+        $annotations = $this->annotationCollectionFactory->createClassAnnotations(AnnotationCollectionFactoryTestChildMock::class);
 
-        $cache = new ArrayCache();
+        $expected = [
+            new Since(['value' => '2']),
+            new Until(['value' => '3']),
+        ];
 
-        $cache->save(ChildClass::class, $cachedAnnotations);
-        $factory = new AnnotationCollectionFactory(new AnnotationReader(), $cache);
-        $annotations = $factory->createClassAnnotations(ChildClass::class);
-
-        self::assertSame($cachedAnnotations, $annotations);
+        self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_CLASS));
     }
 
-    public function testCreateMethodAnnotations()
+    public function testGetMethodAnnotationsWithoutParent()
     {
-        $factory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
-        $annotations = $factory->createMethodAnnotations(ChildClass::class, 'virtualProperty');
+        $annotations = $this->annotationCollectionFactory->createMethodAnnotations(AnnotationCollectionFactoryTestChildMock::class, 'method1');
 
         $expected = [
             new VirtualProperty(),
-            new SerializedName(['value' => 'new_virtual_property']),
+            new SerializedName(['value' => 'method_1']),
         ];
 
         self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_METHOD));
     }
 
+    public function testGetMethodAnnotationsWithParent()
+    {
+        $annotations = $this->annotationCollectionFactory->createMethodAnnotations(AnnotationCollectionFactoryTestChildMock::class, 'method2');
+
+        $expected = [
+            new VirtualProperty(),
+            new SerializedName(['value' => 'method_2']),
+            new Type(['value' => 'int']),
+        ];
+
+        self::assertEquals($expected, $annotations->toArray(AnnotationSet::TYPE_METHOD));
+    }
+
+    public function testCreatePropertyAnnotationsUsesCache()
+    {
+        $cachedAnnotations = new AnnotationSet();
+        $cachedAnnotations->addAnnotation(new Type(['value' => 'string']), AnnotationSet::TYPE_PROPERTY);
+
+        $this->cache->save(AnnotationCollectionFactoryTestParentMock::class.':'.'noParents', $cachedAnnotations);
+        $annotations = $this->annotationCollectionFactory->createPropertyAnnotations(AnnotationCollectionFactoryTestParentMock::class, 'noParents');
+
+        self::assertSame($cachedAnnotations, $annotations);
+    }
+
+    public function testCreateClassAnnotationsUsesCache()
+    {
+        $cachedAnnotations = new AnnotationSet();
+        $cachedAnnotations->addAnnotation(new Type(['value' => 'string']), AnnotationSet::TYPE_CLASS);
+
+        $this->cache->save(AnnotationCollectionFactoryTestParentMock::class, $cachedAnnotations);
+        $annotations = $this->annotationCollectionFactory->createClassAnnotations(AnnotationCollectionFactoryTestParentMock::class);
+
+        self::assertSame($cachedAnnotations, $annotations);
+    }
+
     public function testCreateMethodAnnotationsUsesCache()
     {
         $cachedAnnotations = new AnnotationSet();
-        $cachedAnnotations->addAnnotation(new VirtualProperty(), AnnotationSet::TYPE_METHOD);
+        $cachedAnnotations->addAnnotation(new Type(['value' => 'string']), AnnotationSet::TYPE_METHOD);
 
-        $cache = new ArrayCache();
-        $cache->save(ChildClass::class.':'.'virtualProperty', $cachedAnnotations);
-
-        $factory = new AnnotationCollectionFactory(new AnnotationReader(), $cache);
-        $annotations = $factory->createMethodAnnotations(ChildClass::class, 'virtualProperty');
+        $this->cache->save(AnnotationCollectionFactoryTestParentMock::class.':'.'method1', $cachedAnnotations);
+        $annotations = $this->annotationCollectionFactory->createMethodAnnotations(AnnotationCollectionFactoryTestParentMock::class, 'method1');
 
         self::assertSame($cachedAnnotations, $annotations);
     }

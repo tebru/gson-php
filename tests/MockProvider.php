@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\VoidCache;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
@@ -43,9 +44,13 @@ use Tebru\Gson\Internal\TypeAdapterProvider;
  */
 class MockProvider
 {
-    public static function annotationCollectionFactory()
+    public static function annotationCollectionFactory(CacheProvider $cache = null)
     {
-        return new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        if (null === $cache) {
+            $cache = new VoidCache();
+        }
+
+        return new AnnotationCollectionFactory(new AnnotationReader(), $cache);
     }
 
     public static function metadataFactory()

@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\AccessorStrategy;
 
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\AccessorStrategy\SetByClosure;
-use Tebru\Gson\Test\Mock\ClosureTestMock;
+use Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\SetByClosureTest\SetByClosureTestMock;
 
 /**
  * Class SetByClosureTest
@@ -20,8 +20,8 @@ class SetByClosureTest extends PHPUnit_Framework_TestCase
 {
     public function testSetter()
     {
-        $mock = new ClosureTestMock();
-        $strategy = new SetByClosure('foo', ClosureTestMock::class);
+        $mock = new SetByClosureTestMock();
+        $strategy = new SetByClosure('foo', SetByClosureTestMock::class);
         $strategy->set($mock, 'bar2');
 
         self::assertAttributeSame('bar2', 'foo', $mock);
@@ -29,8 +29,8 @@ class SetByClosureTest extends PHPUnit_Framework_TestCase
 
     public function testSetterNoProperty()
     {
-        $mock = new ClosureTestMock();
-        $strategy = new SetByClosure('foo2', ClosureTestMock::class);
+        $mock = new SetByClosureTestMock();
+        $strategy = new SetByClosure('foo2', SetByClosureTestMock::class);
         $strategy->set($mock, 'bar');
 
         self::assertAttributeSame('bar', 'foo2', $mock);

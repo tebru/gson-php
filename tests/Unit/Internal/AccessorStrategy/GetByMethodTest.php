@@ -8,6 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\AccessorStrategy;
 
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
+use Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\GetByMethodTest\GetByMethodTestMock;
 use Throwable;
 
 /**
@@ -22,23 +23,14 @@ class GetByMethodTest extends PHPUnit_Framework_TestCase
     {
         $strategy = new GetByMethod('foo');
 
-        self::assertSame('bar', $strategy->get(new class {
-            public function foo() {
-                return 'bar';
-            }
-        }));
+        self::assertSame('bar', $strategy->get(new GetByMethodTestMock()));
     }
 
     public function testGetterNoMethod()
     {
         $this->expectException(Throwable::class);
 
-        $strategy = new GetByMethod('foo');
-
-        $strategy->get(new class {
-            public function getFoo() {
-                return 'bar';
-            }
-        });
+        $strategy = new GetByMethod('bar');
+        $strategy->get(new GetByMethodTestMock());
     }
 }

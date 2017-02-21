@@ -22,13 +22,23 @@ use Tebru\Gson\Internal\Data\Property;
  */
 class PropertyCollectionTest extends PHPUnit_Framework_TestCase
 {
-    public function testGetters()
+    /**
+     * @var Property
+     */
+    private $property;
+
+    /**
+     * @var PropertyCollection
+     */
+    private $propertyCollection;
+
+    public function setUp()
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
         $type = new DefaultPhpType('Foo');
 
-        $property = new Property(
+        $this->property = new Property(
             $realName,
             $serializedName,
             $type,
@@ -38,73 +48,27 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             0,
             false
         );
-        $propertyCollection = new PropertyCollection([$property]);
-
-        self::assertSame($property, $propertyCollection->getBySerializedName('foo_bar'));
+        $this->propertyCollection = new PropertyCollection([$this->property]);
+    }
+    public function testGetters()
+    {
+        self::assertSame($this->property, $this->propertyCollection->getBySerializedName('foo_bar'));
     }
 
     public function testGettersNotFound()
     {
-        $realName = 'foo';
-        $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
-
-        $property = new Property(
-            $realName,
-            $serializedName,
-            $type,
-            new GetByPublicProperty('foo'),
-            new SetByPublicProperty('foo'),
-            new AnnotationSet(),
-            0,
-            false
-        );
-        $propertyCollection = new PropertyCollection([$property]);
-
-        self::assertNull($propertyCollection->getBySerializedName('foo_bar2'));
+        self::assertNull($this->propertyCollection->getBySerializedName('foo_bar2'));
     }
 
     public function testToArray()
     {
-        $realName = 'foo';
-        $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
-
-        $property = new Property(
-            $realName,
-            $serializedName,
-            $type,
-            new GetByPublicProperty('foo'),
-            new SetByPublicProperty('foo'),
-            new AnnotationSet(),
-            0,
-            false
-        );
-        $propertyCollection = new PropertyCollection([$property]);
-
-        self::assertSame([$property], $propertyCollection->toArray());
+        self::assertSame([$this->property], $this->propertyCollection->toArray());
     }
 
     public function testIterate()
     {
-        $realName = 'foo';
-        $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
-
-        $property = new Property(
-            $realName,
-            $serializedName,
-            $type,
-            new GetByPublicProperty('foo'),
-            new SetByPublicProperty('foo'),
-            new AnnotationSet(),
-            0,
-            false
-        );
-        $propertyCollection = new PropertyCollection([$property]);
-
-        foreach ($propertyCollection as $p) {
-            self::assertSame($property, $p);
+        foreach ($this->propertyCollection as $p) {
+            self::assertSame($this->property, $p);
         }
     }
 }

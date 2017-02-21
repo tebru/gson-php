@@ -145,6 +145,20 @@ final class AnnotationCollectionFactory
             $annotations->addAnnotation($annotation, AnnotationSet::TYPE_METHOD);
         }
 
+        $parentClass = $reflectionMethod->getDeclaringClass()->getParentClass();
+        while (false !== $parentClass) {
+            // add parent property annotations if they exist
+            if ($parentClass->hasMethod($reflectionMethod->getName())) {
+                $parentMethod = $parentClass->getMethod($reflectionMethod->getName());
+                foreach ($this->reader->getMethodAnnotations($parentMethod) as $parentMethodAnnotation) {
+                    $annotations->addAnnotation($parentMethodAnnotation, AnnotationSet::TYPE_METHOD);
+                }
+            }
+
+            // reset $parentClass
+            $parentClass = $parentClass->getParentClass();
+        }
+
         $this->cache->save($key, $annotations);
 
         return $annotations;
