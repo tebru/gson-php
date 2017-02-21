@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Internal;
 
+use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\Property;
@@ -40,10 +41,10 @@ final class MetadataFactory
      * Create class metadata
      *
      * @param string $className
-     * @return DefaultClassMetadata
+     * @return ClassMetadata
      * @throws \InvalidArgumentException If the type does not exist
      */
-    public function createClassMetadata(string $className): DefaultClassMetadata
+    public function createClassMetadata(string $className): ClassMetadata
     {
         return new DefaultClassMetadata($className, $this->annotationCollectionFactory->createClassAnnotations($className));
     }
@@ -52,10 +53,10 @@ final class MetadataFactory
      * Creates property metadata
      *
      * @param Property $property
-     * @param DefaultClassMetadata $classMetadata
+     * @param ClassMetadata $classMetadata
      * @return PropertyMetadata
      */
-    public function createPropertyMetadata(Property $property, DefaultClassMetadata $classMetadata): PropertyMetadata
+    public function createPropertyMetadata(Property $property, ClassMetadata $classMetadata): PropertyMetadata
     {
         return new DefaultPropertyMetadata(
             $property->getRealName(),
