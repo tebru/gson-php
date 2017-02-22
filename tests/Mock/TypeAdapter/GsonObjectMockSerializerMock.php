@@ -33,6 +33,10 @@ class GsonObjectMockSerializerMock implements JsonSerializer, JsonDeserializer
      */
     public function deserialize(JsonElement $jsonElement, PhpType $type, JsonDeserializationContext $context): GsonObjectMock
     {
+        if ($jsonElement->isJsonObject()) {
+            return new GsonObjectMock($jsonElement->asJsonObject()->get('foo')->getValue());
+        }
+
         return new GsonObjectMock($jsonElement->asString());
     }
 

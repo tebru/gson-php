@@ -15,12 +15,8 @@ use Tebru\Gson\Annotation\Until;
 use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\AnnotationSet;
-use Tebru\Gson\Test\Mock\Annotation\BarAnnotation;
-use Tebru\Gson\Test\Mock\Annotation\BazAnnotation;
-use Tebru\Gson\Test\Mock\Annotation\FooAnnotation;
-use Tebru\Gson\Test\Mock\Annotation\QuxAnnotation;
-use Tebru\Gson\Test\Mock\ChildClass;
-use Tebru\Gson\Test\Mock\ClassWithoutParent;
+
+
 use Tebru\Gson\Test\Mock\Unit\Internal\Data\AnnotationCollectionFactoryTest\AnnotationCollectionFactoryTestChildMock;
 use Tebru\Gson\Test\Mock\Unit\Internal\Data\AnnotationCollectionFactoryTest\AnnotationCollectionFactoryTestParentMock;
 use Tebru\Gson\Test\MockProvider;

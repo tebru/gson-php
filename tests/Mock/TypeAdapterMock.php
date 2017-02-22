@@ -18,7 +18,7 @@ use Tebru\Gson\TypeAdapterFactory;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class TypeAdapterMock extends TypeAdapter implements TypeAdapterFactory
+class TypeAdapterMock extends TypeAdapter implements TypeAdapterFactory, TypeAdapterMockable
 {
     /**
      * Read the next value, convert it to its type and return it

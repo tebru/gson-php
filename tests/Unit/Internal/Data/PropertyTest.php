@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\Data;
 
 use PHPUnit_Framework_TestCase;
+use stdClass;
 use Tebru\Gson\Internal\AccessorStrategy\GetByClosure;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
@@ -31,7 +32,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
+        $type = new DefaultPhpType(stdClass::class);
         $annotationSet = new AnnotationSet();
 
         $property = new Property(
@@ -59,7 +60,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
+        $type = new DefaultPhpType(stdClass::class);
         $annotationSet = new AnnotationSet();
 
         $property = new Property(
@@ -85,7 +86,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $mock = new class { public $foo; };
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
+        $type = new DefaultPhpType(stdClass::class);
 
         $property = new Property(
             $realName,
@@ -107,7 +108,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $mock = new ChildClass();
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
+        $type = new DefaultPhpType(stdClass::class);
 
         $property = new Property(
             $realName,
@@ -129,7 +130,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $mock = new ChildClass();
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
+        $type = new DefaultPhpType(stdClass::class);
 
         $property = new Property(
             $realName,
@@ -151,7 +152,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $mock = new ChildClass();
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
+        $type = new DefaultPhpType(stdClass::class);
         $getter = new GetByClosure('bar', ChildClassParent::class);
         $setter = new SetByClosure('bar', ChildClassParent::class);
 
@@ -175,7 +176,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $mock = new ChildClass();
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
+        $type = new DefaultPhpType(stdClass::class);
         $getter = new GetByClosure('bar', ChildClass::class);
         $setter = new SetByClosure('bar', ChildClass::class);
 
@@ -199,7 +200,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $mock = new class { public $foo; };
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
+        $type = new DefaultPhpType(stdClass::class);
 
         $property = new Property(
             $realName,

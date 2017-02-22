@@ -6,12 +6,13 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
-use Doctrine\Common\Cache\ArrayCache;
+
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\NullTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapterProvider;
+
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class NullTypeAdapterFactoryTest
@@ -38,7 +39,7 @@ class NullTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $factory = new NullTypeAdapterFactory();
-        $adapter = $factory->create(new DefaultPhpType('null'), new TypeAdapterProvider([], new ArrayCache()));
+        $adapter = $factory->create(new DefaultPhpType('null'), MockProvider::typeAdapterProvider());
 
         self::assertInstanceOf(NullTypeAdapter::class, $adapter);
     }

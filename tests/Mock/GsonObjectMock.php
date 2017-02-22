@@ -11,7 +11,7 @@ namespace Tebru\Gson\Test\Mock;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class GsonObjectMock
+class GsonObjectMock implements GsonObjectMockable
 {
     private $foo;
 

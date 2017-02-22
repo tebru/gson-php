@@ -64,6 +64,13 @@ final class DefaultPhpType implements PhpType
     private $class;
 
     /**
+     * An array of interfaces that a class implements
+     *
+     * @var array
+     */
+    private $interfaces = [];
+
+    /**
      * Generic types, if they exist
      *
      * @var array
@@ -179,7 +186,8 @@ final class DefaultPhpType implements PhpType
         $this->type = TypeToken::normalizeType($type);
 
         if ($this->isObject()) {
-            $this->class = 'object' === $type ? stdClass::class : $type;
+            $this->class = TypeToken::OBJECT === $type ? stdClass::class : $type;
+            $this->interfaces = class_implements($this->class);
         } elseif (false === strpos($this->fullType, '<')) {
             $this->fullType = (string) $this->type;
         }
@@ -203,6 +211,30 @@ final class DefaultPhpType implements PhpType
     public function getType(): ?string
     {
         return $this->isObject() ? $this->class : $this->fullType;
+    }
+
+    /**
+     * Returns true if the type matches the class, parent, full type, or one of the interfaces
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function isA(string $type): bool
+    {
+        $currentType = $this->getType();
+        if ($currentType === $type) {
+            return true;
+        }
+
+        if (in_array($type, $this->interfaces, true)) {
+            return true;
+        }
+
+        if (is_subclass_of($currentType, $type)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

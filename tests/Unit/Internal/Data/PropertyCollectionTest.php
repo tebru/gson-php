@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\Data;
 
 use PHPUnit_Framework_TestCase;
+use stdClass;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\Data\AnnotationSet;
@@ -36,7 +37,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new DefaultPhpType('Foo');
+        $type = new DefaultPhpType(stdClass::class);
 
         $this->property = new Property(
             $realName,
@@ -50,6 +51,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         );
         $this->propertyCollection = new PropertyCollection([$this->property]);
     }
+
     public function testGetters()
     {
         self::assertSame($this->property, $this->propertyCollection->getBySerializedName('foo_bar'));

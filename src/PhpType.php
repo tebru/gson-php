@@ -31,6 +31,14 @@ interface PhpType
     public function getType(): ?string;
 
     /**
+     * Returns true if the type matches the class, parent, full type, or one of the interfaces
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function isA(string $type): bool;
+
+    /**
      * Returns true if this is a string
      *
      * @return bool

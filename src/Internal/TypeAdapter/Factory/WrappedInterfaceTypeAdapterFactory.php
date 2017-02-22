@@ -6,48 +6,38 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
-use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\JsonDeserializer;
-use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 
 /**
- * Class CustomWrappedTypeAdapterFactory
+ * Class WrappedInterfaceTypeAdapterFactory
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
+class WrappedInterfaceTypeAdapterFactory implements TypeAdapterFactory
 {
     /**
-     * @var PhpType
+     * @var TypeAdapter
      */
-    private $type;
+    private $typeAdapter;
 
     /**
-     * @var JsonSerializer
+     * @var string
      */
-    private $serializer;
-
-    /**
-     * @var JsonDeserializer
-     */
-    private $deserializer;
+    private $interfaceName;
 
     /**
      * Constructor
      *
-     * @param PhpType $type
-     * @param JsonSerializer $serializer
-     * @param JsonDeserializer $deserializer
+     * @param TypeAdapter $typeAdapter
+     * @param string $interfaceName
      */
-    public function __construct(PhpType $type, JsonSerializer $serializer = null, JsonDeserializer $deserializer = null)
+    public function __construct(TypeAdapter $typeAdapter, string $interfaceName)
     {
-        $this->type = $type;
-        $this->serializer = $serializer;
-        $this->deserializer = $deserializer;
+        $this->typeAdapter = $typeAdapter;
+        $this->interfaceName = $interfaceName;
     }
 
     /**
@@ -59,7 +49,11 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
      */
     public function supports(PhpType $type): bool
     {
-        return $type->isA($this->type->getType());
+        if (!$type->isObject()) {
+            return false;
+        }
+
+        return $type->isA($this->interfaceName);
     }
 
     /**
@@ -72,6 +66,6 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        return new CustomWrappedTypeAdapter($type, $typeAdapterProvider, $this->serializer, $this->deserializer, $this);
+        return $this->typeAdapter;
     }
 }

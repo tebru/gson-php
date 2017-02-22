@@ -40,6 +40,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
+use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedInterfaceTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 
 /**
@@ -157,7 +158,12 @@ class GsonBuilder
     {
         if ($handler instanceof TypeAdapter) {
             $phpType = new DefaultPhpType($type);
-            $this->typeAdapters[$phpType->getUniqueKey()] = $handler;
+
+            if ($phpType->isObject() && interface_exists($type)) {
+                $this->typeAdapterFactories[] = new WrappedInterfaceTypeAdapterFactory($handler, $type);
+            } else {
+                $this->typeAdapters[$phpType->getUniqueKey()] = $handler;
+            }
 
             return $this;
         }
@@ -194,7 +200,7 @@ class GsonBuilder
     public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
     {
         $phpType = new DefaultPhpType($type);
-        $this->instanceCreators[$phpType->getUniqueKey()] = $instanceCreator;
+        $this->instanceCreators[$phpType->getType()] = $instanceCreator;
 
         return $this;
     }
@@ -370,9 +376,11 @@ class GsonBuilder
             $excluder,
             $cache
         );
+        $constructorConstructor = new ConstructorConstructor($this->instanceCreators);
         $typeAdapterProvider = new TypeAdapterProvider(
-            $this->getTypeAdapterFactories($propertyCollectionFactory, $excluder, $annotationCollectionFactory, $metadataFactory),
-            $typeAdapterCache
+            $this->getTypeAdapterFactories($propertyCollectionFactory, $excluder, $annotationCollectionFactory, $metadataFactory, $constructorConstructor),
+            $typeAdapterCache,
+            $constructorConstructor
         );
 
         foreach ($this->typeAdapters as $type => $typeAdapter) {
@@ -389,13 +397,15 @@ class GsonBuilder
      * @param Excluder $excluder
      * @param AnnotationCollectionFactory $annotationCollectionFactory
      * @param MetadataFactory $metadataFactory
+     * @param ConstructorConstructor $constructorConstructor
      * @return array|TypeAdapterFactory[]
      */
     private function getTypeAdapterFactories(
         PropertyCollectionFactory $propertyCollectionFactory,
         Excluder $excluder,
         AnnotationCollectionFactory $annotationCollectionFactory,
-        MetadataFactory $metadataFactory
+        MetadataFactory $metadataFactory,
+        ConstructorConstructor $constructorConstructor
     ): array
     {
         return array_merge(
@@ -414,7 +424,7 @@ class GsonBuilder
                 new ArrayTypeAdapterFactory(),
                 new JsonElementTypeAdapterFactory(),
                 new ReflectionTypeAdapterFactory(
-                    new ConstructorConstructor($this->instanceCreators),
+                    $constructorConstructor,
                     $propertyCollectionFactory,
                     $metadataFactory,
                     $excluder

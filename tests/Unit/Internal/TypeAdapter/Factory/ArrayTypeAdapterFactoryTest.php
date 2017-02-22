@@ -6,13 +6,14 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
-use Doctrine\Common\Cache\ArrayCache;
+
 use PHPUnit_Framework_TestCase;
 use stdClass;
 use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapterProvider;
+
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class ArrayTypeAdapterFactoryTest
@@ -47,7 +48,7 @@ class ArrayTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new ArrayTypeAdapterFactory();
         $phpType = new DefaultPhpType('array');
-        $typeAdapterProvider = new TypeAdapterProvider([], new ArrayCache());
+        $typeAdapterProvider = MockProvider::typeAdapterProvider();
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
         self::assertInstanceOf(ArrayTypeAdapter::class, $adapter);

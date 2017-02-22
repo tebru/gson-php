@@ -9,6 +9,7 @@ namespace Tebru\Gson\Test\Unit\Annotation;
 use DateTime;
 use LogicException;
 use PHPUnit_Framework_TestCase;
+use stdClass;
 use Tebru\Gson\Annotation\Type;
 
 /**
@@ -21,9 +22,9 @@ class TypeTest extends PHPUnit_Framework_TestCase
 {
     public function testCreateTypeAnnotation()
     {
-        $type = new Type(['value' => 'Foo']);
+        $type = new Type(['value' => stdClass::class]);
 
-        self::assertSame('Foo', (string) $type->getType());
+        self::assertSame(stdClass::class, (string) $type->getType());
     }
 
     public function testCreateTypeAnnotationWithOptions()

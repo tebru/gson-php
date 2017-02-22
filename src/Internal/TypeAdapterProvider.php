@@ -38,15 +38,22 @@ final class TypeAdapterProvider
     private $typeAdapterFactories = [];
 
     /**
+     * @var ConstructorConstructor
+     */
+    private $constructorConstructor;
+
+    /**
      * Constructor
      *
      * @param array $typeAdapterFactories
      * @param CacheProvider $cache
+     * @param ConstructorConstructor $constructorConstructor
      */
-    public function __construct(array $typeAdapterFactories, CacheProvider $cache)
+    public function __construct(array $typeAdapterFactories, CacheProvider $cache, ConstructorConstructor $constructorConstructor)
     {
         $this->typeAdapterFactories = $typeAdapterFactories;
         $this->typeAdapterCache = $cache;
+        $this->constructorConstructor = $constructorConstructor;
     }
 
     /**
@@ -112,11 +119,11 @@ final class TypeAdapterProvider
      * @param JsonAdapter $jsonAdapterAnnotation
      * @return TypeAdapter
      * @throws \InvalidArgumentException if an invalid adapter is found
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function getAdapterFromAnnotation(PhpType $type, JsonAdapter $jsonAdapterAnnotation): TypeAdapter
     {
-        $class = $jsonAdapterAnnotation->getClass();
-        $object = new $class();
+        $object = $this->constructorConstructor->get(new DefaultPhpType($jsonAdapterAnnotation->getClass()))->construct();
 
         if ($object instanceof TypeAdapter) {
             return $object;

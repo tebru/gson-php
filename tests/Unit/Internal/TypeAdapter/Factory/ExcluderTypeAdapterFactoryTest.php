@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\ArrayCache;
+
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
@@ -16,10 +16,11 @@ use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapterProvider;
+
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ExcluderExcludeSerializeMock;
 use Tebru\Gson\Test\Mock\ExcluderExposeMock;
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class ExcluderTypeAdapterFactoryTest
@@ -83,7 +84,7 @@ class ExcluderTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
         $this->excluder->setRequireExpose(true);
 
         $phpType = new DefaultPhpType(ChildClass::class);
-        $typeAdapterProvider = new TypeAdapterProvider([], new ArrayCache());
+        $typeAdapterProvider = MockProvider::typeAdapterProvider();
         $adapter = $this->excluderTypeAdapterFactory->create($phpType, $typeAdapterProvider);
 
         self::assertInstanceOf(ExcluderTypeAdapter::class, $adapter);

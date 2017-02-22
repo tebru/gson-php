@@ -50,10 +50,11 @@ final class ConstructorConstructor
      */
     public function get(PhpType $type): ObjectConstructor
     {
-        $class = (string) $type;
-        $key = $type->getUniqueKey();
-        if (array_key_exists($key, $this->instanceCreators)) {
-            return new CreateFromInstanceCreator($this->instanceCreators[$key], $type);
+        $class = $type->getType();
+        foreach ($this->instanceCreators as $instanceCreatorClass => $creator) {
+            if ($type->isA($instanceCreatorClass) && array_key_exists($class, $this->instanceCreators)) {
+                return new CreateFromInstanceCreator($this->instanceCreators[$class], $type);
+            }
         }
 
         try {

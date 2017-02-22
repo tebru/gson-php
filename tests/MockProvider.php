@@ -83,8 +83,16 @@ class MockProvider
         return new ReflectionTypeAdapterFactory(new ConstructorConstructor(), self::propertyCollectionFactory($excluder), self::metadataFactory(), $excluder);
     }
 
-    public static function typeAdapterProvider(Excluder $excluder, array $factories = [])
+    public static function typeAdapterProvider(Excluder $excluder = null, array $factories = [], CacheProvider $cache = null)
     {
+        if (null === $excluder) {
+            $excluder = self::excluder();
+        }
+
+        if (null === $cache) {
+            $cache = new VoidCache();
+        }
+
         return new TypeAdapterProvider(
             array_merge(
                 [
@@ -110,7 +118,8 @@ class MockProvider
                     new WildcardTypeAdapterFactory(),
                 ]
             ),
-            new VoidCache()
+            $cache,
+            new ConstructorConstructor()
         );
     }
 

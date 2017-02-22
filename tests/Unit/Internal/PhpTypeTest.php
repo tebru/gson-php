@@ -6,11 +6,18 @@
 
 namespace Tebru\Gson\Test\Unit\Internal;
 
+use ArrayAccess;
+use Countable;
 use DateTime;
+use IteratorAggregate;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 use Tebru\Gson\Exception\MalformedTypeException;
 use Tebru\Gson\Internal\DefaultPhpType;
+use Tebru\Gson\Test\Mock\Unit\Internal\Data\PhpType\PhpTypeClassParent;
+use Tebru\Gson\Test\Mock\Unit\Internal\Data\PhpType\PhpTypeClassWithInterface;
+use Tebru\Gson\Test\Mock\Unit\Internal\Data\PhpType\PhpTypeInterface;
+use Traversable;
 
 /**
  * Class PhpTypeTest
@@ -129,10 +136,10 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
 
     public function testCustomClass()
     {
-        $phpType = new DefaultPhpType('Foo');
+        $phpType = new DefaultPhpType(stdClass::class);
 
         self::assertTrue($phpType->isObject());
-        self::assertSame('Foo', $phpType->getType());
+        self::assertSame(stdClass::class, $phpType->getType());
     }
 
     public function testOneGeneric()
@@ -156,26 +163,26 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
 
     public function testThreeGeneric()
     {
-        $phpType = new DefaultPhpType('Foo<string, int, Bar>');
+        $phpType = new DefaultPhpType('stdClass<string, int, stdClass>');
 
         self::assertTrue($phpType->isObject());
-        self::assertSame('Foo', $phpType->getType());
+        self::assertSame(stdClass::class, $phpType->getType());
         self::assertCount(3, $phpType->getGenerics());
         self::assertSame('string', (string) $phpType->getGenerics()[0]);
         self::assertSame('integer', (string) $phpType->getGenerics()[1]);
-        self::assertSame('Bar', (string) $phpType->getGenerics()[2]->getType());
+        self::assertSame(stdClass::class, (string) $phpType->getGenerics()[2]->getType());
     }
 
     public function testNestedGeneric()
     {
-        $phpType = new DefaultPhpType('array<array<string, Bar<string, bool>>>');
+        $phpType = new DefaultPhpType('array<array<string, stdClass<string, bool>>>');
 
         self::assertTrue($phpType->isArray());
         self::assertCount(1, $phpType->getGenerics());
         self::assertTrue($phpType->getGenerics()[0]->isArray());
         self::assertCount(2, $phpType->getGenerics()[0]->getGenerics());
         self::assertSame('string', (string) $phpType->getGenerics()[0]->getGenerics()[0]);
-        self::assertSame('Bar', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getType());
+        self::assertSame(stdClass::class, (string) $phpType->getGenerics()[0]->getGenerics()[1]->getType());
         self::assertCount(2, $phpType->getGenerics()[0]->getGenerics()[1]->getGenerics());
         self::assertSame('string', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getGenerics()[0]);
         self::assertSame('boolean', (string) $phpType->getGenerics()[0]->getGenerics()[1]->getGenerics()[1]);
@@ -189,6 +196,62 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
         new DefaultPhpType('array<string');
     }
 
+    public function testGetTypeClass()
+    {
+        $type = new DefaultPhpType(DateTime::class);
+
+        self::assertSame(DateTime::class, $type->getType());
+    }
+
+    public function testGetTypeArray()
+    {
+        $type = new DefaultPhpType('array');
+
+        self::assertSame('array', $type->getType());
+    }
+
+    public function testGetTypeArrayWithGenerics()
+    {
+        $type = new DefaultPhpType('array<int>');
+
+        self::assertSame('array<int>', $type->getType());
+    }
+
+    public function testIsAClass()
+    {
+        $type = new DefaultPhpType(PhpTypeClassWithInterface::class);
+
+        self::assertTrue($type->isA(PhpTypeClassWithInterface::class));
+        self::assertTrue($type->isA(PhpTypeClassParent::class));
+        self::assertTrue($type->isA(PhpTypeInterface::class));
+        self::assertTrue($type->isA(ArrayAccess::class));
+        self::assertTrue($type->isA(IteratorAggregate::class));
+        self::assertTrue($type->isA(Countable::class));
+        self::assertTrue($type->isA(Traversable::class));
+    }
+
+    public function testIsAArray()
+    {
+        $type = new DefaultPhpType('array');
+
+        self::assertTrue($type->isA('array'));
+    }
+
+    public function testIsAArrayGenerics()
+    {
+        $type = new DefaultPhpType('array<int>');
+
+        self::assertFalse($type->isA('array'));
+        self::assertTrue($type->isA('array<int>'));
+    }
+
+    public function testIsACanonical()
+    {
+        $type = new DefaultPhpType('int');
+
+        self::assertTrue($type->isA('integer'));
+    }
+
     public function testOptions()
     {
         $phpType = new DefaultPhpType('DateTime', ['format' => DateTime::ATOM]);
@@ -198,9 +261,9 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
 
     public function testToString()
     {
-        $phpType = new DefaultPhpType('array<array<string, Bar<string, bool>>>');
+        $phpType = new DefaultPhpType('array<array<string, stdClass<string, bool>>>');
 
-        self::assertSame('array<array<string,Bar<string,bool>>>', (string) $phpType);
+        self::assertSame('array<array<string,stdClass<string,bool>>>', (string) $phpType);
     }
 
     public function testToStringReturnsCanonicalType()

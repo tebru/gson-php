@@ -5,18 +5,19 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
-use Doctrine\Common\Cache\ArrayCache;
+
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapterProvider;
+
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\MockDeserializer;
 use Tebru\Gson\Test\Mock\MockSerializer;
 use Tebru\Gson\Test\Mock\UserMock;
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class CustomWrappedTypeAdapterFactoryTest
@@ -50,7 +51,7 @@ class CustomWrappedTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreate()
     {
         $factory = new CustomWrappedTypeAdapterFactory(new DefaultPhpType(UserMock::class), new MockSerializer(), new MockDeserializer());
-        $adapter = $factory->create(new DefaultPhpType(UserMock::class), new TypeAdapterProvider([], new ArrayCache()));
+        $adapter = $factory->create(new DefaultPhpType(UserMock::class), MockProvider::typeAdapterProvider());
 
         self::assertInstanceOf(CustomWrappedTypeAdapter::class, $adapter);
         self::assertAttributeInstanceOf(JsonSerializer::class, 'serializer', $adapter);
