@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
+use Tebru\Gson\InstanceCreator;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromReflectionClass;
@@ -29,6 +30,15 @@ class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
         $instanceCreators = [ClassWithParameters::class => new ClassWithParametersInstanceCreator()];
         $constructorConstructor = new ConstructorConstructor($instanceCreators);
         $object = $constructorConstructor->get(new DefaultPhpType(ClassWithParameters::class));
+
+        self::assertInstanceOf(CreateFromInstanceCreator::class, $object);
+    }
+
+    public function testCreateFromInstanceCreatorInterface()
+    {
+        $instanceCreators = [InstanceCreator::class => new ClassWithParametersInstanceCreator()];
+        $constructorConstructor = new ConstructorConstructor($instanceCreators);
+        $object = $constructorConstructor->get(new DefaultPhpType(ClassWithParametersInstanceCreator::class));
 
         self::assertInstanceOf(CreateFromInstanceCreator::class, $object);
     }

@@ -52,8 +52,8 @@ final class ConstructorConstructor
     {
         $class = $type->getType();
         foreach ($this->instanceCreators as $instanceCreatorClass => $creator) {
-            if ($type->isA($instanceCreatorClass) && array_key_exists($class, $this->instanceCreators)) {
-                return new CreateFromInstanceCreator($this->instanceCreators[$class], $type);
+            if ($type->isA($instanceCreatorClass)) {
+                return new CreateFromInstanceCreator($creator, $type);
             }
         }
 
