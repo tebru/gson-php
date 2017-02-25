@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Gson;
 use Tebru\Gson\Internal\DefaultPhpType;
-use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedInterfaceTypeAdapterFactory;
+use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedTypeAdapterFactory;
 use Tebru\Gson\Test\Mock\TypeAdapterMock;
 use Tebru\Gson\Test\Mock\TypeAdapterMockable;
 use Tebru\Gson\Test\MockProvider;
@@ -18,16 +18,16 @@ use Tebru\Gson\Test\MockProvider;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class WrappedInterfaceTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
+class WrappedTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var WrappedInterfaceTypeAdapterFactory
+     * @var WrappedTypeAdapterFactory
      */
     private $wrappedTypeAdapterFactory;
 
     public function setUp()
     {
-        $this->wrappedTypeAdapterFactory = new WrappedInterfaceTypeAdapterFactory(new TypeAdapterMock(), TypeAdapterMockable::class);
+        $this->wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new DefaultPhpType(TypeAdapterMockable::class));
     }
 
     public function testSupportsTrue()

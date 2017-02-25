@@ -40,7 +40,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedInterfaceTypeAdapterFactory;
+use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 
 /**
@@ -157,13 +157,7 @@ class GsonBuilder
     public function registerType(string $type, $handler): GsonBuilder
     {
         if ($handler instanceof TypeAdapter) {
-            $phpType = new DefaultPhpType($type);
-
-            if ($phpType->isObject() && interface_exists($type)) {
-                $this->typeAdapterFactories[] = new WrappedInterfaceTypeAdapterFactory($handler, $type);
-            } else {
-                $this->typeAdapters[$phpType->getUniqueKey()] = $handler;
-            }
+            $this->typeAdapterFactories[] = new WrappedTypeAdapterFactory($handler, new DefaultPhpType($type));
 
             return $this;
         }

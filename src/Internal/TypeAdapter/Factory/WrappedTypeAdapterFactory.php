@@ -16,7 +16,7 @@ use Tebru\Gson\TypeAdapterFactory;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class WrappedInterfaceTypeAdapterFactory implements TypeAdapterFactory
+class WrappedTypeAdapterFactory implements TypeAdapterFactory
 {
     /**
      * @var TypeAdapter
@@ -24,20 +24,20 @@ class WrappedInterfaceTypeAdapterFactory implements TypeAdapterFactory
     private $typeAdapter;
 
     /**
-     * @var string
+     * @var PhpType
      */
-    private $interfaceName;
+    private $type;
 
     /**
      * Constructor
      *
      * @param TypeAdapter $typeAdapter
-     * @param string $interfaceName
+     * @param PhpType $type
      */
-    public function __construct(TypeAdapter $typeAdapter, string $interfaceName)
+    public function __construct(TypeAdapter $typeAdapter, PhpType $type)
     {
         $this->typeAdapter = $typeAdapter;
-        $this->interfaceName = $interfaceName;
+        $this->type = $type;
     }
 
     /**
@@ -49,11 +49,7 @@ class WrappedInterfaceTypeAdapterFactory implements TypeAdapterFactory
      */
     public function supports(PhpType $type): bool
     {
-        if (!$type->isObject()) {
-            return false;
-        }
-
-        return $type->isA($this->interfaceName);
+        return $type->isA($this->type->getType());
     }
 
     /**

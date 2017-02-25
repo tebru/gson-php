@@ -16,7 +16,7 @@ use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedInterfaceTypeAdapterFactory;
+use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\ChildClass;
@@ -74,7 +74,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 
     public function testGetTypeAdapterInterface()
     {
-        $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [new WrappedInterfaceTypeAdapterFactory(new TypeAdapterMock(), TypeAdapterMockable::class)]);
+        $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [new WrappedTypeAdapterFactory(new TypeAdapterMock(), new DefaultPhpType(TypeAdapterMockable::class))]);
         $adapter = $typeAdapterProvider->getAdapter(new DefaultPhpType(TypeAdapterMock::class));
 
         self::assertInstanceOf(TypeAdapterMock::class, $adapter);
