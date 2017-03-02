@@ -39,7 +39,7 @@ class JsonAdapter
      */
     public function __construct(array $params)
     {
-        if (!array_key_exists('value', $params)) {
+        if (!isset($params['value'])) {
             throw new LogicException('@JsonAdapter annotation must specify a class as the first argument');
         }
 

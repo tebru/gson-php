@@ -40,11 +40,11 @@ class Expose
      */
     public function __construct(array $params)
     {
-        if (array_key_exists('serialize', $params)) {
+        if (isset($params['serialize'])) {
             $this->serialize = $params['serialize'];
         }
 
-        if (array_key_exists('deserialize', $params)) {
+        if (isset($params['deserialize'])) {
             $this->deserialize = $params['deserialize'];
         }
     }

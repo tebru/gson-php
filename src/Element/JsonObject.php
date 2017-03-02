@@ -91,7 +91,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      */
     public function has(string $property): bool
     {
-        return array_key_exists($property, $this->properties);
+        return isset($this->properties[$property]);
     }
 
     /**
@@ -240,7 +240,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      */
     public function remove(string $property): bool
     {
-        if (!array_key_exists($property, $this->properties)) {
+        if (!isset($this->properties[$property])) {
             return false;
         }
 

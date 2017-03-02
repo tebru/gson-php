@@ -34,7 +34,7 @@ class SerializedName
      */
     public function __construct(array $params)
     {
-        if (!array_key_exists('value', $params)) {
+        if (!isset($params['value'])) {
             throw new LogicException('@SerializedName annotation must specify a name as the first argument');
         }
 

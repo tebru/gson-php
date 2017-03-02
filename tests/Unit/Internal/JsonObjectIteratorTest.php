@@ -15,6 +15,7 @@ use Tebru\Gson\Internal\JsonObjectIterator;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\JsonObjectIterator
+ * @covers \Tebru\Gson\Internal\AbstractIterator
  */
 class JsonObjectIteratorTest extends PHPUnit_Framework_TestCase
 {
@@ -50,7 +51,7 @@ class JsonObjectIteratorTest extends PHPUnit_Framework_TestCase
         $iterator = new JsonObjectIterator($jsonObject);
         $iterator->next();
 
-        self::assertEquals(['bar', JsonPrimitive::create(2)], $iterator->current());
+        self::assertEquals(JsonPrimitive::create(2), $iterator->current());
     }
 
     public function testValid()

@@ -3,6 +3,7 @@
  * Copyright (c) Nate Brunette.
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
+
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
@@ -14,6 +15,7 @@ use Tebru\Gson\Internal\StdClassIterator;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\StdClassIterator
+ * @covers \Tebru\Gson\Internal\AbstractIterator
  */
 class StdClassIteratorTest extends PHPUnit_Framework_TestCase
 {
@@ -25,7 +27,8 @@ class StdClassIteratorTest extends PHPUnit_Framework_TestCase
 
         $iterator = new StdClassIterator($class);
 
-        self::assertSame(['foo', 1], $iterator->current());
+        self::assertSame('foo', $iterator->key());
+        self::assertSame(1, $iterator->current());
     }
 
     public function testNext()
@@ -37,7 +40,8 @@ class StdClassIteratorTest extends PHPUnit_Framework_TestCase
         $iterator = new StdClassIterator($class);
         $iterator->next();
 
-        self::assertSame(['bar', 2], $iterator->current());
+        self::assertSame('bar', $iterator->key());
+        self::assertSame(2, $iterator->current());
     }
 
     public function testKey()

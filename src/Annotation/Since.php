@@ -35,7 +35,7 @@ class Since
      */
     public function __construct(array $params)
     {
-        if (!array_key_exists('value', $params)) {
+        if (!isset($params['value'])) {
             throw new LogicException('@Since annotation must specify a version as the first argument');
         }
 

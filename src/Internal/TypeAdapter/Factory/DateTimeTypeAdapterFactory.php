@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
-use DateTime;
+use DateTimeInterface;
 use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\PhpType;
@@ -33,7 +33,7 @@ final class DateTimeTypeAdapterFactory implements TypeAdapterFactory
             return false;
         }
 
-        return $type->isA(DateTime::class);
+        return $type->isA(DateTimeInterface::class);
     }
 
     /**

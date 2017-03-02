@@ -123,7 +123,7 @@ class JsonArray extends JsonElement implements IteratorAggregate, Countable
      */
     public function has(int $index): bool
     {
-        return array_key_exists($index, $this->values);
+        return isset($this->values[$index]);
     }
 
     /**

@@ -40,11 +40,11 @@ class Exclude
      */
     public function __construct(array $params)
     {
-        if (array_key_exists('serialize', $params)) {
+        if (isset($params['serialize'])) {
             $this->serialize = (bool) $params['serialize'];
         }
 
-        if (array_key_exists('deserialize', $params)) {
+        if (isset($params['deserialize'])) {
             $this->deserialize = (bool) $params['deserialize'];
         }
     }

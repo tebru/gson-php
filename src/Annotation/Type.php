@@ -53,11 +53,11 @@ class Type
      */
     public function __construct(array $params)
     {
-        if (!array_key_exists('value', $params)) {
+        if (!isset($params['value'])) {
             throw new LogicException('@Type annotation must specify a type as the first argument');
         }
 
-        if (array_key_exists('options', $params)) {
+        if (isset($params['options'])) {
             $this->options = (array) $params['options'];
         }
 

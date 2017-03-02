@@ -53,7 +53,7 @@ final class PropertyCollection implements IteratorAggregate
      */
     public function getBySerializedName(string $name): ?Property
     {
-        if (!array_key_exists($name, $this->elements)) {
+        if (!isset($this->elements[$name])) {
             return null;
         }
 

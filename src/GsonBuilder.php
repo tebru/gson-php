@@ -377,10 +377,6 @@ class GsonBuilder
             $constructorConstructor
         );
 
-        foreach ($this->typeAdapters as $type => $typeAdapter) {
-            $typeAdapterProvider->addTypeAdapter($type, $typeAdapter);
-        }
-
         return new Gson($typeAdapterProvider, $propertyCollectionFactory, $this->serializeNull);
     }
 

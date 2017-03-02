@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Internal;
 
 use ArrayIterator;
-use SplStack;
+use SebastianBergmann\CodeCoverage\Node\Iterator;
 use Tebru\Gson\Element\JsonArray;
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonNull;
@@ -27,9 +27,23 @@ final class JsonElementReader implements JsonReadable
     /**
      * A stack representing the next element to be consumed
      *
-     * @var SplStack
+     * @var array
      */
-    private $stack;
+    private $stack = [];
+
+    /**
+     * An array of types that map to the position in the stack
+     *
+     * @var array
+     */
+    private $stackTypes = [];
+
+    /**
+     * The current size of the stack
+     *
+     * @var int
+     */
+    private $stackSize = 0;
 
     /**
      * A cache of the current [@see JsonToken].  This should get nulled out
@@ -47,8 +61,7 @@ final class JsonElementReader implements JsonReadable
      */
     public function __construct(JsonElement $jsonElement)
     {
-        $this->stack = new SplStack();
-        $this->stack->push($jsonElement);
+        $this->push($jsonElement);
     }
 
     /**
@@ -66,9 +79,8 @@ final class JsonElementReader implements JsonReadable
         }
 
         /** @var JsonArray $jsonArray */
-        $jsonArray = $this->stack->pop();
-        $this->stack->push($jsonArray->getIterator());
-        $this->currentToken = null;
+        $jsonArray = $this->pop();
+        $this->push($jsonArray->getIterator(), ArrayIterator::class);
     }
 
     /**
@@ -85,8 +97,7 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        $this->stack->pop();
-        $this->currentToken = null;
+        $this->pop();
     }
 
     /**
@@ -103,8 +114,7 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        $this->stack->push(new JsonObjectIterator($this->stack->pop()));
-        $this->currentToken = null;
+        $this->push(new JsonObjectIterator($this->pop()->asJsonObject()), JsonObjectIterator::class);
     }
 
     /**
@@ -121,8 +131,7 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        $this->stack->pop();
-        $this->currentToken = null;
+        $this->pop();
     }
 
     /**
@@ -153,9 +162,7 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        $this->currentToken = null;
-
-        return $this->stack->pop()->asBoolean();
+        return $this->pop()->asBoolean();
     }
 
     /**
@@ -172,9 +179,7 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        $this->currentToken = null;
-
-        return $this->stack->pop()->asFloat();
+        return $this->pop()->asFloat();
     }
 
     /**
@@ -191,9 +196,7 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        $this->currentToken = null;
-
-        return $this->stack->pop()->asInteger();
+        return $this->pop()->asInteger();
     }
 
     /**
@@ -215,9 +218,7 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        $this->currentToken = null;
-
-        return $this->stack->pop()->asString();
+        return $this->pop()->asString();
     }
 
     /**
@@ -234,8 +235,7 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        $this->stack->pop();
-        $this->currentToken = null;
+        $this->pop();
 
         return null;
     }
@@ -255,14 +255,14 @@ final class JsonElementReader implements JsonReadable
         }
 
         /** @var JsonObjectIterator $iterator */
-        $iterator = $this->stack->top();
-        $result = $iterator->current();
+        $iterator = $this->stack[$this->stackSize - 1];
+        $key = $iterator->key();
+        $value = $iterator->current();
         $iterator->next();
 
-        $this->stack->push($result[1]);
-        $this->currentToken = null;
+        $this->push($value);
 
-        return $result[0];
+        return $key;
     }
 
     /**
@@ -276,16 +276,16 @@ final class JsonElementReader implements JsonReadable
             return $this->currentToken;
         }
 
-        if (0 === count($this->stack)) {
+        if (0 === $this->stackSize) {
             $this->currentToken = JsonToken::END_DOCUMENT;
 
             return $this->currentToken;
         }
 
         $token = null;
-        $element = $this->stack->top();
+        $element = $this->stack[$this->stackSize - 1];
 
-        switch (get_class($element)) {
+        switch ($this->stackTypes[$this->stackSize - 1]) {
             case JsonArray::class:
                 $token = JsonToken::BEGIN_ARRAY;
                 break;
@@ -311,7 +311,7 @@ final class JsonElementReader implements JsonReadable
                 break;
             case ArrayIterator::class:
                 if ($element->valid()) {
-                    $this->stack->push($element->current());
+                    $this->push($element->current());
                     $element->next();
 
                     $token = $this->peek();
@@ -335,6 +335,38 @@ final class JsonElementReader implements JsonReadable
      */
     public function skipValue(): void
     {
-        $this->stack->pop();
+        $this->pop();
+    }
+
+    /**
+     * Push an element onto the stack
+     *
+     * @param JsonElement|Iterator $element
+     * @param string $type
+     */
+    private function push($element, $type = null): void
+    {
+        if (null === $type) {
+            $type = get_class($element);
+        }
+
+        $this->stack[$this->stackSize] = $element;
+        $this->stackTypes[$this->stackSize] = $type;
+        $this->stackSize++;
+        $this->currentToken = null;
+    }
+
+    /**
+     * Pop the last element off the stack and return it
+     *
+     * @return JsonElement|Iterator
+     */
+    private function pop()
+    {
+        $this->stackSize--;
+        array_pop($this->stackTypes);
+        $this->currentToken = null;
+
+        return array_pop($this->stack);
     }
 }

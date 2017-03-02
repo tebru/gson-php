@@ -54,21 +54,21 @@ final class AnnotationSet
         $class = get_class($annotation);
         switch ($type) {
             case self::TYPE_CLASS:
-                if (array_key_exists($class, $this->classAnnotations)) {
+                if (isset($this->classAnnotations[$class])) {
                     return;
                 }
 
                 $this->classAnnotations[$class] = $annotation;
                 break;
             case self::TYPE_PROPERTY:
-                if (array_key_exists($class, $this->propertyAnnotations)) {
+                if (isset($this->propertyAnnotations[$class])) {
                     return;
                 }
 
                 $this->propertyAnnotations[$class] = $annotation;
                 break;
             case self::TYPE_METHOD:
-                if (array_key_exists($class, $this->methodAnnotations)) {
+                if (isset($this->methodAnnotations[$class])) {
                     return;
                 }
 
@@ -88,15 +88,15 @@ final class AnnotationSet
      */
     public function getAnnotation(string $annotationClass, $filter)
     {
-        if (self::TYPE_PROPERTY & $filter && array_key_exists($annotationClass, $this->propertyAnnotations)) {
+        if (self::TYPE_PROPERTY & $filter && isset($this->propertyAnnotations[$annotationClass])) {
             return $this->propertyAnnotations[$annotationClass];
         }
 
-        if (self::TYPE_CLASS & $filter && array_key_exists($annotationClass, $this->classAnnotations)) {
+        if (self::TYPE_CLASS & $filter && isset($this->classAnnotations[$annotationClass])) {
             return $this->classAnnotations[$annotationClass];
         }
 
-        if (self::TYPE_METHOD & $filter && array_key_exists($annotationClass, $this->methodAnnotations)) {
+        if (self::TYPE_METHOD & $filter && isset($this->methodAnnotations[$annotationClass])) {
             return $this->methodAnnotations[$annotationClass];
         }
 

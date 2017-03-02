@@ -7,7 +7,6 @@
 namespace Tebru\Gson\Internal;
 
 use ArrayIterator;
-use SplStack;
 use stdClass;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\JsonReadable;
@@ -23,9 +22,23 @@ final class JsonDecodeReader implements JsonReadable
     /**
      * A stack representing the next element to be consumed
      *
-     * @var SplStack
+     * @var array
      */
-    private $stack;
+    private $stack = [];
+
+    /**
+     * An array of types that map to the position in the stack
+     *
+     * @var array
+     */
+    private $stackTypes = [];
+
+    /**
+     * The current size of the stack
+     *
+     * @var int
+     */
+    private $stackSize = 0;
 
     /**
      * A cache of the current [@see JsonToken].  This should get nulled out
@@ -43,8 +56,7 @@ final class JsonDecodeReader implements JsonReadable
      */
     public function __construct(string $json)
     {
-        $this->stack = new SplStack();
-        $this->stack->push(json_decode($json));
+        $this->push(json_decode($json));
     }
 
     /**
@@ -61,9 +73,8 @@ final class JsonDecodeReader implements JsonReadable
             );
         }
 
-        $array = $this->stack->pop();
-        $this->stack->push(new ArrayIterator($array));
-        $this->currentToken = null;
+        $array = $this->pop();
+        $this->push(new ArrayIterator($array), ArrayIterator::class);
     }
 
     /**
@@ -80,8 +91,7 @@ final class JsonDecodeReader implements JsonReadable
             );
         }
 
-        $this->stack->pop();
-        $this->currentToken = null;
+        $this->pop();
     }
 
     /**
@@ -98,8 +108,7 @@ final class JsonDecodeReader implements JsonReadable
             );
         }
 
-        $this->stack->push(new StdClassIterator($this->stack->pop()));
-        $this->currentToken = null;
+        $this->push(new StdClassIterator($this->pop()), StdClassIterator::class);
     }
 
     /**
@@ -116,8 +125,7 @@ final class JsonDecodeReader implements JsonReadable
             );
         }
 
-        $this->stack->pop();
-        $this->currentToken = null;
+        $this->pop();
     }
 
     /**
@@ -148,9 +156,7 @@ final class JsonDecodeReader implements JsonReadable
             );
         }
 
-        $this->currentToken = null;
-
-        return $this->stack->pop();
+        return $this->pop();
     }
 
     /**
@@ -167,9 +173,7 @@ final class JsonDecodeReader implements JsonReadable
             );
         }
 
-        $this->currentToken = null;
-
-        return (float)$this->stack->pop();
+        return (float)$this->pop();
     }
 
     /**
@@ -186,9 +190,7 @@ final class JsonDecodeReader implements JsonReadable
             );
         }
 
-        $this->currentToken = null;
-
-        return (int)$this->stack->pop();
+        return (int)$this->pop();
     }
 
     /**
@@ -210,9 +212,7 @@ final class JsonDecodeReader implements JsonReadable
             );
         }
 
-        $this->currentToken = null;
-
-        return $this->stack->pop();
+        return $this->pop();
     }
 
     /**
@@ -229,8 +229,7 @@ final class JsonDecodeReader implements JsonReadable
             );
         }
 
-        $this->stack->pop();
-        $this->currentToken = null;
+        $this->pop();
 
         return null;
     }
@@ -250,14 +249,14 @@ final class JsonDecodeReader implements JsonReadable
         }
 
         /** @var StdClassIterator $iterator */
-        $iterator = $this->stack->top();
-        $result = $iterator->current();
+        $iterator = $this->stack[$this->stackSize - 1];
+        $key = $iterator->key();
+        $value = $iterator->current();
         $iterator->next();
 
-        $this->stack->push($result[1]);
-        $this->currentToken = null;
+        $this->push($value);
 
-        return $result[0];
+        return $key;
     }
 
     /**
@@ -271,16 +270,16 @@ final class JsonDecodeReader implements JsonReadable
             return $this->currentToken;
         }
 
-        if (0 === count($this->stack)) {
+        if (0 === $this->stackSize) {
             $this->currentToken = JsonToken::END_DOCUMENT;
 
             return $this->currentToken;
         }
 
         $token = null;
-        $element = $this->stack->top();
+        $element = $this->stack[$this->stackSize - 1];
 
-        switch (gettype($element)) {
+        switch ($this->stackTypes[$this->stackSize - 1]) {
             case 'array':
                 $token = JsonToken::BEGIN_ARRAY;
                 break;
@@ -298,25 +297,24 @@ final class JsonDecodeReader implements JsonReadable
             case 'NULL':
                 $token = JsonToken::NULL;
                 break;
+            case StdClassIterator::class:
+                $token = $element->valid() ? JsonToken::NAME : JsonToken::END_OBJECT;
+                break;
+            case ArrayIterator::class:
+                if ($element->valid()) {
+                    $this->push($element->current());
+                    $element->next();
+
+                    $token = $this->peek();
+                } else {
+                    $token = JsonToken::END_ARRAY;
+                }
+                break;
             case 'object':
                 switch (get_class($element)) {
                     case stdClass::class:
                         $token = JsonToken::BEGIN_OBJECT;
                         break;
-                    case StdClassIterator::class:
-                        $token = $element->valid() ? JsonToken::NAME : JsonToken::END_OBJECT;
-                        break;
-                    case ArrayIterator::class:
-                        if ($element->valid()) {
-                            $this->stack->push($element->current());
-                            $element->next();
-
-                            $token = $this->peek();
-                            break;
-                        } else {
-                            $token = JsonToken::END_ARRAY;
-                            break;
-                        }
                 }
                 break;
         }
@@ -334,6 +332,38 @@ final class JsonDecodeReader implements JsonReadable
      */
     public function skipValue(): void
     {
-        $this->stack->pop();
+        $this->pop();
+    }
+
+    /**
+     * Push an element onto the stack
+     *
+     * @param mixed $element
+     * @param string $type
+     */
+    private function push($element, $type = null): void
+    {
+        if (null === $type) {
+            $type = gettype($element);
+        }
+
+        $this->stack[$this->stackSize] = $element;
+        $this->stackTypes[$this->stackSize] = $type;
+        $this->stackSize++;
+        $this->currentToken = null;
+    }
+
+    /**
+     * Pop the last element off the stack and return it
+     *
+     * @return mixed
+     */
+    private function pop()
+    {
+        $this->stackSize--;
+        array_pop($this->stackTypes);
+        $this->currentToken = null;
+
+        return array_pop($this->stack);
     }
 }

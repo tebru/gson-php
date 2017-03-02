@@ -36,7 +36,7 @@ final class ReflectionPropertySet implements IteratorAggregate
     public function add(ReflectionProperty $element): bool
     {
         $key = $element->getName();
-        if (array_key_exists($key, $this->elements)) {
+        if (isset($this->elements[$key])) {
             return false;
         }
 

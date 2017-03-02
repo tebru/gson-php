@@ -32,8 +32,9 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
         $stack = $this->stack($reader);
 
-        self::assertInstanceOf(ArrayIterator::class, $stack->top());
-        self::assertSame(1, $stack->top()->current());
+        $top = array_pop($stack);
+        self::assertInstanceOf(ArrayIterator::class, $top);
+        self::assertSame(1, $top->current());
     }
 
     public function testBeginArrayInvalidToken()
@@ -80,9 +81,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->beginObject();
 
         $stack = $this->stack($reader);
+        $top = array_pop($stack);
 
-        self::assertInstanceOf(StdClassIterator::class, $stack->top());
-        self::assertSame(['key', 'value'], $stack->top()->current());
+        self::assertInstanceOf(StdClassIterator::class, $top);
+        self::assertSame('key', $top->key());
+        self::assertSame('value', $top->current());
     }
 
     public function testBeginObjectInvalidToken()
@@ -557,7 +560,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         return [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [-1]];
     }
 
-    private function stack(JsonDecodeReader $reader): SplStack
+    private function stack(JsonDecodeReader $reader): array
     {
         return self::readAttribute($reader, 'stack');
     }

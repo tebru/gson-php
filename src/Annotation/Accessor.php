@@ -42,11 +42,11 @@ class Accessor
      */
     public function __construct(array $params)
     {
-        if (array_key_exists('get', $params)) {
+        if (isset($params['get'])) {
             $this->get = $params['get'];
         }
 
-        if (array_key_exists('set', $params)) {
+        if (isset($params['set'])) {
             $this->set = $params['set'];
         }
 

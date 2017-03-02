@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Internal;
 
-use Iterator;
 use SplQueue;
 use Tebru\Gson\Element\JsonObject;
 
@@ -15,13 +14,8 @@ use Tebru\Gson\Element\JsonObject;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class JsonObjectIterator implements Iterator
+final class JsonObjectIterator extends AbstractIterator
 {
-    /**
-     * @var SplQueue
-     */
-    private $queue;
-
     /**
      * Constructor
      *
@@ -31,59 +25,8 @@ final class JsonObjectIterator implements Iterator
     {
         $this->queue = new SplQueue();
         foreach($jsonObject as $key => $value) {
-            $this->queue->enqueue([$key, $value]);
+            $this->queue[] = [$key, $value];
+            $this->total++;
         }
-
-        $this->queue->rewind();
-    }
-
-    /**
-     * Return the current element
-     *
-     * @return array
-     */
-    public function current(): array
-    {
-        return $this->queue->current();
-    }
-
-    /**
-     * Move forward to next element
-     *
-     * @return void
-     */
-    public function next(): void
-    {
-        $this->queue->next();
-    }
-
-    /**
-     * Return the key of the current element
-     *
-     * @return string
-     */
-    public function key(): string
-    {
-        return $this->queue->current()[0];
-    }
-
-    /**
-     * Checks if current position is valid
-     *
-     * @return bool
-     */
-    public function valid(): bool
-    {
-        return $this->queue->valid();
-    }
-
-    /**
-     * Rewind the Iterator to the first element
-     *
-     * @return void
-     */
-    public function rewind(): void
-    {
-        $this->queue->rewind();
     }
 }
