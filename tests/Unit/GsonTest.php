@@ -19,14 +19,13 @@ use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\GsonObjectMockable;
 use Tebru\Gson\Test\Mock\GsonObjectMockInstanceCreatorMock;
 use Tebru\Gson\Test\Mock\Strategy\TwoPropertyNamingStrategy;
-use Tebru\Gson\Test\Mock\TypeAdapter\GsonObjectMockSerializerMock;
+use Tebru\Gson\Test\Mock\TypeAdapter\CustomTypeAdapter;
 use Tebru\Gson\Test\Mock\TypeAdapter\GsonObjectMockTypeAdapterMock;
 use Tebru\Gson\Test\Mock\TypeAdapter\Integer1Deserializer;
 use Tebru\Gson\Test\Mock\TypeAdapter\Integer1Serializer;
 use Tebru\Gson\Test\Mock\TypeAdapter\Integer1SerializerDeserializer;
 use Tebru\Gson\Test\Mock\TypeAdapter\Integer1TypeAdapter;
 use Tebru\Gson\Test\Mock\TypeAdapter\Integer1TypeAdapterFactory;
-use Tebru\Gson\Test\Mock\Unit\Integer1TypeAdaptable;
 
 /**
  * Class GsonTest
@@ -508,7 +507,9 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeSimple()
     {
-        $gson = Gson::builder()->build();
+        $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
+            ->build();
         $result = $gson->toJson($this->gsonMock());
         $json = json_decode($this->json(), true);
         $json['virtual'] = 2;
@@ -520,6 +521,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
     public function testSerializeDateTimeFormat()
     {
         $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->setDateTimeFormat('Y')
             ->build();
         $result = $gson->toJson($this->gsonMock());
@@ -534,6 +536,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
     public function testSerializeNulls()
     {
         $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->serializeNull()
             ->build();
         $result = $gson->toJson(new GsonMock());
@@ -557,7 +560,8 @@ class GsonTest extends PHPUnit_Framework_TestCase
             "exclude_from_strategy": null,
             "gson_object_mock": null,
             "virtual": 2,
-            "excluded_class": null
+            "excluded_class": null,
+            "pseudo_class": null
         }';
 
         self::assertJsonStringEqualsJsonString($expected, $result);
@@ -566,6 +570,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
     public function testSerializeNotSince()
     {
         $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->setVersion(1)
             ->build();
 
@@ -581,6 +586,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
     public function testSerializeNotUntil()
     {
         $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->setVersion(2)
             ->build();
 
@@ -596,6 +602,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
     public function testSerializeNotProtected()
     {
         $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->setExcludedModifier(ReflectionProperty::IS_PROTECTED)
             ->build();
 
@@ -622,6 +629,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
     public function testSerializeCustomTypeAdapter()
     {
         $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->registerType('int', new Integer1TypeAdapter())
             ->build();
 
@@ -638,6 +646,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
     public function testSerializeCustomTypeAdapterFactory()
     {
         $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->addTypeAdapterFactory(new Integer1TypeAdapterFactory())
             ->build();
 
@@ -679,6 +688,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
     public function testSerializeWithExclusionStrategy()
     {
         $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->addExclusionStrategy(new GsonMockExclusionStrategyMock(), true, true)
             ->build();
 
@@ -693,7 +703,9 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
     public function testToJsonElement()
     {
-        $gson = Gson::builder()->build();
+        $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
+            ->build();
         $result = $gson->toJsonElement($this->gsonMock());
         $json = json_decode($this->json(), true);
         $json['virtual'] = 2;
@@ -706,6 +718,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
     {
         $exclusionStrategy = new GsonMockExclusionStrategyMock();
         $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->addExclusionStrategy($exclusionStrategy, true, true)
             ->build();
         $result = $gson->toJsonElement($this->gsonMock());
@@ -714,6 +727,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         $exclusionStrategy->skipProperty = false;
 
         $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->addExclusionStrategy($exclusionStrategy, true, true)
             ->build();
         $result2 = $gson->toJsonElement($this->gsonMock());

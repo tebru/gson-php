@@ -50,6 +50,10 @@ final class JsonTypeAdapterFactory implements TypeAdapterFactory
             return false;
         }
 
+        if (!class_exists($type->getType())) {
+            return false;
+        }
+
         $annotations = $this->annotationCollectionFactory->createClassAnnotations($type->getType());
 
         return null !== $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_CLASS);

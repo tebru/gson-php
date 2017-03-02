@@ -57,6 +57,10 @@ final class ExcluderTypeAdapterFactory implements TypeAdapterFactory
             return false;
         }
 
+        if (!class_exists($type->getType())) {
+            return false;
+        }
+
         $classMetadata = $this->metadataFactory->createClassMetadata($type->getType());
         $skipSerialize = $this->excluder->excludeClass($classMetadata, true);
         $skipDeserialize = $this->excluder->excludeClass($classMetadata, false);

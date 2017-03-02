@@ -79,6 +79,11 @@ class ExcluderTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluderTypeAdapterFactory->supports(new DefaultPhpType('string')));
     }
 
+    public function testNotValidForPseudoObject()
+    {
+        self::assertFalse($this->excluderTypeAdapterFactory->supports(new DefaultPhpType('String')));
+    }
+
     public function testCreate()
     {
         $this->excluder->setRequireExpose(true);

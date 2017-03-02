@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Mock;
 
 use DateTime;
+use Tebru\Gson\Annotation as Gson;
 use Tebru\Gson\Annotation\Accessor;
 use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
@@ -89,6 +90,11 @@ class GsonMock
      * @Type("Tebru\Gson\Test\Mock\ExcludedClassMock")
      */
     private $excludedClass;
+
+    /**
+     * @Type("CustomType")
+     */
+    private $pseudoClass;
 
     public function getInteger(): ?int
     {

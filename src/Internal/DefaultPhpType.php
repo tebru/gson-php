@@ -187,7 +187,10 @@ final class DefaultPhpType implements PhpType
 
         if ($this->isObject()) {
             $this->class = TypeToken::OBJECT === $type ? stdClass::class : $type;
-            $this->interfaces = class_implements($this->class);
+
+            if (class_exists($type)) {
+                $this->interfaces = class_implements($this->class);
+            }
         } elseif (false === strpos($this->fullType, '<')) {
             $this->fullType = (string) $this->type;
         }

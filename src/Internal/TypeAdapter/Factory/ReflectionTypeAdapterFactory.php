@@ -74,7 +74,11 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      */
     public function supports(PhpType $type): bool
     {
-        return $type->isObject();
+        if (!$type->isObject()) {
+            return false;
+        }
+
+        return class_exists($type->getType());
     }
 
     /**

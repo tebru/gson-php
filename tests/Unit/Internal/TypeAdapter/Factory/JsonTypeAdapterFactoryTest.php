@@ -47,6 +47,13 @@ class JsonTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
         self::assertFalse($factory->supports(new DefaultPhpType('string')));
     }
 
+    public function testNotValidForPseudoClass()
+    {
+        $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+
+        self::assertFalse($factory->supports(new DefaultPhpType('String')));
+    }
+
     public function testCreate()
     {
         $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
