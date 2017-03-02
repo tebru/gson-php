@@ -30,28 +30,28 @@ class DateTimeTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
      */
     public function testValidSupports($class)
     {
-        $factory = new DateTimeTypeAdapterFactory();
+        $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
 
         self::assertTrue($factory->supports(new DefaultPhpType($class)));
     }
 
     public function testInvalidSupports()
     {
-        $factory = new DateTimeTypeAdapterFactory();
+        $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
 
         self::assertFalse($factory->supports(new DefaultPhpType(ChildClass::class)));
     }
 
     public function testNonClassSupports()
     {
-        $factory = new DateTimeTypeAdapterFactory();
+        $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
 
         self::assertFalse($factory->supports(new DefaultPhpType('string')));
     }
 
     public function testCreate()
     {
-        $factory = new DateTimeTypeAdapterFactory();
+        $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
         $phpType = new DefaultPhpType(DateTime::class);
         $adapter = $factory->create($phpType, MockProvider::typeAdapterProvider());
 

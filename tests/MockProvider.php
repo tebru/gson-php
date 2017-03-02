@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test;
 
+use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\VoidCache;
@@ -106,7 +107,7 @@ class MockProvider
                     new FloatTypeAdapterFactory(),
                     new BooleanTypeAdapterFactory(),
                     new NullTypeAdapterFactory(),
-                    new DateTimeTypeAdapterFactory(),
+                    new DateTimeTypeAdapterFactory(DateTime::ATOM),
                     new ArrayTypeAdapterFactory(),
                     new JsonElementTypeAdapterFactory(),
                     new ReflectionTypeAdapterFactory(

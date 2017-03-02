@@ -21,6 +21,21 @@ use Tebru\Gson\TypeAdapterFactory;
 final class DateTimeTypeAdapterFactory implements TypeAdapterFactory
 {
     /**
+     * @var string
+     */
+    private $format;
+
+    /**
+     * Constructor
+     *
+     * @param string $format
+     */
+    public function __construct(string $format)
+    {
+        $this->format = $format;
+    }
+
+    /**
      * Will be called before ::create() is called.  The current type will be passed
      * in.  Return false if ::create() should not be called.
      *
@@ -46,6 +61,6 @@ final class DateTimeTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        return new DateTimeTypeAdapter($type);
+        return new DateTimeTypeAdapter($type, $this->format);
     }
 }

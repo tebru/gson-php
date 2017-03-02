@@ -7,6 +7,7 @@
 namespace Tebru\Gson;
 
 use BadMethodCallException;
+use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\ArrayCache;
@@ -56,11 +57,6 @@ class GsonBuilder
      * @var TypeAdapterFactory[]
      */
     private $typeAdapterFactories = [];
-
-    /**
-     * @var TypeAdapter[]
-     */
-    private $typeAdapters = [];
 
     /**
      * @var InstanceCreator[]
@@ -115,6 +111,13 @@ class GsonBuilder
      * @var bool
      */
     private $serializeNull = false;
+
+    /**
+     * Default format for DateTimes
+     *
+     * @var string
+     */
+    private $dateTimeFormat = DateTime::ATOM;
 
     /**
      * True if we should be caching
@@ -295,6 +298,19 @@ class GsonBuilder
     }
 
     /**
+     * Set the default datetime format
+     *
+     * @param string $format
+     * @return GsonBuilder
+     */
+    public function setDateTimeFormat(string $format): GsonBuilder
+    {
+        $this->dateTimeFormat = $format;
+
+        return $this;
+    }
+
+    /**
      * Set whether caching is enabled
      *
      * @param bool $enableCache
@@ -410,7 +426,7 @@ class GsonBuilder
                 new FloatTypeAdapterFactory(),
                 new BooleanTypeAdapterFactory(),
                 new NullTypeAdapterFactory(),
-                new DateTimeTypeAdapterFactory(),
+                new DateTimeTypeAdapterFactory($this->dateTimeFormat),
                 new ArrayTypeAdapterFactory(),
                 new JsonElementTypeAdapterFactory(),
                 new ReflectionTypeAdapterFactory(

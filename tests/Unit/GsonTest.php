@@ -517,6 +517,20 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
+    public function testSerializeDateTimeFormat()
+    {
+        $gson = Gson::builder()
+            ->setDateTimeFormat('Y')
+            ->build();
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
+        $json['date'] = '2017';
+        unset($json['exclude']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
     public function testSerializeNulls()
     {
         $gson = Gson::builder()

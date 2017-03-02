@@ -27,13 +27,20 @@ final class DateTimeTypeAdapter extends TypeAdapter
     private $type;
 
     /**
+     * @var string
+     */
+    private $format;
+
+    /**
      * Constructor
      *
      * @param PhpType $type
+     * @param string $format
      */
-    public function __construct(PhpType $type)
+    public function __construct(PhpType $type, string $format)
     {
         $this->type = $type;
+        $this->format = $format;
     }
 
     /**
@@ -54,7 +61,7 @@ final class DateTimeTypeAdapter extends TypeAdapter
         $timezone = $this->type->getOptions()['timezone'] ?? null;
 
         if (null === $format) {
-            $format = DateTime::ATOM;
+            $format = $this->format;
         }
 
         if (null !== $timezone) {
@@ -85,7 +92,7 @@ final class DateTimeTypeAdapter extends TypeAdapter
         $format = $this->type->getOptions()['format'] ?? null;
 
         if (null === $format) {
-            $format = DateTime::ATOM;
+            $format = $this->format;
         }
 
         $dateTime = $value->format($format);
