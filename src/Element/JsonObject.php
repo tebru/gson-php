@@ -215,7 +215,6 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return array
-     * @throws \BadMethodCallException If the value is not an array
      */
     public function getAsArray(string $property)
     {

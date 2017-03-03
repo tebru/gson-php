@@ -48,7 +48,6 @@ final class DateTimeTypeAdapter extends TypeAdapter
      *
      * @param JsonReadable $reader
      * @return DateTime|null
-     * @throws \OutOfRangeException if the key doesn't exist
      */
     public function read(JsonReadable $reader): ?DateTime
     {

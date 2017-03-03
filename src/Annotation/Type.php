@@ -26,9 +26,9 @@ use Tebru\Gson\PhpType;
 class Type
 {
     /**
-     * An object representation of the php type
+     * The php type as a string
      *
-     * @var PhpType
+     * @var string
      */
     private $value;
 
@@ -48,8 +48,6 @@ class Type
      *
      * @param array $params
      * @throws \LogicException If value does not exist in params array
-     * @throws \RuntimeException If the value is not valid
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function __construct(array $params)
     {
@@ -57,20 +55,21 @@ class Type
             throw new LogicException('@Type annotation must specify a type as the first argument');
         }
 
+        $this->value = $params['value'];
+
         if (isset($params['options'])) {
             $this->options = (array) $params['options'];
         }
-
-        $this->value = new DefaultPhpType($params['value'], $this->options);
     }
 
     /**
      * Returns the php type
      *
      * @return PhpType
+     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function getType(): PhpType
     {
-        return $this->value;
+        return new DefaultPhpType($this->value, $this->options);
     }
 }

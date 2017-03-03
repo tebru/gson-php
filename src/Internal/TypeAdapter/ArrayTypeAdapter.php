@@ -54,10 +54,8 @@ final class ArrayTypeAdapter extends TypeAdapter
      * @return mixed
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If trying to read from non object/array
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \OutOfBoundsException if the index doesn't exist
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      * @throws \LogicException If the wrong number of generics exist
-     * @throws \RuntimeException If the value is not valid
      */
     public function read(JsonReadable $reader): ?array
     {

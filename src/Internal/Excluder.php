@@ -125,7 +125,6 @@ final class Excluder
      * @param ClassMetadata $classMetadata
      * @param bool $serialize
      * @return bool
-     * @throws \InvalidArgumentException If the type does not exist
      */
     public function excludeClass(ClassMetadata $classMetadata, bool $serialize): bool
     {

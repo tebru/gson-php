@@ -92,7 +92,6 @@ class Gson
      * @return mixed
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
-     * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      */
@@ -127,7 +126,6 @@ class Gson
      * @return JsonElement
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
-     * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      */

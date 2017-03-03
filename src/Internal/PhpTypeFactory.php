@@ -34,7 +34,6 @@ final class PhpTypeFactory
      * @param ReflectionMethod|null $getterMethod
      * @param ReflectionMethod|null $setterMethod
      * @return PhpType
-     * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function create(AnnotationSet $annotations, int $filter, ReflectionMethod $getterMethod = null, ReflectionMethod $setterMethod = null): PhpType

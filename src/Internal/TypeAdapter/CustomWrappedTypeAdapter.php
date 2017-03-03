@@ -107,7 +107,6 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
      * @param mixed $value
      * @return void
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
-     * @throws \LogicException If the token can not be handled
      * @throws \Tebru\Gson\Exception\UnsupportedMethodException
      */
     public function write(JsonWritable $writer, $value): void

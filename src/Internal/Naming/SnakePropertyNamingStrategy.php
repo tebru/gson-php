@@ -27,11 +27,10 @@ final class SnakePropertyNamingStrategy implements PropertyNamingStrategy
     public function translateName(string $propertyName): string
     {
         $snakeCase = [];
-        $length = strlen($propertyName);
-        for ($i = 0; $i < $length; ++$i) {
-            $snakeCase[] = ctype_upper($propertyName[$i])
-                ? '_' . strtolower($propertyName[$i])
-                : strtolower($propertyName[$i]);
+        foreach (str_split($propertyName) as $character) {
+            $snakeCase[] = ctype_upper($character)
+                ? '_' . strtolower($character)
+                : strtolower($character);
         }
 
         return implode($snakeCase);

@@ -116,7 +116,6 @@ final class PropertyCollectionFactory
      *
      * @param PhpType $phpType
      * @return PropertyCollection
-     * @throws \RuntimeException If the value is not valid
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      * @throws \InvalidArgumentException If the type does not exist
@@ -231,7 +230,6 @@ final class PropertyCollectionFactory
      * @param PropertyMetadata $propertyMetadata
      * @param bool $serialize
      * @return bool
-     * @throws \InvalidArgumentException If the type does not exist
      */
     private function excludeProperty(PropertyMetadata $propertyMetadata, bool $serialize): bool
     {

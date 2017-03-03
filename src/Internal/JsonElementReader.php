@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Internal;
 
 use ArrayIterator;
-use SebastianBergmann\CodeCoverage\Node\Iterator;
+use Iterator;
 use Tebru\Gson\Element\JsonArray;
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonNull;
@@ -114,7 +114,10 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        $this->push(new JsonObjectIterator($this->pop()->asJsonObject()), JsonObjectIterator::class);
+        /** @var JsonObject $jsonObject */
+        $jsonObject = $this->pop();
+
+        $this->push(new JsonObjectIterator($jsonObject), JsonObjectIterator::class);
     }
 
     /**
@@ -162,7 +165,10 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        return $this->pop()->asBoolean();
+        /** @var JsonPrimitive $primitive */
+        $primitive = $this->pop();
+
+        return $primitive->asBoolean();
     }
 
     /**
@@ -179,7 +185,10 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        return $this->pop()->asFloat();
+        /** @var JsonPrimitive $primitive */
+        $primitive = $this->pop();
+
+        return $primitive->asFloat();
     }
 
     /**
@@ -196,7 +205,10 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        return $this->pop()->asInteger();
+        /** @var JsonPrimitive $primitive */
+        $primitive = $this->pop();
+
+        return $primitive->asInteger();
     }
 
     /**
@@ -218,7 +230,10 @@ final class JsonElementReader implements JsonReadable
             );
         }
 
-        return $this->pop()->asString();
+        /** @var JsonPrimitive $primitive */
+        $primitive = $this->pop();
+
+        return $primitive->asString();
     }
 
     /**
