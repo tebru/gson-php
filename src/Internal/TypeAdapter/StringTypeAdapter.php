@@ -48,6 +48,6 @@ final class StringTypeAdapter extends TypeAdapter
             return;
         }
 
-        $writer->writeString($value);
+        $writer->writeString((string)$value);
     }
 }

@@ -48,6 +48,6 @@ final class BooleanTypeAdapter extends TypeAdapter
             return;
         }
 
-        $writer->writeBoolean($value);
+        $writer->writeBoolean((bool)$value);
     }
 }

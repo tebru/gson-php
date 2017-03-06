@@ -48,6 +48,6 @@ final class IntegerTypeAdapter extends TypeAdapter
             return;
         }
 
-        $writer->writeInteger($value);
+        $writer->writeInteger((int)$value);
     }
 }

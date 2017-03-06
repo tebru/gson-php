@@ -48,6 +48,6 @@ final class FloatTypeAdapter extends TypeAdapter
             return;
         }
 
-        $writer->writeFloat($value);
+        $writer->writeFloat((float)$value);
     }
 }
