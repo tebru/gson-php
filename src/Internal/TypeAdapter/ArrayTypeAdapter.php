@@ -102,7 +102,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                         case 2:
                             /** @var PhpType $keyType */
                             $keyType = $generics[0];
-                            if ($keyType->isString()) {
+                            if ($keyType->isString() || !is_numeric($name)) {
                                 $name = sprintf('"%s"', $name);
                             }
 
