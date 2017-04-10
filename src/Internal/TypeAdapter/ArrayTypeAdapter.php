@@ -7,9 +7,7 @@
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use LogicException;
-use Tebru\Gson\Exception\MalformedJsonException;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
-use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
