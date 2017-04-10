@@ -94,6 +94,7 @@ class Gson
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \Tebru\Gson\Exception\MalformedJsonException If the json cannot be decoded
      */
     public function fromJson(string $json, $type)
     {
@@ -128,6 +129,7 @@ class Gson
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \Tebru\Gson\Exception\MalformedJsonException If the json cannot be decoded
      */
     public function toJsonElement($object): JsonElement
     {

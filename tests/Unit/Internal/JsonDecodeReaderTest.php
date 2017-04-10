@@ -9,6 +9,7 @@ namespace Tebru\Gson\Test\Unit\Internal;
 use ArrayIterator;
 use PHPUnit_Framework_TestCase;
 use SplStack;
+use Tebru\Gson\Exception\MalformedJsonException;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\Internal\StdClassIterator;
@@ -22,6 +23,15 @@ use Tebru\Gson\JsonToken;
  */
 class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 {
+    public function testMalformedJson()
+    {
+        try {
+            new JsonDecodeReader('asdf');
+        } catch (MalformedJsonException $exception) {
+            self::assertSame('Could not decode json, the error message was: "Syntax error"', $exception->getMessage());
+        }
+    }
+
     public function testBeginArray()
     {
         $reader = new JsonDecodeReader('[1]');

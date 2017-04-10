@@ -8,6 +8,7 @@ namespace Tebru\Gson\Internal;
 
 use ArrayIterator;
 use stdClass;
+use Tebru\Gson\Exception\MalformedJsonException;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
@@ -69,10 +70,15 @@ final class JsonDecodeReader implements JsonReadable
      * Constructor
      *
      * @param string $json
+     * @throws \Tebru\Gson\Exception\MalformedJsonException If the json cannot be decoded
      */
     public function __construct(string $json)
     {
         $this->push(json_decode($json));
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new MalformedJsonException(sprintf('Could not decode json, the error message was: "%s"', json_last_error_msg()));
+        }
     }
 
     /**
