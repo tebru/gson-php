@@ -261,7 +261,7 @@ final class JsonDecodeReader implements JsonReadable
 
         $this->push($value);
 
-        return $key;
+        return (string)$key;
     }
 
     /**

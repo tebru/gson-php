@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use LogicException;
+use Tebru\Gson\Exception\MalformedJsonException;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\JsonWritable;
@@ -102,12 +103,18 @@ final class ArrayTypeAdapter extends TypeAdapter
                         case 2:
                             /** @var PhpType $keyType */
                             $keyType = $generics[0];
-                            if ($keyType->isString()) {
-                                $name = sprintf('"%s"', $name);
+
+                            if (!$keyType->isString() && !$keyType->isInteger()) {
+                                throw new LogicException('Array keys must be strings or integers');
                             }
 
-                            $keyAdapter = $this->typeAdapterProvider->getAdapter($keyType);
-                            $name = $keyAdapter->read(new JsonDecodeReader($name));
+                            if ($keyType->isInteger()) {
+                                if (!ctype_digit($name)) {
+                                    throw new UnexpectedJsonTokenException(sprintf('Expected integer, but found string for key at "%s"', $reader->getPath()));
+                                }
+
+                                $name = (int)$name;
+                            }
 
                             $valueAdapter = $this->typeAdapterProvider->getAdapter($generics[1]);
                             $array[$name] = $valueAdapter->read($reader);
@@ -144,7 +151,7 @@ final class ArrayTypeAdapter extends TypeAdapter
 
                 break;
             default:
-                throw new UnexpectedJsonTokenException(sprintf('Could not parse json, expected array or object but found "%s"', $token));
+                throw new UnexpectedJsonTokenException(sprintf('Could not parse json, expected array or object but found "%s" at "%s"', $token, $reader->getPath()));
         }
 
         return $array;

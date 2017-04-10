@@ -105,6 +105,37 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
     }
 
+    public function testDeserializeArrayWithNonStringOrIntegerKey()
+    {
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<float, string>'));
+        try {
+            $adapter->readFromJson('{"1.1": "foo"}');
+        } catch (LogicException $exception) {
+            self::assertSame('Array keys must be strings or integers', $exception->getMessage());
+        }
+    }
+
+    public function testDeserializeArrayWithIntegerKeyPassedString()
+    {
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<int, string>'));
+        try {
+            $adapter->readFromJson('{"asdf": "foo"}');
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected integer, but found string for key at "$.asdf"', $exception->getMessage());
+        }
+    }
+
+    public function testDeserializeArrayWithIntegerKey()
+    {
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<int, string>'));
+        $result = $adapter->readFromJson('{"1": "foo"}');
+
+        self::assertSame([1 => 'foo'], $result);
+    }
+
     public function testDeserializeMoreThanTwoGenericTypes()
     {
         $adapter = new ArrayTypeAdapter(new DefaultPhpType('array<string, string, string>'), $this->typeAdapterProvider);
@@ -131,7 +162,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         try {
             $adapter->readFromJson('1');
         } catch (UnexpectedJsonTokenException $exception) {
-            self::assertSame('Could not parse json, expected array or object but found "number"', $exception->getMessage());
+            self::assertSame('Could not parse json, expected array or object but found "number" at "$"', $exception->getMessage());
         }
     }
 
