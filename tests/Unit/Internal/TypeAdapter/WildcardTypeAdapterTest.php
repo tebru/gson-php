@@ -120,17 +120,17 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeException()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Could not parse token "end-object"');
-
         $reader = new JsonDecodeReader('{"key": "value"}');
         $reader->beginObject();
         $reader->nextName();
         $reader->nextString();
         $adapter = new WildcardTypeAdapter($this->typeAdapterProvider);
-        $result = $adapter->read($reader);
 
-        self::assertSame('key', $result);
+        try {
+            $adapter->read($reader);
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Could not parse token "end-object"', $exception->getMessage());
+        }
     }
 
     public function testSerializeArray()
@@ -184,11 +184,12 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeResource()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The type "resource" could not be handled by any of the registered type adapters');
-
         $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
 
-        $adapter->writeToJson(fopen(__FILE__, 'rb'), false);
+        try {
+            $adapter->writeToJson(fopen(__FILE__, 'rb'), false);
+        } catch (InvalidArgumentException $exception) {
+            self::assertSame('The type "resource" could not be handled by any of the registered type adapters', $exception->getMessage());
+        }
     }
 }

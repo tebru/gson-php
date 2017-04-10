@@ -42,9 +42,10 @@ class AccessorTest extends PHPUnit_Framework_TestCase
 
     public function testCreateAnnotationThrowsException()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('@Accessor annotation must specify either get or set key');
-
-        new Accessor([]);
+        try {
+            new Accessor([]);
+        } catch (LogicException $exception) {
+            self::assertSame('@Accessor annotation must specify either get or set key', $exception->getMessage());
+        }
     }
 }

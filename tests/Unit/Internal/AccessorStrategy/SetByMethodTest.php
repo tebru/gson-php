@@ -31,9 +31,11 @@ class SetByMethodTest extends PHPUnit_Framework_TestCase
 
     public function testSetterNoMethod()
     {
-        $this->expectException(Throwable::class);
-
         $strategy = new SetByMethod('foo');
-        $strategy->set(new SetByMethodTestMock(), 'bar');
+        try {
+            $strategy->set(new SetByMethodTestMock(), 'bar');
+        } catch (Throwable $throwable) {
+            self::assertSame('Call to undefined method Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\SetByMethodTest\SetByMethodTestMock::foo()', $throwable->getMessage());
+        }
     }
 }

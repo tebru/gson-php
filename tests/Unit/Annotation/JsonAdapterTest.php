@@ -28,9 +28,10 @@ class JsonAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testCreateThrowsException()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('@JsonAdapter annotation must specify a class as the first argument');
-
-        new JsonAdapter([]);
+        try {
+            new JsonAdapter([]);
+        } catch (LogicException $exception) {
+            self::assertSame('@JsonAdapter annotation must specify a class as the first argument', $exception->getMessage());
+        }
     }
 }

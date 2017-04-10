@@ -105,13 +105,14 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
 
     public function testGetAsPrimitiveException()
     {
-        $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('This value is not a primitive');
-
         $jsonObject = new JsonObject();
         $jsonObject->add('foo', new JsonObject());
 
-        $jsonObject->getAsJsonPrimitive('foo');
+        try {
+            $jsonObject->getAsJsonPrimitive('foo');
+        } catch (BadMethodCallException $exception) {
+            self::assertSame('This value is not a primitive', $exception->getMessage());
+        }
     }
 
     public function testGetAsJsonArray()
@@ -127,13 +128,14 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
 
     public function testGetAsJsonArrayException()
     {
-        $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('This value is not an array');
-
         $jsonObject = new JsonObject();
         $jsonObject->add('foo', new JsonObject());
 
-        $jsonObject->getAsJsonArray('foo');
+        try {
+            $jsonObject->getAsJsonArray('foo');
+        } catch (BadMethodCallException $exception) {
+            self::assertSame('This value is not an array', $exception->getMessage());
+        }
     }
 
     public function testGetAsJsonObject()
@@ -149,13 +151,14 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
 
     public function testGetAsJsonObjectException()
     {
-        $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('This value is not an object');
-
         $jsonObject = new JsonObject();
         $jsonObject->add('foo', new JsonArray());
 
-        $jsonObject->getAsJsonObject('foo');
+        try {
+            $jsonObject->getAsJsonObject('foo');
+        } catch (BadMethodCallException $exception) {
+            self::assertSame('This value is not an object', $exception->getMessage());
+        }
     }
 
     public function testGetAsString()

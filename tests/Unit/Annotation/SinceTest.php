@@ -27,9 +27,10 @@ class SinceTest extends PHPUnit_Framework_TestCase
 
     public function testNoVersion()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('@Since annotation must specify a version as the first argument');
-
-        new Since([]);
+        try {
+            new Since([]);
+        } catch (LogicException $exception) {
+            self::assertSame('@Since annotation must specify a version as the first argument', $exception->getMessage());
+        }
     }
 }

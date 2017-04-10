@@ -190,10 +190,11 @@ class PhpTypeTest extends PHPUnit_Framework_TestCase
 
     public function testGenericNoEndingBracket()
     {
-        $this->expectException(MalformedTypeException::class);
-        $this->expectExceptionMessage('Could not find ending ">" for generic type');
-
-        new DefaultPhpType('array<string');
+        try {
+            new DefaultPhpType('array<string');
+        } catch (MalformedTypeException $exception) {
+            self::assertSame('Could not find ending ">" for generic type', $exception->getMessage());
+        }
     }
 
     public function testGetTypeClass()

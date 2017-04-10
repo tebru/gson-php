@@ -46,11 +46,12 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testBeginArrayInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "begin-array", but found "begin-object"');
-
         $reader = new JsonElementReader(new JsonObject());
-        $reader->beginArray();
+        try {
+            $reader->beginArray();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "begin-array", but found "begin-object" at "$"', $exception->getMessage());
+        }
     }
 
     public function testEndArrayEmpty()
@@ -76,14 +77,15 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testEndArrayInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "end-array", but found "begin-object"');
-
         $jsonArray = new JsonArray();
         $jsonArray->addJsonElement(new JsonObject());
         $reader = new JsonElementReader($jsonArray);
         $reader->beginArray();
-        $reader->endArray();
+        try {
+            $reader->endArray();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "end-array", but found "begin-object" at "$[0]"', $exception->getMessage());
+        }
     }
 
     public function testBeginObject()
@@ -102,11 +104,12 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testBeginObjectInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "begin-object", but found "begin-array"');
-
         $reader = new JsonElementReader(new JsonArray());
-        $reader->beginObject();
+        try {
+            $reader->beginObject();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "begin-object", but found "begin-array" at "$"', $exception->getMessage());
+        }
     }
 
     public function testEndObjectEmpty()
@@ -133,14 +136,15 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testEndObjectInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "end-object", but found "name"');
-
         $jsonObject = new JsonObject();
         $jsonObject->addString('key', 'value');
         $reader = new JsonElementReader($jsonObject);
         $reader->beginObject();
-        $reader->endObject();
+        try {
+            $reader->endObject();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "end-object", but found "name" at "$"', $exception->getMessage());
+        }
     }
 
     public function testHasNextObjectTrue()
@@ -195,11 +199,12 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextBooleanInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "boolean", but found "string"');
-
         $reader = new JsonElementReader(JsonPrimitive::create('test'));
-        $reader->nextBoolean();
+        try {
+            $reader->nextBoolean();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "boolean", but found "string" at "$"', $exception->getMessage());
+        }
     }
 
     public function testNextDouble()
@@ -218,11 +223,12 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextDoubleInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "number", but found "string"');
-
         $reader = new JsonElementReader(JsonPrimitive::create('1.1'));
-        $reader->nextDouble();
+        try {
+            $reader->nextDouble();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "number", but found "string" at "$"', $exception->getMessage());
+        }
     }
 
     public function testNextInteger()
@@ -234,11 +240,12 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextIntegerInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "number", but found "string"');
-
         $reader = new JsonElementReader(JsonPrimitive::create('1'));
-        $reader->nextInteger();
+        try {
+            $reader->nextInteger();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "number", but found "string" at "$"', $exception->getMessage());
+        }
     }
 
     public function testNextString()
@@ -315,11 +322,12 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextStringInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "string", but found "number"');
-
         $reader = new JsonElementReader(JsonPrimitive::create(1));
-        $reader->nextString();
+        try {
+            $reader->nextString();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "string", but found "number" at "$"', $exception->getMessage());
+        }
     }
 
     public function testNextStringName()
@@ -341,11 +349,12 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextNullInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "null", but found "string"');
-
         $reader = new JsonElementReader(JsonPrimitive::create('test'));
-        $reader->nextNull();
+        try {
+            $reader->nextNull();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "null", but found "string" at "$"', $exception->getMessage());
+        }
     }
 
     public function testNextName()
@@ -360,15 +369,16 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextNameInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "name", but found "string"');
-
         $jsonObject = new JsonObject();
         $jsonObject->addString('key', 'value');
         $reader = new JsonElementReader($jsonObject);
         $reader->beginObject();
         $reader->nextName();
-        $reader->nextName();
+        try {
+            $reader->nextName();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "name", but found "string" at "$.key"', $exception->getMessage());
+        }
     }
 
     public function testPeekEmptyArrayEnding()

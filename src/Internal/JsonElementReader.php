@@ -55,6 +55,22 @@ final class JsonElementReader implements JsonReadable
     private $currentToken;
 
     /**
+     * An array of path names that correspond to the current stack
+     *
+     * @var array
+     */
+    private $pathNames = [];
+
+    /**
+     * An array of path indicies that correspond to the current stack. This array could contain invalid
+     * values at indexes outside the current stack. It could also contain incorrect values at indexes
+     * where a path name is used. Data should only be fetched by referencing the current position in the stack.
+     *
+     * @var array
+     */
+    private $pathIndices = [];
+
+    /**
      * Constructor
      *
      * @param JsonElement $jsonElement
@@ -72,15 +88,12 @@ final class JsonElementReader implements JsonReadable
      */
     public function beginArray(): void
     {
-        if ($this->peek() !== JsonToken::BEGIN_ARRAY) {
-            throw new UnexpectedJsonTokenException(
-                sprintf('Expected "%s", but found "%s"', JsonToken::BEGIN_ARRAY, $this->peek())
-            );
-        }
+        $this->expect(JsonToken::BEGIN_ARRAY);
 
         /** @var JsonArray $jsonArray */
         $jsonArray = $this->pop();
         $this->push($jsonArray->getIterator(), ArrayIterator::class);
+        $this->pathIndices[$this->stackSize - 1] = 0;
     }
 
     /**
@@ -91,13 +104,10 @@ final class JsonElementReader implements JsonReadable
      */
     public function endArray(): void
     {
-        if ($this->peek() !== JsonToken::END_ARRAY) {
-            throw new UnexpectedJsonTokenException(
-                sprintf('Expected "%s", but found "%s"', JsonToken::END_ARRAY, $this->peek())
-            );
-        }
+        $this->expect(JsonToken::END_ARRAY);
 
         $this->pop();
+        $this->incrementPathIndex();
     }
 
     /**
@@ -108,11 +118,7 @@ final class JsonElementReader implements JsonReadable
      */
     public function beginObject(): void
     {
-        if ($this->peek() !== JsonToken::BEGIN_OBJECT) {
-            throw new UnexpectedJsonTokenException(
-                sprintf('Expected "%s", but found "%s"', JsonToken::BEGIN_OBJECT, $this->peek())
-            );
-        }
+        $this->expect(JsonToken::BEGIN_OBJECT);
 
         /** @var JsonObject $jsonObject */
         $jsonObject = $this->pop();
@@ -128,13 +134,10 @@ final class JsonElementReader implements JsonReadable
      */
     public function endObject(): void
     {
-        if ($this->peek() !== JsonToken::END_OBJECT) {
-            throw new UnexpectedJsonTokenException(
-                sprintf('Expected "%s", but found "%s"', JsonToken::END_OBJECT, $this->peek())
-            );
-        }
+        $this->expect(JsonToken::END_OBJECT);
 
         $this->pop();
+        $this->incrementPathIndex();
     }
 
     /**
@@ -159,14 +162,12 @@ final class JsonElementReader implements JsonReadable
      */
     public function nextBoolean(): bool
     {
-        if ($this->peek() !== JsonToken::BOOLEAN) {
-            throw new UnexpectedJsonTokenException(
-                sprintf('Expected "%s", but found "%s"', JsonToken::BOOLEAN, $this->peek())
-            );
-        }
+        $this->expect(JsonToken::BOOLEAN);
 
         /** @var JsonPrimitive $primitive */
         $primitive = $this->pop();
+
+        $this->incrementPathIndex();
 
         return $primitive->asBoolean();
     }
@@ -179,14 +180,12 @@ final class JsonElementReader implements JsonReadable
      */
     public function nextDouble(): float
     {
-        if ($this->peek() !== JsonToken::NUMBER) {
-            throw new UnexpectedJsonTokenException(
-                sprintf('Expected "%s", but found "%s"', JsonToken::NUMBER, $this->peek())
-            );
-        }
+        $this->expect(JsonToken::NUMBER);
 
         /** @var JsonPrimitive $primitive */
         $primitive = $this->pop();
+
+        $this->incrementPathIndex();
 
         return $primitive->asFloat();
     }
@@ -199,14 +198,12 @@ final class JsonElementReader implements JsonReadable
      */
     public function nextInteger(): int
     {
-        if ($this->peek() !== JsonToken::NUMBER) {
-            throw new UnexpectedJsonTokenException(
-                sprintf('Expected "%s", but found "%s"', JsonToken::NUMBER, $this->peek())
-            );
-        }
+        $this->expect(JsonToken::NUMBER);
 
         /** @var JsonPrimitive $primitive */
         $primitive = $this->pop();
+
+        $this->incrementPathIndex();
 
         return $primitive->asInteger();
     }
@@ -224,14 +221,12 @@ final class JsonElementReader implements JsonReadable
             return $this->nextName();
         }
 
-        if ($peek !== JsonToken::STRING) {
-            throw new UnexpectedJsonTokenException(
-                sprintf('Expected "%s", but found "%s"', JsonToken::STRING, $this->peek())
-            );
-        }
+        $this->expect(JsonToken::STRING);
 
         /** @var JsonPrimitive $primitive */
         $primitive = $this->pop();
+
+        $this->incrementPathIndex();
 
         return $primitive->asString();
     }
@@ -244,13 +239,11 @@ final class JsonElementReader implements JsonReadable
      */
     public function nextNull()
     {
-        if ($this->peek() !== JsonToken::NULL) {
-            throw new UnexpectedJsonTokenException(
-                sprintf('Expected "%s", but found "%s"', JsonToken::NULL, $this->peek())
-            );
-        }
+        $this->expect(JsonToken::NULL);
 
         $this->pop();
+
+        $this->incrementPathIndex();
 
         return null;
     }
@@ -263,17 +256,15 @@ final class JsonElementReader implements JsonReadable
      */
     public function nextName(): string
     {
-        if ($this->peek() !== JsonToken::NAME) {
-            throw new UnexpectedJsonTokenException(
-                sprintf('Expected "%s", but found "%s"', JsonToken::NAME, $this->peek())
-            );
-        }
+        $this->expect(JsonToken::NAME);
 
         /** @var JsonObjectIterator $iterator */
         $iterator = $this->stack[$this->stackSize - 1];
         $key = $iterator->key();
         $value = $iterator->current();
         $iterator->next();
+
+        $this->pathNames[$this->stackSize - 1] = $key;
 
         $this->push($value);
 
@@ -354,6 +345,27 @@ final class JsonElementReader implements JsonReadable
     }
 
     /**
+     * Get the current read path in json xpath format
+     *
+     * @return string
+     */
+    public function getPath(): string
+    {
+        $result = '$';
+        foreach ($this->stack as $index => $item) {
+            if ($item instanceof ArrayIterator && isset($this->pathIndices[$index])) {
+                $result .= '['.$this->pathIndices[$index].']';
+            }
+
+            if ($item instanceof JsonObjectIterator && isset($this->pathNames[$index])) {
+                $result .= '.'.$this->pathNames[$index];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Push an element onto the stack
      *
      * @param JsonElement|Iterator $element
@@ -383,5 +395,40 @@ final class JsonElementReader implements JsonReadable
         $this->currentToken = null;
 
         return array_pop($this->stack);
+    }
+
+    /**
+     * Check that the next token equals the expectation
+     *
+     * @param string $expectedToken
+     * @throws UnexpectedJsonTokenException
+     */
+    private function expect(string $expectedToken)
+    {
+        if ($this->peek() === $expectedToken) {
+            return;
+        }
+
+        // increment the path index because exceptions are thrown before this value is increased. We
+        // want to display the current index that has a problem.
+        $this->incrementPathIndex();
+
+        throw new UnexpectedJsonTokenException(
+            sprintf('Expected "%s", but found "%s" at "%s"', $expectedToken, $this->peek(), $this->getPath())
+        );
+    }
+
+    /**
+     * Increment the path index. This should be called any time a new value is parsed.
+     */
+    private function incrementPathIndex(): void
+    {
+        $index = $this->stackSize - 1;
+        if ($index >= 0) {
+            if (!isset($this->pathIndices[$index])) {
+                $this->pathIndices[$index] = 0;
+            }
+            $this->pathIndices[$index]++;
+        }
     }
 }

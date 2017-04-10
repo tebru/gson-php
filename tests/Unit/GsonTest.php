@@ -8,6 +8,7 @@ namespace Tebru\Gson\Test\Unit;
 
 use BadMethodCallException;
 use DateTime;
+use LogicException;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
 use Tebru\Gson\Gson;
@@ -677,12 +678,13 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeWithInvalidHandler()
     {
-        $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Handler of type "Tebru\Gson\Test\Mock\ChildClass" is not supported');
-
-        Gson::builder()
-            ->registerType('foo', new ChildClass())
-            ->build();
+        try {
+            Gson::builder()
+                ->registerType('foo', new ChildClass())
+                ->build();
+        } catch (BadMethodCallException $exception) {
+            self::assertSame('Handler of type "Tebru\Gson\Test\Mock\ChildClass" is not supported', $exception->getMessage());
+        }
     }
 
     public function testSerializeWithExclusionStrategy()
@@ -745,12 +747,13 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
     public function testEnableCacheWithoutDirectoryThrowsException()
     {
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Cannot enable cache without a cache directory');
-
-        Gson::builder()
-            ->enableCache(true)
-            ->build();
+        try {
+            Gson::builder()
+                ->enableCache(true)
+                ->build();
+        } catch (LogicException $exception) {
+            self::assertSame('Cannot enable cache without a cache directory', $exception->getMessage());
+        }
     }
 
     private function json(): string

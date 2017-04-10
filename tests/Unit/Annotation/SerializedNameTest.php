@@ -27,9 +27,10 @@ class SerializedNameTest extends PHPUnit_Framework_TestCase
 
     public function testCreateThrowsException()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('@SerializedName annotation must specify a name as the first argument');
-
-        new SerializedName([]);
+        try {
+            new SerializedName([]);
+        } catch (LogicException $exception) {
+            self::assertSame('@SerializedName annotation must specify a name as the first argument', $exception->getMessage());
+        }
     }
 }

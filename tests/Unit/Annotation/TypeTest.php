@@ -38,9 +38,10 @@ class TypeTest extends PHPUnit_Framework_TestCase
 
     public function testCreateThrowsException()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('@Type annotation must specify a type as the first argument');
-
-        new Type([]);
+        try {
+            new Type([]);
+        } catch (LogicException $exception) {
+            self::assertSame('@Type annotation must specify a type as the first argument', $exception->getMessage());
+        }
     }
 }

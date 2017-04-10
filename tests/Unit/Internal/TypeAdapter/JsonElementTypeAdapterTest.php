@@ -113,14 +113,15 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeException()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Could not handle token "end-object"');
-
         $reader = new JsonDecodeReader('{}');
         $reader->beginObject();
 
         $typeAdapter = new JsonElementTypeAdapter();
-        $typeAdapter->read($reader);
+        try {
+            $typeAdapter->read($reader);
+        } catch (LogicException $exception) {
+            self::assertSame('Could not handle token "end-object"', $exception->getMessage());
+        }
     }
 
     public function testSerializeNull()

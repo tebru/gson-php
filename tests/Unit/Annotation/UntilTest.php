@@ -27,9 +27,10 @@ class UntilTest extends PHPUnit_Framework_TestCase
 
     public function testNoVersion()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('@Until annotation must specify a version as the first argument');
-
-        new Until([]);
+        try {
+            new Until([]);
+        } catch (LogicException $exception) {
+            self::assertSame('@Until annotation must specify a version as the first argument', $exception->getMessage());
+        }
     }
 }

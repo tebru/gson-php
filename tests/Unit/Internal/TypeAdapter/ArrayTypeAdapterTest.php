@@ -107,29 +107,32 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeMoreThanTwoGenericTypes()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Array may not have more than 2 generic types');
-
         $adapter = new ArrayTypeAdapter(new DefaultPhpType('array<string, string, string>'), $this->typeAdapterProvider);
-        $adapter->readFromJson('{}');
+        try {
+            $adapter->readFromJson('{}');
+        } catch (LogicException $exception) {
+            self::assertSame('Array may not have more than 2 generic types', $exception->getMessage());
+        }
     }
 
     public function testDeserializeMoreThanOneGenericTypeForArray()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('An array may only specify a generic type for the value');
-
         $adapter = new ArrayTypeAdapter(new DefaultPhpType('array<string, string>'), $this->typeAdapterProvider);
-        $adapter->readFromJson('[1]');
+        try {
+            $adapter->readFromJson('[1]');
+        } catch (LogicException $exception) {
+            self::assertSame('An array may only specify a generic type for the value', $exception->getMessage());
+        }
     }
 
     public function testDeserializeNonArrayOrObject()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Could not parse json, expected array or object but found "number"');
-
         $adapter = new ArrayTypeAdapter(new DefaultPhpType('array'), $this->typeAdapterProvider);
-        $adapter->readFromJson('1');
+        try {
+            $adapter->readFromJson('1');
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Could not parse json, expected array or object but found "number"', $exception->getMessage());
+        }
     }
 
     public function testSerializeNull()
@@ -198,10 +201,11 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeTooManyGenerics()
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Array may not have more than 2 generic types');
-
         $adapter = new ArrayTypeAdapter(new DefaultPhpType('array<int, string, int>'), $this->typeAdapterProvider);
-        $adapter->writeToJson([], false);
+        try {
+            $adapter->writeToJson([], false);
+        } catch (LogicException $exception) {
+            self::assertSame('Array may not have more than 2 generic types', $exception->getMessage());
+        }
     }
 }

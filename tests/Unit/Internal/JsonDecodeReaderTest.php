@@ -39,11 +39,12 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
     public function testBeginArrayInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "begin-array", but found "begin-object"');
-
         $reader = new JsonDecodeReader('{}');
-        $reader->beginArray();
+        try {
+            $reader->beginArray();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "begin-array", but found "begin-object" at "$"', $exception->getMessage());
+        }
     }
 
     public function testEndArrayEmpty()
@@ -67,12 +68,13 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
     public function testEndArrayInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "end-array", but found "begin-object"');
-
         $reader = new JsonDecodeReader('[{}]');
         $reader->beginArray();
-        $reader->endArray();
+        try {
+            $reader->endArray();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "end-array", but found "begin-object" at "$[0]"', $exception->getMessage());
+        }
     }
 
     public function testBeginObject()
@@ -90,11 +92,12 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
     public function testBeginObjectInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "begin-object", but found "begin-array"');
-
         $reader = new JsonDecodeReader('[]');
-        $reader->beginObject();
+        try {
+            $reader->beginObject();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "begin-object", but found "begin-array" at "$"', $exception->getMessage());
+        }
     }
 
     public function testEndObjectEmpty()
@@ -119,12 +122,14 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
     public function testEndObjectInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "end-object", but found "name"');
-
         $reader = new JsonDecodeReader('{"test": 1}');
         $reader->beginObject();
-        $reader->endObject();
+        $reader->nextName();
+        try {
+            $reader->endObject();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "end-object", but found "number" at "$.test"', $exception->getMessage());
+        }
     }
 
     public function testHasNextObjectTrue()
@@ -175,11 +180,14 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextBooleanInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "boolean", but found "string"');
-
-        $reader = new JsonDecodeReader('"tru"');
+        $reader = new JsonDecodeReader('[true, "tru"]');
+        $reader->beginArray();
         $reader->nextBoolean();
+        try {
+            $reader->nextBoolean();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "boolean", but found "string" at "$[1]"', $exception->getMessage());
+        }
     }
 
     public function testNextDouble()
@@ -198,11 +206,14 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextDoubleInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "number", but found "string"');
-
-        $reader = new JsonDecodeReader('"1.1"');
-        $reader->nextDouble();
+        $reader = new JsonDecodeReader('{"foo": "1.1"}');
+        $reader->beginObject();
+        $reader->nextName();
+        try {
+            $reader->nextDouble();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "number", but found "string" at "$.foo"', $exception->getMessage());
+        }
     }
 
     public function testNextInteger()
@@ -214,11 +225,13 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextIntegerInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "number", but found "string"');
-
-        $reader = new JsonDecodeReader('"1"');
-        $reader->nextInteger();
+        $reader = new JsonDecodeReader('["1"]');
+        $reader->beginArray();
+        try {
+            $reader->nextInteger();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "number", but found "string" at "$[0]"', $exception->getMessage());
+        }
     }
 
     public function testNextString()
@@ -295,11 +308,12 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextStringInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "string", but found "number"');
-
         $reader = new JsonDecodeReader('1');
-        $reader->nextString();
+        try {
+            $reader->nextString();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "string", but found "number" at "$"', $exception->getMessage());
+        }
     }
 
     public function testNextStringName()
@@ -319,11 +333,12 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextNullInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "null", but found "string"');
-
         $reader = new JsonDecodeReader('"test"');
-        $reader->nextNull();
+        try {
+            $reader->nextNull();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "null", but found "string" at "$"', $exception->getMessage());
+        }
     }
 
     public function testNextName()
@@ -336,13 +351,14 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 
     public function testNextNameInvalidToken()
     {
-        $this->expectException(UnexpectedJsonTokenException::class);
-        $this->expectExceptionMessage('Expected "name", but found "string"');
-
         $reader = new JsonDecodeReader('{"test": "test"}');
         $reader->beginObject();
         $reader->nextName();
-        $reader->nextName();
+        try {
+            $reader->nextName();
+        } catch (UnexpectedJsonTokenException $exception) {
+            self::assertSame('Expected "name", but found "string" at "$.test"', $exception->getMessage());
+        }
     }
 
     public function testPeekEmptyArrayEnding()
@@ -553,6 +569,184 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('active', $reader->nextName());
         self::assertTrue($reader->nextBoolean());
         $reader->endObject();
+    }
+
+    public function testGetPathSimpleName()
+    {
+        $reader = new JsonDecodeReader('{"name": 1}');
+        $reader->beginObject();
+        $reader->nextName();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$.name', $path);
+    }
+
+    public function testGetPathNestedName()
+    {
+        $reader = new JsonDecodeReader('{"name": {"name2": 1}}');
+        $reader->beginObject();
+        $reader->nextName();
+        $reader->beginObject();
+        $reader->nextName();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$.name.name2', $path);
+    }
+
+    public function testGetPathSimpleArray()
+    {
+        $reader = new JsonDecodeReader('[1, 2]');
+        $reader->beginArray();
+        $reader->nextInteger();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$[1]', $path);
+    }
+
+    public function testGetPathNestedArray()
+    {
+        $reader = new JsonDecodeReader('[1, [1, 2]]');
+        $reader->beginArray();
+        $reader->nextInteger();
+        $reader->beginArray();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$[1][0]', $path);
+    }
+
+    public function testComplexObject()
+    {
+        $reader = new JsonDecodeReader('
+            {
+                "name": {
+                    "nested": 2,
+                    "array": [1,2]
+                },
+                "second": [
+                    1,
+                    {
+                        "nested2": [1, 2, 3]
+                    }
+                ]
+            }
+        ');
+        $reader->beginObject();
+        $reader->nextName();
+        $reader->beginObject();
+        $reader->nextName();
+        $reader->nextInteger();
+        $reader->nextName();
+        $reader->beginArray();
+        $reader->nextInteger();
+        $reader->nextInteger();
+        $reader->endArray();
+        $reader->endObject();
+        $reader->nextName();
+        $reader->beginArray();
+        $reader->nextInteger();
+        $reader->beginObject();
+        $reader->nextName();
+        $reader->beginArray();
+        $reader->nextInteger();
+        $reader->nextInteger();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$.second[1].nested2[2]', $path);
+    }
+
+    public function testGetPathBegin()
+    {
+        $reader = new JsonDecodeReader('{"name": 1}');
+
+        $path = $reader->getPath();
+
+        self::assertSame('$', $path);
+    }
+
+    public function testGetPathBeginObject()
+    {
+        $reader = new JsonDecodeReader('{"name": 1}');
+        $reader->beginObject();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$', $path);
+    }
+
+    public function testGetPathLastValueInObject()
+    {
+        $reader = new JsonDecodeReader('{"name": 1}');
+        $reader->beginObject();
+        $reader->nextName();
+        $reader->nextInteger();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$.name', $path);
+    }
+
+    public function testGetPathEndObject()
+    {
+        $reader = new JsonDecodeReader('{"name": 1}');
+        $reader->beginObject();
+        $reader->nextName();
+        $reader->nextInteger();
+        $reader->endObject();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$', $path);
+    }
+
+    public function testGetPathBeginArray()
+    {
+        $reader = new JsonDecodeReader('[]');
+        $reader->beginArray();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$[0]', $path);
+    }
+
+    public function testGetPathFirstArray()
+    {
+        $reader = new JsonDecodeReader('[1, 2]');
+        $reader->beginArray();
+        $reader->nextInteger();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$[1]', $path);
+    }
+
+    public function testGetPathLastArray()
+    {
+        $reader = new JsonDecodeReader('[1, 2]');
+        $reader->beginArray();
+        $reader->nextInteger();
+        $reader->nextInteger();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$[2]', $path);
+    }
+
+    public function testGetPathEndArray()
+    {
+        $reader = new JsonDecodeReader('[1, 2]');
+        $reader->beginArray();
+        $reader->nextInteger();
+        $reader->nextInteger();
+        $reader->endArray();
+
+        $path = $reader->getPath();
+
+        self::assertSame('$', $path);
     }
 
     public function provideValidNumbers()

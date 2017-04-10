@@ -82,21 +82,23 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 
     public function testGetTypeAdapterThrowsException()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The type "stdClass" could not be handled by any of the registered type adapters');
-
         $typeAdapterProvider = new TypeAdapterProvider([], new VoidCache(), new ConstructorConstructor());
-        $typeAdapterProvider->getAdapter(new DefaultPhpType(stdClass::class));
+        try {
+            $typeAdapterProvider->getAdapter(new DefaultPhpType(stdClass::class));
+        } catch (InvalidArgumentException $exception) {
+            self::assertSame('The type "stdClass" could not be handled by any of the registered type adapters', $exception->getMessage());
+        }
     }
 
     public function testGetTypeAdapterSkipClass()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The type "string" could not be handled by any of the registered type adapters');
-
         $mock = new TypeAdapterMock();
         $typeAdapterProvider = new TypeAdapterProvider([$mock], new VoidCache(), new ConstructorConstructor());
-        $typeAdapterProvider->getAdapter(new DefaultPhpType('string'), $mock);
+        try {
+            $typeAdapterProvider->getAdapter(new DefaultPhpType('string'), $mock);
+        } catch (InvalidArgumentException $exception) {
+            self::assertSame('The type "string" could not be handled by any of the registered type adapters', $exception->getMessage());
+        }
     }
 
     public function testGetTypeAdapterUsesCache()
@@ -112,16 +114,17 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 
     public function testGetTypeAdapterSkipsCache()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The type "string" could not be handled by any of the registered type adapters');
-
         $this->typeAdapterProvider->getAdapter(new DefaultPhpType('string'));
 
         $reflectionProperty = new ReflectionProperty(TypeAdapterProvider::class, 'typeAdapterFactories');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($this->typeAdapterProvider, []);
 
-        self::assertInstanceOf(TypeAdapterMock::class, $this->typeAdapterProvider->getAdapter(new DefaultPhpType('string'), $this->typeAdapterMock));
+        try {
+            $this->typeAdapterProvider->getAdapter(new DefaultPhpType('string'));
+        } catch (InvalidArgumentException $exception) {
+            self::assertSame('The type "string" could not be handled by any of the registered type adapters', $exception->getMessage());
+        }
     }
 
     public function testGetTypeAdapterFromAnnotation()
@@ -158,10 +161,11 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 
     public function testGetTypeAdapterFromAnnotationException()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The type adapter must be an instance of TypeAdapter, TypeAdapterFactory, JsonSerializer, or JsonDeserializer, but "Tebru\Gson\Test\Mock\ChildClass" was found');
-
-        $this->typeAdapterProvider->getAdapterFromAnnotation(new DefaultPhpType('string'), new JsonAdapter(['value' => ChildClass::class]));
+        try {
+            $this->typeAdapterProvider->getAdapterFromAnnotation(new DefaultPhpType('string'), new JsonAdapter(['value' => ChildClass::class]));
+        } catch (InvalidArgumentException $exception) {
+            self::assertSame('The type adapter must be an instance of TypeAdapter, TypeAdapterFactory, JsonSerializer, or JsonDeserializer, but "Tebru\Gson\Test\Mock\ChildClass" was found', $exception->getMessage());
+        }
     }
 
     public function testGetJsonSerializerAndDeserializerFromAnnotation()

@@ -37,38 +37,42 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
 
     public function testAsString()
     {
-        $this->expectException(UnsupportedMethodException::class);
-        $this->expectExceptionMessage('This method "asString" is not supported on "Tebru\Gson\Element\JsonNull"');
-
         $element = new JsonNull();
-        $element->asString();
+        try {
+            $element->asString();
+        } catch (UnsupportedMethodException $exception) {
+            self::assertSame('This method "asString" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+        }
     }
 
     public function testAsInteger()
     {
-        $this->expectException(UnsupportedMethodException::class);
-        $this->expectExceptionMessage('This method "asInteger" is not supported on "Tebru\Gson\Element\JsonNull"');
-
         $element = new JsonNull();
-        $element->asInteger();
+        try {
+            $element->asInteger();
+        } catch (UnsupportedMethodException $exception) {
+            self::assertSame('This method "asInteger" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+        }
     }
 
     public function testAsFloat()
     {
-        $this->expectException(UnsupportedMethodException::class);
-        $this->expectExceptionMessage('This method "asFloat" is not supported on "Tebru\Gson\Element\JsonNull"');
-
         $element = new JsonNull();
-        $element->asFloat();
+        try {
+            $element->asFloat();
+        } catch (UnsupportedMethodException $exception) {
+            self::assertSame('This method "asFloat" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+        }
     }
 
     public function testAsBoolean()
     {
-        $this->expectException(UnsupportedMethodException::class);
-        $this->expectExceptionMessage('This method "asBoolean" is not supported on "Tebru\Gson\Element\JsonNull"');
-
         $element = new JsonNull();
-        $element->asBoolean();
+        try {
+            $element->asBoolean();
+        } catch (UnsupportedMethodException $exception) {
+            self::assertSame('This method "asBoolean" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+        }
     }
 
     public function testAsArray()
@@ -79,28 +83,31 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
 
     public function testAsJsonObject()
     {
-        $this->expectException(UnsupportedMethodException::class);
-        $this->expectExceptionMessage('This method "asJsonObject" is not supported on "Tebru\Gson\Element\JsonNull"');
-
         $element = new JsonNull();
-        $element->asJsonObject();
+        try {
+            $element->asJsonObject();
+        } catch (UnsupportedMethodException $exception) {
+            self::assertSame('This method "asJsonObject" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+        }
     }
 
     public function testAsJsonArray()
     {
-        $this->expectException(UnsupportedMethodException::class);
-        $this->expectExceptionMessage('This method "asJsonArray" is not supported on "Tebru\Gson\Element\JsonNull"');
-
         $element = new JsonNull();
-        $element->asJsonArray();
+        try {
+            $element->asJsonArray();
+        } catch (UnsupportedMethodException $exception) {
+            self::assertSame('This method "asJsonArray" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+        }
     }
 
     public function testGetValue()
     {
-        $this->expectException(UnsupportedMethodException::class);
-        $this->expectExceptionMessage('This method "getValue" is not supported on "Tebru\Gson\Element\JsonNull"');
-
         $element = new JsonNull();
-        $element->getValue();
+        try {
+            $element->getValue();
+        } catch (UnsupportedMethodException $exception) {
+            self::assertSame('This method "getValue" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+        }
     }
 }

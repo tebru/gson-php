@@ -28,9 +28,11 @@ class GetByMethodTest extends PHPUnit_Framework_TestCase
 
     public function testGetterNoMethod()
     {
-        $this->expectException(Throwable::class);
-
         $strategy = new GetByMethod('bar');
-        $strategy->get(new GetByMethodTestMock());
+        try {
+            $strategy->get(new GetByMethodTestMock());
+        } catch (Throwable $throwable) {
+            self::assertSame('Call to undefined method Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\GetByMethodTest\GetByMethodTestMock::bar()', $throwable->getMessage());
+        }
     }
 }
