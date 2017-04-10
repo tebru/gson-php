@@ -120,7 +120,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         try {
             $typeAdapter->read($reader);
         } catch (LogicException $exception) {
-            self::assertSame('Could not handle token "end-object"', $exception->getMessage());
+            self::assertSame('Could not handle token "end-object" at "$"', $exception->getMessage());
         }
     }
 

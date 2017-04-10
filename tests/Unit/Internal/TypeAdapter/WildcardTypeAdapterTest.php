@@ -129,7 +129,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
         try {
             $adapter->read($reader);
         } catch (UnexpectedJsonTokenException $exception) {
-            self::assertSame('Could not parse token "end-object"', $exception->getMessage());
+            self::assertSame('Could not parse token "end-object" at "$.key"', $exception->getMessage());
         }
     }
 

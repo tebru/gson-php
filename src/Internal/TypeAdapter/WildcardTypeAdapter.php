@@ -72,7 +72,10 @@ final class WildcardTypeAdapter extends TypeAdapter
                 break;
             default:
                 throw new UnexpectedJsonTokenException(
-                    sprintf('Could not parse token "%s"', $reader->peek())
+                    sprintf('Could not parse token "%s" at "%s"',
+                        $reader->peek(),
+                        $reader->getPath()
+                    )
                 );
         }
 

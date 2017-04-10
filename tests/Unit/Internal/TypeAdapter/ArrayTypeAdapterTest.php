@@ -112,7 +112,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         try {
             $adapter->readFromJson('{"1.1": "foo"}');
         } catch (LogicException $exception) {
-            self::assertSame('Array keys must be strings or integers', $exception->getMessage());
+            self::assertSame('Array keys must be strings or integers at "$.1.1"', $exception->getMessage());
         }
     }
 
@@ -142,7 +142,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         try {
             $adapter->readFromJson('{}');
         } catch (LogicException $exception) {
-            self::assertSame('Array may not have more than 2 generic types', $exception->getMessage());
+            self::assertSame('Array may not have more than 2 generic types at "$"', $exception->getMessage());
         }
     }
 
@@ -152,7 +152,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         try {
             $adapter->readFromJson('[1]');
         } catch (LogicException $exception) {
-            self::assertSame('An array may only specify a generic type for the value', $exception->getMessage());
+            self::assertSame('An array may only specify a generic type for the value at "$[0]"', $exception->getMessage());
         }
     }
 

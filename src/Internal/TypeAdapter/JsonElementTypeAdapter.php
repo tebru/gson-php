@@ -64,7 +64,7 @@ final class JsonElementTypeAdapter extends TypeAdapter
 
                 return new JsonNull();
             default:
-                throw new LogicException(sprintf('Could not handle token "%s"', $reader->peek()));
+                throw new LogicException(sprintf('Could not handle token "%s" at "%s"', $reader->peek(), $reader->getPath()));
         }
     }
 

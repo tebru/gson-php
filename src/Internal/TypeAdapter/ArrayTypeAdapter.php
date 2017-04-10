@@ -69,7 +69,7 @@ final class ArrayTypeAdapter extends TypeAdapter
         $generics = $this->type->getGenerics();
 
         if (count($generics) > 2) {
-            throw new LogicException('Array may not have more than 2 generic types');
+            throw new LogicException(sprintf('Array may not have more than 2 generic types at "%s"', $reader->getPath()));
         }
 
         switch ($token) {
@@ -105,7 +105,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                             $keyType = $generics[0];
 
                             if (!$keyType->isString() && !$keyType->isInteger()) {
-                                throw new LogicException('Array keys must be strings or integers');
+                                throw new LogicException(sprintf('Array keys must be strings or integers at "%s"', $reader->getPath()));
                             }
 
                             if ($keyType->isInteger()) {
@@ -143,7 +143,7 @@ final class ArrayTypeAdapter extends TypeAdapter
 
                             break;
                         default:
-                            throw new LogicException('An array may only specify a generic type for the value');
+                            throw new LogicException(sprintf('An array may only specify a generic type for the value at "%s"', $reader->getPath()));
                     }
                 }
 
