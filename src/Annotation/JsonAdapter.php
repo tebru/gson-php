@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Annotation;
 
-use LogicException;
+use OutOfBoundsException;
 
 /**
  * Class JsonAdapter
@@ -35,12 +35,12 @@ class JsonAdapter
      * Constructor
      *
      * @param array $params
-     * @throws \LogicException If name isn't provided
+     * @throws \OutOfBoundsException
      */
     public function __construct(array $params)
     {
         if (!isset($params['value'])) {
-            throw new LogicException('@JsonAdapter annotation must specify a class as the first argument');
+            throw new OutOfBoundsException('@JsonAdapter annotation must specify a class as the first argument');
         }
 
         $this->value = $params['value'];

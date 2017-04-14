@@ -42,7 +42,6 @@ final class MetadataFactory
      *
      * @param string $className
      * @return ClassMetadata
-     * @throws \InvalidArgumentException If the type does not exist
      */
     public function createClassMetadata(string $className): ClassMetadata
     {

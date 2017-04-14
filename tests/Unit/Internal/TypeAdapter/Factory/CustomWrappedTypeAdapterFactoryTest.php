@@ -10,7 +10,6 @@ use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
-
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\Test\Mock\ChildClass;

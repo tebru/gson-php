@@ -6,13 +6,13 @@
 
 namespace Tebru\Gson;
 
-use BadMethodCallException;
 use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\ChainCache;
 use Doctrine\Common\Cache\FilesystemCache;
+use InvalidArgumentException;
 use LogicException;
 use ReflectionProperty;
 use Tebru\Gson\Internal\AccessorMethodProvider;
@@ -154,7 +154,7 @@ class GsonBuilder
      * @param string $type
      * @param $handler
      * @return GsonBuilder
-     * @throws \BadMethodCallException If the handler is not supported
+     * @throws \InvalidArgumentException
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function registerType(string $type, $handler): GsonBuilder
@@ -183,7 +183,7 @@ class GsonBuilder
             return $this;
         }
 
-        throw new BadMethodCallException(sprintf('Handler of type "%s" is not supported', get_class($handler)));
+        throw new InvalidArgumentException(sprintf('Handler of type "%s" is not supported', get_class($handler)));
     }
 
     /**
@@ -340,8 +340,8 @@ class GsonBuilder
      * Builds a new [@see Gson] object based on configuration set
      *
      * @return Gson
-     * @throws \InvalidArgumentException If there was a problem creating the cache
-     * @throws \LogicException If trying to cache without a cache directory
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function build(): Gson
     {
@@ -357,15 +357,9 @@ class GsonBuilder
         $reader = new CachedReader(new AnnotationReader(), $doctrineAnnotationCache);
 
         $cache = false === $this->enableCache ? new ArrayCache() : new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
-        $cache->setNamespace('property_collection_cache');
+        $cache->setNamespace('gson');
 
-        $annotationCache = false === $this->enableCache ? new ArrayCache(): new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
-        $annotationCache->setNamespace('annotation_cache');
-
-        $typeAdapterCache = new ArrayCache();
-        $typeAdapterCache->setNamespace('type_adapter_cache');
-
-        $annotationCollectionFactory = new AnnotationCollectionFactory($reader, $annotationCache);
+        $annotationCollectionFactory = new AnnotationCollectionFactory($reader, $cache);
         $excluder = new Excluder();
         $excluder->setVersion($this->version);
         $excluder->setExcludedModifiers($this->excludedModifiers);
@@ -389,7 +383,6 @@ class GsonBuilder
         $constructorConstructor = new ConstructorConstructor($this->instanceCreators);
         $typeAdapterProvider = new TypeAdapterProvider(
             $this->getTypeAdapterFactories($propertyCollectionFactory, $excluder, $annotationCollectionFactory, $metadataFactory, $constructorConstructor),
-            $typeAdapterCache,
             $constructorConstructor
         );
 

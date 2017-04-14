@@ -401,7 +401,7 @@ final class JsonElementReader implements JsonReadable
      * Check that the next token equals the expectation
      *
      * @param string $expectedToken
-     * @throws UnexpectedJsonTokenException
+     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not the expectation
      */
     private function expect(string $expectedToken)
     {

@@ -117,14 +117,13 @@ final class PropertyCollectionFactory
      * @param PhpType $phpType
      * @return PropertyCollection
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
-     * @throws \InvalidArgumentException If the type does not exist
      */
     public function create(PhpType $phpType): PropertyCollection
     {
         $class = $phpType->getType();
+        $key = 'properties:'.$class;
 
-        $data = $this->cache->fetch($class);
+        $data = $this->cache->fetch($key);
         if (false !== $data) {
             return $data;
         }
@@ -217,7 +216,7 @@ final class PropertyCollectionFactory
             $properties->add($property);
         }
 
-        $this->cache->save($class, $properties);
+        $this->cache->save($key, $properties);
 
         return $properties;
     }

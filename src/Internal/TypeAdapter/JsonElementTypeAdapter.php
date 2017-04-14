@@ -29,7 +29,7 @@ final class JsonElementTypeAdapter extends TypeAdapter
      *
      * @param JsonReadable $reader
      * @return mixed
-     * @throws \LogicException If the token can not be handled
+     * @throws \LogicException
      */
     public function read(JsonReadable $reader): JsonElement
     {
@@ -74,7 +74,7 @@ final class JsonElementTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param JsonElement $value
      * @return void
-     * @throws \Tebru\Gson\Exception\UnsupportedMethodException
+     * @throws \Tebru\Gson\Exception\UnsupportedOperationException
      */
     public function write(JsonWritable $writer, $value): void
     {

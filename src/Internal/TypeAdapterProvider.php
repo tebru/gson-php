@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Internal;
 
-use Doctrine\Common\Cache\CacheProvider;
 use InvalidArgumentException;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
@@ -24,18 +23,18 @@ use Tebru\Gson\TypeAdapterFactory;
 final class TypeAdapterProvider
 {
     /**
-     * A cache of mapped factories
+     * A cache of created type adapters
      *
-     * @var CacheProvider
+     * @var array
      */
-    private $typeAdapterCache;
+    private $typeAdapters = [];
 
     /**
-     * All registered [@see TypeAdapter]s
+     * All registered [@see TypeAdapter] factories
      *
      * @var TypeAdapterFactory[]
      */
-    private $typeAdapterFactories = [];
+    private $typeAdapterFactories;
 
     /**
      * @var ConstructorConstructor
@@ -46,25 +45,12 @@ final class TypeAdapterProvider
      * Constructor
      *
      * @param array $typeAdapterFactories
-     * @param CacheProvider $cache
      * @param ConstructorConstructor $constructorConstructor
      */
-    public function __construct(array $typeAdapterFactories, CacheProvider $cache, ConstructorConstructor $constructorConstructor)
+    public function __construct(array $typeAdapterFactories, ConstructorConstructor $constructorConstructor)
     {
         $this->typeAdapterFactories = $typeAdapterFactories;
-        $this->typeAdapterCache = $cache;
         $this->constructorConstructor = $constructorConstructor;
-    }
-
-    /**
-     * Add type adapter directly into cache
-     *
-     * @param string $type
-     * @param TypeAdapter $typeAdapter
-     */
-    public function addTypeAdapter(string $type, TypeAdapter $typeAdapter): void
-    {
-        $this->typeAdapterCache->save($type, $typeAdapter);
     }
 
     /**
@@ -80,9 +66,8 @@ final class TypeAdapterProvider
     public function getAdapter(PhpType $type, TypeAdapterFactory $skip = null): TypeAdapter
     {
         $key = $type->getUniqueKey();
-        $typeAdapter = $this->typeAdapterCache->fetch($key);
-        if (null === $skip && false !== $typeAdapter) {
-            return $typeAdapter;
+        if (null === $skip && isset($this->typeAdapters[$key])) {
+            return $this->typeAdapters[$key];
         }
 
         foreach ($this->typeAdapterFactories as $typeAdapterFactory) {
@@ -98,7 +83,7 @@ final class TypeAdapterProvider
 
             // do not save skipped adapters
             if (null === $skip) {
-                $this->typeAdapterCache->save($key, $adapter);
+                $this->typeAdapters[$key] = $adapter;
             }
 
             return $adapter;
@@ -106,7 +91,7 @@ final class TypeAdapterProvider
 
         throw new InvalidArgumentException(sprintf(
             'The type "%s" could not be handled by any of the registered type adapters',
-            (string) $type
+            (string)$type
         ));
     }
 
@@ -118,7 +103,7 @@ final class TypeAdapterProvider
      * @param PhpType $type
      * @param JsonAdapter $jsonAdapterAnnotation
      * @return TypeAdapter
-     * @throws \InvalidArgumentException if an invalid adapter is found
+     * @throws \InvalidArgumentException
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function getAdapterFromAnnotation(PhpType $type, JsonAdapter $jsonAdapterAnnotation): TypeAdapter

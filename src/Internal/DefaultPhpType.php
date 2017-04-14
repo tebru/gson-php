@@ -84,7 +84,7 @@ final class DefaultPhpType implements PhpType
      *
      * @var array
      */
-    private $options = [];
+    private $options;
 
     /**
      * Constructor
@@ -106,10 +106,10 @@ final class DefaultPhpType implements PhpType
      *
      * @param mixed $variable
      * @return PhpType
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public static function createFromVariable($variable): PhpType
     {
+        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
         return is_object($variable) ? new self(get_class($variable)) : new self(gettype($variable));
     }
 

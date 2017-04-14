@@ -42,9 +42,9 @@ final class WildcardTypeAdapter extends TypeAdapter
      *
      * @param JsonReadable $reader
      * @return mixed
+     * @throws \InvalidArgumentException
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the token can't be processed
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      */
     public function read(JsonReadable $reader)
     {
@@ -88,8 +88,7 @@ final class WildcardTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param mixed $value
      * @return void
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \InvalidArgumentException
      */
     public function write(JsonWritable $writer, $value): void
     {

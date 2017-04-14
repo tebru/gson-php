@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Annotation;
 
-use LogicException;
+use OutOfBoundsException;
 use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\PhpType;
 
@@ -47,12 +47,12 @@ class Type
      * Constructor
      *
      * @param array $params
-     * @throws \LogicException If value does not exist in params array
+     * @throws \OutOfBoundsException
      */
     public function __construct(array $params)
     {
         if (!isset($params['value'])) {
-            throw new LogicException('@Type annotation must specify a type as the first argument');
+            throw new OutOfBoundsException('@Type annotation must specify a type as the first argument');
         }
 
         $this->value = $params['value'];

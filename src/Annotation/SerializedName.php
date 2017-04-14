@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Annotation;
 
-use LogicException;
+use OutOfBoundsException;
 
 /**
  * Class SerializedName
@@ -30,12 +30,12 @@ class SerializedName
      * Constructor
      *
      * @param array $params
-     * @throws \LogicException If name isn't provided
+     * @throws \OutOfBoundsException
      */
     public function __construct(array $params)
     {
         if (!isset($params['value'])) {
-            throw new LogicException('@SerializedName annotation must specify a name as the first argument');
+            throw new OutOfBoundsException('@SerializedName annotation must specify a name as the first argument');
         }
 
         $this->value = $params['value'];

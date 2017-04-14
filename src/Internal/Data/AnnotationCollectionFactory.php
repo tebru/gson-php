@@ -51,11 +51,10 @@ final class AnnotationCollectionFactory
      * @param string $className
      * @param string $propertyName
      * @return AnnotationSet
-     * @throws \InvalidArgumentException If the type does not exist
      */
     public function createPropertyAnnotations(string $className, string $propertyName): AnnotationSet
     {
-        $key = $className.':'.$propertyName;
+        $key = 'annotations:'.$className.':'.$propertyName;
         if ($this->cache->contains($key)) {
             return $this->cache->fetch($key);
         }
@@ -66,6 +65,7 @@ final class AnnotationCollectionFactory
 
         // start with with all property annotations
         foreach ($this->reader->getPropertyAnnotations($reflectionProperty) as $defaultAnnotation) {
+            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
             $annotations->addAnnotation($defaultAnnotation, AnnotationSet::TYPE_PROPERTY);
         }
 
@@ -77,6 +77,7 @@ final class AnnotationCollectionFactory
             if ($parentClass->hasProperty($reflectionProperty->getName())) {
                 $parentProperty = $parentClass->getProperty($reflectionProperty->getName());
                 foreach ($this->reader->getPropertyAnnotations($parentProperty) as $parentPropertyAnnotation) {
+                    /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
                     $annotations->addAnnotation($parentPropertyAnnotation, AnnotationSet::TYPE_PROPERTY);
                 }
             }
@@ -95,7 +96,6 @@ final class AnnotationCollectionFactory
      *
      * @param string $className
      * @return AnnotationSet
-     * @throws \InvalidArgumentException If the type does not exist
      */
     public function createClassAnnotations(string $className): AnnotationSet
     {
@@ -107,12 +107,14 @@ final class AnnotationCollectionFactory
 
         $annotations = new AnnotationSet();
         foreach ($this->reader->getClassAnnotations($reflectionClass) as $annotation) {
+            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
             $annotations->addAnnotation($annotation, AnnotationSet::TYPE_CLASS);
         }
         $parentClass = $reflectionClass->getParentClass();
 
         while (false !== $parentClass) {
             foreach ($this->reader->getClassAnnotations($parentClass) as $parentAnnotation) {
+                /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
                 $annotations->addAnnotation($parentAnnotation, AnnotationSet::TYPE_CLASS);
             }
             $parentClass = $parentClass->getParentClass();
@@ -129,7 +131,6 @@ final class AnnotationCollectionFactory
      * @param string $className
      * @param string $methodName
      * @return AnnotationSet
-     * @throws \InvalidArgumentException If the type does not exist
      */
     public function createMethodAnnotations(string $className, string $methodName): AnnotationSet
     {
@@ -142,6 +143,7 @@ final class AnnotationCollectionFactory
 
         $reflectionMethod = new ReflectionMethod($className, $methodName);
         foreach ($this->reader->getMethodAnnotations($reflectionMethod) as $annotation) {
+            /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
             $annotations->addAnnotation($annotation, AnnotationSet::TYPE_METHOD);
         }
 
@@ -151,6 +153,7 @@ final class AnnotationCollectionFactory
             if ($parentClass->hasMethod($reflectionMethod->getName())) {
                 $parentMethod = $parentClass->getMethod($reflectionMethod->getName());
                 foreach ($this->reader->getMethodAnnotations($parentMethod) as $parentMethodAnnotation) {
+                    /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
                     $annotations->addAnnotation($parentMethodAnnotation, AnnotationSet::TYPE_METHOD);
                 }
             }

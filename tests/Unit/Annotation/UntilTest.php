@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use LogicException;
+use OutOfBoundsException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Annotation\Until;
 
@@ -29,7 +29,7 @@ class UntilTest extends PHPUnit_Framework_TestCase
     {
         try {
             new Until([]);
-        } catch (LogicException $exception) {
+        } catch (OutOfBoundsException $exception) {
             self::assertSame('@Until annotation must specify a version as the first argument', $exception->getMessage());
         }
     }

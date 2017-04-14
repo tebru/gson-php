@@ -10,10 +10,10 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Class UnsupportedMethodException
+ * Class UnsupportedOperationException
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class UnsupportedMethodException extends RuntimeException implements Throwable
+class UnsupportedOperationException extends RuntimeException implements Throwable
 {
 }

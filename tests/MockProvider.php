@@ -84,14 +84,10 @@ class MockProvider
         return new ReflectionTypeAdapterFactory(new ConstructorConstructor(), self::propertyCollectionFactory($excluder), self::metadataFactory(), $excluder);
     }
 
-    public static function typeAdapterProvider(Excluder $excluder = null, array $factories = [], CacheProvider $cache = null)
+    public static function typeAdapterProvider(Excluder $excluder = null, array $factories = [])
     {
         if (null === $excluder) {
             $excluder = self::excluder();
-        }
-
-        if (null === $cache) {
-            $cache = new VoidCache();
         }
 
         return new TypeAdapterProvider(
@@ -119,7 +115,6 @@ class MockProvider
                     new WildcardTypeAdapterFactory(),
                 ]
             ),
-            $cache,
             new ConstructorConstructor()
         );
     }

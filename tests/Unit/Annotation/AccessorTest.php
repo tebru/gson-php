@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use LogicException;
+use OutOfBoundsException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Annotation\Accessor;
 
@@ -44,7 +44,7 @@ class AccessorTest extends PHPUnit_Framework_TestCase
     {
         try {
             new Accessor([]);
-        } catch (LogicException $exception) {
+        } catch (OutOfBoundsException $exception) {
             self::assertSame('@Accessor annotation must specify either get or set key', $exception->getMessage());
         }
     }

@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Annotation;
 
-use LogicException;
+use OutOfBoundsException;
 
 /**
  * Class Accessor
@@ -38,7 +38,7 @@ class Accessor
      * Constructor
      *
      * @param string[] $params
-     * @throws \LogicException If getter or setter is not specified
+     * @throws \OutOfBoundsException
      */
     public function __construct(array $params)
     {
@@ -51,7 +51,7 @@ class Accessor
         }
 
         if (null === $this->get && null === $this->set) {
-            throw new LogicException('@Accessor annotation must specify either get or set key');
+            throw new OutOfBoundsException('@Accessor annotation must specify either get or set key');
         }
     }
 

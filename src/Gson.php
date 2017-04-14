@@ -30,7 +30,7 @@ class Gson
      * A factory that reflects over class properties and returns a collection
      * of [@see Property] objects
      *
-     * @var \Tebru\Gson\Internal\Data\PropertyCollectionFactory
+     * @var PropertyCollectionFactory
      */
     private $propertyCollectionFactory;
 
@@ -73,8 +73,7 @@ class Gson
      *
      * @param mixed $object
      * @return string
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \InvalidArgumentException
      */
     public function toJson($object): string
     {
@@ -90,10 +89,8 @@ class Gson
      * @param string $json
      * @param object|string $type
      * @return mixed
+     * @throws \InvalidArgumentException
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      * @throws \Tebru\Gson\Exception\MalformedJsonException If the json cannot be decoded
      */
     public function fromJson(string $json, $type)
@@ -125,10 +122,8 @@ class Gson
      *
      * @param mixed $object
      * @return JsonElement
+     * @throws \InvalidArgumentException
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      * @throws \Tebru\Gson\Exception\MalformedJsonException If the json cannot be decoded
      */
     public function toJsonElement($object): JsonElement

@@ -7,9 +7,9 @@
 namespace Tebru\Gson\Element;
 
 use ArrayIterator;
-use BadMethodCallException;
 use Countable;
 use IteratorAggregate;
+use LogicException;
 use stdClass;
 
 /**
@@ -110,7 +110,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return JsonPrimitive
-     * @throws \BadMethodCallException If the value is not a primitive
+     * @throws \LogicException
      */
     public function getAsJsonPrimitive(string $property): JsonPrimitive
     {
@@ -118,7 +118,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
         $jsonElement = $this->properties[$property];
 
         if (!$jsonElement->isJsonPrimitive()) {
-            throw new BadMethodCallException('This value is not a primitive');
+            throw new LogicException('This value is not a primitive');
         }
 
         return $jsonElement;
@@ -129,7 +129,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return JsonObject
-     * @throws \BadMethodCallException If the value is not an object
+     * @throws \LogicException
      */
     public function getAsJsonObject(string $property): JsonObject
     {
@@ -137,7 +137,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
         $jsonElement = $this->properties[$property];
 
         if (!$jsonElement->isJsonObject()) {
-            throw new BadMethodCallException('This value is not an object');
+            throw new LogicException('This value is not an object');
         }
 
         return $jsonElement;
@@ -148,7 +148,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return JsonArray
-     * @throws \BadMethodCallException If the value is not an array
+     * @throws \LogicException
      */
     public function getAsJsonArray(string $property): JsonArray
     {
@@ -156,7 +156,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
         $jsonElement = $this->properties[$property];
 
         if (!$jsonElement->isJsonArray()) {
-            throw new BadMethodCallException('This value is not an array');
+            throw new LogicException('This value is not an array');
         }
 
         return $jsonElement;
@@ -167,7 +167,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return string
-     * @throws \BadMethodCallException If the value is not a primitive
+     * @throws \LogicException
      */
     public function getAsString(string $property): string
     {
@@ -179,7 +179,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return int
-     * @throws \BadMethodCallException If the value is not a primitive
+     * @throws \LogicException
      */
     public function getAsInteger(string $property): int
     {
@@ -191,7 +191,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return float
-     * @throws \BadMethodCallException If the value is not a primitive
+     * @throws \LogicException
      */
     public function getAsFloat(string $property): float
     {
@@ -203,7 +203,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return boolean
-     * @throws \BadMethodCallException If the value is not a primitive
+     * @throws \LogicException
      */
     public function getAsBoolean(string $property): bool
     {

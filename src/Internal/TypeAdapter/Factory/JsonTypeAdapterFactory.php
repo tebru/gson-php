@@ -42,7 +42,6 @@ final class JsonTypeAdapterFactory implements TypeAdapterFactory
      *
      * @param PhpType $type
      * @return bool
-     * @throws \InvalidArgumentException If the type does not exist
      */
     public function supports(PhpType $type): bool
     {
@@ -66,7 +65,7 @@ final class JsonTypeAdapterFactory implements TypeAdapterFactory
      * @param PhpType $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
-     * @throws \InvalidArgumentException if an invalid adapter is found
+     * @throws \InvalidArgumentException
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter

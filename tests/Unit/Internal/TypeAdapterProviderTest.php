@@ -5,11 +5,8 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\VoidCache;
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
-use ReflectionProperty;
 use stdClass;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Internal\ConstructorConstructor;
@@ -36,11 +33,6 @@ use Tebru\Gson\Test\MockProvider;
 class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var ArrayCache
-     */
-    private $cache;
-
-    /**
      * @var TypeAdapterMock
      */
     private $typeAdapterMock;
@@ -52,17 +44,8 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
     
     public function setUp()
     {
-        $this->cache = new ArrayCache();
         $this->typeAdapterMock = new TypeAdapterMock();
-        $this->typeAdapterProvider = MockProvider::typeAdapterProvider(MockProvider::excluder(), [$this->typeAdapterMock], $this->cache);
-    }
-
-    public function testAddTypeAdapter()
-    {
-        $this->typeAdapterProvider->addTypeAdapter('string', new TypeAdapterMock());
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('string'));
-
-        self::assertInstanceOf(TypeAdapterMock::class, $adapter);
+        $this->typeAdapterProvider = MockProvider::typeAdapterProvider(MockProvider::excluder(), [$this->typeAdapterMock]);
     }
 
     public function testGetTypeAdapter()
@@ -82,7 +65,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 
     public function testGetTypeAdapterThrowsException()
     {
-        $typeAdapterProvider = new TypeAdapterProvider([], new VoidCache(), new ConstructorConstructor());
+        $typeAdapterProvider = new TypeAdapterProvider([], new ConstructorConstructor());
         try {
             $typeAdapterProvider->getAdapter(new DefaultPhpType(stdClass::class));
         } catch (InvalidArgumentException $exception) {
@@ -93,7 +76,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
     public function testGetTypeAdapterSkipClass()
     {
         $mock = new TypeAdapterMock();
-        $typeAdapterProvider = new TypeAdapterProvider([$mock], new VoidCache(), new ConstructorConstructor());
+        $typeAdapterProvider = new TypeAdapterProvider([$mock], new ConstructorConstructor());
         try {
             $typeAdapterProvider->getAdapter(new DefaultPhpType('string'), $mock);
         } catch (InvalidArgumentException $exception) {
@@ -103,28 +86,9 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 
     public function testGetTypeAdapterUsesCache()
     {
-        $this->typeAdapterProvider->getAdapter(new DefaultPhpType('string'));
+        $stringTypeAdapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('string'));
 
-        $reflectionProperty = new ReflectionProperty(TypeAdapterProvider::class, 'typeAdapterFactories');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->typeAdapterProvider, []);
-
-        self::assertInstanceOf(TypeAdapterMock::class, $this->typeAdapterProvider->getAdapter(new DefaultPhpType('string')));
-    }
-
-    public function testGetTypeAdapterSkipsCache()
-    {
-        $this->typeAdapterProvider->getAdapter(new DefaultPhpType('string'));
-
-        $reflectionProperty = new ReflectionProperty(TypeAdapterProvider::class, 'typeAdapterFactories');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->typeAdapterProvider, []);
-
-        try {
-            $this->typeAdapterProvider->getAdapter(new DefaultPhpType('string'));
-        } catch (InvalidArgumentException $exception) {
-            self::assertSame('The type "string" could not be handled by any of the registered type adapters', $exception->getMessage());
-        }
+        self::assertSame($stringTypeAdapter, $this->typeAdapterProvider->getAdapter(new DefaultPhpType('string')));
     }
 
     public function testGetTypeAdapterFromAnnotation()

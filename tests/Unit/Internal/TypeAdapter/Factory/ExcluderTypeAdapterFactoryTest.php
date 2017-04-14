@@ -16,7 +16,6 @@ use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
-
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ExcluderExcludeSerializeMock;
 use Tebru\Gson\Test\Mock\ExcluderExposeMock;

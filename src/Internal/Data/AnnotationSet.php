@@ -47,7 +47,7 @@ final class AnnotationSet
      *
      * @param $annotation
      * @param int $type
-     * @throws \InvalidArgumentException If the type does not exist
+     * @throws \InvalidArgumentException
      */
     public function addAnnotation($annotation, int $type)
     {
@@ -108,7 +108,7 @@ final class AnnotationSet
      *
      * @param int $type
      * @return array
-     * @throws \InvalidArgumentException If the type does not exist
+     * @throws \InvalidArgumentException
      */
     public function toArray(int $type)
     {

@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Annotation;
 
-use LogicException;
+use OutOfBoundsException;
 
 /**
  * Class Since
@@ -31,12 +31,12 @@ class Since
      * Constructor
      *
      * @param array $params
-     * @throws \LogicException If the version is not specified
+     * @throws \OutOfBoundsException
      */
     public function __construct(array $params)
     {
         if (!isset($params['value'])) {
-            throw new LogicException('@Since annotation must specify a version as the first argument');
+            throw new OutOfBoundsException('@Since annotation must specify a version as the first argument');
         }
 
         $this->value = (string) $params['value'];

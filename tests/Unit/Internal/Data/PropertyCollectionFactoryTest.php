@@ -120,10 +120,10 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
 
         // assert data is stored in cache
         $factory->create(new DefaultPhpType(PropertyCollectionMock::class));
-        self::assertCount(4, $cache->fetch(PropertyCollectionMock::class)->toArray());
+        self::assertCount(4, $cache->fetch('properties:'.PropertyCollectionMock::class)->toArray());
 
         // overwrite cache
-        $cache->save(PropertyCollectionMock::class, new PropertyCollection());
+        $cache->save('properties:'.PropertyCollectionMock::class, new PropertyCollection());
 
         // assert we use the new cache
         $collection = $factory->create(new DefaultPhpType(PropertyCollectionMock::class));

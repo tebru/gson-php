@@ -236,7 +236,7 @@ final class Property
     }
 
     /**
-     * Given an object an value, set the value to the object at this property
+     * Given an object and value, set the value to the object at this property
      *
      * @param object $object
      * @param mixed $value

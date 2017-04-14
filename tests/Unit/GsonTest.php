@@ -6,8 +6,8 @@
 
 namespace Tebru\Gson\Test\Unit;
 
-use BadMethodCallException;
 use DateTime;
+use InvalidArgumentException;
 use LogicException;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
@@ -682,7 +682,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
             Gson::builder()
                 ->registerType('foo', new ChildClass())
                 ->build();
-        } catch (BadMethodCallException $exception) {
+        } catch (InvalidArgumentException $exception) {
             self::assertSame('Handler of type "Tebru\Gson\Test\Mock\ChildClass" is not supported', $exception->getMessage());
         }
     }

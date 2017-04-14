@@ -39,7 +39,7 @@ final class DefaultJsonDeserializationContext implements JsonDeserializationCont
      * @param JsonElement $jsonElement
      * @param string $type
      * @return mixed
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws \InvalidArgumentException
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function deserialize(JsonElement $jsonElement, string $type)

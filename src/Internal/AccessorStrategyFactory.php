@@ -39,7 +39,9 @@ final class AccessorStrategyFactory
     {
         if (null !== $getterMethod) {
             return new GetByMethod($getterMethod->getName());
-        } elseif ($reflectionProperty->isPublic()) {
+        }
+
+        if ($reflectionProperty->isPublic()) {
             return new GetByPublicProperty($reflectionProperty->getName());
         }
 
@@ -61,7 +63,9 @@ final class AccessorStrategyFactory
     {
         if (null !== $setterMethod) {
             return new SetByMethod($setterMethod->getName());
-        } elseif ($reflectionProperty->isPublic()) {
+        }
+
+        if ($reflectionProperty->isPublic()) {
             return new SetByPublicProperty($reflectionProperty->getName());
         }
 

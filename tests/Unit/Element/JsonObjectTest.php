@@ -5,7 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\Element;
 
-use BadMethodCallException;
+use LogicException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Element\JsonArray;
 use Tebru\Gson\Element\JsonObject;
@@ -110,7 +110,7 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
 
         try {
             $jsonObject->getAsJsonPrimitive('foo');
-        } catch (BadMethodCallException $exception) {
+        } catch (LogicException $exception) {
             self::assertSame('This value is not a primitive', $exception->getMessage());
         }
     }
@@ -133,7 +133,7 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
 
         try {
             $jsonObject->getAsJsonArray('foo');
-        } catch (BadMethodCallException $exception) {
+        } catch (LogicException $exception) {
             self::assertSame('This value is not an array', $exception->getMessage());
         }
     }
@@ -156,7 +156,7 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
 
         try {
             $jsonObject->getAsJsonObject('foo');
-        } catch (BadMethodCallException $exception) {
+        } catch (LogicException $exception) {
             self::assertSame('This value is not an object', $exception->getMessage());
         }
     }

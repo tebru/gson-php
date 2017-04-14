@@ -88,7 +88,6 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
      * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      */
     public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {

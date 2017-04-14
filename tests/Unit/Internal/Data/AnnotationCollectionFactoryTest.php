@@ -15,8 +15,6 @@ use Tebru\Gson\Annotation\Until;
 use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\AnnotationSet;
-
-
 use Tebru\Gson\Test\Mock\Unit\Internal\Data\AnnotationCollectionFactoryTest\AnnotationCollectionFactoryTestChildMock;
 use Tebru\Gson\Test\Mock\Unit\Internal\Data\AnnotationCollectionFactoryTest\AnnotationCollectionFactoryTestParentMock;
 use Tebru\Gson\Test\MockProvider;
@@ -124,7 +122,7 @@ class AnnotationCollectionFactoryTest extends PHPUnit_Framework_TestCase
         $cachedAnnotations = new AnnotationSet();
         $cachedAnnotations->addAnnotation(new Type(['value' => 'string']), AnnotationSet::TYPE_PROPERTY);
 
-        $this->cache->save(AnnotationCollectionFactoryTestParentMock::class.':'.'noParents', $cachedAnnotations);
+        $this->cache->save('annotations:'.AnnotationCollectionFactoryTestParentMock::class.':noParents', $cachedAnnotations);
         $annotations = $this->annotationCollectionFactory->createPropertyAnnotations(AnnotationCollectionFactoryTestParentMock::class, 'noParents');
 
         self::assertSame($cachedAnnotations, $annotations);
