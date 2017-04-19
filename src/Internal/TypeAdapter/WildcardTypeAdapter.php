@@ -8,12 +8,11 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\JsonWritable;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\Internal\TypeToken;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
 use Tebru\Gson\TypeAdapter;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class WildcardTypeAdapter
@@ -44,31 +43,31 @@ final class WildcardTypeAdapter extends TypeAdapter
      * @return mixed
      * @throws \InvalidArgumentException
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the token can't be processed
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function read(JsonReadable $reader)
     {
         switch ($reader->peek()) {
             case JsonToken::BEGIN_ARRAY:
-                $type = new DefaultPhpType(TypeToken::ARRAY);
+                $type = new TypeToken(TypeToken::ARRAY);
                 break;
             case JsonToken::BEGIN_OBJECT:
-                $type = new DefaultPhpType(TypeToken::OBJECT);
+                $type = new TypeToken(TypeToken::OBJECT);
                 break;
             case JsonToken::STRING:
-                $type = new DefaultPhpType(TypeToken::STRING);
+                $type = new TypeToken(TypeToken::STRING);
                 break;
             case JsonToken::NAME:
-                $type = new DefaultPhpType(TypeToken::STRING);
+                $type = new TypeToken(TypeToken::STRING);
                 break;
             case JsonToken::BOOLEAN:
-                $type = new DefaultPhpType(TypeToken::BOOLEAN);
+                $type = new TypeToken(TypeToken::BOOLEAN);
                 break;
             case JsonToken::NUMBER:
-                $type = new DefaultPhpType(TypeToken::FLOAT);
+                $type = new TypeToken(TypeToken::FLOAT);
                 break;
             case JsonToken::NULL:
-                $type = new DefaultPhpType(TypeToken::NULL);
+                $type = new TypeToken(TypeToken::NULL);
                 break;
             default:
                 throw new UnexpectedJsonTokenException(
@@ -92,7 +91,7 @@ final class WildcardTypeAdapter extends TypeAdapter
      */
     public function write(JsonWritable $writer, $value): void
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(DefaultPhpType::createFromVariable($value));
+        $adapter = $this->typeAdapterProvider->getAdapter(TypeToken::createFromVariable($value));
         $adapter->write($writer, $value);
     }
 }

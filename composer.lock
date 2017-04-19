@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f38fe64c5a4eae67075731932720dd0d",
+    "content-hash": "376b56946b126af08c51c533f61404e3",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -197,6 +197,45 @@
                 "parser"
             ],
             "time": "2014-09-09T13:34:57+00:00"
+        },
+        {
+            "name": "tebru/php-type",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tebru/php-type.git",
+                "reference": "3ec053dd1822a5d1672dd268be63c8645464d0a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tebru/php-type/zipball/3ec053dd1822a5d1672dd268be63c8645464d0a1",
+                "reference": "3ec053dd1822a5d1672dd268be63c8645464d0a1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Tebru\\PhpType\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nate Brunette",
+                    "email": "n@tebru.net"
+                }
+            ],
+            "description": "A type wrapper for PHP that support generic syntax",
+            "time": "2017-04-19T00:07:55+00:00"
         }
     ],
     "packages-dev": [

@@ -11,8 +11,8 @@ use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\JsonSerializationContext;
 use Tebru\Gson\JsonSerializer;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Test\Mock\GsonMock;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class Integer1Serializer
@@ -27,11 +27,11 @@ class Integer1Serializer implements JsonSerializer
      * return a JsonElement.
      *
      * @param GsonMock $object
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param JsonSerializationContext $context
      * @return JsonElement
      */
-    public function serialize($object, PhpType $type, JsonSerializationContext $context): JsonElement
+    public function serialize($object, TypeToken $type, JsonSerializationContext $context): JsonElement
     {
         $jsonObject = new JsonObject();
         $jsonObject->addInteger('integer', $object->getInteger() + 1);

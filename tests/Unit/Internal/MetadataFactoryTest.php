@@ -16,9 +16,9 @@ use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\PropertyMetadata;
 use Tebru\Gson\Test\Mock\Foo;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class MetadataFactoryTest
@@ -44,7 +44,7 @@ class MetadataFactoryTest extends PHPUnit_Framework_TestCase
         $this->defaultProperty = $defaultProperty = new Property(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
             new AnnotationSet(),

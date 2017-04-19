@@ -9,13 +9,13 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 use DateTime;
 
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
 
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\DateTimeMock;
 use Tebru\Gson\Test\MockProvider;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class DateTimeTypeAdapterFactoryTest
@@ -32,27 +32,27 @@ class DateTimeTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
 
-        self::assertTrue($factory->supports(new DefaultPhpType($class)));
+        self::assertTrue($factory->supports(new TypeToken($class)));
     }
 
     public function testInvalidSupports()
     {
         $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
 
-        self::assertFalse($factory->supports(new DefaultPhpType(ChildClass::class)));
+        self::assertFalse($factory->supports(new TypeToken(ChildClass::class)));
     }
 
     public function testNonClassSupports()
     {
         $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
 
-        self::assertFalse($factory->supports(new DefaultPhpType('string')));
+        self::assertFalse($factory->supports(new TypeToken('string')));
     }
 
     public function testCreate()
     {
         $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
-        $phpType = new DefaultPhpType(DateTime::class);
+        $phpType = new TypeToken(DateTime::class);
         $adapter = $factory->create($phpType, MockProvider::typeAdapterProvider());
 
         self::assertInstanceOf(DateTimeTypeAdapter::class, $adapter);

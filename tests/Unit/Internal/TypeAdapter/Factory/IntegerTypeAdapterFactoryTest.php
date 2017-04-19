@@ -8,11 +8,11 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
 
 use Tebru\Gson\Test\MockProvider;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class IntegerTypeAdapterFactoryTest
@@ -26,20 +26,20 @@ class IntegerTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     {
         $factory = new IntegerTypeAdapterFactory();
 
-        self::assertTrue($factory->supports(new DefaultPhpType('int')));
+        self::assertTrue($factory->supports(new TypeToken('int')));
     }
 
     public function testInvalidSupports()
     {
         $factory = new IntegerTypeAdapterFactory();
 
-        self::assertFalse($factory->supports(new DefaultPhpType('string')));
+        self::assertFalse($factory->supports(new TypeToken('string')));
     }
 
     public function testCreate()
     {
         $factory = new IntegerTypeAdapterFactory();
-        $adapter = $factory->create(new DefaultPhpType('int'), MockProvider::typeAdapterProvider());
+        $adapter = $factory->create(new TypeToken('int'), MockProvider::typeAdapterProvider());
 
         self::assertInstanceOf(IntegerTypeAdapter::class, $adapter);
     }

@@ -12,7 +12,7 @@ use Tebru\Gson\JsonDeserializationContext;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializationContext;
 use Tebru\Gson\JsonSerializer;
-use Tebru\Gson\PhpType;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class MockSerializerDeserializer
@@ -27,11 +27,11 @@ class MockSerializerDeserializer implements JsonSerializer, JsonDeserializer
      * return a JsonElement.
      *
      * @param UserMock $object
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param JsonSerializationContext $context
      * @return JsonElement
      */
-    public function serialize($object, PhpType $type, JsonSerializationContext $context): JsonElement
+    public function serialize($object, TypeToken $type, JsonSerializationContext $context): JsonElement
     {
         $jsonUser = new JsonObject();
         $jsonUser->addInteger('id', $object->getId());
@@ -55,11 +55,11 @@ class MockSerializerDeserializer implements JsonSerializer, JsonDeserializer
      * the JsonDeserializationContext if you want to delegate deserialization of sub types.
      *
      * @param JsonElement $jsonElement
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param JsonDeserializationContext $context
      * @return UserMock
      */
-    public function deserialize(JsonElement $jsonElement, PhpType $type, JsonDeserializationContext $context): UserMock
+    public function deserialize(JsonElement $jsonElement, TypeToken $type, JsonDeserializationContext $context): UserMock
     {
         /** @var JsonObject $jsonUser */
         $jsonUser = $jsonElement;

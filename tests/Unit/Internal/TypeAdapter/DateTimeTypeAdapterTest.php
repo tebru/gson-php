@@ -8,9 +8,8 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use DateTime;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
-use Tebru\Gson\Test\Mock\DateTimeMock;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class DateTimeTypeAdapterTest
@@ -23,40 +22,22 @@ class DateTimeTypeAdapterTest extends PHPUnit_Framework_TestCase
 {
     public function testDeserializeNull()
     {
-        $adapter = new DateTimeTypeAdapter(new DefaultPhpType(DateTime::class), DateTime::ATOM);
+        $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
 
         self::assertNull($adapter->readFromJson('null'));
     }
 
     public function testDeserializeCreateDatetimeDefault()
     {
-        $adapter = new DateTimeTypeAdapter(new DefaultPhpType(DateTime::class), DateTime::ATOM);
+        $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
         $result = $adapter->readFromJson('"2016-01-02T12:23:53-06:00"');
-
-        self::assertSame('2016-01-02T12:23:53-06:00', $result->format(DateTime::ATOM));
-    }
-
-    public function testDeserializeCreateDatetimeFormat()
-    {
-        $type = new DefaultPhpType(DateTime::class, ['format' => 'm/d/Y H:i:s']);
-        $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
-        $result = $adapter->readFromJson('"1/2/2016 12:23:53"');
-
-        self::assertSame('2016-01-02T12:23:53+00:00', $result->format(DateTime::ATOM));
-    }
-
-    public function testDeserializeCreateDatetimeFormatAndTimezone()
-    {
-        $type = new DefaultPhpType(DateTime::class, ['format' => 'm/d/Y H:i:s', 'timezone' => 'America/Chicago']);
-        $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
-        $result = $adapter->readFromJson('"1/2/2016 12:23:53"');
 
         self::assertSame('2016-01-02T12:23:53-06:00', $result->format(DateTime::ATOM));
     }
 
     public function testSerializeNull()
     {
-        $type = new DefaultPhpType(DateTime::class, ['format' => 'm/d/Y H:i:s']);
+        $type = new TypeToken(DateTime::class);
         $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
 
         self::assertSame('null', $adapter->writeToJson(null, false));
@@ -64,31 +45,11 @@ class DateTimeTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeDefault()
     {
-        $type = new DefaultPhpType(DateTime::class);
+        $type = new TypeToken(DateTime::class);
         $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
 
         $dateTime = DateTime::createFromFormat(DateTime::ATOM, '2016-01-02T12:23:53-06:00');
 
         self::assertSame('"2016-01-02T12:23:53-06:00"', $adapter->writeToJson($dateTime, false));
-    }
-
-    public function testSerializeDifferentFormat()
-    {
-        $type = new DefaultPhpType(DateTime::class, ['format' => 'm/d/Y H:i:s']);
-        $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
-
-        $dateTime = DateTime::createFromFormat(DateTime::ATOM, '2016-01-02T12:23:53-06:00');
-
-        self::assertSame('"01\/02\/2016 12:23:53"', $adapter->writeToJson($dateTime, false));
-    }
-
-    public function testDeserializeCreateDatetimeFormatAndTimezoneWithSubclass()
-    {
-        $type = new DefaultPhpType(DateTimeMock::class, ['format' => 'm/d/Y H:i:s', 'timezone' => 'America/Chicago']);
-        $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
-        $result = $adapter->readFromJson('"1/2/2016 12:23:53"');
-
-        self::assertInstanceOf(DateTimeMock::class, $result);
-        self::assertSame('2016-01-02T12:23:53-06:00', $result->format(DateTime::ATOM));
     }
 }

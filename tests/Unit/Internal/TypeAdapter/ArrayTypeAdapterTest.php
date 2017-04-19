@@ -9,10 +9,10 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 use LogicException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\MockProvider;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class ArrayTypeAdapterTest
@@ -35,7 +35,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     
     public function testDeserializeNull()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
 
         $result = $adapter->readFromJson('null');
 
@@ -45,7 +45,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserializeSimpleArray()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
         $result = $adapter->readFromJson('[1, 2, 3]');
 
         self::assertSame([1.0, 2.0, 3.0], $result);
@@ -54,7 +54,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserializeSimpleArrayAsInteger()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<int>'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<int>'));
         $result = $adapter->readFromJson('[1, 2, 3]');
 
         self::assertSame([1, 2, 3], $result);
@@ -63,7 +63,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserializeNestedArray()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<array<int>>'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<array<int>>'));
         $result = $adapter->readFromJson('[[1], [2], [3]]');
 
         self::assertSame([[1], [2], [3]], $result);
@@ -72,7 +72,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserializeSimpleObject()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
         $result = $adapter->readFromJson('{"key": "value"}');
 
         self::assertSame(['key' => 'value'], $result);
@@ -81,7 +81,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserializeNestedObject()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
         $result = $adapter->readFromJson('{"key": {"nestedKey": "nestedValue", "nestedKey2": "nestedValue2"}}');
 
         self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
@@ -90,7 +90,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserializeNestedObjectWithGeneric()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<array>'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<array>'));
         $result = $adapter->readFromJson('{"key": {"nestedKey": "nestedValue", "nestedKey2": "nestedValue2"}}');
 
         self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
@@ -99,7 +99,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserializeNestedObjectWithKeyAndValueTypes()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<string, array<string, string>>'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<string, array<string, string>>'));
         $result = $adapter->readFromJson('{"key": {"nestedKey": "nestedValue", "nestedKey2": "nestedValue2"}}');
 
         self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
@@ -108,7 +108,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserializeArrayWithNonStringOrIntegerKey()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<float, string>'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<float, string>'));
         try {
             $adapter->readFromJson('{"1.1": "foo"}');
         } catch (LogicException $exception) {
@@ -119,7 +119,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserializeArrayWithIntegerKeyPassedString()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<int, string>'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<int, string>'));
         try {
             $adapter->readFromJson('{"asdf": "foo"}');
         } catch (UnexpectedJsonTokenException $exception) {
@@ -130,7 +130,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserializeArrayWithIntegerKey()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<int, string>'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<int, string>'));
         $result = $adapter->readFromJson('{"1": "foo"}');
 
         self::assertSame([1 => 'foo'], $result);
@@ -138,7 +138,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeMoreThanTwoGenericTypes()
     {
-        $adapter = new ArrayTypeAdapter(new DefaultPhpType('array<string, string, string>'), $this->typeAdapterProvider);
+        $adapter = new ArrayTypeAdapter(new TypeToken('array<string, string, string>'), $this->typeAdapterProvider);
         try {
             $adapter->readFromJson('{}');
         } catch (LogicException $exception) {
@@ -148,7 +148,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeMoreThanOneGenericTypeForArray()
     {
-        $adapter = new ArrayTypeAdapter(new DefaultPhpType('array<string, string>'), $this->typeAdapterProvider);
+        $adapter = new ArrayTypeAdapter(new TypeToken('array<string, string>'), $this->typeAdapterProvider);
         try {
             $adapter->readFromJson('[1]');
         } catch (LogicException $exception) {
@@ -158,7 +158,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNonArrayOrObject()
     {
-        $adapter = new ArrayTypeAdapter(new DefaultPhpType('array'), $this->typeAdapterProvider);
+        $adapter = new ArrayTypeAdapter(new TypeToken('array'), $this->typeAdapterProvider);
         try {
             $adapter->readFromJson('1');
         } catch (UnexpectedJsonTokenException $exception) {
@@ -169,7 +169,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testSerializeNull()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
 
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
@@ -177,7 +177,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testSerializeArrayInts()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
 
         self::assertSame('[1,2,3]', $adapter->writeToJson([1, 2, 3], false));
     }
@@ -185,7 +185,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testSerializeArrayVariableTypes()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
 
         self::assertSame('[1,"foo"]', $adapter->writeToJson([1, 'foo', null], false));
     }
@@ -193,7 +193,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testSerializeArrayVariableTypesNull()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
 
         self::assertSame('[1,"foo",null]', $adapter->writeToJson([1, 'foo', null], true));
     }
@@ -201,7 +201,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testSerializeArrayAsObject()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
 
         self::assertSame('{"foo":"bar","bar":1}', $adapter->writeToJson(['foo' => 'bar', 'bar' => 1], false));
     }
@@ -209,7 +209,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testSerializeArrayOneGenericType()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<int>'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<int>'));
 
         self::assertSame('[1,2,3]', $adapter->writeToJson([1, 2, 3], false));
     }
@@ -217,7 +217,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testSerializeArrayAsObjectOneGenericType()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<string>'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<string>'));
 
         self::assertSame('{"foo":"bar"}', $adapter->writeToJson(['foo' => 'bar'], false));
     }
@@ -225,14 +225,14 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testSerializeArrayTwoGenericTypes()
     {
         /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('array<string, string>'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<string, string>'));
 
         self::assertSame('{"foo":"bar"}', $adapter->writeToJson(['foo' => 'bar'], false));
     }
 
     public function testSerializeTooManyGenerics()
     {
-        $adapter = new ArrayTypeAdapter(new DefaultPhpType('array<int, string, int>'), $this->typeAdapterProvider);
+        $adapter = new ArrayTypeAdapter(new TypeToken('array<int, string, int>'), $this->typeAdapterProvider);
         try {
             $adapter->writeToJson([], false);
         } catch (LogicException $exception) {

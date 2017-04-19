@@ -16,7 +16,6 @@ use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\DefaultPropertyMetadata;
 use Tebru\Gson\Test\Mock\ExcluderVersionMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\BarPropertyExclusionStrategy;
@@ -27,6 +26,7 @@ use Tebru\Gson\Test\Mock\ExclusionStrategies\FooExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\Foo;
 use Tebru\Gson\Test\MockProvider;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class ExcluderTest
@@ -150,7 +150,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_STATIC,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
@@ -168,7 +168,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
@@ -186,7 +186,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PROTECTED,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
@@ -204,7 +204,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
@@ -223,7 +223,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -244,7 +244,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -265,7 +265,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -286,7 +286,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -307,7 +307,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -328,7 +328,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -349,7 +349,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -368,7 +368,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -387,7 +387,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -406,7 +406,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -427,7 +427,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -448,7 +448,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -469,7 +469,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -488,7 +488,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             $annotations,
@@ -506,7 +506,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
@@ -525,7 +525,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),
@@ -541,7 +541,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
             new DefaultClassMetadata(Foo::class, new AnnotationSet()),
             new AnnotationSet(),

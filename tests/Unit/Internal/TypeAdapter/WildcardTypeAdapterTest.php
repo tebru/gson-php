@@ -10,10 +10,10 @@ use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\Internal\JsonDecodeReader;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\WildcardTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\MockProvider;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class WildcardTypeAdapterTest
@@ -36,7 +36,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
     
     public function testDeserializeArray()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         $result = $adapter->readFromJson('[]');
 
@@ -45,7 +45,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeObject()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         $result = $adapter->readFromJson('{}');
 
@@ -54,7 +54,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeString()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         $result = $adapter->readFromJson('"foo"');
 
@@ -73,7 +73,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeBoolean()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         $result = $adapter->readFromJson('true');
 
@@ -82,7 +82,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeBooleanFalse()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         $result = $adapter->readFromJson('false');
 
@@ -91,7 +91,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNumberInt()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         $result = $adapter->readFromJson('1');
 
@@ -100,7 +100,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNumberFloat()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         $result = $adapter->readFromJson('1.1');
 
@@ -109,7 +109,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNumberNull()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         $result = $adapter->readFromJson('null');
 
@@ -133,56 +133,56 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeArray()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         self::assertSame('[]', $adapter->writeToJson([], false));
     }
 
     public function testSerializeObject()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         self::assertSame('{"foo":"bar"}', $adapter->writeToJson(['foo' => 'bar'], false));
     }
 
     public function testSerializeString()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         self::assertSame('"foo"', $adapter->writeToJson('foo', false));
     }
 
     public function testSerializeBooleanTrue()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         self::assertSame('true', $adapter->writeToJson(true, false));
     }
 
     public function testSerializeBooleanFalse()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         self::assertSame('false', $adapter->writeToJson(false, false));
     }
 
     public function testSerializeInteger()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         self::assertSame('1', $adapter->writeToJson(1, false));
     }
 
     public function testSerializeNull()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
 
     public function testSerializeResource()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType('?'));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
 
         try {
             $adapter->writeToJson(fopen(__FILE__, 'rb'), false);

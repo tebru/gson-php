@@ -8,7 +8,7 @@ namespace Tebru\Gson\Internal\ObjectConstructor;
 
 use Tebru\Gson\InstanceCreator;
 use Tebru\Gson\Internal\ObjectConstructor;
-use Tebru\Gson\PhpType;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class CreateFromInstanceCreator
@@ -29,7 +29,7 @@ final class CreateFromInstanceCreator implements ObjectConstructor
     /**
      * Php Type instance
      *
-     * @var PhpType
+     * @var TypeToken
      */
     private $type;
 
@@ -37,9 +37,9 @@ final class CreateFromInstanceCreator implements ObjectConstructor
      * Constructor
      *
      * @param InstanceCreator $instanceCreator
-     * @param PhpType $type
+     * @param TypeToken $type
      */
-    public function __construct(InstanceCreator $instanceCreator, PhpType $type)
+    public function __construct(InstanceCreator $instanceCreator, TypeToken $type)
     {
         $this->instanceCreator = $instanceCreator;
         $this->type = $type;

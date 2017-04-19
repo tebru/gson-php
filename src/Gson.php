@@ -9,8 +9,8 @@ namespace Tebru\Gson;
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class Gson
@@ -77,7 +77,7 @@ class Gson
      */
     public function toJson($object): string
     {
-        $type = DefaultPhpType::createFromVariable($object);
+        $type = TypeToken::createFromVariable($object);
         $typeAdapter = $this->typeAdapterProvider->getAdapter($type);
 
         return $typeAdapter->writeToJson($object, $this->serializeNull);
@@ -90,12 +90,12 @@ class Gson
      * @param object|string $type
      * @return mixed
      * @throws \InvalidArgumentException
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \Tebru\Gson\Exception\MalformedJsonException If the json cannot be decoded
      */
     public function fromJson(string $json, $type)
     {
-        $phpType = is_object($type) ? new DefaultPhpType(get_class($type)) : new DefaultPhpType($type);
+        $phpType = is_object($type) ? new TypeToken(get_class($type)) : new TypeToken($type);
         $typeAdapter = $this->typeAdapterProvider->getAdapter($phpType);
         $instance = $typeAdapter->readFromJson($json);
 
@@ -123,7 +123,7 @@ class Gson
      * @param mixed $object
      * @return JsonElement
      * @throws \InvalidArgumentException
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      * @throws \Tebru\Gson\Exception\MalformedJsonException If the json cannot be decoded
      */
     public function toJsonElement($object): JsonElement

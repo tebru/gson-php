@@ -9,9 +9,9 @@ namespace Tebru\Gson\Test\Mock;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonReadable;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class TypeAdapterMock
@@ -47,10 +47,10 @@ class TypeAdapterMock extends TypeAdapter implements TypeAdapterFactory, TypeAda
      * Will be called before ::create() is called.  The current type will be passed
      * in.  Return false if ::create() should not be called.
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @return bool
      */
-    public function supports(PhpType $type): bool
+    public function supports(TypeToken $type): bool
     {
         return 'string' === (string) $type;
     }
@@ -59,11 +59,11 @@ class TypeAdapterMock extends TypeAdapter implements TypeAdapterFactory, TypeAda
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
      * to be fetched during creation.  Should return a new instance of the TypeAdapter.
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
      */
-    public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
         return new self();
     }

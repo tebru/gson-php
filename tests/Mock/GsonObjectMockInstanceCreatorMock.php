@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Mock;
 
 use Tebru\Gson\InstanceCreator;
-use Tebru\Gson\PhpType;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class GsonObjectMockInstanceCreatorMock
@@ -19,10 +19,10 @@ class GsonObjectMockInstanceCreatorMock implements InstanceCreator
     /**
      * Accepts a [@see PhpType] and returns an instantiated object
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @return object
      */
-    public function createInstance(PhpType $type)
+    public function createInstance(TypeToken $type)
     {
         return new GsonObjectMock(null);
     }

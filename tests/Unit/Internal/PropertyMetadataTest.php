@@ -9,11 +9,11 @@ use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
 use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\DefaultPropertyMetadata;
 use Tebru\Gson\PropertyMetadata;
 use Tebru\Gson\Test\Mock\Annotation\FooAnnotation;
 use Tebru\Gson\Test\Mock\Foo;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class PropertyMetadataTest
@@ -49,7 +49,7 @@ class PropertyMetadataTest extends PHPUnit_Framework_TestCase
         $this->propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PUBLIC,
             $this->classMetadata,
             $this->annotations,
@@ -59,7 +59,7 @@ class PropertyMetadataTest extends PHPUnit_Framework_TestCase
         $this->virtualPropertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
-            new DefaultPhpType('string'),
+            new TypeToken('string'),
             ReflectionProperty::IS_PUBLIC,
             $this->classMetadata,
             $this->annotations,

@@ -13,13 +13,13 @@ use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ExcluderExcludeSerializeMock;
 use Tebru\Gson\Test\Mock\ExcluderExposeMock;
 use Tebru\Gson\Test\MockProvider;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class ExcluderTypeAdapterFactoryTest
@@ -51,43 +51,43 @@ class ExcluderTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     
     public function testValidSupportsOnlySerialization()
     {
-        self::assertTrue($this->excluderTypeAdapterFactory->supports(new DefaultPhpType(ExcluderExcludeSerializeMock::class)));
+        self::assertTrue($this->excluderTypeAdapterFactory->supports(new TypeToken(ExcluderExcludeSerializeMock::class)));
     }
 
     public function testValidSupportsOnlyDeserialization()
     {
         $this->excluder->setRequireExpose(true);
 
-        self::assertTrue($this->excluderTypeAdapterFactory->supports(new DefaultPhpType(ExcluderExposeMock::class)));
+        self::assertTrue($this->excluderTypeAdapterFactory->supports(new TypeToken(ExcluderExposeMock::class)));
     }
 
     public function testValidSupportsBoth()
     {
         $this->excluder->setRequireExpose(true);
 
-        self::assertTrue($this->excluderTypeAdapterFactory->supports(new DefaultPhpType(ChildClass::class)));
+        self::assertTrue($this->excluderTypeAdapterFactory->supports(new TypeToken(ChildClass::class)));
     }
 
     public function testValidSupportsFalse()
     {
-        self::assertFalse($this->excluderTypeAdapterFactory->supports(new DefaultPhpType(ChildClass::class)));
+        self::assertFalse($this->excluderTypeAdapterFactory->supports(new TypeToken(ChildClass::class)));
     }
 
     public function testValidSupportsNonObject()
     {
-        self::assertFalse($this->excluderTypeAdapterFactory->supports(new DefaultPhpType('string')));
+        self::assertFalse($this->excluderTypeAdapterFactory->supports(new TypeToken('string')));
     }
 
     public function testNotValidForPseudoObject()
     {
-        self::assertFalse($this->excluderTypeAdapterFactory->supports(new DefaultPhpType('String')));
+        self::assertFalse($this->excluderTypeAdapterFactory->supports(new TypeToken('String')));
     }
 
     public function testCreate()
     {
         $this->excluder->setRequireExpose(true);
 
-        $phpType = new DefaultPhpType(ChildClass::class);
+        $phpType = new TypeToken(ChildClass::class);
         $typeAdapterProvider = MockProvider::typeAdapterProvider();
         $adapter = $this->excluderTypeAdapterFactory->create($phpType, $typeAdapterProvider);
 

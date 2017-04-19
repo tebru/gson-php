@@ -6,6 +6,7 @@
 namespace Tebru\Gson;
 
 use Tebru\Gson\Internal\Data\AnnotationSet;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Interface PropertyMetadata
@@ -33,9 +34,9 @@ interface PropertyMetadata
     /**
      * Get the full php type object
      *
-     * @return PhpType
+     * @return TypeToken
      */
-    public function getType(): PhpType;
+    public function getType(): TypeToken;
 
     /**
      * Get the property type as a string

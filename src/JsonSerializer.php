@@ -7,6 +7,7 @@
 namespace Tebru\Gson;
 
 use Tebru\Gson\Element\JsonElement;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Interface JsonSerializer
@@ -23,9 +24,9 @@ interface JsonSerializer
      * return a JsonElement.
      *
      * @param mixed $object
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param JsonSerializationContext $context
      * @return JsonElement
      */
-    public function serialize($object, PhpType $type, JsonSerializationContext $context): JsonElement;
+    public function serialize($object, TypeToken $type, JsonSerializationContext $context): JsonElement;
 }

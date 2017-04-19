@@ -12,8 +12,8 @@ use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\PropertyCollection;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\Data\Property;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class PropertyCollectionTest
@@ -37,7 +37,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
-        $type = new DefaultPhpType(stdClass::class);
+        $type = new TypeToken(stdClass::class);
 
         $this->property = new Property(
             $realName,

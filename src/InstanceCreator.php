@@ -6,6 +6,8 @@
 
 namespace Tebru\Gson;
 
+use Tebru\PhpType\TypeToken;
+
 /**
  * Interface InstanceCreator
  *
@@ -19,8 +21,8 @@ interface InstanceCreator
     /**
      * Accepts a [@see PhpType] and returns an instantiated object
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @return object
      */
-    public function createInstance(PhpType $type);
+    public function createInstance(TypeToken $type);
 }

@@ -90,7 +90,7 @@ final class ReflectionTypeAdapter extends TypeAdapter
      * @param JsonReadable $reader
      * @return mixed
      * @throws \InvalidArgumentException
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function read(JsonReadable $reader)
     {
@@ -139,7 +139,7 @@ final class ReflectionTypeAdapter extends TypeAdapter
      * @param mixed $value
      * @return void
      * @throws \InvalidArgumentException
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function write(JsonWritable $writer, $value): void
     {

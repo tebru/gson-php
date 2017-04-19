@@ -8,7 +8,7 @@ namespace Tebru\Gson\Internal\Data;
 
 use Tebru\Gson\Internal\GetterStrategy;
 use Tebru\Gson\Internal\SetterStrategy;
-use Tebru\Gson\PhpType;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class Property
@@ -37,7 +37,7 @@ final class Property
     /**
      * The property type
      *
-     * @var PhpType
+     * @var TypeToken
      */
     private $type;
 
@@ -96,7 +96,7 @@ final class Property
      *
      * @param string $realName
      * @param string $serializedName
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param GetterStrategy $getterStrategy
      * @param SetterStrategy $setterStrategy
      * @param AnnotationSet $annotations
@@ -106,7 +106,7 @@ final class Property
     public function __construct(
         string $realName,
         string $serializedName,
-        PhpType $type,
+        TypeToken $type,
         GetterStrategy $getterStrategy,
         SetterStrategy $setterStrategy,
         AnnotationSet $annotations,
@@ -147,9 +147,9 @@ final class Property
     /**
      * Get the property type
      *
-     * @return PhpType
+     * @return TypeToken
      */
-    public function getType(): PhpType
+    public function getType(): TypeToken
     {
         return $this->type;
     }

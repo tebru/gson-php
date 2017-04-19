@@ -7,9 +7,9 @@
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class WrappedInterfaceTypeAdapterFactory
@@ -24,7 +24,7 @@ class WrappedTypeAdapterFactory implements TypeAdapterFactory
     private $typeAdapter;
 
     /**
-     * @var PhpType
+     * @var TypeToken
      */
     private $type;
 
@@ -32,9 +32,9 @@ class WrappedTypeAdapterFactory implements TypeAdapterFactory
      * Constructor
      *
      * @param TypeAdapter $typeAdapter
-     * @param PhpType $type
+     * @param TypeToken $type
      */
-    public function __construct(TypeAdapter $typeAdapter, PhpType $type)
+    public function __construct(TypeAdapter $typeAdapter, TypeToken $type)
     {
         $this->typeAdapter = $typeAdapter;
         $this->type = $type;
@@ -44,23 +44,23 @@ class WrappedTypeAdapterFactory implements TypeAdapterFactory
      * Will be called before ::create() is called.  The current type will be passed
      * in.  Return false if ::create() should not be called.
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @return bool
      */
-    public function supports(PhpType $type): bool
+    public function supports(TypeToken $type): bool
     {
-        return $type->isA($this->type->getType());
+        return $type->isA($this->type->getRawType());
     }
 
     /**
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
      * to be fetched during creation.  Should return a new instance of the TypeAdapter.
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
      */
-    public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
         return $this->typeAdapter;
     }

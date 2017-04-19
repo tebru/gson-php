@@ -9,13 +9,11 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 use LogicException;
 use Tebru\Gson\Exception\UnexpectedJsonTokenException;
 use Tebru\Gson\JsonWritable;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\Internal\TypeToken;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class ArrayTypeAdapter
@@ -25,7 +23,7 @@ use Tebru\Gson\TypeAdapter;
 final class ArrayTypeAdapter extends TypeAdapter
 {
     /**
-     * @var PhpType
+     * @var TypeToken
      */
     private $type;
 
@@ -37,10 +35,10 @@ final class ArrayTypeAdapter extends TypeAdapter
     /**
      * Constructor
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      */
-    public function __construct(PhpType $type, TypeAdapterProvider $typeAdapterProvider)
+    public function __construct(TypeToken $type, TypeAdapterProvider $typeAdapterProvider)
     {
         $this->type = $type;
         $this->typeAdapterProvider = $typeAdapterProvider;
@@ -54,7 +52,7 @@ final class ArrayTypeAdapter extends TypeAdapter
      * @throws \InvalidArgumentException
      * @throws \LogicException
      * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If trying to read from non object/array
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function read(JsonReadable $reader): ?array
     {
@@ -84,8 +82,8 @@ final class ArrayTypeAdapter extends TypeAdapter
                             // If there is a nested object, continue deserializing to an array,
                             // otherwise guess the type using the wildcard
                             $type = $reader->peek() === JsonToken::BEGIN_OBJECT
-                                ? new DefaultPhpType(TypeToken::ARRAY)
-                                : new DefaultPhpType(TypeToken::WILDCARD);
+                                ? new TypeToken(TypeToken::ARRAY)
+                                : new TypeToken(TypeToken::WILDCARD);
 
                             $adapter = $this->typeAdapterProvider->getAdapter($type);
                             $array[$name] = $adapter->read($reader);
@@ -99,7 +97,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                             break;
                         // generic for key and value specified
                         case 2:
-                            /** @var PhpType $keyType */
+                            /** @var TypeToken $keyType */
                             $keyType = $generics[0];
 
                             if (!$keyType->isString() && !$keyType->isInteger()) {
@@ -131,7 +129,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                     switch (count($generics)) {
                         // no generics specified
                         case 0:
-                            $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(TypeToken::WILDCARD));
+                            $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(TypeToken::WILDCARD));
                             $array[] = $adapter->read($reader);
 
                             break;
@@ -193,7 +191,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                         $writer->name((string)$key);
                     }
 
-                    $adapter = $this->typeAdapterProvider->getAdapter(DefaultPhpType::createFromVariable($item));
+                    $adapter = $this->typeAdapterProvider->getAdapter(TypeToken::createFromVariable($item));
                     $adapter->write($writer, $item);
 
                     break;

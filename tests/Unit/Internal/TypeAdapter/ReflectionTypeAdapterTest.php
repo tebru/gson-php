@@ -8,13 +8,13 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\AddressMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\UserMockExclusionStrategy;
 use Tebru\Gson\Test\Mock\UserMock;
 use Tebru\Gson\Test\MockProvider;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class ReflectionTypeAdapterTest
@@ -43,7 +43,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNull()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
         $result = $adapter->readFromJson('null');
 
         self::assertNull($result);
@@ -52,7 +52,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
     public function testDeserialize()
     {
         /** @var ReflectionTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
         /** @var UserMock $user */
         $user = $adapter->readFromJson('
@@ -91,7 +91,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->excluder->addExclusionStrategy(new UserMockExclusionStrategy(), false, true);
 
         /** @var ReflectionTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
         /** @var UserMock $user */
         $user = $adapter->readFromJson('
@@ -116,14 +116,14 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeNull()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
 
     public function testSerialize()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
         $user = new UserMock();
         $user->setId(1);
@@ -161,7 +161,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->addExclusionStrategy(new UserMockExclusionStrategy(), true, false);
 
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(UserMock::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
         $user = new UserMock();
         $user->setId(1);

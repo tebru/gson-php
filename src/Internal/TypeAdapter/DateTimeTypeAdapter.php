@@ -7,12 +7,11 @@
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use DateTime;
-use DateTimeZone;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class DateTimeTypeAdapter
@@ -22,7 +21,7 @@ use Tebru\Gson\TypeAdapter;
 final class DateTimeTypeAdapter extends TypeAdapter
 {
     /**
-     * @var PhpType
+     * @var TypeToken
      */
     private $type;
 
@@ -34,10 +33,10 @@ final class DateTimeTypeAdapter extends TypeAdapter
     /**
      * Constructor
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param string $format
      */
-    public function __construct(PhpType $type, string $format)
+    public function __construct(TypeToken $type, string $format)
     {
         $this->type = $type;
         $this->format = $format;
@@ -56,21 +55,11 @@ final class DateTimeTypeAdapter extends TypeAdapter
         }
 
         $formattedDateTime = $reader->nextString();
-        $format = $this->type->getOptions()['format'] ?? null;
-        $timezone = $this->type->getOptions()['timezone'] ?? null;
-
-        if (null === $format) {
-            $format = $this->format;
-        }
-
-        if (null !== $timezone) {
-            $timezone = new DateTimeZone($timezone);
-        }
 
         /** @var DateTime $class */
-        $class = $this->type->getType();
+        $class = $this->type->getRawType();
 
-        return $class::createFromFormat($format, $formattedDateTime, $timezone);
+        return $class::createFromFormat($this->format, $formattedDateTime);
     }
 
     /**
@@ -88,13 +77,7 @@ final class DateTimeTypeAdapter extends TypeAdapter
             return;
         }
 
-        $format = $this->type->getOptions()['format'] ?? null;
-
-        if (null === $format) {
-            $format = $this->format;
-        }
-
-        $dateTime = $value->format($format);
+        $dateTime = $value->format($this->format);
         $writer->writeString($dateTime);
     }
 }

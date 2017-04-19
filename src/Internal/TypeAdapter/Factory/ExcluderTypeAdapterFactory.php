@@ -10,9 +10,9 @@ use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class ExcluderTypeAdapterFactory
@@ -47,20 +47,20 @@ final class ExcluderTypeAdapterFactory implements TypeAdapterFactory
      * Will be called before ::create() is called.  The current type will be passed
      * in.  Return false if ::create() should not be called.
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @return bool
      */
-    public function supports(PhpType $type): bool
+    public function supports(TypeToken $type): bool
     {
         if (!$type->isObject()) {
             return false;
         }
 
-        if (!class_exists($type->getType())) {
+        if (!class_exists($type->getRawType())) {
             return false;
         }
 
-        $classMetadata = $this->metadataFactory->createClassMetadata($type->getType());
+        $classMetadata = $this->metadataFactory->createClassMetadata($type->getRawType());
         $skipSerialize = $this->excluder->excludeClass($classMetadata, true);
         $skipDeserialize = $this->excluder->excludeClass($classMetadata, false);
 
@@ -72,13 +72,13 @@ final class ExcluderTypeAdapterFactory implements TypeAdapterFactory
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
      * to be fetched during creation.  Should return a new instance of the TypeAdapter.
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
      */
-    public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        $classMetadata = $this->metadataFactory->createClassMetadata($type->getType());
+        $classMetadata = $this->metadataFactory->createClassMetadata($type->getRawType());
         $skipSerialize = $this->excluder->excludeClass($classMetadata, true);
         $skipDeserialize = $this->excluder->excludeClass($classMetadata, false);
 

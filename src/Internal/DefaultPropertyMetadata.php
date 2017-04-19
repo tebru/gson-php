@@ -8,8 +8,8 @@ namespace Tebru\Gson\Internal;
 
 use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\PropertyMetadata;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class DefaultPropertyMetadata
@@ -37,7 +37,7 @@ final class DefaultPropertyMetadata implements PropertyMetadata
     /**
      * The property type
      *
-     * @var PhpType
+     * @var TypeToken
      */
     private $type;
 
@@ -74,7 +74,7 @@ final class DefaultPropertyMetadata implements PropertyMetadata
      *
      * @param string $name
      * @param string $serializedName
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param int $modifiers
      * @param ClassMetadata $classMetadata
      * @param AnnotationSet $annotations
@@ -83,7 +83,7 @@ final class DefaultPropertyMetadata implements PropertyMetadata
     public function __construct(
         string $name,
         string $serializedName,
-        PhpType $type,
+        TypeToken $type,
         int $modifiers,
         ClassMetadata $classMetadata,
         AnnotationSet $annotations,
@@ -122,9 +122,9 @@ final class DefaultPropertyMetadata implements PropertyMetadata
     /**
      * Get the full php type object
      *
-     * @return PhpType
+     * @return TypeToken
      */
-    public function getType(): PhpType
+    public function getType(): TypeToken
     {
         return $this->type;
     }

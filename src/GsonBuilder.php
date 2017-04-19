@@ -26,7 +26,6 @@ use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
@@ -43,6 +42,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class GsonBuilder
@@ -155,30 +155,30 @@ class GsonBuilder
      * @param $handler
      * @return GsonBuilder
      * @throws \InvalidArgumentException
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function registerType(string $type, $handler): GsonBuilder
     {
         if ($handler instanceof TypeAdapter) {
-            $this->typeAdapterFactories[] = new WrappedTypeAdapterFactory($handler, new DefaultPhpType($type));
+            $this->typeAdapterFactories[] = new WrappedTypeAdapterFactory($handler, new TypeToken($type));
 
             return $this;
         }
 
         if ($handler instanceof JsonSerializer && $handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new DefaultPhpType($type), $handler, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $handler, $handler);
 
             return $this;
         }
 
         if ($handler instanceof JsonSerializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new DefaultPhpType($type), $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $handler);
 
             return $this;
         }
 
         if ($handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new DefaultPhpType($type), null, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), null, $handler);
 
             return $this;
         }
@@ -192,12 +192,12 @@ class GsonBuilder
      * @param string $type
      * @param InstanceCreator $instanceCreator
      * @return GsonBuilder
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
     {
-        $phpType = new DefaultPhpType($type);
-        $this->instanceCreators[$phpType->getType()] = $instanceCreator;
+        $phpType = new TypeToken($type);
+        $this->instanceCreators[$phpType->getRawType()] = $instanceCreator;
 
         return $this;
     }

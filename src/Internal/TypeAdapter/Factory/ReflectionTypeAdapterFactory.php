@@ -14,9 +14,9 @@ use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class ReflectionTypeAdapterFactory
@@ -69,32 +69,32 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      * Will be called before ::create() is called.  The current type will be passed
      * in.  Return false if ::create() should not be called.
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @return bool
      */
-    public function supports(PhpType $type): bool
+    public function supports(TypeToken $type): bool
     {
         if (!$type->isObject()) {
             return false;
         }
 
-        return class_exists($type->getType());
+        return class_exists($type->getRawType());
     }
 
     /**
      * Accepts the current type.  Should return a new instance of the TypeAdapter.
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
-    public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
         $properties = $this->propertyCollectionFactory->create($type);
         $objectConstructor = $this->constructorConstructor->get($type);
 
-        $classMetadata = $this->metadataFactory->createClassMetadata($type->getType());
+        $classMetadata = $this->metadataFactory->createClassMetadata($type->getRawType());
         $metadataPropertyCollection = new MetadataPropertyCollection();
 
         /** @var Property $property */

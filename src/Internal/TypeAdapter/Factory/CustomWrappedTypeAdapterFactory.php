@@ -10,9 +10,9 @@ use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class CustomWrappedTypeAdapterFactory
@@ -22,7 +22,7 @@ use Tebru\Gson\TypeAdapterFactory;
 final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
 {
     /**
-     * @var PhpType
+     * @var TypeToken
      */
     private $type;
 
@@ -39,11 +39,11 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
     /**
      * Constructor
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param JsonSerializer $serializer
      * @param JsonDeserializer $deserializer
      */
-    public function __construct(PhpType $type, JsonSerializer $serializer = null, JsonDeserializer $deserializer = null)
+    public function __construct(TypeToken $type, JsonSerializer $serializer = null, JsonDeserializer $deserializer = null)
     {
         $this->type = $type;
         $this->serializer = $serializer;
@@ -54,23 +54,23 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
      * Will be called before ::create() is called.  The current type will be passed
      * in.  Return false if ::create() should not be called.
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @return bool
      */
-    public function supports(PhpType $type): bool
+    public function supports(TypeToken $type): bool
     {
-        return $type->isA($this->type->getType());
+        return $type->isA($this->type->getRawType());
     }
 
     /**
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
      * to be fetched during creation.  Should return a new instance of the TypeAdapter.
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
      */
-    public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
         return new CustomWrappedTypeAdapter($type, $typeAdapterProvider, $this->serializer, $this->deserializer, $this);
     }

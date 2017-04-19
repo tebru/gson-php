@@ -7,6 +7,7 @@
 namespace Tebru\Gson;
 
 use Tebru\Gson\Element\JsonElement;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Interface JsonDeserializer
@@ -22,9 +23,9 @@ interface JsonDeserializer
      * the JsonDeserializationContext if you want to delegate deserialization of sub types.
      *
      * @param JsonElement $jsonElement
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param JsonDeserializationContext $context
      * @return mixed
      */
-    public function deserialize(JsonElement $jsonElement, PhpType $type, JsonDeserializationContext $context);
+    public function deserialize(JsonElement $jsonElement, TypeToken $type, JsonDeserializationContext $context);
 }

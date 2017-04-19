@@ -9,7 +9,7 @@ namespace Tebru\Gson\Internal;
 use ReflectionMethod;
 use Tebru\Gson\Annotation\Type;
 use Tebru\Gson\Internal\Data\AnnotationSet;
-use Tebru\Gson\PhpType;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class PhpTypeFactory
@@ -33,10 +33,10 @@ final class PhpTypeFactory
      * @param int $filter
      * @param ReflectionMethod|null $getterMethod
      * @param ReflectionMethod|null $setterMethod
-     * @return PhpType
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @return TypeToken
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
-    public function create(AnnotationSet $annotations, int $filter, ReflectionMethod $getterMethod = null, ReflectionMethod $setterMethod = null): PhpType
+    public function create(AnnotationSet $annotations, int $filter, ReflectionMethod $getterMethod = null, ReflectionMethod $setterMethod = null): TypeToken
     {
         /** @var Type $typeAnnotation */
         $typeAnnotation = $annotations->getAnnotation(Type::class, $filter);
@@ -48,21 +48,21 @@ final class PhpTypeFactory
         if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
             $parameter = $setterMethod->getParameters()[0];
             if (null !== $parameter->getType()) {
-                return new DefaultPhpType((string) $parameter->getType());
+                return new TypeToken((string) $parameter->getType());
             }
         }
 
         if (null !== $getterMethod && null !== $getterMethod->getReturnType()) {
-            return new DefaultPhpType((string) $getterMethod->getReturnType());
+            return new TypeToken((string) $getterMethod->getReturnType());
         }
 
         if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
             $parameter = $setterMethod->getParameters()[0];
             if ($parameter->isDefaultValueAvailable() && null !== $parameter->getDefaultValue()) {
-                return new DefaultPhpType(gettype($parameter->getDefaultValue()));
+                return new TypeToken(gettype($parameter->getDefaultValue()));
             }
         }
 
-        return new DefaultPhpType(TypeToken::WILDCARD);
+        return new TypeToken(TypeToken::WILDCARD);
     }
 }

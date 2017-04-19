@@ -13,9 +13,9 @@ use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonSerializer;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class CustomWrappedTypeAdapter
@@ -27,7 +27,7 @@ use Tebru\Gson\TypeAdapterFactory;
 final class CustomWrappedTypeAdapter extends TypeAdapter
 {
     /**
-     * @var PhpType
+     * @var TypeToken
      */
     private $type;
 
@@ -54,14 +54,14 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
     /**
      * Constructor
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @param JsonSerializer $serializer
      * @param JsonDeserializer $deserializer
      * @param TypeAdapterFactory $skip
      */
     public function __construct(
-        PhpType $type,
+        TypeToken $type,
         TypeAdapterProvider $typeAdapterProvider,
         JsonSerializer $serializer = null,
         JsonDeserializer $deserializer = null,

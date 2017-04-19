@@ -8,7 +8,6 @@ namespace Tebru\Gson\Test\Mock\TypeAdapter;
 
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonReadable;
-use Tebru\Gson\Test\Mock\Unit\Integer1TypeAdaptable;
 use Tebru\Gson\TypeAdapter;
 
 /**

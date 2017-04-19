@@ -18,8 +18,8 @@ use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\PhpTypeFactory;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\PropertyMetadata;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class PropertyCollectionFactory
@@ -114,13 +114,13 @@ final class PropertyCollectionFactory
     /**
      * Create a [@see PropertyCollection] based on the properties of the provided type
      *
-     * @param PhpType $phpType
+     * @param TypeToken $phpType
      * @return PropertyCollection
-     * @throws \Tebru\Gson\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
-    public function create(PhpType $phpType): PropertyCollection
+    public function create(TypeToken $phpType): PropertyCollection
     {
-        $class = $phpType->getType();
+        $class = $phpType->getRawType();
         $key = 'properties:'.$class;
 
         $data = $this->cache->fetch($key);

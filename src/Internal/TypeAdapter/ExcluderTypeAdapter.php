@@ -9,9 +9,9 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonReadable;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class ExcluderTypeAdapter
@@ -21,7 +21,7 @@ use Tebru\Gson\TypeAdapterFactory;
 final class ExcluderTypeAdapter extends TypeAdapter
 {
     /**
-     * @var PhpType
+     * @var TypeToken
      */
     private $type;
 
@@ -52,14 +52,14 @@ final class ExcluderTypeAdapter extends TypeAdapter
     /**
      * Constructor
      *
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @param bool $skipSerialize
      * @param bool $skipDeserialize
      * @param TypeAdapterFactory $skip
      */
     public function __construct(
-        PhpType $type,
+        TypeToken $type,
         TypeAdapterProvider $typeAdapterProvider,
         bool $skipSerialize,
         bool $skipDeserialize,

@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use DateTime;
 use OutOfBoundsException;
 use PHPUnit_Framework_TestCase;
 use stdClass;
@@ -25,15 +24,6 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $type = new Type(['value' => stdClass::class]);
 
         self::assertSame(stdClass::class, (string) $type->getType());
-    }
-
-    public function testCreateTypeAnnotationWithOptions()
-    {
-        $type = new Type(['value' => DateTime::class, 'options' => ['format' => DateTime::ATOM]]);
-        $phpType = $type->getType();
-
-        self::assertSame(DateTime::class, (string) $phpType);
-        self::assertSame(DateTime::ATOM, $phpType->getOptions()['format']);
     }
 
     public function testCreateThrowsException()

@@ -10,7 +10,7 @@ use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\JsonDeserializationContext;
 use Tebru\Gson\JsonDeserializer;
-use Tebru\Gson\PhpType;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class MockDeserializer
@@ -24,11 +24,11 @@ class MockDeserializer implements JsonDeserializer
      * the JsonDeserializationContext if you want to delegate deserialization of sub types.
      *
      * @param JsonElement $jsonElement
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param JsonDeserializationContext $context
      * @return UserMock
      */
-    public function deserialize(JsonElement $jsonElement, PhpType $type, JsonDeserializationContext $context): UserMock
+    public function deserialize(JsonElement $jsonElement, TypeToken $type, JsonDeserializationContext $context): UserMock
     {
         /** @var JsonObject $jsonUser */
         $jsonUser = $jsonElement;

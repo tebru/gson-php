@@ -10,9 +10,9 @@ use DateTime;
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\JsonDeserializationContext;
 use Tebru\Gson\JsonDeserializer;
-use Tebru\Gson\PhpType;
 use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class Integer1Deserializer
@@ -26,11 +26,11 @@ class Integer1Deserializer implements JsonDeserializer
      * the JsonDeserializationContext if you want to delegate deserialization of sub types.
      *
      * @param JsonElement $jsonElement
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param JsonDeserializationContext $context
      * @return mixed
      */
-    public function deserialize(JsonElement $jsonElement, PhpType $type, JsonDeserializationContext $context): GsonMock
+    public function deserialize(JsonElement $jsonElement, TypeToken $type, JsonDeserializationContext $context): GsonMock
     {
         $json = $jsonElement->asJsonObject();
 

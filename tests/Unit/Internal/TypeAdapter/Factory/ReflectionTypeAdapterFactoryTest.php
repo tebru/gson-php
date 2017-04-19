@@ -9,11 +9,11 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\Internal\DefaultPhpType;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\MockProvider;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class ReflectionTypeAdapterFactoryTest
@@ -47,17 +47,17 @@ class ReflectionTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testValidSupports()
     {
-        self::assertTrue($this->reflectionTypeAdapterFactory->supports(new DefaultPhpType(ChildClass::class)));
+        self::assertTrue($this->reflectionTypeAdapterFactory->supports(new TypeToken(ChildClass::class)));
     }
 
     public function testNonClassSupports()
     {
-        self::assertFalse($this->reflectionTypeAdapterFactory->supports(new DefaultPhpType('string')));
+        self::assertFalse($this->reflectionTypeAdapterFactory->supports(new TypeToken('string')));
     }
 
     public function testCreate()
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(new DefaultPhpType(ChildClass::class));
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(ChildClass::class));
 
         self::assertInstanceOf(ReflectionTypeAdapter::class, $adapter);
     }

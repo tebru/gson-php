@@ -10,7 +10,7 @@ use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\JsonSerializationContext;
 use Tebru\Gson\JsonSerializer;
-use Tebru\Gson\PhpType;
+use Tebru\PhpType\TypeToken;
 
 /**
  * Class MockSerializer
@@ -25,11 +25,11 @@ class MockSerializer implements JsonSerializer
      * return a JsonElement.
      *
      * @param UserMock $object
-     * @param PhpType $type
+     * @param TypeToken $type
      * @param JsonSerializationContext $context
      * @return JsonElement
      */
-    public function serialize($object, PhpType $type, JsonSerializationContext $context): JsonElement
+    public function serialize($object, TypeToken $type, JsonSerializationContext $context): JsonElement
     {
         $jsonUser = new JsonObject();
         $jsonUser->addInteger('id', $object->getId());
