@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Internal;
 
-use SplQueue;
 use Tebru\Gson\Element\JsonObject;
 
 /**
@@ -23,7 +22,6 @@ final class JsonObjectIterator extends AbstractIterator
      */
     public function __construct(JsonObject $jsonObject)
     {
-        $this->queue = new SplQueue();
         foreach($jsonObject as $key => $value) {
             $this->queue[] = [$key, $value];
             $this->total++;
