@@ -52,7 +52,7 @@ class SnakePropertyNamingStrategyTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo1_bar', $propertyNaming->translateName('foo1Bar'));
     }
 
-    public function testUnderscope()
+    public function testUnderscore()
     {
         $propertyNaming = new SnakePropertyNamingStrategy();
 

@@ -51,9 +51,9 @@ class Integer1SerializerDeserializer implements JsonDeserializer, JsonSerializer
         $mock->setMyAccessor($json->getAsString('accessor'));
         $mock->setSerializedname($json->getAsString('serialized_name'));
 
-        $type = $json->getAsArray('type');
-        $type = array_map(function (int $value) { return $value + 1; }, $type);
-        $mock->setType($type);
+        $array = $json->getAsArray('type');
+        $array = array_map(function (int $value) { return $value + 1; }, $array);
+        $mock->setType($array);
 
         $mock->setJsonAdapter(new GsonObjectMock($json->getAsString('json_adapter')));
         $mock->setExpose($json->getAsBoolean('expose'));

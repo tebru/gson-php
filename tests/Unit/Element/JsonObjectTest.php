@@ -190,7 +190,7 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
         $jsonObject = new JsonObject();
         $jsonObject->addBoolean('foo', false);
 
-        self::assertSame(false, $jsonObject->getAsBoolean('foo'));
+        self::assertFalse($jsonObject->getAsBoolean('foo'));
     }
 
     public function testGetAsArray()
