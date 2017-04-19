@@ -4,6 +4,7 @@ Gson PHP
 [![Build Status](https://travis-ci.org/tebru/gson-php.svg?branch=master)](https://travis-ci.org/tebru/gson-php)
 [![Code Coverage](https://scrutinizer-ci.com/g/tebru/gson-php/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/tebru/gson-php/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/tebru/gson-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/tebru/gson-php/?branch=master)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/ac79dde0-1a2f-42ca-b4b6-3ff513bcf0b5/mini.png)](https://insight.sensiolabs.com/projects/ac79dde0-1a2f-42ca-b4b6-3ff513bcf0b5)
 
 This library is a port of [google/gson](https://github.com/google/gson)
 written in PHP.  Its purpose is to easily handle the conversion
