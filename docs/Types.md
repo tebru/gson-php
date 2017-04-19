@@ -1,7 +1,7 @@
 Types
 =====
 
-All types are handled by the `PhpType` class.  This allows normalizing
+All types are handled by the `TypeToken` class.  This allows normalizing
 types (int vs integer) and defining generic types.  You should not have
 to interact with this class too often, but any type provided as a string
 will ultimately be routed through this class.

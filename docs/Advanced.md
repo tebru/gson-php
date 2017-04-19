@@ -44,6 +44,17 @@ Gson::builder()
     ->build();
 ```
 
+Set the DateTime format
+-----------------------
+
+Formatting DateTimes defaults to using DateTime::ATOM
+
+```php
+Gson::builder()
+    ->setDateTimeFormat(DateTime::RFC2822)
+    ->build();
+```
+
 Set the Version
 ---------------
 
