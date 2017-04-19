@@ -91,7 +91,7 @@ class Gson
      * @return mixed
      * @throws \InvalidArgumentException
      * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \Tebru\Gson\Exception\MalformedJsonException If the json cannot be decoded
+     * @throws \Tebru\Gson\Exception\JsonParseException If the json cannot be decoded
      */
     public function fromJson(string $json, $type)
     {
@@ -124,7 +124,7 @@ class Gson
      * @return JsonElement
      * @throws \InvalidArgumentException
      * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \Tebru\Gson\Exception\MalformedJsonException If the json cannot be decoded
+     * @throws \Tebru\Gson\Exception\JsonParseException If the json cannot be decoded
      */
     public function toJsonElement($object): JsonElement
     {

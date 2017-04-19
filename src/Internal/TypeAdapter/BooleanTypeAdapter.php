@@ -22,7 +22,7 @@ final class BooleanTypeAdapter extends TypeAdapter
      * Read the next value, convert it to its type and return it
      *
      * @param JsonReadable $reader
-     * @return mixed
+     * @return bool|null
      */
     public function read(JsonReadable $reader): ?bool
     {

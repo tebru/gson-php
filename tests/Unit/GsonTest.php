@@ -681,7 +681,9 @@ class GsonTest extends PHPUnit_Framework_TestCase
                 ->build();
         } catch (InvalidArgumentException $exception) {
             self::assertSame('Handler of type "Tebru\Gson\Test\Mock\ChildClass" is not supported', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testSerializeWithExclusionStrategy()
@@ -749,7 +751,9 @@ class GsonTest extends PHPUnit_Framework_TestCase
                 ->build();
         } catch (LogicException $exception) {
             self::assertSame('Cannot enable cache without a cache directory', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     private function json(): string

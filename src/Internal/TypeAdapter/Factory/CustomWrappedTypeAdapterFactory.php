@@ -40,8 +40,8 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
      * Constructor
      *
      * @param TypeToken $type
-     * @param JsonSerializer $serializer
-     * @param JsonDeserializer $deserializer
+     * @param JsonSerializer|null $serializer
+     * @param JsonDeserializer|null $deserializer
      */
     public function __construct(TypeToken $type, JsonSerializer $serializer = null, JsonDeserializer $deserializer = null)
     {

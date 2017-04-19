@@ -32,6 +32,8 @@ class TypeTest extends PHPUnit_Framework_TestCase
             new Type([]);
         } catch (OutOfBoundsException $exception) {
             self::assertSame('@Type annotation must specify a type as the first argument', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

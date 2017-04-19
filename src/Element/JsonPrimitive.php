@@ -27,7 +27,7 @@ class JsonPrimitive extends JsonElement
      *
      * @param mixed $value
      */
-    private function __construct($value)
+    protected function __construct($value)
     {
         $this->value = $value;
     }

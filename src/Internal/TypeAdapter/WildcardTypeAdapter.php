@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter;
 
-use Tebru\Gson\Exception\UnexpectedJsonTokenException;
+use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonReadable;
@@ -42,7 +42,7 @@ final class WildcardTypeAdapter extends TypeAdapter
      * @param JsonReadable $reader
      * @return mixed
      * @throws \InvalidArgumentException
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the token can't be processed
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the token can't be processed
      * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function read(JsonReadable $reader)
@@ -70,7 +70,7 @@ final class WildcardTypeAdapter extends TypeAdapter
                 $type = new TypeToken(TypeToken::NULL);
                 break;
             default:
-                throw new UnexpectedJsonTokenException(
+                throw new JsonSyntaxException(
                     sprintf('Could not parse token "%s" at "%s"',
                         $reader->peek(),
                         $reader->getPath()

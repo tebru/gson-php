@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use DateTime;
+use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
@@ -47,6 +48,7 @@ final class DateTimeTypeAdapter extends TypeAdapter
      *
      * @param JsonReadable $reader
      * @return DateTime|null
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the DateTime could not be created from format
      */
     public function read(JsonReadable $reader): ?DateTime
     {
@@ -59,7 +61,19 @@ final class DateTimeTypeAdapter extends TypeAdapter
         /** @var DateTime $class */
         $class = $this->type->getRawType();
 
-        return $class::createFromFormat($this->format, $formattedDateTime);
+        $dateTime = $class::createFromFormat($this->format, $formattedDateTime);
+
+        if ($dateTime !== false) {
+            return $dateTime;
+        }
+
+        throw new JsonSyntaxException(sprintf(
+            'Could not create "%s" class from "%s" using format "%s" at "%s"',
+            $class,
+            $formattedDateTime,
+            $this->format,
+            $reader->getPath()
+        ));
     }
 
     /**

@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use LogicException;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Exception\UnexpectedJsonTokenException;
+use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\MockProvider;
@@ -113,7 +113,9 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
             $adapter->readFromJson('{"1.1": "foo"}');
         } catch (LogicException $exception) {
             self::assertSame('Array keys must be strings or integers at "$.1.1"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testDeserializeArrayWithIntegerKeyPassedString()
@@ -122,9 +124,11 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<int, string>'));
         try {
             $adapter->readFromJson('{"asdf": "foo"}');
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected integer, but found string for key at "$.asdf"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testDeserializeArrayWithIntegerKey()
@@ -143,7 +147,9 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
             $adapter->readFromJson('{}');
         } catch (LogicException $exception) {
             self::assertSame('Array may not have more than 2 generic types at "$"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testDeserializeMoreThanOneGenericTypeForArray()
@@ -153,7 +159,9 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
             $adapter->readFromJson('[1]');
         } catch (LogicException $exception) {
             self::assertSame('An array may only specify a generic type for the value at "$[0]"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testDeserializeNonArrayOrObject()
@@ -161,9 +169,11 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         $adapter = new ArrayTypeAdapter(new TypeToken('array'), $this->typeAdapterProvider);
         try {
             $adapter->readFromJson('1');
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Could not parse json, expected array or object but found "number" at "$"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testSerializeNull()
@@ -237,6 +247,8 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
             $adapter->writeToJson([], false);
         } catch (LogicException $exception) {
             self::assertSame('Array may not have more than 2 generic types', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

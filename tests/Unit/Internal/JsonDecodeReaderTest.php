@@ -9,8 +9,8 @@ namespace Tebru\Gson\Test\Unit\Internal;
 use ArrayIterator;
 use PHPUnit_Framework_TestCase;
 use SplStack;
-use Tebru\Gson\Exception\MalformedJsonException;
-use Tebru\Gson\Exception\UnexpectedJsonTokenException;
+use Tebru\Gson\Exception\JsonParseException;
+use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\Internal\StdClassIterator;
 use Tebru\Gson\JsonToken;
@@ -28,9 +28,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
     {
         try {
             new JsonDecodeReader('asdf');
-        } catch (MalformedJsonException $exception) {
+        } catch (JsonParseException $exception) {
             self::assertSame('Could not decode json, the error message was: "Syntax error"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testBeginArray()
@@ -53,9 +55,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader = new JsonDecodeReader('{}');
         try {
             $reader->beginArray();
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected "begin-array", but found "begin-object" at "$"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testEndArrayEmpty()
@@ -83,9 +87,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->beginArray();
         try {
             $reader->endArray();
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected "end-array", but found "begin-object" at "$[0]"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testBeginObject()
@@ -106,9 +112,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader = new JsonDecodeReader('[]');
         try {
             $reader->beginObject();
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected "begin-object", but found "begin-array" at "$"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testEndObjectEmpty()
@@ -138,9 +146,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->nextName();
         try {
             $reader->endObject();
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected "end-object", but found "number" at "$.test"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testHasNextObjectTrue()
@@ -196,9 +206,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->nextBoolean();
         try {
             $reader->nextBoolean();
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected "boolean", but found "string" at "$[1]"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testNextDouble()
@@ -222,9 +234,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->nextName();
         try {
             $reader->nextDouble();
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected "number", but found "string" at "$.foo"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testNextInteger()
@@ -240,9 +254,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->beginArray();
         try {
             $reader->nextInteger();
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected "number", but found "string" at "$[0]"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testNextString()
@@ -322,9 +338,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader = new JsonDecodeReader('1');
         try {
             $reader->nextString();
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected "string", but found "number" at "$"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testNextStringName()
@@ -347,9 +365,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader = new JsonDecodeReader('"test"');
         try {
             $reader->nextNull();
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected "null", but found "string" at "$"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testNextName()
@@ -367,9 +387,11 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->nextName();
         try {
             $reader->nextName();
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Expected "name", but found "string" at "$.test"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testPeekEmptyArrayEnding()

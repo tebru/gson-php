@@ -31,6 +31,8 @@ class UntilTest extends PHPUnit_Framework_TestCase
             new Until([]);
         } catch (OutOfBoundsException $exception) {
             self::assertSame('@Until annotation must specify a version as the first argument', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

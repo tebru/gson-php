@@ -59,7 +59,7 @@ final class TypeAdapterProvider
      * over all of the factories and finds a type adapter that supports the type.
      *
      * @param TypeToken $type
-     * @param TypeAdapterFactory $skip
+     * @param TypeAdapterFactory|null $skip
      * @return TypeAdapter
      * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
      */

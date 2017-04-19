@@ -32,6 +32,8 @@ class JsonAdapterTest extends PHPUnit_Framework_TestCase
             new JsonAdapter([]);
         } catch (OutOfBoundsException $exception) {
             self::assertSame('@JsonAdapter annotation must specify a class as the first argument', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

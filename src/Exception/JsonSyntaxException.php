@@ -6,15 +6,13 @@
 
 namespace Tebru\Gson\Exception;
 
-use RuntimeException;
-
 /**
- * Class MalformedTypeException
+ * Class UnexpectedJsonTokenException
  *
- * Thrown if the type could not be parsed
+ * Thrown when a malformed type is found
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class MalformedTypeException extends RuntimeException
+class JsonSyntaxException extends JsonParseException
 {
 }

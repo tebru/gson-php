@@ -22,7 +22,7 @@ final class StringTypeAdapter extends TypeAdapter
      * Read the next value, convert it to its type and return it
      *
      * @param JsonReadable $reader
-     * @return mixed
+     * @return string|null
      */
     public function read(JsonReadable $reader): ?string
     {

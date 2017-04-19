@@ -112,7 +112,9 @@ class AnnotationSetTest extends PHPUnit_Framework_TestCase
             $set->addAnnotation(new Since(['value' => '1']), 10);
         } catch (InvalidArgumentException $exception) {
             self::assertSame('Type not supported', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testToArray()
@@ -138,6 +140,8 @@ class AnnotationSetTest extends PHPUnit_Framework_TestCase
             $set->toArray(10);
         } catch (InvalidArgumentException $exception) {
             self::assertSame('Type not supported', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

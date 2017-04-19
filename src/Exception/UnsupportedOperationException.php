@@ -7,13 +7,12 @@
 namespace Tebru\Gson\Exception;
 
 use RuntimeException;
-use Throwable;
 
 /**
  * Class UnsupportedOperationException
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class UnsupportedOperationException extends RuntimeException implements Throwable
+class UnsupportedOperationException extends RuntimeException
 {
 }

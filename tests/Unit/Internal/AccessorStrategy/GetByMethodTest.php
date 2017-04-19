@@ -33,6 +33,8 @@ class GetByMethodTest extends PHPUnit_Framework_TestCase
             $strategy->get(new GetByMethodTestMock());
         } catch (Throwable $throwable) {
             self::assertSame('Call to undefined method Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\GetByMethodTest\GetByMethodTestMock::bar()', $throwable->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

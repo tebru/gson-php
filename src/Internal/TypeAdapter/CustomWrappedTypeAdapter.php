@@ -56,9 +56,9 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
      *
      * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
-     * @param JsonSerializer $serializer
-     * @param JsonDeserializer $deserializer
-     * @param TypeAdapterFactory $skip
+     * @param JsonSerializer|null $serializer
+     * @param JsonDeserializer|null $deserializer
+     * @param TypeAdapterFactory|null $skip
      */
     public function __construct(
         TypeToken $type,

@@ -31,6 +31,8 @@ class SerializedNameTest extends PHPUnit_Framework_TestCase
             new SerializedName([]);
         } catch (OutOfBoundsException $exception) {
             self::assertSame('@SerializedName annotation must specify a name as the first argument', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

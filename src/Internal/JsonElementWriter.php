@@ -243,6 +243,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      * Sets whether nulls are serialized
      *
      * @param bool $serializeNull
+     * @return void
      */
     public function setSerializeNull(bool $serializeNull): void
     {

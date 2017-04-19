@@ -9,12 +9,12 @@ namespace Tebru\Gson\Exception;
 use RuntimeException;
 
 /**
- * Class MalformedJsonException
+ * Class JsonParseException
  *
- * Thrown when an unexpected character is found
+ * Thrown when there is an issue parsing the json string
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class MalformedJsonException extends RuntimeException
+class JsonParseException extends RuntimeException
 {
 }

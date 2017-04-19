@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Exception\UnexpectedJsonTokenException;
+use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\Internal\TypeAdapter\WildcardTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -126,9 +126,11 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
         try {
             $adapter->read($reader);
-        } catch (UnexpectedJsonTokenException $exception) {
+        } catch (JsonSyntaxException $exception) {
             self::assertSame('Could not parse token "end-object" at "$.key"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testSerializeArray()
@@ -188,6 +190,8 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
             $adapter->writeToJson(fopen(__FILE__, 'rb'), false);
         } catch (InvalidArgumentException $exception) {
             self::assertSame('The type "resource" could not be handled by any of the registered type adapters', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

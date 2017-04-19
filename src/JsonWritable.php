@@ -94,6 +94,7 @@ interface JsonWritable
      * Sets whether nulls are serialized
      *
      * @param bool $serializeNull
+     * @return void
      */
     public function setSerializeNull(bool $serializeNull): void;
 }

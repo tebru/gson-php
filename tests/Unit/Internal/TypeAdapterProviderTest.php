@@ -70,7 +70,9 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
             $typeAdapterProvider->getAdapter(new TypeToken(stdClass::class));
         } catch (InvalidArgumentException $exception) {
             self::assertSame('The type "stdClass" could not be handled by any of the registered type adapters', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testGetTypeAdapterSkipClass()
@@ -81,7 +83,9 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
             $typeAdapterProvider->getAdapter(new TypeToken('string'), $mock);
         } catch (InvalidArgumentException $exception) {
             self::assertSame('The type "string" could not be handled by any of the registered type adapters', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testGetTypeAdapterUsesCache()
@@ -129,7 +133,9 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
             $this->typeAdapterProvider->getAdapterFromAnnotation(new TypeToken('string'), new JsonAdapter(['value' => ChildClass::class]));
         } catch (InvalidArgumentException $exception) {
             self::assertSame('The type adapter must be an instance of TypeAdapter, TypeAdapterFactory, JsonSerializer, or JsonDeserializer, but "Tebru\Gson\Test\Mock\ChildClass" was found', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testGetJsonSerializerAndDeserializerFromAnnotation()

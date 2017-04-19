@@ -112,7 +112,9 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
             $jsonObject->getAsJsonPrimitive('foo');
         } catch (LogicException $exception) {
             self::assertSame('This value is not a primitive', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testGetAsJsonArray()
@@ -135,7 +137,9 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
             $jsonObject->getAsJsonArray('foo');
         } catch (LogicException $exception) {
             self::assertSame('This value is not an array', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testGetAsJsonObject()
@@ -158,7 +162,9 @@ class JsonObjectTest extends PHPUnit_Framework_TestCase
             $jsonObject->getAsJsonObject('foo');
         } catch (LogicException $exception) {
             self::assertSame('This value is not an object', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testGetAsString()

@@ -8,7 +8,7 @@ namespace Tebru\Gson\Internal;
 
 use Iterator;
 use Tebru\Gson\Element\JsonElement;
-use Tebru\Gson\Exception\UnexpectedJsonTokenException;
+use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
 
@@ -83,7 +83,8 @@ abstract class JsonReader implements JsonReadable
      * Push an element onto the stack
      *
      * @param JsonElement|Iterator $element
-     * @param string $type
+     * @param string|null $type
+     * @return void
      */
     abstract protected function push($element, $type = null): void;
 
@@ -91,7 +92,7 @@ abstract class JsonReader implements JsonReadable
      * Consumes the next token and asserts it's the end of an array
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not END_ARRAY
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not END_ARRAY
      */
     public function endArray(): void
     {
@@ -105,7 +106,7 @@ abstract class JsonReader implements JsonReadable
      * Consumes the next token and asserts it's the end of an object
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not END_OBJECT
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not END_OBJECT
      */
     public function endObject(): void
     {
@@ -133,7 +134,7 @@ abstract class JsonReader implements JsonReadable
      * Consumes the next name and returns it
      *
      * @return string
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not NAME
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NAME
      */
     public function nextName(): string
     {
@@ -156,7 +157,7 @@ abstract class JsonReader implements JsonReadable
      * Consumes the value of the next token and asserts it's null
      *
      * @return null
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not NAME or NULL
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NAME or NULL
      */
     public function nextNull()
     {
@@ -198,7 +199,7 @@ abstract class JsonReader implements JsonReadable
      * Check that the next token equals the expectation
      *
      * @param string $expectedToken
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not the expectation
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not the expectation
      */
     protected function expect(string $expectedToken)
     {
@@ -210,7 +211,7 @@ abstract class JsonReader implements JsonReadable
         // want to display the current index that has a problem.
         $this->incrementPathIndex();
 
-        throw new UnexpectedJsonTokenException(
+        throw new JsonSyntaxException(
             sprintf('Expected "%s", but found "%s" at "%s"', $expectedToken, $this->peek(), $this->getPath())
         );
     }

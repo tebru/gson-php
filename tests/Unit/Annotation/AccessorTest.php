@@ -46,6 +46,8 @@ class AccessorTest extends PHPUnit_Framework_TestCase
             new Accessor([]);
         } catch (OutOfBoundsException $exception) {
             self::assertSame('@Accessor annotation must specify either get or set key', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

@@ -32,10 +32,10 @@ class GetByPublicPropertyTest extends PHPUnit_Framework_TestCase
 
         try {
             $strategy->get(new GetByPublicPropertyTestMock());
-
-            self::assertTrue(false);
         } catch (Throwable $throwable) {
             self::assertTrue(true);
+            return;
         }
+        self::assertTrue(false);
     }
 }

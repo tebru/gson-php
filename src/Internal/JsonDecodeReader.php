@@ -8,7 +8,7 @@ namespace Tebru\Gson\Internal;
 
 use ArrayIterator;
 use stdClass;
-use Tebru\Gson\Exception\MalformedJsonException;
+use Tebru\Gson\Exception\JsonParseException;
 use Tebru\Gson\JsonToken;
 
 /**
@@ -22,14 +22,14 @@ final class JsonDecodeReader extends JsonReader
      * Constructor
      *
      * @param string $json
-     * @throws \Tebru\Gson\Exception\MalformedJsonException If the json cannot be decoded
+     * @throws \Tebru\Gson\Exception\JsonParseException If the json cannot be decoded
      */
     public function __construct(string $json)
     {
         $this->push(json_decode($json));
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new MalformedJsonException(sprintf('Could not decode json, the error message was: "%s"', json_last_error_msg()));
+            throw new JsonParseException(sprintf('Could not decode json, the error message was: "%s"', json_last_error_msg()));
         }
     }
 
@@ -37,7 +37,7 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the next token and asserts it's the beginning of a new array
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not BEGIN_ARRAY
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not BEGIN_ARRAY
      */
     public function beginArray(): void
     {
@@ -52,7 +52,7 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the next token and asserts it's the beginning of a new object
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not BEGIN_OBJECT
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not BEGIN_OBJECT
      */
     public function beginObject(): void
     {
@@ -65,7 +65,7 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the value of the next token, asserts it's a boolean and returns it
      *
      * @return bool
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not BOOLEAN
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not BOOLEAN
      */
     public function nextBoolean(): bool
     {
@@ -82,7 +82,7 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the value of the next token, asserts it's a double and returns it
      *
      * @return double
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not NUMBER
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NUMBER
      */
     public function nextDouble(): float
     {
@@ -99,7 +99,7 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the value of the next token, asserts it's an int and returns it
      *
      * @return int
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not NUMBER
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NUMBER
      */
     public function nextInteger(): int
     {
@@ -116,7 +116,7 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the value of the next token, asserts it's a string and returns it
      *
      * @return string
-     * @throws \Tebru\Gson\Exception\UnexpectedJsonTokenException If the next token is not NAME or STRING
+     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NAME or STRING
      */
     public function nextString(): string
     {
@@ -226,7 +226,7 @@ final class JsonDecodeReader extends JsonReader
      * Push an element onto the stack
      *
      * @param mixed $element
-     * @param string $type
+     * @param string|null $type
      */
     protected function push($element, $type = null): void
     {

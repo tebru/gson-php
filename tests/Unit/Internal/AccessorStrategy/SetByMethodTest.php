@@ -36,6 +36,8 @@ class SetByMethodTest extends PHPUnit_Framework_TestCase
             $strategy->set(new SetByMethodTestMock(), 'bar');
         } catch (Throwable $throwable) {
             self::assertSame('Call to undefined method Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\SetByMethodTest\SetByMethodTestMock::foo()', $throwable->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

@@ -42,7 +42,9 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
             $element->asString();
         } catch (UnsupportedOperationException $exception) {
             self::assertSame('This method "asString" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testAsInteger()
@@ -52,7 +54,9 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
             $element->asInteger();
         } catch (UnsupportedOperationException $exception) {
             self::assertSame('This method "asInteger" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testAsFloat()
@@ -62,7 +66,9 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
             $element->asFloat();
         } catch (UnsupportedOperationException $exception) {
             self::assertSame('This method "asFloat" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testAsBoolean()
@@ -72,7 +78,9 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
             $element->asBoolean();
         } catch (UnsupportedOperationException $exception) {
             self::assertSame('This method "asBoolean" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testAsArray()
@@ -88,7 +96,9 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
             $element->asJsonObject();
         } catch (UnsupportedOperationException $exception) {
             self::assertSame('This method "asJsonObject" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testAsJsonArray()
@@ -98,7 +108,9 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
             $element->asJsonArray();
         } catch (UnsupportedOperationException $exception) {
             self::assertSame('This method "asJsonArray" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 
     public function testGetValue()
@@ -108,6 +120,8 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
             $element->getValue();
         } catch (UnsupportedOperationException $exception) {
             self::assertSame('This method "getValue" is not supported on "Tebru\Gson\Element\JsonNull"', $exception->getMessage());
+            return;
         }
+        self::assertTrue(false);
     }
 }

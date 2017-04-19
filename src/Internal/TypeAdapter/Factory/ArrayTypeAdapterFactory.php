@@ -33,11 +33,7 @@ final class ArrayTypeAdapterFactory implements TypeAdapterFactory
             return true;
         }
 
-        if ($type->isA(stdClass::class)) {
-            return true;
-        }
-
-        return false;
+        return $type->isA(stdClass::class);
     }
 
     /**

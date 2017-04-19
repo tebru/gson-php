@@ -28,7 +28,7 @@ final class JsonElementTypeAdapter extends TypeAdapter
      * Read the next value, convert it to its type and return it
      *
      * @param JsonReadable $reader
-     * @return mixed
+     * @return JsonElement
      * @throws \LogicException
      */
     public function read(JsonReadable $reader): JsonElement
