@@ -342,7 +342,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      *
      * @return bool
      */
-    private function topIsObject()
+    private function topIsObject(): bool
     {
         if (0 === $this->stackSize) {
             return false;
@@ -356,7 +356,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      *
      * @return bool
      */
-    private function topIsArray()
+    private function topIsArray(): bool
     {
         if (0 === $this->stackSize) {
             return false;

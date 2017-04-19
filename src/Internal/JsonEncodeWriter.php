@@ -324,7 +324,7 @@ final class JsonEncodeWriter implements JsonWritable
      *
      * @return bool
      */
-    private function topIsObject()
+    private function topIsObject(): bool
     {
         if (0 === $this->stackSize) {
             return false;
@@ -338,7 +338,7 @@ final class JsonEncodeWriter implements JsonWritable
      *
      * @return bool
      */
-    private function topIsArray()
+    private function topIsArray(): bool
     {
         if (0 === $this->stackSize) {
             return false;
