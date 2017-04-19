@@ -200,16 +200,16 @@
         },
         {
             "name": "tebru/php-type",
-            "version": "v0.1.0",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tebru/php-type.git",
-                "reference": "3ec053dd1822a5d1672dd268be63c8645464d0a1"
+                "reference": "ba578cff7ead9214c57a1c966298cd8e599fa12c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tebru/php-type/zipball/3ec053dd1822a5d1672dd268be63c8645464d0a1",
-                "reference": "3ec053dd1822a5d1672dd268be63c8645464d0a1",
+                "url": "https://api.github.com/repos/tebru/php-type/zipball/ba578cff7ead9214c57a1c966298cd8e599fa12c",
+                "reference": "ba578cff7ead9214c57a1c966298cd8e599fa12c",
                 "shasum": ""
             },
             "require": {
@@ -235,7 +235,7 @@
                 }
             ],
             "description": "A type wrapper for PHP that support generic syntax",
-            "time": "2017-04-19T00:07:55+00:00"
+            "time": "2017-04-19T17:03:48+00:00"
         }
     ],
     "packages-dev": [

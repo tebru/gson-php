@@ -82,7 +82,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                             // If there is a nested object, continue deserializing to an array,
                             // otherwise guess the type using the wildcard
                             $type = $reader->peek() === JsonToken::BEGIN_OBJECT
-                                ? new TypeToken(TypeToken::ARRAY)
+                                ? new TypeToken(TypeToken::HASH)
                                 : new TypeToken(TypeToken::WILDCARD);
 
                             $adapter = $this->typeAdapterProvider->getAdapter($type);

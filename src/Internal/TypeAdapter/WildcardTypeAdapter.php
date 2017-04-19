@@ -49,7 +49,7 @@ final class WildcardTypeAdapter extends TypeAdapter
     {
         switch ($reader->peek()) {
             case JsonToken::BEGIN_ARRAY:
-                $type = new TypeToken(TypeToken::ARRAY);
+                $type = new TypeToken(TypeToken::HASH);
                 break;
             case JsonToken::BEGIN_OBJECT:
                 $type = new TypeToken(TypeToken::OBJECT);
