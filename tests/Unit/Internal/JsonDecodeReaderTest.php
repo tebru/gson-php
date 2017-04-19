@@ -20,6 +20,7 @@ use Tebru\Gson\JsonToken;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\JsonDecodeReader
+ * @covers \Tebru\Gson\Internal\JsonReader
  */
 class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 {

@@ -24,6 +24,7 @@ use Tebru\Gson\JsonToken;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\JsonElementReader
+ * @covers \Tebru\Gson\Internal\JsonReader
  */
 class JsonElementReaderTest extends PHPUnit_Framework_TestCase
 {
