@@ -3,7 +3,7 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
-Master
+v0.2.0
 ------
 
 * BC BREAK: Refactored ExclusionStrategy interface
