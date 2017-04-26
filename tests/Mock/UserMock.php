@@ -146,7 +146,7 @@ class UserMock
     /**
      * @param string $phone
      */
-    public function setPhone(string $phone)
+    public function setPhone(string $phone = null)
     {
         $this->phone = $phone;
     }

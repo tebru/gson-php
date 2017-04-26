@@ -243,10 +243,6 @@ final class Property
      */
     public function set($object, $value): void
     {
-        if (null === $value) {
-            return;
-        }
-
         $this->setterStrategy->set($object, $value);
     }
 }

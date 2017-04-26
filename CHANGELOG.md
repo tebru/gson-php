@@ -19,6 +19,7 @@ Master
 * FIXED: Now throws exception for invalid array key types
 * FIXED: Some issues where types were potentially not cast to the proper value
 * FIXED: Issue with InstanceCreator not creating correct object
+* FIXED: Setters now set null values
 * ADDED: Support for subclasses of DateTime
 * ADDED: toJsonElement() method on Gson
 * ADDED: Path information for thrown exception during reading
