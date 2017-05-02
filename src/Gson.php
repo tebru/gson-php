@@ -7,8 +7,8 @@
 namespace Tebru\Gson;
 
 use Tebru\Gson\Element\JsonElement;
-use Tebru\Gson\Internal\Data\Property;
-use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
+use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstance;
+use Tebru\Gson\Internal\ObjectConstructorAware;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\PhpType\TypeToken;
 
@@ -27,14 +27,6 @@ class Gson
     private $typeAdapterProvider;
 
     /**
-     * A factory that reflects over class properties and returns a collection
-     * of [@see Property] objects
-     *
-     * @var PropertyCollectionFactory
-     */
-    private $propertyCollectionFactory;
-
-    /**
      * True if we should serialize nulls
      *
      * @var bool
@@ -45,16 +37,11 @@ class Gson
      * Constructor
      *
      * @param TypeAdapterProvider $typeAdapterProvider
-     * @param PropertyCollectionFactory $propertyCollectionFactory
      * @param bool $serializeNull
      */
-    public function __construct(
-        TypeAdapterProvider $typeAdapterProvider,
-        PropertyCollectionFactory $propertyCollectionFactory,
-        bool $serializeNull
-    ) {
+    public function __construct(TypeAdapterProvider $typeAdapterProvider, bool $serializeNull)
+    {
         $this->typeAdapterProvider = $typeAdapterProvider;
-        $this->propertyCollectionFactory = $propertyCollectionFactory;
         $this->serializeNull = $serializeNull;
     }
 
@@ -95,22 +82,15 @@ class Gson
      */
     public function fromJson(string $json, $type)
     {
-        $phpType = is_object($type) ? new TypeToken(get_class($type)) : new TypeToken($type);
-        $typeAdapter = $this->typeAdapterProvider->getAdapter($phpType);
-        $instance = $typeAdapter->readFromJson($json);
+        $isObject = is_object($type);
+        $typeToken = $isObject ? new TypeToken(get_class($type)) : new TypeToken($type);
+        $typeAdapter = $this->typeAdapterProvider->getAdapter($typeToken);
 
-        if (is_string($type)) {
-            return $instance;
+        if ($isObject && $typeAdapter instanceof ObjectConstructorAware) {
+            $typeAdapter->setObjectConstructor(new CreateFromInstance($type));
         }
 
-        $properties = $this->propertyCollectionFactory->create($phpType);
-
-        /** @var Property $property */
-        foreach ($properties as $property) {
-            $property->set($type, $property->get($instance));
-        }
-
-        return $type;
+        return $typeAdapter->readFromJson($json);
     }
 
     /**

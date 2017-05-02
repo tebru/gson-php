@@ -32,6 +32,7 @@ use Tebru\Gson\Test\Mock\TypeAdapter\Integer1TypeAdapterFactory;
  * Class GsonTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\ObjectConstructorAwareTrait
  * @covers \Tebru\Gson\Gson
  * @covers \Tebru\Gson\GsonBuilder
  */
@@ -501,9 +502,23 @@ class GsonTest extends PHPUnit_Framework_TestCase
         $gson = Gson::builder()->build();
 
         /** @var GsonMock $gsonMock */
-        $gsonMock = $gson->fromJson($this->json(), $gsonMock);
+        $returnedObject = $gson->fromJson($this->json(), $gsonMock);
 
-        self::assertFalse($gsonMock->getExclude());
+        self::assertSame($gsonMock, $returnedObject);
+    }
+
+    public function testDeserializeUsesSameObjectNested()
+    {
+        $gsonMock = new GsonMock();
+        $gsonMock->setExclude(false);
+        $gsonMock->setGsonObjectMock(new GsonObjectMock('test'));
+
+        $gson = Gson::builder()->build();
+
+        /** @var GsonMock $gsonMock */
+        $returnedObject = $gson->fromJson($this->json(), $gsonMock);
+
+        self::assertSame($gsonMock, $returnedObject);
     }
 
     public function testSerializeSimple()

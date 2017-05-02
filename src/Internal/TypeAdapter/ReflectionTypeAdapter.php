@@ -12,6 +12,9 @@ use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstance;
+use Tebru\Gson\Internal\ObjectConstructorAware;
+use Tebru\Gson\Internal\ObjectConstructorAwareTrait;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\Data\PropertyCollection;
@@ -27,12 +30,9 @@ use Tebru\Gson\TypeAdapter;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class ReflectionTypeAdapter extends TypeAdapter
+final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAware
 {
-    /**
-     * @var ObjectConstructor
-     */
-    private $objectConstructor;
+    use ObjectConstructorAwareTrait;
 
     /**
      * @var PropertyCollection
@@ -124,6 +124,13 @@ final class ReflectionTypeAdapter extends TypeAdapter
             $adapter = null === $jsonAdapterAnnotation
                 ? $this->typeAdapterProvider->getAdapter($property->getType())
                 : $this->typeAdapterProvider->getAdapterFromAnnotation($property->getType(), $jsonAdapterAnnotation);
+
+            if ($adapter instanceof ObjectConstructorAware) {
+                $nestedObject = $property->get($object);
+                if ($nestedObject !== null) {
+                    $adapter->setObjectConstructor(new CreateFromInstance($nestedObject));
+                }
+            }
 
             $property->set($object, $adapter->read($reader));
         }
