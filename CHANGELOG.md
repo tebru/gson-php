@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+master
+------
+
+* FIXED: Issues with default property values and overrides when deserializing into provided object
+
 v0.2.0
 ------
 

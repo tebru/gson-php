@@ -386,7 +386,7 @@ class GsonBuilder
             $constructorConstructor
         );
 
-        return new Gson($typeAdapterProvider, $propertyCollectionFactory, $this->serializeNull);
+        return new Gson($typeAdapterProvider, $this->serializeNull);
     }
 
     /**

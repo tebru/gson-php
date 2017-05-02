@@ -8,6 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstance;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\AddressMock;
@@ -20,6 +21,7 @@ use Tebru\PhpType\TypeToken;
  * Class ReflectionTypeAdapterTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\ObjectConstructorAwareTrait
  * @covers \Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
@@ -64,6 +66,51 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
                 "address": {
                     "street": "123 ABC St.",
                     "city": "My City",
+                    "state": "MN",
+                    "zip": 12345
+                },
+                "phone": null,
+                "enabled": true
+            }
+        ');
+        $address = $user->getAddress();
+
+        self::assertInstanceOf(UserMock::class, $user);
+        self::assertSame(1, $user->getId());
+        self::assertSame('test@example.com', $user->getEmail());
+        self::assertSame('Test User', $user->getName());
+        self::assertNull($user->getPhone());
+        self::assertTrue($user->isEnabled());
+        self::assertNull($user->getPassword());
+        self::assertSame('123 ABC St.', $address->getStreet());
+        self::assertSame('My City', $address->getCity());
+        self::assertSame('MN', $address->getState());
+        self::assertSame(12345, $address->getZip());
+    }
+
+    public function testDeserializeOverrideObjectConstructor()
+    {
+        /** @var ReflectionTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
+
+        $address = new AddressMock();
+        $address->setCity('My City');
+        $address->setStreet('Foo');
+
+        $userMock = new UserMock();
+        $userMock->setAddress($address);
+
+        $adapter->setObjectConstructor(new CreateFromInstance($userMock));
+
+        /** @var UserMock $user */
+        $user = $adapter->readFromJson('
+            {
+                "id": 1,
+                "name": "Test User",
+                "email": "test@example.com",
+                "password": "password1",
+                "address": {
+                    "street": "123 ABC St.",
                     "state": "MN",
                     "zip": 12345
                 },
