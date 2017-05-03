@@ -22,7 +22,7 @@ class FooExclusionStrategy implements ExclusionStrategy
         return Foo::class === $classMetadata->getName();
     }
 
-    public function shouldSkipProperty(PropertyMetadata $propertyMetadata): bool
+    public function shouldSkipProperty(PropertyMetadata $propertyMetadata, ExclusionData $exclusionData): bool
     {
         return Foo2::class === $propertyMetadata->getDeclaringClassMetadata->getName()
             && 'bar' === $propertyMetadata->getName();
@@ -30,6 +30,18 @@ class FooExclusionStrategy implements ExclusionStrategy
 }
 ```
 
+The `ExclusionData` parameter allows you to make runtime exclusion
+decisions based on data available during serialization or deserialization.
+The `getData()` method will always return an object. This object will
+be fully hydrated during serialization, but will likely be empty or
+partially hydrated during deserialization unless a hydrated object was
+provided when calling `Gson::fromJson()`.
+
+During deserialization, the `getDeserializePayload()`
+method will return the data that has been `json_decode`'d. During
+serialization, this method will return null. Additionally, there is a
+method `isSerialize()` to check if the exclusion strategy is being
+executed during serialization or deserialization.
 
 Options on the Builder
 ----------------------

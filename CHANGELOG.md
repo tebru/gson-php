@@ -6,6 +6,8 @@ This document keeps track of changes between releases of the library.
 master
 ------
 
+* BC BREAK: Changed ExclusionStrategy interface to accept ExclusionData for access to runtime data
+* BC BREAK: Added `getPayload()` method to JsonReadable interface
 * FIXED: Issues with default property values and overrides when deserializing into provided object
 
 v0.2.0

@@ -12,6 +12,7 @@ use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Annotation\Until;
 use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\ExclusionData;
 use Tebru\Gson\ExclusionStrategy;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\PropertyMetadata;
@@ -173,14 +174,14 @@ final class Excluder
      * Uses user-defined strategies
      *
      * @param PropertyMetadata $property
-     * @param bool $serialize
+     * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function excludePropertyByStrategy(PropertyMetadata $property, bool $serialize): bool
+    public function excludePropertyByStrategy(PropertyMetadata $property, ExclusionData $exclusionData): bool
     {
-        $strategies = $serialize ? $this->serializationStrategies : $this->deserializationStrategies;
+        $strategies = $exclusionData->isSerialize() ? $this->serializationStrategies : $this->deserializationStrategies;
         foreach ($strategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipProperty($property)) {
+            if ($exclusionStrategy->shouldSkipProperty($property, $exclusionData)) {
                 return true;
             }
         }

@@ -11,6 +11,7 @@ use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
+use Tebru\Gson\Internal\DefaultExclusionData;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstance;
 use Tebru\Gson\Internal\ObjectConstructorAware;
@@ -88,7 +89,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
      * Read the next value, convert it to its type and return it
      *
      * @param JsonReadable $reader
-     * @return mixed
+     * @return object
      * @throws \InvalidArgumentException
      * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
@@ -105,6 +106,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
         }
 
         $object = $this->objectConstructor->construct();
+        $exclusionData = new DefaultExclusionData(false, clone $object, $reader->getPayload());
 
         $reader->beginObject();
         while ($reader->hasNext()) {
@@ -113,7 +115,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             if (
                 null === $property
                 || $property->skipDeserialize()
-                || $this->excluder->excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), false)
+                || $this->excluder->excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), $exclusionData)
             ) {
                 $reader->skipValue();
                 continue;
@@ -143,7 +145,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param mixed $value
+     * @param object $value
      * @return void
      * @throws \InvalidArgumentException
      * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
@@ -162,6 +164,8 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             return;
         }
 
+        $exclusionData = new DefaultExclusionData(true, $value);
+
         $writer->beginObject();
 
         /** @var Property $property */
@@ -170,7 +174,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
 
             if (
                 $property->skipSerialize()
-                || $this->excluder->excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), true)
+                || $this->excluder->excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), $exclusionData)
             ) {
                 $writer->writeNull();
 
