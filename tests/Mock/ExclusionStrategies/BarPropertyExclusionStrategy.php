@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Mock\ExclusionStrategies;
 
 use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\ExclusionData;
 use Tebru\Gson\ExclusionStrategy;
 use Tebru\Gson\PropertyMetadata;
 
@@ -32,9 +33,10 @@ class BarPropertyExclusionStrategy implements ExclusionStrategy
      * Return true if the property should be ignored
      *
      * @param PropertyMetadata $propertyMetadata
+     * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function shouldSkipProperty(PropertyMetadata $propertyMetadata): bool
+    public function shouldSkipProperty(PropertyMetadata $propertyMetadata, ExclusionData $exclusionData): bool
     {
         return 'bar' === $propertyMetadata->getName();
     }

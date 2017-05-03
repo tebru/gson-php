@@ -29,6 +29,7 @@ final class JsonElementReader extends JsonReader
      */
     public function __construct(JsonElement $jsonElement)
     {
+        $this->payload = $jsonElement;
         $this->push($jsonElement);
     }
 

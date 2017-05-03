@@ -14,6 +14,7 @@ use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Annotation\Until;
 use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
+use Tebru\Gson\Internal\DefaultExclusionData;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\DefaultPropertyMetadata;
@@ -25,6 +26,7 @@ use Tebru\Gson\Test\Mock\ExcluderExposeMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\Foo;
+use Tebru\Gson\Test\Mock\UserMock;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
 
@@ -532,8 +534,10 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             false
         );
 
-        self::assertTrue($this->excluder->excludePropertyByStrategy($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludePropertyByStrategy($propertyMetadata, false));
+        $serializeExclusionData = new DefaultExclusionData(true, new UserMock());
+        $deserializeExclusionData = new DefaultExclusionData(false, new UserMock(), ['name' => 'John Doe']);
+        self::assertTrue($this->excluder->excludePropertyByStrategy($propertyMetadata, $serializeExclusionData));
+        self::assertTrue($this->excluder->excludePropertyByStrategy($propertyMetadata, $deserializeExclusionData));
     }
 
     public function testExcludeFromStrategyFalse()
@@ -548,7 +552,9 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             false
         );
 
-        self::assertFalse($this->excluder->excludePropertyByStrategy($propertyMetadata, true));
-        self::assertFalse($this->excluder->excludePropertyByStrategy($propertyMetadata, false));
+        $serializeExclusionData = new DefaultExclusionData(true, new UserMock());
+        $deserializeExclusionData = new DefaultExclusionData(false, new UserMock(), ['name' => 'John Doe']);
+        self::assertFalse($this->excluder->excludePropertyByStrategy($propertyMetadata, $serializeExclusionData));
+        self::assertFalse($this->excluder->excludePropertyByStrategy($propertyMetadata, $deserializeExclusionData));
     }
 }

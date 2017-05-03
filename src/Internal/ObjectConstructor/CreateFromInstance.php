@@ -13,7 +13,7 @@ use Tebru\Gson\Internal\ObjectConstructor;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class CreateFromInstance implements ObjectConstructor
+final class CreateFromInstance implements ObjectConstructor
 {
     /**
      * The already instantiated object

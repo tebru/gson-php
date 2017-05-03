@@ -638,6 +638,17 @@ class JsonElementReaderTest extends PHPUnit_Framework_TestCase
         $reader->endObject();
     }
 
+    public function testGetPayload()
+    {
+        $adapter = new JsonElementTypeAdapter();
+        $jsonObject = $adapter->readFromJson('{"name": 1}');
+        $reader = new JsonElementReader($jsonObject);
+
+        $payload = $reader->getPayload();
+
+        self::assertSame($jsonObject, $payload);
+    }
+
     public function provideValidNumbers()
     {
         return [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [-1]];

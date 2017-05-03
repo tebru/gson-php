@@ -9,6 +9,7 @@ namespace Tebru\Gson\Test\Unit\Internal;
 use ArrayIterator;
 use PHPUnit_Framework_TestCase;
 use SplStack;
+use stdClass;
 use Tebru\Gson\Exception\JsonParseException;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\JsonDecodeReader;
@@ -780,6 +781,17 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $path = $reader->getPath();
 
         self::assertSame('$', $path);
+    }
+
+    public function testGetPayload()
+    {
+        $reader = new JsonDecodeReader('{"name": 1}');
+
+        $payload = $reader->getPayload();
+        $expected = new stdClass();
+        $expected->name = 1;
+
+        self::assertEquals($expected, $payload);
     }
 
     public function provideValidNumbers()

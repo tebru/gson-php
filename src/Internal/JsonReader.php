@@ -61,9 +61,16 @@ abstract class JsonReader implements JsonReadable
      * whenever a new token should be returned with the subsequent call
      * to [@see JsonDecodeReader::peek]
      *
-     * @var
+     * @var int|null
      */
     protected $currentToken;
+
+    /**
+     * The original payload
+     *
+     * @var mixed
+     */
+    protected $payload;
 
     /**
      * Returns an enum representing the type of the next token without consuming it
@@ -179,6 +186,16 @@ abstract class JsonReader implements JsonReadable
     public function skipValue(): void
     {
         $this->pop();
+    }
+
+    /**
+     * Returns the original json after json_decode
+     *
+     * @return mixed
+     */
+    public function getPayload()
+    {
+        return $this->payload;
     }
 
     /**

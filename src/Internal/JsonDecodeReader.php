@@ -26,11 +26,14 @@ final class JsonDecodeReader extends JsonReader
      */
     public function __construct(string $json)
     {
-        $this->push(json_decode($json));
+        $decodedJson = json_decode($json);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new JsonParseException(sprintf('Could not decode json, the error message was: "%s"', json_last_error_msg()));
         }
+
+        $this->payload = $decodedJson;
+        $this->push($decodedJson);
     }
 
     /**
