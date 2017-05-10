@@ -3,7 +3,7 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
-master
+v0.3.0
 ------
 
 * BC BREAK: Changed ExclusionStrategy interface to accept ExclusionData for access to runtime data
