@@ -88,8 +88,7 @@ final class DefaultPropertyMetadata implements PropertyMetadata
         ClassMetadata $classMetadata,
         AnnotationSet $annotations,
         bool $virtual
-    )
-    {
+    ) {
         $this->name = $name;
         $this->serializedName = $serializedName;
         $this->type = $type;
@@ -97,6 +96,8 @@ final class DefaultPropertyMetadata implements PropertyMetadata
         $this->classMetadata = $classMetadata;
         $this->annotations = $annotations;
         $this->virtual = $virtual;
+
+        $classMetadata->addPropertyMetadata($this);
     }
 
     /**

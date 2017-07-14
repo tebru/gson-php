@@ -3,6 +3,7 @@
  * Copyright (c) Nate Brunette.
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
+
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
@@ -12,11 +13,11 @@ use Tebru\Gson\Test\Mock\Annotation\FooAnnotation;
 use Tebru\Gson\Test\Mock\Foo;
 
 /**
- * Class DefaultClassMetadataTest
+ * Class ClassMetadataTest
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class DefaultClassMetadataTest extends PHPUnit_Framework_TestCase
+class ClassMetadataTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var AnnotationSet

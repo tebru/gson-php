@@ -40,4 +40,27 @@ interface ClassMetadata
      * @return null|object
      */
     public function getAnnotation(string $annotationClass);
+
+    /**
+     * Returns an array of [@see PropertyMetadata] objects
+     *
+     * @return array
+     */
+    public function getPropertyMetadata(): array;
+
+    /**
+     * Get [@see PropertyMetadata] by property name
+     *
+     * @param string $propertyName
+     * @return PropertyMetadata|null
+     */
+    public function getProperty(string $propertyName): ?PropertyMetadata;
+
+    /**
+     * Add [@see PropertyMetadata] link
+     *
+     * @param PropertyMetadata $propertyMetadata
+     * @return void
+     */
+    public function addPropertyMetadata(PropertyMetadata $propertyMetadata): void;
 }

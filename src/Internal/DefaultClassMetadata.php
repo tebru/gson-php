@@ -8,6 +8,7 @@ namespace Tebru\Gson\Internal;
 
 use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\Data\AnnotationSet;
+use Tebru\Gson\PropertyMetadata;
 
 /**
  * Class DefaultClassMetadata
@@ -31,6 +32,13 @@ final class DefaultClassMetadata implements ClassMetadata
      * @var AnnotationSet
      */
     private $annotations;
+
+    /**
+     * An array of [@see PropertyMetadata] objects
+     *
+     * @var PropertyMetadata[]
+     */
+    private $propertyMetadata;
 
     /**
      * Constructor
@@ -74,5 +82,43 @@ final class DefaultClassMetadata implements ClassMetadata
     public function getAnnotation(string $annotationClass)
     {
         return $this->annotations->getAnnotation($annotationClass, AnnotationSet::TYPE_CLASS);
+    }
+
+    /**
+     * Returns an array of [@see PropertyMetadata] objects
+     *
+     * @return array
+     */
+    public function getPropertyMetadata(): array
+    {
+        return $this->propertyMetadata;
+    }
+
+    /**
+     * Get [@see PropertyMetadata] by property name
+     *
+     * @param string $propertyName
+     * @return PropertyMetadata|null
+     */
+    public function getProperty(string $propertyName): ?PropertyMetadata
+    {
+        foreach ($this->propertyMetadata as $property) {
+            if ($property->getName() === $propertyName) {
+                return $property;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Add [@see PropertyMetadata] link
+     *
+     * @param PropertyMetadata $propertyMetadata
+     * @return void
+     */
+    public function addPropertyMetadata(PropertyMetadata $propertyMetadata): void
+    {
+        $this->propertyMetadata[] = $propertyMetadata;
     }
 }

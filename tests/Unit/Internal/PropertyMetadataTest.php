@@ -57,8 +57,8 @@ class PropertyMetadataTest extends PHPUnit_Framework_TestCase
         );
 
         $this->virtualPropertyMetadata = new DefaultPropertyMetadata(
-            'foo',
-            'foo',
+            'foo2',
+            'foo2',
             new TypeToken('string'),
             ReflectionProperty::IS_PUBLIC,
             $this->classMetadata,
@@ -77,6 +77,11 @@ class PropertyMetadataTest extends PHPUnit_Framework_TestCase
         self::assertSame($this->classMetadata, $this->propertyMetadata->getDeclaringClassMetadata());
         self::assertSame(Foo::class, $this->propertyMetadata->getDeclaringClassName());
         self::assertSame($this->annotations, $this->propertyMetadata->getAnnotations());
+        self::assertSame($this->propertyMetadata, $this->classMetadata->getPropertyMetadata()[0]);
+        self::assertSame($this->virtualPropertyMetadata, $this->classMetadata->getPropertyMetadata()[1]);
+        self::assertSame($this->propertyMetadata, $this->classMetadata->getProperty('foo'));
+        self::assertSame($this->virtualPropertyMetadata, $this->classMetadata->getProperty('foo2'));
+        self::assertNull($this->propertyMetadata->getDeclaringClassMetadata()->getProperty('foo3'));
         self::assertFalse($this->propertyMetadata->isVirtual());
     }
 
