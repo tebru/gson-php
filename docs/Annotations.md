@@ -1,7 +1,18 @@
 Annotation Reference
 ====================
 
-This page lists all of the annotations and ow to use them.
+This page lists all of the annotations and how to use them.
+
+Make sure you're importing the annotations as well. Although all of the
+examples use the regular annotation, here's an example of using an alias.
+
+```
+use Tebru\Gson\Annotation as Gson;
+
+/**
+ * @Gson\Type("string")
+ */
+```
 
 @Accessor
 ---------
