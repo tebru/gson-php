@@ -1,6 +1,6 @@
 {
     "name": "tebru/gson-php",
-    "description": "Gson for PHP: Convert PHP object to and from json",
+    "description": "Gson for PHP: Convert PHP objects to and from json",
     "type": "library",
     "license": "MIT",
     "authors": [
