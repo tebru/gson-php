@@ -4,6 +4,8 @@
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
 
+declare(strict_types=1);
+
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use DateTimeInterface;
