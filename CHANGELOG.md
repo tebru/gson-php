@@ -9,6 +9,7 @@ master
 * BC BREAK: Adding link between ClassMetadata and PropertyMetadata
 * BC BREAK: Removed AnnotationSet and replaced with AnnotationCollection.
 This affects exclusion strategies using annotations from ExclusionData.
+* ADDED: Strict type checking
 
 v0.3.0
 ------
