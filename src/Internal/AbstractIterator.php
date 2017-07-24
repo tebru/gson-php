@@ -61,9 +61,9 @@ abstract class AbstractIterator implements Iterator
     /**
      * Return the key of the current element
      *
-     * @return string
+     * @return string|int
      */
-    public function key(): string
+    public function key()
     {
         return $this->queue[$this->iterated][0];
     }
