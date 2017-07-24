@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Internal;
 
 use ReflectionProperty;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\Annotation\Since;
@@ -14,7 +15,6 @@ use Tebru\Gson\Annotation\Until;
 use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\ExclusionData;
 use Tebru\Gson\ExclusionStrategy;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\PropertyMetadata;
 
 /**
@@ -129,7 +129,7 @@ final class Excluder
      */
     public function excludeClass(ClassMetadata $classMetadata, bool $serialize): bool
     {
-        return $this->excludeByAnnotation($classMetadata->getAnnotations(), $serialize, AnnotationSet::TYPE_CLASS);
+        return $this->excludeByAnnotation($classMetadata->getAnnotations(), $serialize);
     }
 
     /**
@@ -163,9 +163,7 @@ final class Excluder
             return true;
         }
 
-        $filter = $propertyMetadata->isVirtual() ? AnnotationSet::TYPE_METHOD : AnnotationSet::TYPE_PROPERTY;
-
-        return $this->excludeByAnnotation($propertyMetadata->getAnnotations(), $serialize, $filter);
+        return $this->excludeByAnnotation($propertyMetadata->getAnnotations(), $serialize);
     }
 
     /**
@@ -196,19 +194,18 @@ final class Excluder
      * - [@see Exclude]
      * - [@see Expose] (if requireExpose is set)
      *
-     * @param AnnotationSet $annotations
+     * @param AnnotationCollection $annotations
      * @param bool $serialize
-     * @param int $filter
      * @return bool
      */
-    private function excludeByAnnotation(AnnotationSet $annotations, bool $serialize, int $filter): bool
+    private function excludeByAnnotation(AnnotationCollection $annotations, bool $serialize): bool
     {
-        if (!$this->validVersion($annotations, $filter)) {
+        if (!$this->validVersion($annotations)) {
             return true;
         }
 
         /** @var Exclude $exclude */
-        $exclude = $annotations->getAnnotation(Exclude::class, $filter);
+        $exclude = $annotations->get(Exclude::class);
         if (null !== $exclude && $exclude->shouldExclude($serialize)) {
             return true;
         }
@@ -216,7 +213,7 @@ final class Excluder
         // if we need an expose annotation
         if ($this->requireExpose) {
             /** @var Expose $expose */
-            $expose = $annotations->getAnnotation(Expose::class, $filter);
+            $expose = $annotations->get(Expose::class);
             if (null === $expose || !$expose->shouldExpose($serialize)) {
                 return true;
             }
@@ -228,48 +225,43 @@ final class Excluder
     /**
      * Returns true if the set version is valid for [@see Since] and [@see Until] annotations
      *
-     * @param AnnotationSet $annotations
-     * @param int $filter
+     * @param AnnotationCollection $annotations
      * @return bool
      */
-    private function validVersion(AnnotationSet $annotations, int $filter): bool
+    private function validVersion(AnnotationCollection $annotations): bool
     {
-        return !$this->shouldSkipSince($annotations, $filter) && !$this->shouldSkipUntil($annotations, $filter);
+        return !$this->shouldSkipSince($annotations) && !$this->shouldSkipUntil($annotations);
     }
 
     /**
      * Returns true if we should skip based on the [@see Since] annotation
      *
-     * @param AnnotationSet $annotations
-     * @param int $filter
+     * @param AnnotationCollection $annotations
      * @return bool
      */
-    private function shouldSkipSince(AnnotationSet $annotations, int $filter): bool
+    private function shouldSkipSince(AnnotationCollection $annotations): bool
     {
-        /** @var Since $sinceAnnotation */
-        $sinceAnnotation = $annotations->getAnnotation(Since::class, $filter);
+        $sinceAnnotation = $annotations->get(Since::class);
 
         return
             null !== $sinceAnnotation
             && null !== $this->version
-            && version_compare($this->version, $sinceAnnotation->getVersion(), '<');
+            && version_compare($this->version, $sinceAnnotation->getValue(), '<');
     }
 
     /**
      * Returns true if we should skip based on the [@see Until] annotation
      *
-     * @param AnnotationSet $annotations
-     * @param int $filter
+     * @param AnnotationCollection $annotations
      * @return bool
      */
-    private function shouldSkipUntil(AnnotationSet $annotations, int $filter): bool
+    private function shouldSkipUntil(AnnotationCollection $annotations): bool
     {
-        /** @var Until $sinceAnnotation */
-        $untilAnnotation = $annotations->getAnnotation(Until::class, $filter);
+        $untilAnnotation = $annotations->get(Until::class);
 
         return
             null !== $untilAnnotation
             && null !== $this->version
-            && version_compare($this->version, $untilAnnotation->getVersion(), '>=');
+            && version_compare($this->version, $untilAnnotation->getValue(), '>=');
     }
 }

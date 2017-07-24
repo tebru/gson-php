@@ -9,6 +9,7 @@ namespace Tebru\Gson\Internal\Data;
 use Doctrine\Common\Cache\Cache;
 use ReflectionClass;
 use ReflectionProperty;
+use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
@@ -37,9 +38,9 @@ final class PropertyCollectionFactory
     private $reflectionPropertySetFactory;
 
     /**
-     * @var AnnotationCollectionFactory
+     * @var AnnotationReaderAdapter
      */
-    private $annotationCollectionFactory;
+    private $annotationReader;
 
     /**
      * @var MetadataFactory
@@ -80,7 +81,7 @@ final class PropertyCollectionFactory
      * Constructor
      *
      * @param ReflectionPropertySetFactory $reflectionPropertySetFactory
-     * @param AnnotationCollectionFactory $annotationCollectionFactory
+     * @param AnnotationReaderAdapter $annotationReader
      * @param MetadataFactory $metadataFactory
      * @param PropertyNamer $propertyNamer
      * @param AccessorMethodProvider $accessorMethodProvider
@@ -91,7 +92,7 @@ final class PropertyCollectionFactory
      */
     public function __construct(
         ReflectionPropertySetFactory $reflectionPropertySetFactory,
-        AnnotationCollectionFactory $annotationCollectionFactory,
+        AnnotationReaderAdapter $annotationReader,
         MetadataFactory $metadataFactory,
         PropertyNamer $propertyNamer,
         AccessorMethodProvider $accessorMethodProvider,
@@ -101,7 +102,7 @@ final class PropertyCollectionFactory
         Cache $cache
     ) {
         $this->reflectionPropertySetFactory = $reflectionPropertySetFactory;
-        $this->annotationCollectionFactory = $annotationCollectionFactory;
+        $this->annotationReader = $annotationReader;
         $this->metadataFactory = $metadataFactory;
         $this->propertyNamer = $propertyNamer;
         $this->accessorMethodProvider = $accessorMethodProvider;
@@ -134,17 +135,19 @@ final class PropertyCollectionFactory
 
         /** @var ReflectionProperty $reflectionProperty */
         foreach ($reflectionProperties as $reflectionProperty) {
-            $annotations = $this->annotationCollectionFactory->createPropertyAnnotations(
+            $annotations = $this->annotationReader->readProperty(
+                $reflectionProperty->getName(),
                 $reflectionProperty->getDeclaringClass()->getName(),
-                $reflectionProperty->getName()
+                false,
+                true
             );
 
-            $serializedName = $this->propertyNamer->serializedName($reflectionProperty->getName(), $annotations, AnnotationSet::TYPE_PROPERTY);
+            $serializedName = $this->propertyNamer->serializedName($reflectionProperty->getName(), $annotations);
             $getterMethod = $this->accessorMethodProvider->getterMethod($reflectionClass, $reflectionProperty, $annotations);
             $setterMethod = $this->accessorMethodProvider->setterMethod($reflectionClass, $reflectionProperty, $annotations);
             $getterStrategy = $this->accessorStrategyFactory->getterStrategy($reflectionProperty, $getterMethod);
             $setterStrategy = $this->accessorStrategyFactory->setterStrategy($reflectionProperty, $setterMethod);
-            $type = $this->phpTypeFactory->create($annotations, AnnotationSet::TYPE_PROPERTY, $getterMethod, $setterMethod);
+            $type = $this->phpTypeFactory->create($annotations, $getterMethod, $setterMethod);
 
             $property = new Property(
                 $reflectionProperty->getName(),
@@ -177,13 +180,18 @@ final class PropertyCollectionFactory
 
         // add virtual properties
         foreach ($reflectionClass->getMethods() as $reflectionMethod) {
-            $annotations = $this->annotationCollectionFactory->createMethodAnnotations($reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getName());
-            if (null === $annotations->getAnnotation(VirtualProperty::class, AnnotationSet::TYPE_METHOD)) {
+            $annotations = $this->annotationReader->readMethod(
+                $reflectionMethod->getName(),
+                $reflectionMethod->getDeclaringClass()->getName(),
+                false,
+                true
+            );
+            if (null === $annotations->get(VirtualProperty::class)) {
                 continue;
             }
 
-            $serializedName = $this->propertyNamer->serializedName($reflectionMethod->getName(), $annotations, AnnotationSet::TYPE_METHOD);
-            $type = $this->phpTypeFactory->create($annotations, AnnotationSet::TYPE_METHOD, $reflectionMethod);
+            $serializedName = $this->propertyNamer->serializedName($reflectionMethod->getName(), $annotations);
+            $type = $this->phpTypeFactory->create($annotations, $reflectionMethod);
             $getterStrategy = new GetByMethod($reflectionMethod->getName());
             $setterStrategy = new SetByNull();
 

@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Annotation;
 
-use OutOfBoundsException;
+use Tebru\AnnotationReader\AbstractAnnotation;
 
 /**
  * Class Since
@@ -20,7 +20,7 @@ use OutOfBoundsException;
  * @Annotation
  * @Target({"CLASS", "PROPERTY", "METHOD"})
  */
-class Since
+class Since extends AbstractAnnotation
 {
     /**
      * @var string
@@ -28,27 +28,24 @@ class Since
     private $value;
 
     /**
-     * Constructor
-     *
-     * @param array $params
-     * @throws \OutOfBoundsException
+     * Initialize annotation data
      */
-    public function __construct(array $params)
+    protected function init(): void
     {
-        if (!isset($params['value'])) {
-            throw new OutOfBoundsException('@Since annotation must specify a version as the first argument');
-        }
+        $this->assertKey();
 
-        $this->value = (string) $params['value'];
+        $this->value = (string)$this->data['value'];
     }
 
     /**
-     * Returns the version
+     * Get the value
      *
      * @return string
      */
-    public function getVersion(): string
+    public function getValue()
     {
         return $this->value;
     }
+
+
 }

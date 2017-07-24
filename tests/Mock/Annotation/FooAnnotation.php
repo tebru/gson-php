@@ -15,4 +15,7 @@ namespace Tebru\Gson\Test\Mock\Annotation;
  */
 class FooAnnotation extends MockAnnotation
 {
+    protected function init(): void
+    {
+    }
 }

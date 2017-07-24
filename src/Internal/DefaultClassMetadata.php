@@ -6,8 +6,9 @@
 
 namespace Tebru\Gson\Internal;
 
+use Tebru\AnnotationReader\AbstractAnnotation;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\ClassMetadata;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\PropertyMetadata;
 
 /**
@@ -29,7 +30,7 @@ final class DefaultClassMetadata implements ClassMetadata
     /**
      * The class annotations
      *
-     * @var AnnotationSet
+     * @var AnnotationCollection
      */
     private $annotations;
 
@@ -44,9 +45,9 @@ final class DefaultClassMetadata implements ClassMetadata
      * Constructor
      *
      * @param string $name
-     * @param AnnotationSet $annotations
+     * @param AnnotationCollection $annotations
      */
-    public function __construct(string $name, AnnotationSet $annotations)
+    public function __construct(string $name, AnnotationCollection $annotations)
     {
         $this->name = $name;
         $this->annotations = $annotations;
@@ -65,9 +66,9 @@ final class DefaultClassMetadata implements ClassMetadata
     /**
      * Get all class annotations
      *
-     * @return AnnotationSet
+     * @return AnnotationCollection
      */
-    public function getAnnotations(): AnnotationSet
+    public function getAnnotations(): AnnotationCollection
     {
         return $this->annotations;
     }
@@ -77,11 +78,11 @@ final class DefaultClassMetadata implements ClassMetadata
      * doesn't exist.
      *
      * @param string $annotationClass
-     * @return null|object
+     * @return null|AbstractAnnotation
      */
-    public function getAnnotation(string $annotationClass)
+    public function getAnnotation(string $annotationClass): ?AbstractAnnotation
     {
-        return $this->annotations->getAnnotation($annotationClass, AnnotationSet::TYPE_CLASS);
+        return $this->annotations->get($annotationClass);
     }
 
     /**

@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Internal\Data\AnnotationSet;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Test\Mock\Annotation\FooAnnotation;
 use Tebru\Gson\Test\Mock\Foo;
@@ -20,7 +20,7 @@ use Tebru\Gson\Test\Mock\Foo;
 class ClassMetadataTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var AnnotationSet
+     * @var AnnotationCollection
      */
     private $annotations;
 
@@ -31,7 +31,7 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->annotations = new AnnotationSet();
+        $this->annotations = new AnnotationCollection();
         $this->metadata = new DefaultClassMetadata(Foo::class, $this->annotations);
     }
 
@@ -44,7 +44,7 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
     public function testGetAnnotation()
     {
         $annotation = new FooAnnotation([]);
-        $this->annotations->addAnnotation($annotation, AnnotationSet::TYPE_CLASS);
+        $this->annotations->add($annotation);
 
         self::assertSame($annotation, $this->metadata->getAnnotation(FooAnnotation::class));
     }

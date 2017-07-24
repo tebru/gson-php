@@ -8,9 +8,9 @@ namespace Tebru\Gson\Test\Unit\Internal\Data;
 
 use PHPUnit_Framework_TestCase;
 use stdClass;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\PhpType\TypeToken;
@@ -45,7 +45,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             $type,
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
-            new AnnotationSet(),
+            new AnnotationCollection(),
             0,
             false
         );

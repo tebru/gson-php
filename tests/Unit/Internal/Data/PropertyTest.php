@@ -8,13 +8,13 @@ namespace Tebru\Gson\Test\Unit\Internal\Data;
 
 use PHPUnit_Framework_TestCase;
 use stdClass;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Internal\AccessorStrategy\GetByClosure;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategy\SetByClosure;
 use Tebru\Gson\Internal\AccessorStrategy\SetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ChildClassParent;
@@ -33,7 +33,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $realName = 'foo';
         $serializedName = 'foo_bar';
         $type = new TypeToken(stdClass::class);
-        $annotationSet = new AnnotationSet();
+        $annotations = new AnnotationCollection();
 
         $property = new Property(
             $realName,
@@ -41,7 +41,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $type,
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
-            $annotationSet,
+            $annotations,
             0,
             false
         );
@@ -50,7 +50,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         self::assertSame($serializedName, $property->getSerializedName());
         self::assertSame($type, $property->getType());
         self::assertSame(0, $property->getModifiers());
-        self::assertSame($annotationSet, $property->getAnnotations());
+        self::assertSame($annotations, $property->getAnnotations());
         self::assertFalse($property->skipSerialize());
         self::assertFalse($property->skipDeserialize());
         self::assertFalse($property->isVirtual());
@@ -61,7 +61,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $realName = 'foo';
         $serializedName = 'foo_bar';
         $type = new TypeToken(stdClass::class);
-        $annotationSet = new AnnotationSet();
+        $annotations = new AnnotationCollection();
 
         $property = new Property(
             $realName,
@@ -69,7 +69,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $type,
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
-            $annotationSet,
+            $annotations,
             0,
             false
         );
@@ -94,7 +94,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $type,
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
-            new AnnotationSet(),
+            new AnnotationCollection(),
             0,
             false
         );
@@ -116,7 +116,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $type,
             new GetByMethod('getOverridden'),
             new SetByMethod('setOverridden'),
-            new AnnotationSet(),
+            new AnnotationCollection(),
             0,
             false
         );
@@ -138,7 +138,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $type,
             new GetByPublicProperty('qux'),
             new SetByPublicProperty('qux'),
-            new AnnotationSet(),
+            new AnnotationCollection(),
             0,
             false
         );
@@ -162,7 +162,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $type,
             $getter,
             $setter,
-            new AnnotationSet(),
+            new AnnotationCollection(),
             0,
             false
         );
@@ -186,7 +186,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $type,
             $getter,
             $setter,
-            new AnnotationSet(),
+            new AnnotationCollection(),
             0,
             false
         );
@@ -208,7 +208,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $type,
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
-            new AnnotationSet(),
+            new AnnotationCollection(),
             0,
             false
         );

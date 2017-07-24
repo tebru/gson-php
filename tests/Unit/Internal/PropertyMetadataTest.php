@@ -7,8 +7,8 @@ namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Internal\DefaultClassMetadata;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\DefaultPropertyMetadata;
 use Tebru\Gson\PropertyMetadata;
 use Tebru\Gson\Test\Mock\Annotation\FooAnnotation;
@@ -28,7 +28,7 @@ class PropertyMetadataTest extends PHPUnit_Framework_TestCase
     private $classMetadata;
 
     /**
-     * @var AnnotationSet
+     * @var AnnotationCollection
      */
     private $annotations;
 
@@ -44,8 +44,8 @@ class PropertyMetadataTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->classMetadata = new DefaultClassMetadata(Foo::class, new AnnotationSet());
-        $this->annotations = new AnnotationSet();
+        $this->classMetadata = new DefaultClassMetadata(Foo::class, new AnnotationCollection());
+        $this->annotations = new AnnotationCollection();
         $this->propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
@@ -88,7 +88,7 @@ class PropertyMetadataTest extends PHPUnit_Framework_TestCase
     public function testGetAnnotation()
     {
         $annotation = new FooAnnotation([]);
-        $this->annotations->addAnnotation($annotation, AnnotationSet::TYPE_PROPERTY);
+        $this->annotations->add($annotation);
 
         self::assertSame($annotation, $this->propertyMetadata->getAnnotation(FooAnnotation::class));
     }
@@ -101,7 +101,7 @@ class PropertyMetadataTest extends PHPUnit_Framework_TestCase
     public function testGetAnnotationVirtual()
     {
         $annotation = new FooAnnotation([]);
-        $this->annotations->addAnnotation($annotation, AnnotationSet::TYPE_METHOD);
+        $this->annotations->add($annotation);
 
 
         self::assertSame($annotation, $this->virtualPropertyMetadata->getAnnotation(FooAnnotation::class));

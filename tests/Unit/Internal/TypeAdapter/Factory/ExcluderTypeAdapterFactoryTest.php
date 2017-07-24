@@ -10,7 +10,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
+use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\TypeAdapter\ExcluderTypeAdapter;
@@ -45,7 +45,7 @@ class ExcluderTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->excluder = new Excluder();
-        $metadataFactory = new MetadataFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+        $metadataFactory = new MetadataFactory(new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache()));
         $this->excluderTypeAdapterFactory = new ExcluderTypeAdapterFactory($this->excluder, $metadataFactory);
     }
     

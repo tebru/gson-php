@@ -8,12 +8,12 @@ namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Annotation\Until;
 use Tebru\Gson\Internal\DefaultClassMetadata;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\DefaultExclusionData;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
@@ -154,8 +154,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_STATIC,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
-            new AnnotationSet(),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new AnnotationCollection(),
             false
         );
 
@@ -172,8 +172,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
-            new AnnotationSet(),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new AnnotationCollection(),
             false
         );
 
@@ -190,8 +190,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PROTECTED,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
-            new AnnotationSet(),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new AnnotationCollection(),
             false
         );
 
@@ -208,8 +208,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
-            new AnnotationSet(),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new AnnotationCollection(),
             false
         );
 
@@ -219,15 +219,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     public function testDoNotExcludeWithoutVersion()
     {
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Until(['value' => '2']), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Until(['value' => '2']));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -240,15 +240,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setVersion('1.0.0');
 
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Since(['value' => '1.0.1']));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -261,15 +261,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setVersion('1.0.1');
 
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Since(['value' => '1.0.1']));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -282,15 +282,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setVersion('1.0.2');
 
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Since(['value' => '1.0.1']), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Since(['value' => '1.0.1']));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -303,15 +303,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setVersion('1');
 
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Until(['value' => '2.0.0']));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -324,15 +324,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setVersion('2.0.0');
 
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Until(['value' => '2.0.0']));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -345,15 +345,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setVersion('2.0.1');
 
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Until(['value' => '2.0.0']), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Until(['value' => '2.0.0']));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -364,15 +364,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     public function testExcludeWithExcludeAnnotation()
     {
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Exclude([]), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Exclude([]));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -383,15 +383,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     public function testExcludeWithExcludeAnnotationOnlySerialize()
     {
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Exclude(['deserialize' => false]), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Exclude(['deserialize' => false]));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -402,15 +402,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     public function testExcludeWithExcludeAnnotationOnlyDeserialize()
     {
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Exclude(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Exclude(['serialize' => false]));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -423,15 +423,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setRequireExpose(true);
 
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Expose([]), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Expose([]));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -444,15 +444,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setRequireExpose(true);
 
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Expose(['deserialize' => false]), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Expose(['deserialize' => false]));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -465,15 +465,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->setRequireExpose(true);
 
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Expose(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Expose(['serialize' => false]));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -484,15 +484,15 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     public function testDoNotExcludeWithExposeAnnotationWithoutRequireExpose()
     {
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation(new Expose(['serialize' => false]), AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Expose(['serialize' => false]));
 
         $propertyMetadata = new DefaultPropertyMetadata(
             'foo',
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
             $annotations,
             false
         );
@@ -510,8 +510,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
-            new AnnotationSet(),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new AnnotationCollection(),
             false
         );
 
@@ -529,8 +529,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
-            new AnnotationSet(),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new AnnotationCollection(),
             false
         );
 
@@ -547,8 +547,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
             'foo',
             new TypeToken('string'),
             ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationSet()),
-            new AnnotationSet(),
+            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new AnnotationCollection(),
             false
         );
 

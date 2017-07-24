@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Annotation;
 
-use OutOfBoundsException;
+use Tebru\AnnotationReader\AbstractAnnotation;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -22,30 +22,8 @@ use Tebru\PhpType\TypeToken;
  * @Annotation
  * @Target({"PROPERTY", "METHOD"})
  */
-class Type
+class Type extends AbstractAnnotation
 {
-    /**
-     * The php type as a string
-     *
-     * @var string
-     */
-    private $value;
-
-    /**
-     * Constructor
-     *
-     * @param array $params
-     * @throws \OutOfBoundsException
-     */
-    public function __construct(array $params)
-    {
-        if (!isset($params['value'])) {
-            throw new OutOfBoundsException('@Type annotation must specify a type as the first argument');
-        }
-
-        $this->value = $params['value'];
-    }
-
     /**
      * Returns the php type
      *
@@ -54,6 +32,6 @@ class Type
      */
     public function getType(): TypeToken
     {
-        return new TypeToken($this->value);
+        return new TypeToken($this->getValue());
     }
 }

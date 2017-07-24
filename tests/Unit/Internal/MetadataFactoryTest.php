@@ -9,11 +9,11 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
+use Tebru\AnnotationReader\AnnotationCollection;
+use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\PropertyMetadata;
@@ -40,14 +40,14 @@ class MetadataFactoryTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->metadataFactory = new MetadataFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+        $this->metadataFactory = new MetadataFactory(new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache()));
         $this->defaultProperty = $defaultProperty = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
             new GetByPublicProperty('foo'),
             new SetByPublicProperty('foo'),
-            new AnnotationSet(),
+            new AnnotationCollection(),
             ReflectionProperty::IS_PUBLIC,
             false
         );
@@ -59,7 +59,7 @@ class MetadataFactoryTest extends PHPUnit_Framework_TestCase
 
         self::assertInstanceOf(ClassMetadata::class, $metadata);
         self::assertSame(Foo::class, $metadata->getName());
-        self::assertEquals(new AnnotationSet(), $metadata->getAnnotations());
+        self::assertEquals(new AnnotationCollection(), $metadata->getAnnotations());
     }
 
     public function testCreatePropertyMetadata()

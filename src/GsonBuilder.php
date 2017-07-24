@@ -15,10 +15,10 @@ use Doctrine\Common\Cache\FilesystemCache;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionProperty;
+use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
@@ -340,6 +340,7 @@ class GsonBuilder
      * Builds a new [@see Gson] object based on configuration set
      *
      * @return Gson
+     * @throws \Doctrine\Common\Annotations\AnnotationException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
@@ -359,7 +360,7 @@ class GsonBuilder
         $cache = false === $this->enableCache ? new ArrayCache() : new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
         $cache->setNamespace('gson');
 
-        $annotationCollectionFactory = new AnnotationCollectionFactory($reader, $cache);
+        $annotationReader = new AnnotationReaderAdapter($reader, $cache);
         $excluder = new Excluder();
         $excluder->setVersion($this->version);
         $excluder->setExcludedModifiers($this->excludedModifiers);
@@ -368,10 +369,10 @@ class GsonBuilder
             $excluder->addExclusionStrategy($strategy[0], $strategy[1], $strategy[2]);
         }
 
-        $metadataFactory = new MetadataFactory($annotationCollectionFactory);
+        $metadataFactory = new MetadataFactory($annotationReader);
         $propertyCollectionFactory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
+            $annotationReader,
             $metadataFactory,
             new PropertyNamer($propertyNamingStrategy),
             new AccessorMethodProvider($methodNamingStrategy),
@@ -382,7 +383,7 @@ class GsonBuilder
         );
         $constructorConstructor = new ConstructorConstructor($this->instanceCreators);
         $typeAdapterProvider = new TypeAdapterProvider(
-            $this->getTypeAdapterFactories($propertyCollectionFactory, $excluder, $annotationCollectionFactory, $metadataFactory, $constructorConstructor),
+            $this->getTypeAdapterFactories($propertyCollectionFactory, $excluder, $annotationReader, $metadataFactory, $constructorConstructor),
             $constructorConstructor
         );
 
@@ -394,7 +395,7 @@ class GsonBuilder
      *
      * @param PropertyCollectionFactory $propertyCollectionFactory
      * @param Excluder $excluder
-     * @param AnnotationCollectionFactory $annotationCollectionFactory
+     * @param AnnotationReaderAdapter $annotationReader
      * @param MetadataFactory $metadataFactory
      * @param ConstructorConstructor $constructorConstructor
      * @return array|TypeAdapterFactory[]
@@ -402,7 +403,7 @@ class GsonBuilder
     private function getTypeAdapterFactories(
         PropertyCollectionFactory $propertyCollectionFactory,
         Excluder $excluder,
-        AnnotationCollectionFactory $annotationCollectionFactory,
+        AnnotationReaderAdapter $annotationReader,
         MetadataFactory $metadataFactory,
         ConstructorConstructor $constructorConstructor
     ): array
@@ -410,7 +411,7 @@ class GsonBuilder
         return array_merge(
             [
                 new ExcluderTypeAdapterFactory($excluder, $metadataFactory),
-                new JsonTypeAdapterFactory($annotationCollectionFactory),
+                new JsonTypeAdapterFactory($annotationReader),
             ],
             $this->typeAdapterFactories,
             [

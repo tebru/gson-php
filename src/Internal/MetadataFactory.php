@@ -6,8 +6,9 @@
 
 namespace Tebru\Gson\Internal;
 
+use Tebru\AnnotationReader\AnnotationCollection;
+use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\ClassMetadata;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\PropertyMetadata;
 
@@ -20,20 +21,20 @@ final class MetadataFactory
 {
     /**
      * Reads annotations from a class, property, or method and returns
-     * an [@see AnnotationSet]
+     * an [@see AnnotationCollection]
      *
-     * @var AnnotationCollectionFactory
+     * @var AnnotationReaderAdapter
      */
-    private $annotationCollectionFactory;
+    private $annotationReader;
 
     /**
      * Constructor
      *
-     * @param AnnotationCollectionFactory $annotationCollectionFactory
+     * @param AnnotationReaderAdapter $annotationReader
      */
-    public function __construct(AnnotationCollectionFactory $annotationCollectionFactory)
+    public function __construct(AnnotationReaderAdapter $annotationReader)
     {
-        $this->annotationCollectionFactory = $annotationCollectionFactory;
+        $this->annotationReader = $annotationReader;
     }
 
     /**
@@ -44,7 +45,7 @@ final class MetadataFactory
      */
     public function createClassMetadata(string $className): ClassMetadata
     {
-        return new DefaultClassMetadata($className, $this->annotationCollectionFactory->createClassAnnotations($className));
+        return new DefaultClassMetadata($className, $this->annotationReader->readClass($className, true));
     }
 
     /**

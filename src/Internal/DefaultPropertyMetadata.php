@@ -6,8 +6,9 @@
 
 namespace Tebru\Gson\Internal;
 
+use Tebru\AnnotationReader\AbstractAnnotation;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\ClassMetadata;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\PropertyMetadata;
 use Tebru\PhpType\TypeToken;
 
@@ -58,7 +59,7 @@ final class DefaultPropertyMetadata implements PropertyMetadata
     /**
      * The property's annotations
      *
-     * @var AnnotationSet
+     * @var AnnotationCollection
      */
     private $annotations;
 
@@ -77,7 +78,7 @@ final class DefaultPropertyMetadata implements PropertyMetadata
      * @param TypeToken $type
      * @param int $modifiers
      * @param ClassMetadata $classMetadata
-     * @param AnnotationSet $annotations
+     * @param AnnotationCollection $annotations
      * @param bool $virtual
      */
     public function __construct(
@@ -86,7 +87,7 @@ final class DefaultPropertyMetadata implements PropertyMetadata
         TypeToken $type,
         int $modifiers,
         ClassMetadata $classMetadata,
-        AnnotationSet $annotations,
+        AnnotationCollection $annotations,
         bool $virtual
     ) {
         $this->name = $name;
@@ -173,9 +174,9 @@ final class DefaultPropertyMetadata implements PropertyMetadata
     /**
      * Get property annotations
      *
-     * @return AnnotationSet
+     * @return AnnotationCollection
      */
-    public function getAnnotations(): AnnotationSet
+    public function getAnnotations(): AnnotationCollection
     {
         return $this->annotations;
     }
@@ -184,13 +185,11 @@ final class DefaultPropertyMetadata implements PropertyMetadata
      * Get a single annotation, returns null if the annotation doesn't exist
      *
      * @param string $annotationName
-     * @return null|object
+     * @return null|AbstractAnnotation
      */
-    public function getAnnotation(string $annotationName)
+    public function getAnnotation(string $annotationName): ?AbstractAnnotation
     {
-        return $this->virtual
-            ? $this->annotations->getAnnotation($annotationName, AnnotationSet::TYPE_METHOD)
-            : $this->annotations->getAnnotation($annotationName, AnnotationSet::TYPE_PROPERTY);
+        return $this->annotations->get($annotationName);
     }
 
     /**

@@ -6,17 +6,13 @@
 
 namespace Tebru\Gson\Test\Mock\Annotation;
 
+use Tebru\AnnotationReader\AbstractAnnotation;
+
 /**
  * Class MockAnnotation
  *
  * @author Nate Brunette <n@tebru.net>
  */
-abstract class MockAnnotation
+abstract class MockAnnotation extends AbstractAnnotation
 {
-    private $values;
-
-    public function __construct(array $values)
-    {
-        $this->values = $values;
-    }
 }

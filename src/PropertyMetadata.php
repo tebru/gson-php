@@ -6,7 +6,8 @@
 
 namespace Tebru\Gson;
 
-use Tebru\Gson\Internal\Data\AnnotationSet;
+use Tebru\AnnotationReader\AbstractAnnotation;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -70,17 +71,17 @@ interface PropertyMetadata
     /**
      * Get property annotations
      *
-     * @return AnnotationSet
+     * @return AnnotationCollection
      */
-    public function getAnnotations(): AnnotationSet;
+    public function getAnnotations(): AnnotationCollection;
 
     /**
      * Get a single annotation, returns null if the annotation doesn't exist
      *
      * @param string $annotationName
-     * @return null|object
+     * @return null|AbstractAnnotation
      */
-    public function getAnnotation(string $annotationName);
+    public function getAnnotation(string $annotationName): ?AbstractAnnotation;
 
     /**
      * Returns true if the property is virtual

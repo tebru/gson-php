@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Annotation;
 
-use OutOfBoundsException;
+use Tebru\AnnotationReader\AbstractAnnotation;
 
 /**
  * Class JsonAdapter
@@ -24,35 +24,6 @@ use OutOfBoundsException;
  * @Annotation
  * @Target({"CLASS", "PROPERTY", "METHOD"})
  */
-class JsonAdapter
+class JsonAdapter extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    private $value;
-
-    /**
-     * Constructor
-     *
-     * @param array $params
-     * @throws \OutOfBoundsException
-     */
-    public function __construct(array $params)
-    {
-        if (!isset($params['value'])) {
-            throw new OutOfBoundsException('@JsonAdapter annotation must specify a class as the first argument');
-        }
-
-        $this->value = $params['value'];
-    }
-
-    /**
-     * Returns the class name of the custom adapter as a string
-     *
-     * @return string
-     */
-    public function getClass(): string
-    {
-        return $this->value;
-    }
 }

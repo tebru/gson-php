@@ -10,10 +10,10 @@ use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\VoidCache;
+use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
@@ -45,18 +45,18 @@ use Tebru\Gson\Internal\TypeAdapterProvider;
  */
 class MockProvider
 {
-    public static function annotationCollectionFactory(CacheProvider $cache = null)
+    public static function annotationReader(CacheProvider $cache = null)
     {
         if (null === $cache) {
             $cache = new VoidCache();
         }
 
-        return new AnnotationCollectionFactory(new AnnotationReader(), $cache);
+        return new AnnotationReaderAdapter(new AnnotationReader(), $cache);
     }
 
     public static function metadataFactory()
     {
-        return new MetadataFactory(self::annotationCollectionFactory());
+        return new MetadataFactory(self::annotationReader());
     }
 
     public static function excluder()
@@ -68,7 +68,7 @@ class MockProvider
     {
         return new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
-            self::annotationCollectionFactory(),
+            self::annotationReader(),
             self::metadataFactory(),
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
@@ -94,7 +94,7 @@ class MockProvider
             array_merge(
                 [
                     new ExcluderTypeAdapterFactory($excluder, self::metadataFactory()),
-                    new JsonTypeAdapterFactory(self::annotationCollectionFactory()),
+                    new JsonTypeAdapterFactory(self::annotationReader()),
                 ],
                 $factories,
                 [

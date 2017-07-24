@@ -6,6 +6,8 @@
 
 namespace Tebru\Gson\Annotation;
 
+use Tebru\AnnotationReader\AbstractAnnotation;
+
 /**
  * Class Exclude
  *
@@ -17,7 +19,7 @@ namespace Tebru\Gson\Annotation;
  * @Annotation
  * @Target({"CLASS", "PROPERTY", "METHOD"})
  */
-class Exclude
+class Exclude extends AbstractAnnotation
 {
     /**
      * Exclude this property during serialization
@@ -34,19 +36,12 @@ class Exclude
     private $deserialize = true;
 
     /**
-     * Constructor
-     *
-     * @param array $params
+     * Initialize annotation data
      */
-    public function __construct(array $params)
+    protected function init(): void
     {
-        if (isset($params['serialize'])) {
-            $this->serialize = (bool) $params['serialize'];
-        }
-
-        if (isset($params['deserialize'])) {
-            $this->deserialize = (bool) $params['deserialize'];
-        }
+        $this->serialize = $this->data['serialize'] ?? true;
+        $this->deserialize = $this->data['deserialize'] ?? true;
     }
 
     /**

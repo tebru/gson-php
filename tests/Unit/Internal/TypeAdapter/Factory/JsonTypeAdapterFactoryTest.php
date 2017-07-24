@@ -9,7 +9,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
+use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\JsonTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 
@@ -28,35 +28,35 @@ class JsonTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testSupportsTrue()
     {
-        $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+        $factory = new JsonTypeAdapterFactory(new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache()));
 
         self::assertTrue($factory->supports(new TypeToken(JsonAdapterClassMock::class)));
     }
 
     public function testSupportsFalse()
     {
-        $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+        $factory = new JsonTypeAdapterFactory(new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache()));
 
         self::assertFalse($factory->supports(new TypeToken(ChildClass::class)));
     }
 
     public function testSupportsNonObject()
     {
-        $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+        $factory = new JsonTypeAdapterFactory(new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache()));
 
         self::assertFalse($factory->supports(new TypeToken('string')));
     }
 
     public function testNotValidForPseudoClass()
     {
-        $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+        $factory = new JsonTypeAdapterFactory(new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache()));
 
         self::assertFalse($factory->supports(new TypeToken('String')));
     }
 
     public function testCreate()
     {
-        $factory = new JsonTypeAdapterFactory(new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache()));
+        $factory = new JsonTypeAdapterFactory(new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache()));
 
         self::assertInstanceOf(StringTypeAdapter::class, $factory->create(new TypeToken(JsonAdapterClassMock::class), MockProvider::typeAdapterProvider()));
     }

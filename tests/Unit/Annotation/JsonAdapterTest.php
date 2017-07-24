@@ -6,8 +6,8 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use OutOfBoundsException;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Test\Mock\MockSerializer;
 
@@ -23,15 +23,15 @@ class JsonAdapterTest extends PHPUnit_Framework_TestCase
     {
         $type = new JsonAdapter(['value' => MockSerializer::class]);
 
-        self::assertSame(MockSerializer::class, $type->getClass());
+        self::assertSame(MockSerializer::class, $type->getValue());
     }
 
     public function testCreateThrowsException()
     {
         try {
             new JsonAdapter([]);
-        } catch (OutOfBoundsException $exception) {
-            self::assertSame('@JsonAdapter annotation must specify a class as the first argument', $exception->getMessage());
+        } catch (RuntimeException $exception) {
+            self::assertTrue(true);
             return;
         }
         self::assertTrue(false);

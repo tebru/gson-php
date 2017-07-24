@@ -6,6 +6,8 @@
 
 namespace Tebru\Gson\Annotation;
 
+use Tebru\AnnotationReader\AbstractAnnotation;
+
 /**
  * Class VirtualProperty
  *
@@ -17,6 +19,12 @@ namespace Tebru\Gson\Annotation;
  * @Annotation
  * @Target({"METHOD"})
  */
-class VirtualProperty
+class VirtualProperty extends AbstractAnnotation
 {
+    /**
+     * Initialize annotation data
+     */
+    protected function init(): void
+    {
+    }
 }

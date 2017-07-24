@@ -113,4 +113,18 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
 
         self::assertSame(1.0, $primitive->asFloat());
     }
+
+    public function testGetValue()
+    {
+        $primitive = JsonPrimitive::create(1);
+
+        self::assertSame(1, $primitive->getValue());
+    }
+
+    public function testJsonSerialize()
+    {
+        $primitive = JsonPrimitive::create(1);
+
+        self::assertSame('1', json_encode($primitive));
+    }
 }

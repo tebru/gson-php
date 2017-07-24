@@ -6,8 +6,8 @@
 
 namespace Tebru\Gson;
 
-use Tebru\Gson\Internal\Data\AnnotationSet;
-
+use Tebru\AnnotationReader\AbstractAnnotation;
+use Tebru\AnnotationReader\AnnotationCollection;
 
 /**
  * Class ClassMetadata
@@ -28,18 +28,18 @@ interface ClassMetadata
     /**
      * Get all class annotations
      *
-     * @return AnnotationSet
+     * @return AnnotationCollection
      */
-    public function getAnnotations(): AnnotationSet;
+    public function getAnnotations(): AnnotationCollection;
 
     /**
      * Get a specific annotation by class name, returns null if the annotation
      * doesn't exist.
      *
      * @param string $annotationClass
-     * @return null|object
+     * @return null|AbstractAnnotation
      */
-    public function getAnnotation(string $annotationClass);
+    public function getAnnotation(string $annotationClass): ?AbstractAnnotation;
 
     /**
      * Returns an array of [@see PropertyMetadata] objects

@@ -8,8 +8,8 @@ namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
 use ReflectionMethod;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\Type;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\UserMock;
@@ -25,54 +25,54 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromAnnotation()
     {
         $type = new Type(['value' => ChildClass::class]);
-        $annotations = new AnnotationSet();
-        $annotations->addAnnotation($type, AnnotationSet::TYPE_PROPERTY);
+        $annotations = new AnnotationCollection();
+        $annotations->add($type);
 
         $factory = new PhpTypeFactory();
-        $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY);
+        $phpType = $factory->create($annotations);
 
         self::assertSame(ChildClass::class, $phpType->getRawType());
     }
 
     public function testCreateFromSetterTypehint()
     {
-        $annotations = new AnnotationSet();
+        $annotations = new AnnotationCollection();
         $factory = new PhpTypeFactory();
         $setter = new ReflectionMethod(ChildClass::class, 'setWithTypehint');
-        $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY, null, $setter);
+        $phpType = $factory->create($annotations, null, $setter);
 
         self::assertSame(UserMock::class, $phpType->getRawType());
     }
 
     public function testCreateFromGetterReturnType()
     {
-        $annotations = new AnnotationSet();
+        $annotations = new AnnotationCollection();
         $factory = new PhpTypeFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'getWithReturnType');
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
-        $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY, $getter, $setter);
+        $phpType = $factory->create($annotations, $getter, $setter);
 
         self::assertSame(UserMock::class, $phpType->getRawType());
     }
 
     public function testCreateFromSetterDefault()
     {
-        $annotations = new AnnotationSet();
+        $annotations = new AnnotationCollection();
         $factory = new PhpTypeFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'isFoo');
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
-        $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY, $getter, $setter);
+        $phpType = $factory->create($annotations, $getter, $setter);
 
         self::assertSame('string', (string) $phpType);
     }
 
     public function testCreateWildcard()
     {
-        $annotations = new AnnotationSet();
+        $annotations = new AnnotationCollection();
         $factory = new PhpTypeFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'isFoo');
         $setter = new ReflectionMethod(ChildClass::class, 'set_baz');
-        $phpType = $factory->create($annotations, AnnotationSet::TYPE_PROPERTY, $getter, $setter);
+        $phpType = $factory->create($annotations, $getter, $setter);
 
         self::assertSame('?', (string) $phpType);
     }

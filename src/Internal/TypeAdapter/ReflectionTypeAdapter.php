@@ -8,7 +8,6 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\ClassMetadata;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\DefaultExclusionData;
@@ -122,7 +121,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             }
 
             /** @var JsonAdapter $jsonAdapterAnnotation */
-            $jsonAdapterAnnotation = $property->getAnnotations()->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_PROPERTY);
+            $jsonAdapterAnnotation = $property->getAnnotations()->get(JsonAdapter::class);
             $adapter = null === $jsonAdapterAnnotation
                 ? $this->typeAdapterProvider->getAdapter($property->getType())
                 : $this->typeAdapterProvider->getAdapterFromAnnotation($property->getType(), $jsonAdapterAnnotation);
@@ -182,7 +181,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             }
 
             /** @var JsonAdapter $jsonAdapterAnnotation */
-            $jsonAdapterAnnotation = $property->getAnnotations()->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_PROPERTY);
+            $jsonAdapterAnnotation = $property->getAnnotations()->get(JsonAdapter::class);
             $adapter = null === $jsonAdapterAnnotation
                 ? $this->typeAdapterProvider->getAdapter($property->getType())
                 : $this->typeAdapterProvider->getAdapterFromAnnotation($property->getType(), $jsonAdapterAnnotation);

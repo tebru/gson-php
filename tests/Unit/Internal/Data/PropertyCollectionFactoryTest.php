@@ -10,6 +10,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
+use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategy\GetByClosure;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
@@ -19,7 +20,6 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\SetByNull;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
@@ -103,13 +103,13 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateUsesCache()
     {
-        $annotationCollectionFactory = new AnnotationCollectionFactory(new AnnotationReader(), new VoidCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache());
         $cache = new ArrayCache();
 
         $factory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
-            $annotationCollectionFactory,
-            new MetadataFactory($annotationCollectionFactory),
+            $annotationReader,
+            new MetadataFactory($annotationReader),
             new PropertyNamer(new SnakePropertyNamingStrategy()),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),

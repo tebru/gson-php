@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Annotation;
 
-use OutOfBoundsException;
+use Tebru\AnnotationReader\AbstractAnnotation;
 
 /**
  * Class SerializedName
@@ -19,35 +19,6 @@ use OutOfBoundsException;
  * @Annotation
  * @Target({"PROPERTY", "METHOD"})
  */
-class SerializedName
+class SerializedName extends AbstractAnnotation
 {
-    /**
-     * @var string
-     */
-    private $value;
-
-    /**
-     * Constructor
-     *
-     * @param array $params
-     * @throws \OutOfBoundsException
-     */
-    public function __construct(array $params)
-    {
-        if (!isset($params['value'])) {
-            throw new OutOfBoundsException('@SerializedName annotation must specify a name as the first argument');
-        }
-
-        $this->value = $params['value'];
-    }
-
-    /**
-     * Get the serialized name
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->value;
-    }
 }

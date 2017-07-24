@@ -6,8 +6,8 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use OutOfBoundsException;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 use stdClass;
 use Tebru\Gson\Annotation\Type;
 
@@ -30,8 +30,8 @@ class TypeTest extends PHPUnit_Framework_TestCase
     {
         try {
             new Type([]);
-        } catch (OutOfBoundsException $exception) {
-            self::assertSame('@Type annotation must specify a type as the first argument', $exception->getMessage());
+        } catch (RuntimeException $exception) {
+            self::assertTrue(true);
             return;
         }
         self::assertTrue(false);

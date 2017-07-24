@@ -6,7 +6,8 @@
 
 namespace Tebru\Gson\Annotation;
 
-use OutOfBoundsException;
+use RuntimeException;
+use Tebru\AnnotationReader\AbstractAnnotation;
 
 /**
  * Class Accessor
@@ -18,7 +19,7 @@ use OutOfBoundsException;
  * @Annotation
  * @Target({"PROPERTY"})
  */
-class Accessor
+class Accessor extends AbstractAnnotation
 {
     /**
      * Method name representing getter
@@ -37,21 +38,15 @@ class Accessor
     /**
      * Constructor
      *
-     * @param string[] $params
-     * @throws \OutOfBoundsException
+     * @throws \RuntimeException
      */
-    public function __construct(array $params)
+    protected function init(): void
     {
-        if (isset($params['get'])) {
-            $this->get = $params['get'];
-        }
-
-        if (isset($params['set'])) {
-            $this->set = $params['set'];
-        }
+        $this->get = $this->data['get'] ?? null;
+        $this->set = $this->data['set'] ?? null;
 
         if (null === $this->get && null === $this->set) {
-            throw new OutOfBoundsException('@Accessor annotation must specify either get or set key');
+            throw new RuntimeException('@Accessor annotation must specify either get or set key');
         }
     }
 

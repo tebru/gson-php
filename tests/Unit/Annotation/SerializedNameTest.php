@@ -6,8 +6,8 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use OutOfBoundsException;
 use PHPUnit_Framework_TestCase;
+use RuntimeException;
 use Tebru\Gson\Annotation\SerializedName;
 
 /**
@@ -22,15 +22,15 @@ class SerializedNameTest extends PHPUnit_Framework_TestCase
     {
         $annotation = new SerializedName(['value' => 'test']);
 
-        self::assertSame('test', $annotation->getName());
+        self::assertSame('test', $annotation->getValue());
     }
 
     public function testCreateThrowsException()
     {
         try {
             new SerializedName([]);
-        } catch (OutOfBoundsException $exception) {
-            self::assertSame('@SerializedName annotation must specify a name as the first argument', $exception->getMessage());
+        } catch (RuntimeException $exception) {
+            self::assertTrue(true);
             return;
         }
         self::assertTrue(false);

@@ -7,8 +7,8 @@
 namespace Tebru\Gson\Internal;
 
 use ReflectionMethod;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\Type;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -29,17 +29,19 @@ final class PhpTypeFactory
      * - Uses setter default value if it exists
      * - Defaults to wildcard type
      *
-     * @param AnnotationSet $annotations
-     * @param int $filter
+     * @param AnnotationCollection $annotations
      * @param ReflectionMethod|null $getterMethod
      * @param ReflectionMethod|null $setterMethod
      * @return TypeToken
      * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
-    public function create(AnnotationSet $annotations, int $filter, ReflectionMethod $getterMethod = null, ReflectionMethod $setterMethod = null): TypeToken
-    {
+    public function create(
+        AnnotationCollection $annotations,
+        ReflectionMethod $getterMethod = null,
+        ReflectionMethod $setterMethod = null
+    ): TypeToken {
         /** @var Type $typeAnnotation */
-        $typeAnnotation = $annotations->getAnnotation(Type::class, $filter);
+        $typeAnnotation = $annotations->get(Type::class);
 
         if (null !== $typeAnnotation) {
             return $typeAnnotation->getType();

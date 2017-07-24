@@ -6,9 +6,8 @@
 
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
+use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Annotation\JsonAdapter;
-use Tebru\Gson\Internal\Data\AnnotationCollectionFactory;
-use Tebru\Gson\Internal\Data\AnnotationSet;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
@@ -22,18 +21,18 @@ use Tebru\PhpType\TypeToken;
 final class JsonTypeAdapterFactory implements TypeAdapterFactory
 {
     /**
-     * @var AnnotationCollectionFactory
+     * @var AnnotationReaderAdapter
      */
-    private $annotationCollectionFactory;
+    private $annotationReader;
 
     /**
      * Constructor
      *
-     * @param AnnotationCollectionFactory $annotationCollectionFactory
+     * @param AnnotationReaderAdapter $annotationReader
      */
-    public function __construct(AnnotationCollectionFactory $annotationCollectionFactory)
+    public function __construct(AnnotationReaderAdapter $annotationReader)
     {
-        $this->annotationCollectionFactory = $annotationCollectionFactory;
+        $this->annotationReader = $annotationReader;
     }
 
     /**
@@ -53,9 +52,9 @@ final class JsonTypeAdapterFactory implements TypeAdapterFactory
             return false;
         }
 
-        $annotations = $this->annotationCollectionFactory->createClassAnnotations($type->getRawType());
+        $annotations = $this->annotationReader->readClass($type->getRawType(), true);
 
-        return null !== $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_CLASS);
+        return $annotations->exists(JsonAdapter::class);
     }
 
     /**
@@ -70,10 +69,10 @@ final class JsonTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        $annotations = $this->annotationCollectionFactory->createClassAnnotations($type->getRawType());
+        $annotations = $this->annotationReader->readClass($type->getRawType(), true);
 
         /** @var JsonAdapter $annotation */
-        $annotation = $annotations->getAnnotation(JsonAdapter::class, AnnotationSet::TYPE_CLASS);
+        $annotation = $annotations->get(JsonAdapter::class);
 
         return $typeAdapterProvider->getAdapterFromAnnotation($type, $annotation);
     }

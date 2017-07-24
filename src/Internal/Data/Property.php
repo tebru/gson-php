@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Internal\Data;
 
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Internal\GetterStrategy;
 use Tebru\Gson\Internal\SetterStrategy;
 use Tebru\PhpType\TypeToken;
@@ -58,7 +59,7 @@ final class Property
     /**
      * A set of annotations
      *
-     * @var AnnotationSet
+     * @var AnnotationCollection
      */
     private $annotations;
 
@@ -99,7 +100,7 @@ final class Property
      * @param TypeToken $type
      * @param GetterStrategy $getterStrategy
      * @param SetterStrategy $setterStrategy
-     * @param AnnotationSet $annotations
+     * @param AnnotationCollection $annotations
      * @param int $modifiers
      * @param bool $virtual
      */
@@ -109,7 +110,7 @@ final class Property
         TypeToken $type,
         GetterStrategy $getterStrategy,
         SetterStrategy $setterStrategy,
-        AnnotationSet $annotations,
+        AnnotationCollection $annotations,
         int $modifiers,
         bool $virtual
     )
@@ -157,9 +158,9 @@ final class Property
     /**
      * Return the collection of annotations
      *
-     * @return AnnotationSet
+     * @return AnnotationCollection
      */
-    public function getAnnotations(): AnnotationSet
+    public function getAnnotations(): AnnotationCollection
     {
         return $this->annotations;
     }
