@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b3ea81ee88df3606f6e0db0296821c4b",
+    "content-hash": "df57b363fb4d83edca2aab2f1b393a16",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -204,16 +204,16 @@
         },
         {
             "name": "tebru/doctrine-annotation-reader",
-            "version": "dev-master",
+            "version": "v0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tebru/doctrine-annotation-reader.git",
-                "reference": "6c4babbad29ca69b833f96ddbfb9f856b273e2a4"
+                "reference": "29cce0c55657e8260399c625cc6b04363d6d8355"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tebru/doctrine-annotation-reader/zipball/6c4babbad29ca69b833f96ddbfb9f856b273e2a4",
-                "reference": "6c4babbad29ca69b833f96ddbfb9f856b273e2a4",
+                "url": "https://api.github.com/repos/tebru/doctrine-annotation-reader/zipball/29cce0c55657e8260399c625cc6b04363d6d8355",
+                "reference": "29cce0c55657e8260399c625cc6b04363d6d8355",
                 "shasum": ""
             },
             "require": {
@@ -241,7 +241,7 @@
                 }
             ],
             "description": "Provides a cleaner API for reading Doctrine annotations",
-            "time": "2017-07-24 11:55:57"
+            "time": "2017-07-25T15:36:01+00:00"
         },
         {
             "name": "tebru/php-type",
@@ -1600,9 +1600,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "tebru/doctrine-annotation-reader": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
