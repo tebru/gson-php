@@ -357,7 +357,7 @@ class GsonBuilder
 
         $cache = false === $this->enableCache
             ? new ArrayCache()
-            : new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
+            : new ChainCache([new ArrayCache(), new FilesystemCache('', 0, $this->cacheDir)]);
 
         $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), $cache);
         $excluder = new Excluder();
