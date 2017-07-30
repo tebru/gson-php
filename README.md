@@ -19,6 +19,7 @@ And in addition:
 
 * Utilize PHP 7 scalar type hints to be intelligent about property types
 * Limit the number of annotations required to use
+* Allow serialization decisions based on runtime information
 
 Overview
 --------
