@@ -27,7 +27,7 @@ final class TypeAdapterProvider
     /**
      * A cache of created type adapters
      *
-     * @var array
+     * @var TypeAdapter[]
      */
     private $typeAdapters = [];
 
