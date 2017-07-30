@@ -25,29 +25,10 @@ use Tebru\AnnotationReader\AbstractAnnotation;
 class Since extends AbstractAnnotation
 {
     /**
-     * @var string
-     */
-    private $value;
-
-    /**
      * Initialize annotation data
      */
     protected function init(): void
     {
-        $this->assertKey();
-
-        $this->value = (string)$this->data['value'];
+        $this->value = (string)$this->getValue();
     }
-
-    /**
-     * Get the value
-     *
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-
 }

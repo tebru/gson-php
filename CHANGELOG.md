@@ -7,6 +7,8 @@ master
 ------
 
 * CHANGE: Switching cache from Doctrine to PSR simple cache
+* CHANGE: Updating annotation reader library to support setting
+annotation values
 
 v0.4.0
 ------
