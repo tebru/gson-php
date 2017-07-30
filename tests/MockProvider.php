@@ -8,8 +8,8 @@ namespace Tebru\Gson\Test;
 
 use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Cache\VoidCache;
+use Psr\SimpleCache\CacheInterface;
+use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
@@ -45,10 +45,10 @@ use Tebru\Gson\Internal\TypeAdapterProvider;
  */
 class MockProvider
 {
-    public static function annotationReader(CacheProvider $cache = null)
+    public static function annotationReader(CacheInterface $cache = null)
     {
         if (null === $cache) {
-            $cache = new VoidCache();
+            $cache = new NullCache();
         }
 
         return new AnnotationReaderAdapter(new AnnotationReader(), $cache);
@@ -75,7 +75,7 @@ class MockProvider
             new AccessorStrategyFactory(),
             new PhpTypeFactory(),
             $excluder,
-            new VoidCache()
+            new NullCache()
         );
     }
 

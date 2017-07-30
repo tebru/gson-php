@@ -6,9 +6,9 @@
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
+use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\ClassMetadata;
@@ -40,7 +40,7 @@ class MetadataFactoryTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->metadataFactory = new MetadataFactory(new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache()));
+        $this->metadataFactory = new MetadataFactory(new AnnotationReaderAdapter(new AnnotationReader(), new NullCache()));
         $this->defaultProperty = $defaultProperty = new Property(
             'foo',
             'foo',

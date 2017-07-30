@@ -11,12 +11,12 @@ namespace Tebru\Gson;
 use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\CachedReader;
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\ChainCache;
-use Doctrine\Common\Cache\FilesystemCache;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionProperty;
+use Symfony\Component\Cache\Simple\ArrayCache;
+use Symfony\Component\Cache\Simple\ChainCache;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
@@ -355,14 +355,11 @@ class GsonBuilder
         $propertyNamingStrategy = $this->propertyNamingStrategy ?? new SnakePropertyNamingStrategy();
         $methodNamingStrategy = $this->methodNamingStrategy ?? new UpperCaseMethodNamingStrategy();
 
-        $doctrineAnnotationCache = false === $this->enableCache ? new ArrayCache(): new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
-        $doctrineAnnotationCache->setNamespace('doctrine_annotation_cache');
-        $reader = new CachedReader(new AnnotationReader(), $doctrineAnnotationCache);
+        $cache = false === $this->enableCache
+            ? new ArrayCache()
+            : new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
 
-        $cache = false === $this->enableCache ? new ArrayCache() : new ChainCache([new ArrayCache(), new FilesystemCache($this->cacheDir)]);
-        $cache->setNamespace('gson');
-
-        $annotationReader = new AnnotationReaderAdapter($reader, $cache);
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), $cache);
         $excluder = new Excluder();
         $excluder->setVersion($this->version);
         $excluder->setExcludedModifiers($this->excludedModifiers);

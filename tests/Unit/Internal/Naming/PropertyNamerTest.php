@@ -7,9 +7,9 @@
 namespace Tebru\Gson\Test\Unit\Internal\Naming;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
+use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
@@ -27,7 +27,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
     {
         $namer = new PropertyNamer(new SnakePropertyNamingStrategy());
         $reflectionProperty = new ReflectionProperty(AnnotatedMock::class, 'fooBar');
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
         $annotations = $annotationReader->readProperty(
             $reflectionProperty->getName(),
             $reflectionProperty->getDeclaringClass()->getName(),
@@ -42,7 +42,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
     {
         $namer = new PropertyNamer(new SnakePropertyNamingStrategy());
         $reflectionProperty = new ReflectionProperty(AnnotatedMock::class, 'fooBarBaz');
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
         $annotations = $annotationReader->readProperty(
             $reflectionProperty->getName(),
             $reflectionProperty->getDeclaringClass()->getName(),

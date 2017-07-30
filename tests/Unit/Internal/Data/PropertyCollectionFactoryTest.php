@@ -7,9 +7,9 @@
 namespace Tebru\Gson\Test\Unit\Internal\Data;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\VoidCache;
 use PHPUnit_Framework_TestCase;
+use Symfony\Component\Cache\Simple\ArrayCache;
+use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategy\GetByClosure;
@@ -103,7 +103,7 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateUsesCache()
     {
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new VoidCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
         $cache = new ArrayCache();
 
         $factory = new PropertyCollectionFactory(
@@ -118,12 +118,14 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
             $cache
         );
 
+        $cacheKey = 'gson.properties.'.str_replace('\\', '', PropertyCollectionMock::class);
+
         // assert data is stored in cache
         $factory->create(new TypeToken(PropertyCollectionMock::class));
-        self::assertCount(4, $cache->fetch('properties:'.PropertyCollectionMock::class)->toArray());
+        self::assertCount(4, $cache->get($cacheKey)->toArray());
 
         // overwrite cache
-        $cache->save('properties:'.PropertyCollectionMock::class, new PropertyCollection());
+        $cache->set($cacheKey, new PropertyCollection());
 
         // assert we use the new cache
         $collection = $factory->create(new TypeToken(PropertyCollectionMock::class));

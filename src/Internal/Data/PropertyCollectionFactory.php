@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal\Data;
 
-use Doctrine\Common\Cache\Cache;
+use Psr\SimpleCache\CacheInterface;
 use ReflectionClass;
 use ReflectionProperty;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
@@ -75,7 +75,7 @@ final class PropertyCollectionFactory
     private $excluder;
 
     /**
-     * @var Cache
+     * @var CacheInterface
      */
     private $cache;
 
@@ -90,7 +90,7 @@ final class PropertyCollectionFactory
      * @param AccessorStrategyFactory $accessorStrategyFactory
      * @param PhpTypeFactory $phpTypeFactory
      * @param Excluder $excluder
-     * @param Cache $cache
+     * @param CacheInterface $cache
      */
     public function __construct(
         ReflectionPropertySetFactory $reflectionPropertySetFactory,
@@ -101,7 +101,7 @@ final class PropertyCollectionFactory
         AccessorStrategyFactory $accessorStrategyFactory,
         PhpTypeFactory $phpTypeFactory,
         Excluder $excluder,
-        Cache $cache
+        CacheInterface $cache
     ) {
         $this->reflectionPropertySetFactory = $reflectionPropertySetFactory;
         $this->annotationReader = $annotationReader;
@@ -124,10 +124,10 @@ final class PropertyCollectionFactory
     public function create(TypeToken $phpType): PropertyCollection
     {
         $class = $phpType->getRawType();
-        $key = 'properties:'.$class;
+        $key = 'gson.properties.'.str_replace('\\', '', $class);
 
-        $data = $this->cache->fetch($key);
-        if (false !== $data) {
+        $data = $this->cache->get($key);
+        if ($data !== null) {
             return $data;
         }
 
@@ -226,7 +226,7 @@ final class PropertyCollectionFactory
             $properties->add($property);
         }
 
-        $this->cache->save($key, $properties);
+        $this->cache->set($key, $properties);
 
         return $properties;
     }
