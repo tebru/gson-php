@@ -142,16 +142,6 @@ will be used before it is guessed.
 private $foo
 ```
 
-Additional options can be passed into the type as well.  For example,
-DateTime can use `format` and `timezone` options.
-
-```php
-/**
- * @Type("DateTime", options={format: "Y-m-d", timezone: "UTC"})
- */
-private $foo
-```
-
 @Until
 ------
 
