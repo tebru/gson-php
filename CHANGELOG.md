@@ -3,7 +3,7 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
-master
+v0.4.1
 ------
 
 * CHANGE: Switching cache from Doctrine to PSR simple cache
