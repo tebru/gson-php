@@ -112,4 +112,31 @@ class Gson
     {
         return $this->fromJson($this->toJson($object), JsonElement::class);
     }
+
+    /**
+     * Convenience method to convert an object to a json_decode'd array
+     *
+     * @param object $object
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    public function toArray($object): array
+    {
+        return (array)json_decode($this->toJson($object), true);
+    }
+
+    /**
+     * Convenience method to deserialize an array into an object
+     *
+     * @param array $jsonArray
+     * @param mixed $type
+     * @return mixed
+     * @throws \Tebru\PhpType\Exception\MalformedTypeException
+     * @throws \Tebru\Gson\Exception\JsonParseException
+     * @throws \InvalidArgumentException
+     */
+    public function fromArray(array $jsonArray, $type)
+    {
+        return $this->fromJson(json_encode($jsonArray), $type);
+    }
 }

@@ -10,6 +10,7 @@ master
 * CHANGE: Updating annotation reader library to support setting
 annotation values
 * ADDED: Class target to `@VirtualProperty` to allow wrapping/unwrapping classes in generic data bags
+* ADDED: `toArray` and `fromArray` convenience methods on `Gson`
 
 v0.4.0
 ------

@@ -76,6 +76,16 @@ Note that this will do a full conversion from the object to JSON, then
 back to JsonElements.  This is done to take advantage of all custom
 serialization rules.
 
+Likewise, there are methods to operate on arrays instead of strings of json
+
+```php
+// $object obtained elsewhere
+
+$gson = Gson::builder()->build();
+$jsonArray = $gson->toArray($object);
+$object = $gson->fromArray($jsonArray);
+```
+
 Documentation
 -------------
 
