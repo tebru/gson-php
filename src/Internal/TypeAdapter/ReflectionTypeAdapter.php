@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use Tebru\Gson\Annotation\JsonAdapter;
+use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
@@ -110,6 +111,12 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
         $exclusionData = new DefaultExclusionData(false, clone $object, $reader->getPayload());
 
         $reader->beginObject();
+
+        if ($this->classMetadata->getAnnotation(VirtualProperty::class) !== null) {
+            $reader->nextName();
+            $reader->beginObject();
+        }
+
         while ($reader->hasNext()) {
             $name = $reader->nextName();
             $property = $this->properties->getBySerializedName($name);
@@ -138,6 +145,10 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             $property->set($object, $adapter->read($reader));
         }
         $reader->endObject();
+
+        if ($this->classMetadata->getAnnotation(VirtualProperty::class) !== null) {
+            $reader->endObject();
+        }
 
         return $object;
     }
@@ -169,6 +180,12 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
 
         $writer->beginObject();
 
+        $virtualProperty = $this->classMetadata->getAnnotation(VirtualProperty::class) ;
+        if ($virtualProperty !== null) {
+            $writer->name($virtualProperty->getValue());
+            $writer->beginObject();
+        }
+
         /** @var Property $property */
         foreach ($this->properties as $property) {
             $writer->name($property->getSerializedName());
@@ -191,5 +208,9 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
         }
 
         $writer->endObject();
+
+        if ($virtualProperty !== null) {
+            $writer->endObject();
+        }
     }
 }

@@ -9,6 +9,7 @@ master
 * CHANGE: Switching cache from Doctrine to PSR simple cache
 * CHANGE: Updating annotation reader library to support setting
 annotation values
+* ADDED: Class target to `@VirtualProperty` to allow wrapping/unwrapping classes in generic data bags
 
 v0.4.0
 ------

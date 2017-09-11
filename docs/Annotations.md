@@ -173,3 +173,29 @@ public function getFoo()
     return $this->foo;
 }
 ```
+
+It may also be used on classes to wrap/unwrap a class in a key
+
+```php
+/**
+ * @VirtualProperty("data")
+ */
+class User
+{
+    public $id;
+    public $name;
+}
+```
+
+This will allow deserialization of the following data into `User`
+
+```json
+{
+    "data": {
+        "id": 1,
+        "name": "John Doe"
+    }
+}
+```
+
+And will serialize `User` into the above json.

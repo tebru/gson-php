@@ -14,6 +14,7 @@ use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\AddressMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\UserMockExclusionStrategy;
 use Tebru\Gson\Test\Mock\UserMock;
+use Tebru\Gson\Test\Mock\UserMockVirtual;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
 
@@ -161,6 +162,45 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertNull($user);
     }
 
+    public function testDeserializeVirtualProperty()
+    {
+        /** @var ReflectionTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMockVirtual::class));
+
+        /** @var UserMock $user */
+        $user = $adapter->readFromJson('
+            {
+                "data": {
+                    "id": 1,
+                    "name": "Test User",
+                    "email": "test@example.com",
+                    "password": "password1",
+                    "address": {
+                        "street": "123 ABC St.",
+                        "city": "My City",
+                        "state": "MN",
+                        "zip": 12345
+                    },
+                    "phone": null,
+                    "enabled": true
+                }
+            }
+        ');
+        $address = $user->getAddress();
+
+        self::assertInstanceOf(UserMockVirtual::class, $user);
+        self::assertSame(1, $user->getId());
+        self::assertSame('test@example.com', $user->getEmail());
+        self::assertSame('Test User', $user->getName());
+        self::assertNull($user->getPhone());
+        self::assertTrue($user->isEnabled());
+        self::assertNull($user->getPassword());
+        self::assertSame('123 ABC St.', $address->getStreet());
+        self::assertSame('My City', $address->getCity());
+        self::assertSame('MN', $address->getState());
+        self::assertSame(12345, $address->getZip());
+    }
+
     public function testSerializeNull()
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
@@ -227,5 +267,43 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         $user->setAddress($address);
 
         self::assertSame('null', $adapter->writeToJson($user, false));
+    }
+
+    public function testSerializeVirtual()
+    {
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMockVirtual::class));
+
+        $user = new UserMock();
+        $user->setId(1);
+        $user->setEmail('test@example.com');
+        $user->setPassword('password1');
+        $user->setName('John Doe');
+        $user->setPhone('(123) 456-7890');
+        $user->setEnabled(true);
+
+        $address = new AddressMock();
+        $address->setStreet('123 ABC St');
+        $address->setCity('Foo');
+        $address->setState('MN');
+        $address->setZip(12345);
+
+        $user->setAddress($address);
+
+        $expectedJson = '{
+            "data": {
+                "id": 1,
+                "email": "test@example.com",
+                "name": "John Doe",
+                "address": {
+                    "street": "123 ABC St",
+                    "city": "Foo",
+                    "state": "MN",
+                    "zip": 12345
+                },
+                "phone": "(123) 456-7890"
+            }
+        }';
+
+        self::assertJsonStringEqualsJsonString($expectedJson, $adapter->writeToJson($user, false));
     }
 }

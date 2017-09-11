@@ -17,9 +17,21 @@ use Tebru\AnnotationReader\AbstractAnnotation;
  * is helpful if your serialized models need to contain extra properties.  For example,
  * an aggregate of two separate properties on the model.
  *
+ * If used on a class it will add a wrapped property for serialization or deserialization.
+ *
+ * For example, if you had this json
+ *
+ * {"data": {"id": 1}}
+ *
+ * You could deserialize into a class with an id property that has @VirtualProperty("data") on the
+ * class. Similarly, serializing that object would produce the above json.
+ *
+ * The value of this annotation is only used during serialization. Please note that this will always
+ * wrap classes of the specified type, regardless of where they occur in the tree.
+ *
  * @author Nate Brunette <n@tebru.net>
  * @Annotation
- * @Target({"METHOD"})
+ * @Target({"CLASS", "METHOD"})
  */
 class VirtualProperty extends AbstractAnnotation
 {
@@ -28,5 +40,6 @@ class VirtualProperty extends AbstractAnnotation
      */
     protected function init(): void
     {
+        $this->value = $this->data['value'] ?? null;
     }
 }
