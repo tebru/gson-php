@@ -23,9 +23,10 @@ class FooExclusionStrategy implements ExclusionStrategy
      * Return true if the class should be ignored
      *
      * @param ClassMetadata $classMetadata
+     * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function shouldSkipClass(ClassMetadata $classMetadata): bool
+    public function shouldSkipClass(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
     {
         return Foo::class === $classMetadata->getName();
     }

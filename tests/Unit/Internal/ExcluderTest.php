@@ -133,8 +133,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $this->excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), true, false);
         $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
 
-        self::assertTrue($this->excluder->excludeClassByStrategy($classMetadata, true));
-        self::assertFalse($this->excluder->excludeClassByStrategy($classMetadata, false));
+        self::assertTrue($this->excluder->excludeClassByStrategy($classMetadata, new DefaultExclusionData(true, null)));
+        self::assertFalse($this->excluder->excludeClassByStrategy($classMetadata, new DefaultExclusionData(false, null)));
     }
 
     public function testExcludeClassWithStrategyDeserialization()
@@ -143,8 +143,8 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $this->excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), false, true);
         $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
 
-        self::assertFalse($this->excluder->excludeClassByStrategy($classMetadata, true));
-        self::assertTrue($this->excluder->excludeClassByStrategy($classMetadata, false));
+        self::assertFalse($this->excluder->excludeClassByStrategy($classMetadata, new DefaultExclusionData(true, null)));
+        self::assertTrue($this->excluder->excludeClassByStrategy($classMetadata, new DefaultExclusionData(false, null)));
     }
 
     public function testExcludePropertyDefaultModifiers()

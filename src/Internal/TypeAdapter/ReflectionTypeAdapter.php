@@ -101,14 +101,14 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             return $reader->nextNull();
         }
 
-        if ($this->excluder->excludeClassByStrategy($this->classMetadata, false)) {
+        $object = $this->objectConstructor->construct();
+        $exclusionData = new DefaultExclusionData(false, clone $object, $reader->getPayload());
+
+        if ($this->excluder->excludeClassByStrategy($this->classMetadata, $exclusionData)) {
             $reader->skipValue();
 
             return null;
         }
-
-        $object = $this->objectConstructor->construct();
-        $exclusionData = new DefaultExclusionData(false, clone $object, $reader->getPayload());
 
         $reader->beginObject();
 
@@ -170,13 +170,13 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             return;
         }
 
-        if ($this->excluder->excludeClassByStrategy($this->classMetadata, true)) {
+        $exclusionData = new DefaultExclusionData(true, $value);
+
+        if ($this->excluder->excludeClassByStrategy($this->classMetadata, $exclusionData)) {
             $writer->writeNull();
 
             return;
         }
-
-        $exclusionData = new DefaultExclusionData(true, $value);
 
         $writer->beginObject();
 

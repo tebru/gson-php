@@ -136,14 +136,14 @@ final class Excluder
 
     /**
      * @param ClassMetadata $classMetadata
-     * @param bool $serialize
+     * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function excludeClassByStrategy(ClassMetadata $classMetadata, bool $serialize): bool
+    public function excludeClassByStrategy(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
     {
-        $strategies = $serialize ? $this->serializationStrategies : $this->deserializationStrategies;
+        $strategies = $exclusionData->isSerialize() ? $this->serializationStrategies : $this->deserializationStrategies;
         foreach ($strategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipClass($classMetadata)) {
+            if ($exclusionStrategy->shouldSkipClass($classMetadata, $exclusionData)) {
                 return true;
             }
         }
