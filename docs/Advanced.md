@@ -116,16 +116,35 @@ Gson::builder()
     ->build();
 ```
 
-Add Property Naming Strategy
-----------------------------
+Change Property Naming
+----------------------
 
 By default, all property names are converted to snake_case during
-serialization, but you can override this behavior by implementing
-the `PropertyNamingStrategy` and adding it to the builder.
+serialization, but you can override this behavior by setting a new
+PropertyNamingPolicy to the builder.
 
 ```php
 Gson::builder()
-    ->setPropertyNamingStrategy(new SameAsPropertyNameStrategy())
+    ->setPropertyNamingPolicy(PropertyNamingPolicy::IDENTITY)
+    ->build();
+```
+
+Here's a list of what's supported:
+
+- IDENTITY: Leave property name unchanged
+- LOWER_CASE_WITH_DASHES: Convert camel case to lower case separated by dashes
+- LOWER_CASE_WITH_UNDERSCORES: Convert camel case to lower case separated by underscores
+- UPPER_CASE_WITH_DASHES: Convert camel case to upper case separated by dashes
+- UPPER_CASE_WITH_UNDERSCORES: Convert camel case to upper case separated by underscores
+- UPPER_CAMEL_CASE: Capitalize the first letter of a camel case property
+- UPPER_CAMEL_CASE_WITH_SPACES: Converts camel case to capitalized words
+
+You can customize this further by implementing a
+`PropertyNamingStrategy` and adding it to the builder.
+
+```php
+Gson::builder()
+    ->setPropertyNamingStrategy(new MyCustomPropertyNamingStrategy())
     ->build();
 ```
 
