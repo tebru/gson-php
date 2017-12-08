@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.5.0
+------
+
+* BC BREAK: Modified ExclusionStrategy interface to accept ExclusionData during class checks
+
 v0.4.1
 ------
 
