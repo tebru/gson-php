@@ -3,6 +3,12 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.5.1
+------
+
+* ADDED: Support for Symfony 4 components
+* ADDED: Ability to switch property name transformations by common policies on builder
+
 v0.5.0
 ------
 

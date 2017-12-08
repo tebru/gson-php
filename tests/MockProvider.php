@@ -21,7 +21,7 @@ use Tebru\Gson\Internal\DefaultJsonSerializationContext;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
-use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
+use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
@@ -37,6 +37,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PropertyNamingPolicy;
 
 /**
  * Class MockProvider
@@ -70,7 +71,7 @@ class MockProvider
             new ReflectionPropertySetFactory(),
             self::annotationReader(),
             self::metadataFactory(),
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
+            new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES)),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
             new PhpTypeFactory(),

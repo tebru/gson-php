@@ -13,6 +13,7 @@ use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
 use Tebru\Gson\Gson;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
+use Tebru\Gson\PropertyNamingPolicy;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\GsonMockExclusionStrategyMock;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
@@ -410,6 +411,58 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertFalse($gsonMock->getExpose());
         self::assertNull($gsonMock->getExclude());
         self::assertNull($gsonMock->getExcludeFromStrategy());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
+    }
+
+    public function testDeserializeWithPropertyNamingPolicy()
+    {
+        $gson = Gson::builder()
+            ->setPropertyNamingPolicy(PropertyNamingPolicy::IDENTITY)
+            ->build();
+
+        $array = [
+            'integer' => 1,
+            'float' => 3.2,
+            'string' => 'foo',
+            'boolean' => false,
+            'array' => ['foo' => 'bar'],
+            'date' => '2017-01-01T12:01:23-06:00',
+            'public' => 'public',
+            'protected' => 'protected',
+            'since' => 'since',
+            'until' => 'until',
+            'accessor' => 'accessor',
+            'serialized_name' => 'serializedname',
+            'type' => [1, 2, 3],
+            'jsonAdapter' => 'bar',
+            'expose' => false,
+            'exclude' => true,
+            'excludeFromStrategy' => true,
+            'gsonObjectMock' => ['foo' => 'bar'],
+        ];
+
+        $json = json_encode($array);
+
+        /** @var GsonMock $gsonMock */
+        $gsonMock = $gson->fromJson($json, GsonMock::class);
+
+        self::assertSame(1, $gsonMock->getInteger());
+        self::assertSame(3.2, $gsonMock->getFloat());
+        self::assertSame('foo', $gsonMock->getString());
+        self::assertFalse($gsonMock->getBoolean());
+        self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
+        self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
+        self::assertSame('public', $gsonMock->public);
+        self::assertAttributeSame('protected', 'protected', $gsonMock);
+        self::assertSame('since', $gsonMock->getSince());
+        self::assertSame('until', $gsonMock->getUntil());
+        self::assertSame('accessor', $gsonMock->getMyAccessor());
+        self::assertSame('serializedname', $gsonMock->getSerializedname());
+        self::assertSame([1, 2, 3], $gsonMock->getType());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getJsonAdapter());
+        self::assertFalse($gsonMock->getExpose());
+        self::assertNull($gsonMock->getExclude());
+        self::assertTrue($gsonMock->getExcludeFromStrategy());
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 

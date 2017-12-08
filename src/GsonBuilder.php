@@ -10,7 +10,6 @@ namespace Tebru\Gson;
 
 use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\CachedReader;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionProperty;
@@ -26,7 +25,7 @@ use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
-use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
+use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
@@ -71,6 +70,15 @@ class GsonBuilder
      * @var PropertyNamingStrategy
      */
     private $propertyNamingStrategy;
+
+    /**
+     * Property naming policy
+     *
+     * Defaults to converting camel case to snake case
+     *
+     * @var string
+     */
+    private $propertyNamingPolicy = PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES;
 
     /**
      * Strategy for converting property names to method names
@@ -275,6 +283,19 @@ class GsonBuilder
     }
 
     /**
+     * Set one of [@see PropertyNamingPolicy]
+     *
+     * @param string $policy
+     * @return GsonBuilder
+     */
+    public function setPropertyNamingPolicy(string $policy): GsonBuilder
+    {
+        $this->propertyNamingPolicy = $policy;
+
+        return $this;
+    }
+
+    /**
      * Set a custom method naming strategy
      *
      * @param MethodNamingStrategy $methodNamingStrategy
@@ -352,7 +373,7 @@ class GsonBuilder
             throw new LogicException('Cannot enable cache without a cache directory');
         }
 
-        $propertyNamingStrategy = $this->propertyNamingStrategy ?? new SnakePropertyNamingStrategy();
+        $propertyNamingStrategy = $this->propertyNamingStrategy ?? new DefaultPropertyNamingStrategy($this->propertyNamingPolicy);
         $methodNamingStrategy = $this->methodNamingStrategy ?? new UpperCaseMethodNamingStrategy();
 
         $cache = false === $this->enableCache

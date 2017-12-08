@@ -27,10 +27,11 @@ use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
-use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
+use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\PropertyNamingPolicy;
 use Tebru\Gson\Test\Mock\PropertyCollectionMock;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
@@ -110,7 +111,7 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
             new ReflectionPropertySetFactory(),
             $annotationReader,
             new MetadataFactory($annotationReader),
-            new PropertyNamer(new SnakePropertyNamingStrategy()),
+            new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES)),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
             new PhpTypeFactory(),

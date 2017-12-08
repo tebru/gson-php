@@ -12,7 +12,8 @@ use ReflectionProperty;
 use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
-use Tebru\Gson\Internal\Naming\SnakePropertyNamingStrategy;
+use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
+use Tebru\Gson\PropertyNamingPolicy;
 use Tebru\Gson\Test\Mock\AnnotatedMock;
 
 /**
@@ -25,7 +26,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
 {
     public function testGetNameFromAnnotation()
     {
-        $namer = new PropertyNamer(new SnakePropertyNamingStrategy());
+        $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
         $reflectionProperty = new ReflectionProperty(AnnotatedMock::class, 'fooBar');
         $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
         $annotations = $annotationReader->readProperty(
@@ -40,7 +41,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
 
     public function testGetNameUsingStrategy()
     {
-        $namer = new PropertyNamer(new SnakePropertyNamingStrategy());
+        $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
         $reflectionProperty = new ReflectionProperty(AnnotatedMock::class, 'fooBarBaz');
         $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
         $annotations = $annotationReader->readProperty(
