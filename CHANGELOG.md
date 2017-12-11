@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.5.2
+------
+
+* FIXED: TypeError when calling getters for non-nullable return types
+
 v0.5.1
 ------
 

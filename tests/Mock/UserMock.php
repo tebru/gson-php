@@ -122,7 +122,7 @@ class UserMock
     /**
      * @return AddressMock
      */
-    public function getAddress(): ?AddressMock
+    public function getAddress(): AddressMock
     {
         return $this->address;
     }

@@ -69,7 +69,6 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('(123) 456-7890', $user->getPhone());
         self::assertTrue($user->isEnabled());
         self::assertNull($user->getPassword());
-        self::assertNull($user->getAddress());
     }
 
     public function testUsesSerializerNull()

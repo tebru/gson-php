@@ -25,6 +25,7 @@ use Tebru\Gson\JsonReadable;
 use Tebru\Gson\Internal\ObjectConstructor;
 use Tebru\Gson\JsonToken;
 use Tebru\Gson\TypeAdapter;
+use TypeError;
 
 /**
  * Class ReflectionTypeAdapter
@@ -136,7 +137,15 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
                 : $this->typeAdapterProvider->getAdapterFromAnnotation($property->getType(), $jsonAdapterAnnotation);
 
             if ($adapter instanceof ObjectConstructorAware) {
-                $nestedObject = $property->get($object);
+                $nestedObject = null;
+                try {
+                    $nestedObject = $property->get($object);
+                } /** @noinspection BadExceptionsProcessingInspection */ catch (TypeError $error) {
+                    // this may occur when attempting to get a nested object that doesn't exist and
+                    // the method return is not nullable. The type error only occurs because we are
+                    // may be calling the getter before data exists.
+                }
+
                 if ($nestedObject !== null) {
                     $adapter->setObjectConstructor(new CreateFromInstance($nestedObject));
                 }
