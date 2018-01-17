@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Mock;
 
+use Tebru\Gson\Annotation as Gson;
 use Tebru\Gson\Annotation\SerializedName;
 
 /**
@@ -21,4 +22,15 @@ class AnnotatedMock
     private $fooBar;
 
     private $fooBarBaz;
+
+    /**
+     * @Gson\VirtualProperty("vfoo")
+     */
+    public function virtualFoo() {}
+
+    /**
+     * @SerializedName("vfooOverride")
+     * @Gson\VirtualProperty("vfoo")
+     */
+    public function virtualFooWithSerializedName() {}
 }

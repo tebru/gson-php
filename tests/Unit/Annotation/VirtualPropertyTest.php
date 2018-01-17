@@ -23,4 +23,11 @@ class VirtualPropertyTest extends PHPUnit_Framework_TestCase
 
         self::assertInstanceOf(VirtualProperty::class, $type);
     }
+
+    public function testGetAnnotationData()
+    {
+        $annotation = new VirtualProperty(['value' => 'foo']);
+
+        self::assertSame('foo', $annotation->getSerializedName());
+    }
 }

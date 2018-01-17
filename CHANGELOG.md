@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+master
+------
+
+* ADDED: `@VirtualProperty` value will be used if `@SerializedName` doesn't exist
+
 v0.5.2
 ------
 

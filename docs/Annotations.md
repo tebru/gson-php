@@ -160,7 +160,21 @@ private $foo
 
 This acts as an identifier on methods.  It's purpose is to add
 additional data during serialization.  It does nothing during
-deserialization.  It can be used in conjunction with other annotations.
+deserialization.
+
+```php
+/**
+ * @VirtualProperty("foo")
+ * @Type("int")
+ */
+public function getFoo()
+{
+    return $this->foo;
+}
+```
+
+The value is the serialized name. It can be used in conjunction with
+other annotations.
 
 ```php
 /**
@@ -173,6 +187,8 @@ public function getFoo()
     return $this->foo;
 }
 ```
+
+If `@SerializedName` exists, that value will be used instead.
 
 It may also be used on classes to wrap/unwrap a class in a key
 

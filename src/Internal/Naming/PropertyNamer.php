@@ -10,6 +10,7 @@ namespace Tebru\Gson\Internal\Naming;
 
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\SerializedName;
+use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\PropertyNamingStrategy;
 
 /**
@@ -48,6 +49,12 @@ final class PropertyNamer
         $serializedName = $annotations->get(SerializedName::class);
         if (null !== $serializedName) {
             return $serializedName->getValue();
+        }
+
+        /** @var VirtualProperty $virtualProperty */
+        $virtualProperty = $annotations->get(VirtualProperty::class);
+        if ($virtualProperty !== null && $virtualProperty->getSerializedName() !== null) {
+            return $virtualProperty->getSerializedName();
         }
 
         return $this->propertyNamingStrategy->translateName($propertyName);

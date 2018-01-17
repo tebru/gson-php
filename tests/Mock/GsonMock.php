@@ -7,7 +7,6 @@
 namespace Tebru\Gson\Test\Mock;
 
 use DateTime;
-use Tebru\Gson\Annotation as Gson;
 use Tebru\Gson\Annotation\Accessor;
 use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
@@ -299,8 +298,7 @@ class GsonMock
     }
 
     /**
-     * @VirtualProperty()
-     * @SerializedName("virtual")
+     * @VirtualProperty("virtual")
      */
     public function myVirtualProperty(): int
     {

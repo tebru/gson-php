@@ -8,6 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\Naming;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit_Framework_TestCase;
+use ReflectionMethod;
 use ReflectionProperty;
 use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
@@ -37,6 +38,36 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
         );
 
         self::assertSame('foobar', $namer->serializedName($reflectionProperty->getName(), $annotations));
+    }
+
+    public function testGetNameFromVirtualAnnotationOnMethod()
+    {
+        $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
+        $reflectionMethod = new ReflectionMethod(AnnotatedMock::class, 'virtualFoo');
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
+        $annotations = $annotationReader->readMethod(
+            $reflectionMethod->getName(),
+            $reflectionMethod->getDeclaringClass()->getName(),
+            false,
+            true
+        );
+
+        self::assertSame('vfoo', $namer->serializedName($reflectionMethod->getName(), $annotations));
+    }
+
+    public function testGetNameFromVirtualAnnotationOnMethodUsesSerializedName()
+    {
+        $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
+        $reflectionMethod = new ReflectionMethod(AnnotatedMock::class, 'virtualFooWithSerializedName');
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
+        $annotations = $annotationReader->readMethod(
+            $reflectionMethod->getName(),
+            $reflectionMethod->getDeclaringClass()->getName(),
+            false,
+            true
+        );
+
+        self::assertSame('vfooOverride', $namer->serializedName($reflectionMethod->getName(), $annotations));
     }
 
     public function testGetNameUsingStrategy()
