@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f40747e442e3fa9ea342b9239b0c762e",
+    "content-hash": "3893332673ccf12daa811e16e9db663b",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -343,16 +343,16 @@
         },
         {
             "name": "tebru/doctrine-annotation-reader",
-            "version": "v0.3.0",
+            "version": "v0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tebru/doctrine-annotation-reader.git",
-                "reference": "0d646e2074cb60a58c11ac526edea65dc4a6aea0"
+                "reference": "678d98232ad72508e6ada143f398505a78b4e506"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tebru/doctrine-annotation-reader/zipball/0d646e2074cb60a58c11ac526edea65dc4a6aea0",
-                "reference": "0d646e2074cb60a58c11ac526edea65dc4a6aea0",
+                "url": "https://api.github.com/repos/tebru/doctrine-annotation-reader/zipball/678d98232ad72508e6ada143f398505a78b4e506",
+                "reference": "678d98232ad72508e6ada143f398505a78b4e506",
                 "shasum": ""
             },
             "require": {
@@ -380,20 +380,20 @@
                 }
             ],
             "description": "Provides a cleaner API for reading Doctrine annotations",
-            "time": "2017-07-30T18:38:29+00:00"
+            "time": "2018-01-19T18:26:41+00:00"
         },
         {
             "name": "tebru/php-type",
-            "version": "v0.1.2",
+            "version": "v0.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tebru/php-type.git",
-                "reference": "c52d4506586959440b8e72fbd3a70f0ea3df0b42"
+                "reference": "00527f67e290f4e33b5d079fd77c5aec051f036e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tebru/php-type/zipball/c52d4506586959440b8e72fbd3a70f0ea3df0b42",
-                "reference": "c52d4506586959440b8e72fbd3a70f0ea3df0b42",
+                "url": "https://api.github.com/repos/tebru/php-type/zipball/00527f67e290f4e33b5d079fd77c5aec051f036e",
+                "reference": "00527f67e290f4e33b5d079fd77c5aec051f036e",
                 "shasum": ""
             },
             "require": {
@@ -419,7 +419,7 @@
                 }
             ],
             "description": "A type wrapper for PHP that support generic syntax",
-            "time": "2017-07-24T11:49:18+00:00"
+            "time": "2018-01-19T18:20:10+00:00"
         }
     ],
     "packages-dev": [
