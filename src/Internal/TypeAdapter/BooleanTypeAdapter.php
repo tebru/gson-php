@@ -29,7 +29,8 @@ final class BooleanTypeAdapter extends TypeAdapter
     public function read(JsonReadable $reader): ?bool
     {
         if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
+            $reader->nextNull();
+            return null;
         }
 
         return $reader->nextBoolean();

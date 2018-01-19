@@ -97,7 +97,8 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
     public function read(JsonReadable $reader)
     {
         if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
+            $reader->nextNull();
+            return null;
         }
 
         $object = $this->objectConstructor->construct();

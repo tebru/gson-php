@@ -29,7 +29,8 @@ final class IntegerTypeAdapter extends TypeAdapter
     public function read(JsonReadable $reader): ?int
     {
         if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
+            $reader->nextNull();
+            return null;
         }
 
         return $reader->nextInteger();

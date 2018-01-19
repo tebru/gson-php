@@ -57,7 +57,8 @@ final class ArrayTypeAdapter extends TypeAdapter
     public function read(JsonReadable $reader): ?array
     {
         if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
+            $reader->nextNull();
+            return null;
         }
 
         $array = [];

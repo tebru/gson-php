@@ -55,7 +55,8 @@ final class DateTimeTypeAdapter extends TypeAdapter
     public function read(JsonReadable $reader): ?DateTime
     {
         if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
+            $reader->nextNull();
+            return null;
         }
 
         $formattedDateTime = $reader->nextString();
