@@ -119,7 +119,6 @@ final class PropertyCollectionFactory
      *
      * @param TypeToken $phpType
      * @return PropertyCollection
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function create(TypeToken $phpType): PropertyCollection
     {

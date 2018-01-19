@@ -37,12 +37,14 @@ final class DefaultPropertyNamingStrategy implements PropertyNamingStrategy
     {
         $this->policy = $policy;
     }
+
     /**
      * Accepts the PHP class property name and returns the name that should
      * appear in json
      *
      * @param string $propertyName
      * @return string
+     * @throws \RuntimeException
      */
     public function translateName(string $propertyName): string
     {

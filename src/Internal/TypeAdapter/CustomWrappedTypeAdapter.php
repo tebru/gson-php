@@ -81,7 +81,6 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
      *
      * @param JsonReadable $reader
      * @return mixed
-     * @throws \LogicException
      */
     public function read(JsonReadable $reader)
     {
@@ -107,8 +106,6 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param mixed $value
      * @return void
-     * @throws \InvalidArgumentException
-     * @throws \Tebru\Gson\Exception\UnsupportedOperationException
      */
     public function write(JsonWritable $writer, $value): void
     {

@@ -76,7 +76,6 @@ final class JsonElementTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param JsonElement $value
      * @return void
-     * @throws \Tebru\Gson\Exception\UnsupportedOperationException
      */
     public function write(JsonWritable $writer, $value): void
     {

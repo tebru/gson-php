@@ -101,7 +101,6 @@ abstract class JsonReader implements JsonReadable
      * Consumes the next token and asserts it's the end of an array
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not END_ARRAY
      */
     public function endArray(): void
     {
@@ -115,7 +114,6 @@ abstract class JsonReader implements JsonReadable
      * Consumes the next token and asserts it's the end of an object
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not END_OBJECT
      */
     public function endObject(): void
     {
@@ -143,7 +141,6 @@ abstract class JsonReader implements JsonReadable
      * Consumes the next name and returns it
      *
      * @return string
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NAME
      */
     public function nextName(): string
     {
@@ -166,7 +163,6 @@ abstract class JsonReader implements JsonReadable
      * Consumes the value of the next token and asserts it's null
      *
      * @return null
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NAME or NULL
      */
     public function nextNull()
     {

@@ -169,7 +169,6 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return string
-     * @throws \LogicException
      */
     public function getAsString(string $property): string
     {
@@ -181,7 +180,6 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return int
-     * @throws \LogicException
      */
     public function getAsInteger(string $property): int
     {
@@ -193,7 +191,6 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return float
-     * @throws \LogicException
      */
     public function getAsFloat(string $property): float
     {
@@ -205,7 +202,6 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return boolean
-     * @throws \LogicException
      */
     public function getAsBoolean(string $property): bool
     {

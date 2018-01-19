@@ -35,7 +35,6 @@ final class PhpTypeFactory
      * @param ReflectionMethod|null $getterMethod
      * @param ReflectionMethod|null $setterMethod
      * @return TypeToken
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function create(
         AnnotationCollection $annotations,

@@ -51,10 +51,8 @@ final class ArrayTypeAdapter extends TypeAdapter
      *
      * @param JsonReadable $reader
      * @return array|null
-     * @throws \InvalidArgumentException
      * @throws \LogicException
      * @throws \Tebru\Gson\Exception\JsonSyntaxException If trying to read from non object/array
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function read(JsonReadable $reader): ?array
     {

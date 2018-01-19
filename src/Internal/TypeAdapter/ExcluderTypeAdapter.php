@@ -79,7 +79,6 @@ final class ExcluderTypeAdapter extends TypeAdapter
      *
      * @param JsonReadable $reader
      * @return mixed
-     * @throws \InvalidArgumentException
      */
     public function read(JsonReadable $reader)
     {
@@ -100,7 +99,6 @@ final class ExcluderTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param mixed $value
      * @return void
-     * @throws \InvalidArgumentException
      */
     public function write(JsonWritable $writer, $value): void
     {

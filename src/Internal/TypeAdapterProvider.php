@@ -106,7 +106,6 @@ final class TypeAdapterProvider
      * @param JsonAdapter $jsonAdapterAnnotation
      * @return TypeAdapter
      * @throws \InvalidArgumentException
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function getAdapterFromAnnotation(TypeToken $type, JsonAdapter $jsonAdapterAnnotation): TypeAdapter
     {

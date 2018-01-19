@@ -40,7 +40,6 @@ final class DefaultJsonSerializationContext implements JsonSerializationContext
      *
      * @param mixed $object
      * @return JsonElement
-     * @throws \InvalidArgumentException
      */
     public function serialize($object): JsonElement
     {

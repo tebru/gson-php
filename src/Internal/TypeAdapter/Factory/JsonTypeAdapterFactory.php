@@ -66,8 +66,6 @@ final class JsonTypeAdapterFactory implements TypeAdapterFactory
      * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
-     * @throws \InvalidArgumentException
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {

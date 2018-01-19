@@ -48,7 +48,6 @@ abstract class TypeAdapter
      *
      * @param string $json
      * @return mixed
-     * @throws \Tebru\Gson\Exception\JsonParseException If the json cannot be decoded
      */
     public function readFromJson($json)
     {

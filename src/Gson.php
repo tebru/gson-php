@@ -62,7 +62,6 @@ class Gson
      *
      * @param mixed $object
      * @return string
-     * @throws \InvalidArgumentException
      */
     public function toJson($object): string
     {
@@ -78,9 +77,6 @@ class Gson
      * @param string $json
      * @param object|string $type
      * @return mixed
-     * @throws \InvalidArgumentException
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \Tebru\Gson\Exception\JsonParseException If the json cannot be decoded
      */
     public function fromJson(string $json, $type)
     {
@@ -104,9 +100,6 @@ class Gson
      *
      * @param mixed $object
      * @return JsonElement
-     * @throws \InvalidArgumentException
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \Tebru\Gson\Exception\JsonParseException If the json cannot be decoded
      */
     public function toJsonElement($object): JsonElement
     {
@@ -118,7 +111,6 @@ class Gson
      *
      * @param object $object
      * @return array
-     * @throws \InvalidArgumentException
      */
     public function toArray($object): array
     {
@@ -131,9 +123,6 @@ class Gson
      * @param array $jsonArray
      * @param mixed $type
      * @return mixed
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException
-     * @throws \Tebru\Gson\Exception\JsonParseException
-     * @throws \InvalidArgumentException
      */
     public function fromArray(array $jsonArray, $type)
     {

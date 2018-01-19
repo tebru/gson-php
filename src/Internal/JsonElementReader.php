@@ -39,7 +39,6 @@ final class JsonElementReader extends JsonReader
      * Consumes the next token and asserts it's the beginning of a new array
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not BEGIN_ARRAY
      */
     public function beginArray(): void
     {
@@ -55,7 +54,6 @@ final class JsonElementReader extends JsonReader
      * Consumes the next token and asserts it's the beginning of a new object
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not BEGIN_OBJECT
      */
     public function beginObject(): void
     {
@@ -71,7 +69,6 @@ final class JsonElementReader extends JsonReader
      * Consumes the value of the next token, asserts it's a boolean and returns it
      *
      * @return bool
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not BOOLEAN
      */
     public function nextBoolean(): bool
     {
@@ -89,7 +86,6 @@ final class JsonElementReader extends JsonReader
      * Consumes the value of the next token, asserts it's a double and returns it
      *
      * @return double
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NUMBER
      */
     public function nextDouble(): float
     {
@@ -107,7 +103,6 @@ final class JsonElementReader extends JsonReader
      * Consumes the value of the next token, asserts it's an int and returns it
      *
      * @return int
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NUMBER
      */
     public function nextInteger(): int
     {
@@ -125,7 +120,6 @@ final class JsonElementReader extends JsonReader
      * Consumes the value of the next token, asserts it's a string and returns it
      *
      * @return string
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NAME or STRING
      */
     public function nextString(): string
     {

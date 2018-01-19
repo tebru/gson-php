@@ -165,7 +165,6 @@ class GsonBuilder
      * @param $handler
      * @return GsonBuilder
      * @throws \InvalidArgumentException
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function registerType(string $type, $handler): GsonBuilder
     {
@@ -202,7 +201,6 @@ class GsonBuilder
      * @param string $type
      * @param InstanceCreator $instanceCreator
      * @return GsonBuilder
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
     {
@@ -363,8 +361,6 @@ class GsonBuilder
      * Builds a new [@see Gson] object based on configuration set
      *
      * @return Gson
-     * @throws \Doctrine\Common\Annotations\AnnotationException
-     * @throws \InvalidArgumentException
      * @throws \LogicException
      */
     public function build(): Gson
