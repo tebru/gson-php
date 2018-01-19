@@ -118,7 +118,7 @@ abstract class JsonElement implements JsonSerializable
      */
     public function asString(): string
     {
-        throw new UnsupportedOperationException(sprintf('This method "asString" is not supported on "%s"', \get_called_class()));
+        throw new UnsupportedOperationException(sprintf('This method "asString" is not supported on "%s"', static::class));
     }
 
     /**
@@ -129,7 +129,7 @@ abstract class JsonElement implements JsonSerializable
      */
     public function asInteger(): int
     {
-        throw new UnsupportedOperationException(sprintf('This method "asInteger" is not supported on "%s"', \get_called_class()));
+        throw new UnsupportedOperationException(sprintf('This method "asInteger" is not supported on "%s"', static::class));
     }
 
     /**
@@ -140,7 +140,7 @@ abstract class JsonElement implements JsonSerializable
      */
     public function asFloat(): float
     {
-        throw new UnsupportedOperationException(sprintf('This method "asFloat" is not supported on "%s"', \get_called_class()));
+        throw new UnsupportedOperationException(sprintf('This method "asFloat" is not supported on "%s"', static::class));
     }
 
     /**
@@ -151,7 +151,7 @@ abstract class JsonElement implements JsonSerializable
      */
     public function asBoolean(): bool
     {
-        throw new UnsupportedOperationException(sprintf('This method "asBoolean" is not supported on "%s"', \get_called_class()));
+        throw new UnsupportedOperationException(sprintf('This method "asBoolean" is not supported on "%s"', static::class));
     }
 
     /**
@@ -162,7 +162,7 @@ abstract class JsonElement implements JsonSerializable
      */
     public function asJsonObject(): JsonObject
     {
-        throw new UnsupportedOperationException(sprintf('This method "asJsonObject" is not supported on "%s"', \get_called_class()));
+        throw new UnsupportedOperationException(sprintf('This method "asJsonObject" is not supported on "%s"', static::class));
     }
 
     /**
@@ -173,7 +173,7 @@ abstract class JsonElement implements JsonSerializable
      */
     public function asJsonArray(): JsonArray
     {
-        throw new UnsupportedOperationException(sprintf('This method "asJsonArray" is not supported on "%s"', \get_called_class()));
+        throw new UnsupportedOperationException(sprintf('This method "asJsonArray" is not supported on "%s"', static::class));
     }
 
     /**
@@ -184,6 +184,6 @@ abstract class JsonElement implements JsonSerializable
      */
     public function getValue()
     {
-        throw new UnsupportedOperationException(sprintf('This method "getValue" is not supported on "%s"', \get_called_class()));
+        throw new UnsupportedOperationException(sprintf('This method "getValue" is not supported on "%s"', static::class));
     }
 }
