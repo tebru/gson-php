@@ -50,7 +50,7 @@ abstract class JsonReader implements JsonReadable
     protected $pathNames = [];
 
     /**
-     * An array of path indicies that correspond to the current stack. This array could contain invalid
+     * An array of path indices that correspond to the current stack. This array could contain invalid
      * values at indexes outside the current stack. It could also contain incorrect values at indexes
      * where a path name is used. Data should only be fetched by referencing the current position in the stack.
      *

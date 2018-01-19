@@ -64,7 +64,7 @@ final class ConstructorConstructor
             new $class();
 
             return new CreateWithoutArguments($class);
-        } catch (Throwable $throwable) {
+        } /** @noinspection BadExceptionsProcessingInspection */ catch (Throwable $throwable) {
             return new CreateFromReflectionClass($class);
         }
     }
