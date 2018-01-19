@@ -152,6 +152,7 @@ final class JsonElementReader extends JsonReader
     public function peek(): string
     {
         if (null !== $this->currentToken) {
+            /** @noinspection PhpStrictTypeCheckingInspection */
             return $this->currentToken;
         }
 
