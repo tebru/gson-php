@@ -84,8 +84,8 @@ class Gson
      */
     public function fromJson(string $json, $type)
     {
-        $isObject = is_object($type);
-        $typeToken = $isObject ? new TypeToken(get_class($type)) : new TypeToken($type);
+        $isObject = \is_object($type);
+        $typeToken = $isObject ? new TypeToken(\get_class($type)) : new TypeToken($type);
         $typeAdapter = $this->typeAdapterProvider->getAdapter($typeToken);
 
         if ($isObject && $typeAdapter instanceof ObjectConstructorAware) {

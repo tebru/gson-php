@@ -134,7 +134,7 @@ final class TypeAdapterProvider
 
         throw new InvalidArgumentException(sprintf(
             'The type adapter must be an instance of TypeAdapter, TypeAdapterFactory, JsonSerializer, or JsonDeserializer, but "%s" was found',
-            get_class($object)
+            \get_class($object)
         ));
     }
 }

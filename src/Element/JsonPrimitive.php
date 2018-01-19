@@ -56,7 +56,7 @@ class JsonPrimitive extends JsonElement
      */
     public function isString(): bool
     {
-        return is_string($this->value);
+        return \is_string($this->value);
     }
 
     /**
@@ -66,7 +66,7 @@ class JsonPrimitive extends JsonElement
      */
     public function isInteger(): bool
     {
-        return is_int($this->value);
+        return \is_int($this->value);
     }
 
     /**
@@ -76,7 +76,7 @@ class JsonPrimitive extends JsonElement
      */
     public function isFloat(): bool
     {
-        return is_float($this->value);
+        return \is_float($this->value);
     }
 
     /**
@@ -96,7 +96,7 @@ class JsonPrimitive extends JsonElement
      */
     public function isBoolean(): bool
     {
-        return is_bool($this->value);
+        return \is_bool($this->value);
     }
 
     /**

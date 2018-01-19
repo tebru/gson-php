@@ -239,7 +239,7 @@ final class JsonElementReader extends JsonReader
     protected function push($element, $type = null): void
     {
         if (null === $type) {
-            $type = get_class($element);
+            $type = \get_class($element);
         }
 
         $this->stack[$this->stackSize] = $element;

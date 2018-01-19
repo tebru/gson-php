@@ -282,6 +282,6 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      */
     public function count()
     {
-        return count($this->properties);
+        return \count($this->properties);
     }
 }

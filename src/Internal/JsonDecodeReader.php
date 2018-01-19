@@ -193,7 +193,7 @@ final class JsonDecodeReader extends JsonReader
                 }
                 break;
             case 'object':
-                switch (get_class($element)) {
+                switch (\get_class($element)) {
                     case stdClass::class:
                         $token = JsonToken::BEGIN_OBJECT;
                         break;
@@ -236,7 +236,7 @@ final class JsonDecodeReader extends JsonReader
     protected function push($element, $type = null): void
     {
         if (null === $type) {
-            $type = gettype($element);
+            $type = \gettype($element);
         }
 
         $this->stack[$this->stackSize] = $element;

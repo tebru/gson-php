@@ -347,6 +347,6 @@ final class JsonEncodeWriter implements JsonWritable
             return false;
         }
 
-        return is_array($this->stack[$this->last()]);
+        return \is_array($this->stack[$this->last()]);
     }
 }

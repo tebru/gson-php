@@ -66,7 +66,7 @@ final class ArrayTypeAdapter extends TypeAdapter
         $token = $reader->peek();
         $generics = $this->type->getGenerics();
 
-        if (count($generics) > 2) {
+        if (\count($generics) > 2) {
             throw new LogicException(sprintf('Array may not have more than 2 generic types at "%s"', $reader->getPath()));
         }
 
@@ -77,7 +77,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                 while ($reader->hasNext()) {
                     $name = $reader->nextName();
 
-                    switch (count($generics)) {
+                    switch (\count($generics)) {
                         // no generics specified
                         case 0:
                             // By now we know that we're deserializing a json object to an array.
@@ -128,7 +128,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                 $reader->beginArray();
 
                 while ($reader->hasNext()) {
-                    switch (count($generics)) {
+                    switch (\count($generics)) {
                         // no generics specified
                         case 0:
                             $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(TypeToken::WILDCARD));
@@ -172,11 +172,11 @@ final class ArrayTypeAdapter extends TypeAdapter
         }
 
         $generics = $this->type->getGenerics();
-        if (count($generics) > 2) {
+        if (\count($generics) > 2) {
             throw new LogicException('Array may not have more than 2 generic types');
         }
 
-        $numberOfGenerics = count($generics);
+        $numberOfGenerics = \count($generics);
         $arrayIsObject = $this->isArrayObject($value, $numberOfGenerics);
 
         if ($arrayIsObject) {
@@ -237,6 +237,6 @@ final class ArrayTypeAdapter extends TypeAdapter
             return true;
         }
 
-        return is_string(key($array));
+        return \is_string(key($array));
     }
 }

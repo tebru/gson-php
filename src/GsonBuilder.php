@@ -193,7 +193,7 @@ class GsonBuilder
             return $this;
         }
 
-        throw new InvalidArgumentException(sprintf('Handler of type "%s" is not supported', get_class($handler)));
+        throw new InvalidArgumentException(sprintf('Handler of type "%s" is not supported', \get_class($handler)));
     }
 
     /**

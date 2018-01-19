@@ -63,7 +63,7 @@ final class PhpTypeFactory
         if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
             $parameter = $setterMethod->getParameters()[0];
             if ($parameter->isDefaultValueAvailable() && null !== $parameter->getDefaultValue()) {
-                return new TypeToken(gettype($parameter->getDefaultValue()));
+                return new TypeToken(\gettype($parameter->getDefaultValue()));
             }
         }
 
