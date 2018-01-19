@@ -85,9 +85,9 @@ interface JsonReadable
     /**
      * Consumes the value of the next token and asserts it's null
      *
-     * @return null
+     * @return void
      */
-    public function nextNull();
+    public function nextNull(): void;
 
     /**
      * Consumes the next name and returns it

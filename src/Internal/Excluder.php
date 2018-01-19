@@ -110,8 +110,9 @@ final class Excluder
      * @param ExclusionStrategy $strategy
      * @param bool $serialization
      * @param bool $deserialization
+     * @return void
      */
-    public function addExclusionStrategy(ExclusionStrategy $strategy, bool $serialization, bool $deserialization)
+    public function addExclusionStrategy(ExclusionStrategy $strategy, bool $serialization, bool $deserialization): void
     {
         if ($serialization) {
             $this->serializationStrategies[] = $strategy;

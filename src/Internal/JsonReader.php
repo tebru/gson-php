@@ -162,17 +162,15 @@ abstract class JsonReader implements JsonReadable
     /**
      * Consumes the value of the next token and asserts it's null
      *
-     * @return null
+     * @return void
      */
-    public function nextNull()
+    public function nextNull(): void
     {
         $this->expect(JsonToken::NULL);
 
         $this->pop();
 
         $this->incrementPathIndex();
-
-        return null;
     }
 
     /**

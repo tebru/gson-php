@@ -20,10 +20,9 @@ class JsonNull extends JsonElement
     /**
      * Specify data which should be serialized to JSON
      *
-     * @return null
+     * @return void
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): void
     {
-        return null;
     }
 }
