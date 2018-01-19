@@ -17,14 +17,14 @@ namespace Tebru\Gson;
  */
 final class JsonToken
 {
-    const BEGIN_ARRAY = 'begin-array';
-    const END_ARRAY = 'end-array';
-    const BEGIN_OBJECT = 'begin-object';
-    const END_OBJECT = 'end-object';
-    const END_DOCUMENT = 'end-document';
-    const STRING = 'string';
-    const BOOLEAN = 'boolean';
-    const NUMBER = 'number';
-    const NULL = 'null';
-    const NAME = 'name';
+    public const BEGIN_ARRAY = 'begin-array';
+    public const END_ARRAY = 'end-array';
+    public const BEGIN_OBJECT = 'begin-object';
+    public const END_OBJECT = 'end-object';
+    public const END_DOCUMENT = 'end-document';
+    public const STRING = 'string';
+    public const BOOLEAN = 'boolean';
+    public const NUMBER = 'number';
+    public const NULL = 'null';
+    public const NAME = 'name';
 }
