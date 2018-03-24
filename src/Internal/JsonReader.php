@@ -212,9 +212,10 @@ abstract class JsonReader implements JsonReadable
      * Check that the next token equals the expectation
      *
      * @param string $expectedToken
+     * @return void
      * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not the expectation
      */
-    protected function expect(string $expectedToken)
+    protected function expect(string $expectedToken): void
     {
         if ($this->peek() === $expectedToken) {
             return;
