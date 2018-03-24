@@ -30,7 +30,6 @@ class Type extends AbstractAnnotation
      * Returns the php type
      *
      * @return TypeToken
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function getType(): TypeToken
     {

@@ -62,7 +62,6 @@ class Gson
      *
      * @param mixed $object
      * @return string
-     * @throws \InvalidArgumentException
      */
     public function toJson($object): string
     {
@@ -78,14 +77,11 @@ class Gson
      * @param string $json
      * @param object|string $type
      * @return mixed
-     * @throws \InvalidArgumentException
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \Tebru\Gson\Exception\JsonParseException If the json cannot be decoded
      */
     public function fromJson(string $json, $type)
     {
-        $isObject = is_object($type);
-        $typeToken = $isObject ? new TypeToken(get_class($type)) : new TypeToken($type);
+        $isObject = \is_object($type);
+        $typeToken = $isObject ? new TypeToken(\get_class($type)) : new TypeToken($type);
         $typeAdapter = $this->typeAdapterProvider->getAdapter($typeToken);
 
         if ($isObject && $typeAdapter instanceof ObjectConstructorAware) {
@@ -104,9 +100,6 @@ class Gson
      *
      * @param mixed $object
      * @return JsonElement
-     * @throws \InvalidArgumentException
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
-     * @throws \Tebru\Gson\Exception\JsonParseException If the json cannot be decoded
      */
     public function toJsonElement($object): JsonElement
     {
@@ -118,11 +111,10 @@ class Gson
      *
      * @param object $object
      * @return array
-     * @throws \InvalidArgumentException
      */
     public function toArray($object): array
     {
-        return (array)json_decode($this->toJson($object), true);
+        return (array)\json_decode($this->toJson($object), true);
     }
 
     /**
@@ -131,12 +123,9 @@ class Gson
      * @param array $jsonArray
      * @param mixed $type
      * @return mixed
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException
-     * @throws \Tebru\Gson\Exception\JsonParseException
-     * @throws \InvalidArgumentException
      */
     public function fromArray(array $jsonArray, $type)
     {
-        return $this->fromJson(json_encode($jsonArray), $type);
+        return $this->fromJson(\json_encode($jsonArray), $type);
     }
 }

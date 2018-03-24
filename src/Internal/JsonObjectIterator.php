@@ -24,7 +24,7 @@ final class JsonObjectIterator extends AbstractIterator
      */
     public function __construct(JsonObject $jsonObject)
     {
-        foreach($jsonObject as $key => $value) {
+        foreach ($jsonObject as $key => $value) {
             $this->queue[] = [$key, $value];
             $this->total++;
         }

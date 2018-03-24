@@ -110,8 +110,9 @@ final class Excluder
      * @param ExclusionStrategy $strategy
      * @param bool $serialization
      * @param bool $deserialization
+     * @return void
      */
-    public function addExclusionStrategy(ExclusionStrategy $strategy, bool $serialization, bool $deserialization)
+    public function addExclusionStrategy(ExclusionStrategy $strategy, bool $serialization, bool $deserialization): void
     {
         if ($serialization) {
             $this->serializationStrategies[] = $strategy;
@@ -248,7 +249,7 @@ final class Excluder
         return
             null !== $sinceAnnotation
             && null !== $this->version
-            && version_compare($this->version, $sinceAnnotation->getValue(), '<');
+            && \version_compare($this->version, $sinceAnnotation->getValue(), '<');
     }
 
     /**
@@ -264,6 +265,6 @@ final class Excluder
         return
             null !== $untilAnnotation
             && null !== $this->version
-            && version_compare($this->version, $untilAnnotation->getValue(), '>=');
+            && \version_compare($this->version, $untilAnnotation->getValue(), '>=');
     }
 }

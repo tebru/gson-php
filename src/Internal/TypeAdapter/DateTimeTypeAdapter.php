@@ -55,7 +55,8 @@ final class DateTimeTypeAdapter extends TypeAdapter
     public function read(JsonReadable $reader): ?DateTime
     {
         if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
+            $reader->nextNull();
+            return null;
         }
 
         $formattedDateTime = $reader->nextString();
@@ -69,7 +70,7 @@ final class DateTimeTypeAdapter extends TypeAdapter
             return $dateTime;
         }
 
-        throw new JsonSyntaxException(sprintf(
+        throw new JsonSyntaxException(\sprintf(
             'Could not create "%s" class from "%s" using format "%s" at "%s"',
             $class,
             $formattedDateTime,

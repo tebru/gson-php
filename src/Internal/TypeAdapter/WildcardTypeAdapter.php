@@ -43,9 +43,7 @@ final class WildcardTypeAdapter extends TypeAdapter
      *
      * @param JsonReadable $reader
      * @return mixed
-     * @throws \InvalidArgumentException
      * @throws \Tebru\Gson\Exception\JsonSyntaxException If the token can't be processed
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function read(JsonReadable $reader)
     {
@@ -73,7 +71,8 @@ final class WildcardTypeAdapter extends TypeAdapter
                 break;
             default:
                 throw new JsonSyntaxException(
-                    sprintf('Could not parse token "%s" at "%s"',
+                    \sprintf(
+                        'Could not parse token "%s" at "%s"',
                         $reader->peek(),
                         $reader->getPath()
                     )
@@ -89,7 +88,6 @@ final class WildcardTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param mixed $value
      * @return void
-     * @throws \InvalidArgumentException
      */
     public function write(JsonWritable $writer, $value): void
     {

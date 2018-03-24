@@ -42,8 +42,6 @@ final class DefaultJsonDeserializationContext implements JsonDeserializationCont
      * @param JsonElement $jsonElement
      * @param string $type
      * @return mixed
-     * @throws \InvalidArgumentException
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function deserialize(JsonElement $jsonElement, string $type)
     {

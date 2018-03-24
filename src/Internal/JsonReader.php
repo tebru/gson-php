@@ -50,7 +50,7 @@ abstract class JsonReader implements JsonReadable
     protected $pathNames = [];
 
     /**
-     * An array of path indicies that correspond to the current stack. This array could contain invalid
+     * An array of path indices that correspond to the current stack. This array could contain invalid
      * values at indexes outside the current stack. It could also contain incorrect values at indexes
      * where a path name is used. Data should only be fetched by referencing the current position in the stack.
      *
@@ -101,7 +101,6 @@ abstract class JsonReader implements JsonReadable
      * Consumes the next token and asserts it's the end of an array
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not END_ARRAY
      */
     public function endArray(): void
     {
@@ -115,7 +114,6 @@ abstract class JsonReader implements JsonReadable
      * Consumes the next token and asserts it's the end of an object
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not END_OBJECT
      */
     public function endObject(): void
     {
@@ -143,7 +141,6 @@ abstract class JsonReader implements JsonReadable
      * Consumes the next name and returns it
      *
      * @return string
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NAME
      */
     public function nextName(): string
     {
@@ -165,18 +162,15 @@ abstract class JsonReader implements JsonReadable
     /**
      * Consumes the value of the next token and asserts it's null
      *
-     * @return null
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NAME or NULL
+     * @return void
      */
-    public function nextNull()
+    public function nextNull(): void
     {
         $this->expect(JsonToken::NULL);
 
         $this->pop();
 
         $this->incrementPathIndex();
-
-        return null;
     }
 
     /**
@@ -208,19 +202,20 @@ abstract class JsonReader implements JsonReadable
     protected function pop()
     {
         $this->stackSize--;
-        array_pop($this->stackTypes);
+        \array_pop($this->stackTypes);
         $this->currentToken = null;
 
-        return array_pop($this->stack);
+        return \array_pop($this->stack);
     }
 
     /**
      * Check that the next token equals the expectation
      *
      * @param string $expectedToken
+     * @return void
      * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not the expectation
      */
-    protected function expect(string $expectedToken)
+    protected function expect(string $expectedToken): void
     {
         if ($this->peek() === $expectedToken) {
             return;
@@ -231,7 +226,7 @@ abstract class JsonReader implements JsonReadable
         $this->incrementPathIndex();
 
         throw new JsonSyntaxException(
-            sprintf('Expected "%s", but found "%s" at "%s"', $expectedToken, $this->peek(), $this->getPath())
+            \sprintf('Expected "%s", but found "%s" at "%s"', $expectedToken, $this->peek(), $this->getPath())
         );
     }
 

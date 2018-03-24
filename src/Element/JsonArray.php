@@ -200,6 +200,6 @@ class JsonArray extends JsonElement implements IteratorAggregate, Countable
      */
     public function count(): int
     {
-        return count($this->values);
+        return \count($this->values);
     }
 }

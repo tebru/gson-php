@@ -169,7 +169,6 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return string
-     * @throws \LogicException
      */
     public function getAsString(string $property): string
     {
@@ -181,7 +180,6 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return int
-     * @throws \LogicException
      */
     public function getAsInteger(string $property): int
     {
@@ -193,7 +191,6 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return float
-     * @throws \LogicException
      */
     public function getAsFloat(string $property): float
     {
@@ -205,7 +202,6 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @param string $property
      * @return boolean
-     * @throws \LogicException
      */
     public function getAsBoolean(string $property): bool
     {
@@ -218,9 +214,9 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      * @param string $property
      * @return array
      */
-    public function getAsArray(string $property)
+    public function getAsArray(string $property): array
     {
-        return json_decode(json_encode($this->get($property)), true);
+        return \json_decode(\json_encode($this->get($property)), true);
     }
 
     /**
@@ -255,7 +251,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @return stdClass
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): stdClass
     {
         $class = new stdClass();
         foreach ($this->properties as $key => $property) {
@@ -280,8 +276,8 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
-        return count($this->properties);
+        return \count($this->properties);
     }
 }

@@ -29,7 +29,8 @@ final class StringTypeAdapter extends TypeAdapter
     public function read(JsonReadable $reader): ?string
     {
         if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
+            $reader->nextNull();
+            return null;
         }
 
         return $reader->nextString();

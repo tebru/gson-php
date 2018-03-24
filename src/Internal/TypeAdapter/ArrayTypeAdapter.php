@@ -51,23 +51,22 @@ final class ArrayTypeAdapter extends TypeAdapter
      *
      * @param JsonReadable $reader
      * @return array|null
-     * @throws \InvalidArgumentException
      * @throws \LogicException
      * @throws \Tebru\Gson\Exception\JsonSyntaxException If trying to read from non object/array
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function read(JsonReadable $reader): ?array
     {
         if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
+            $reader->nextNull();
+            return null;
         }
 
         $array = [];
         $token = $reader->peek();
         $generics = $this->type->getGenerics();
 
-        if (count($generics) > 2) {
-            throw new LogicException(sprintf('Array may not have more than 2 generic types at "%s"', $reader->getPath()));
+        if (\count($generics) > 2) {
+            throw new LogicException(\sprintf('Array may not have more than 2 generic types at "%s"', $reader->getPath()));
         }
 
         switch ($token) {
@@ -77,7 +76,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                 while ($reader->hasNext()) {
                     $name = $reader->nextName();
 
-                    switch (count($generics)) {
+                    switch (\count($generics)) {
                         // no generics specified
                         case 0:
                             // By now we know that we're deserializing a json object to an array.
@@ -103,12 +102,12 @@ final class ArrayTypeAdapter extends TypeAdapter
                             $keyType = $generics[0];
 
                             if (!$keyType->isString() && !$keyType->isInteger()) {
-                                throw new LogicException(sprintf('Array keys must be strings or integers at "%s"', $reader->getPath()));
+                                throw new LogicException(\sprintf('Array keys must be strings or integers at "%s"', $reader->getPath()));
                             }
 
                             if ($keyType->isInteger()) {
-                                if (!ctype_digit($name)) {
-                                    throw new JsonSyntaxException(sprintf('Expected integer, but found string for key at "%s"', $reader->getPath()));
+                                if (!\ctype_digit($name)) {
+                                    throw new JsonSyntaxException(\sprintf('Expected integer, but found string for key at "%s"', $reader->getPath()));
                                 }
 
                                 $name = (int)$name;
@@ -128,7 +127,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                 $reader->beginArray();
 
                 while ($reader->hasNext()) {
-                    switch (count($generics)) {
+                    switch (\count($generics)) {
                         // no generics specified
                         case 0:
                             $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(TypeToken::WILDCARD));
@@ -141,7 +140,7 @@ final class ArrayTypeAdapter extends TypeAdapter
 
                             break;
                         default:
-                            throw new LogicException(sprintf('An array may only specify a generic type for the value at "%s"', $reader->getPath()));
+                            throw new LogicException(\sprintf('An array may only specify a generic type for the value at "%s"', $reader->getPath()));
                     }
                 }
 
@@ -149,7 +148,7 @@ final class ArrayTypeAdapter extends TypeAdapter
 
                 break;
             default:
-                throw new JsonSyntaxException(sprintf('Could not parse json, expected array or object but found "%s" at "%s"', $token, $reader->getPath()));
+                throw new JsonSyntaxException(\sprintf('Could not parse json, expected array or object but found "%s" at "%s"', $token, $reader->getPath()));
         }
 
         return $array;
@@ -172,11 +171,11 @@ final class ArrayTypeAdapter extends TypeAdapter
         }
 
         $generics = $this->type->getGenerics();
-        if (count($generics) > 2) {
+        if (\count($generics) > 2) {
             throw new LogicException('Array may not have more than 2 generic types');
         }
 
-        $numberOfGenerics = count($generics);
+        $numberOfGenerics = \count($generics);
         $arrayIsObject = $this->isArrayObject($value, $numberOfGenerics);
 
         if ($arrayIsObject) {
@@ -237,6 +236,6 @@ final class ArrayTypeAdapter extends TypeAdapter
             return true;
         }
 
-        return is_string(key($array));
+        return \is_string(\key($array));
     }
 }

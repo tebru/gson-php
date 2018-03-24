@@ -322,7 +322,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     private function pop(): void
     {
-        array_splice($this->stack, $this->last(), 1);
+        \array_splice($this->stack, $this->last(), 1);
         $this->stackSize--;
     }
 

@@ -66,7 +66,7 @@ final class JsonElementTypeAdapter extends TypeAdapter
 
                 return new JsonNull();
             default:
-                throw new LogicException(sprintf('Could not handle token "%s" at "%s"', $reader->peek(), $reader->getPath()));
+                throw new LogicException(\sprintf('Could not handle token "%s" at "%s"', $reader->peek(), $reader->getPath()));
         }
     }
 
@@ -76,7 +76,6 @@ final class JsonElementTypeAdapter extends TypeAdapter
      * @param JsonWritable $writer
      * @param JsonElement $value
      * @return void
-     * @throws \Tebru\Gson\Exception\UnsupportedOperationException
      */
     public function write(JsonWritable $writer, $value): void
     {

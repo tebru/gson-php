@@ -28,10 +28,10 @@ final class JsonDecodeReader extends JsonReader
      */
     public function __construct(string $json)
     {
-        $decodedJson = json_decode($json);
+        $decodedJson = \json_decode($json);
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new JsonParseException(sprintf('Could not decode json, the error message was: "%s"', json_last_error_msg()));
+        if (\json_last_error() !== JSON_ERROR_NONE) {
+            throw new JsonParseException(\sprintf('Could not decode json, the error message was: "%s"', \json_last_error_msg()));
         }
 
         $this->payload = $decodedJson;
@@ -42,7 +42,6 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the next token and asserts it's the beginning of a new array
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not BEGIN_ARRAY
      */
     public function beginArray(): void
     {
@@ -57,7 +56,6 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the next token and asserts it's the beginning of a new object
      *
      * @return void
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not BEGIN_OBJECT
      */
     public function beginObject(): void
     {
@@ -70,7 +68,6 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the value of the next token, asserts it's a boolean and returns it
      *
      * @return bool
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not BOOLEAN
      */
     public function nextBoolean(): bool
     {
@@ -87,7 +84,6 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the value of the next token, asserts it's a double and returns it
      *
      * @return double
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NUMBER
      */
     public function nextDouble(): float
     {
@@ -104,7 +100,6 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the value of the next token, asserts it's an int and returns it
      *
      * @return int
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NUMBER
      */
     public function nextInteger(): int
     {
@@ -121,7 +116,6 @@ final class JsonDecodeReader extends JsonReader
      * Consumes the value of the next token, asserts it's a string and returns it
      *
      * @return string
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not NAME or STRING
      */
     public function nextString(): string
     {
@@ -147,6 +141,7 @@ final class JsonDecodeReader extends JsonReader
     public function peek(): string
     {
         if (null !== $this->currentToken) {
+            /** @noinspection PhpStrictTypeCheckingInspection */
             return $this->currentToken;
         }
 
@@ -193,7 +188,7 @@ final class JsonDecodeReader extends JsonReader
                 }
                 break;
             case 'object':
-                switch (get_class($element)) {
+                switch (\get_class($element)) {
                     case stdClass::class:
                         $token = JsonToken::BEGIN_OBJECT;
                         break;
@@ -236,7 +231,7 @@ final class JsonDecodeReader extends JsonReader
     protected function push($element, $type = null): void
     {
         if (null === $type) {
-            $type = gettype($element);
+            $type = \gettype($element);
         }
 
         $this->stack[$this->stackSize] = $element;

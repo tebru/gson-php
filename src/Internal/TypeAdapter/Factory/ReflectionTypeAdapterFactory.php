@@ -80,7 +80,7 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
             return false;
         }
 
-        return class_exists($type->getRawType());
+        return \class_exists($type->getRawType());
     }
 
     /**
@@ -89,7 +89,7 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {

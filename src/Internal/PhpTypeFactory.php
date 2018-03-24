@@ -35,7 +35,6 @@ final class PhpTypeFactory
      * @param ReflectionMethod|null $getterMethod
      * @param ReflectionMethod|null $setterMethod
      * @return TypeToken
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function create(
         AnnotationCollection $annotations,
@@ -63,7 +62,7 @@ final class PhpTypeFactory
         if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
             $parameter = $setterMethod->getParameters()[0];
             if ($parameter->isDefaultValueAvailable() && null !== $parameter->getDefaultValue()) {
-                return new TypeToken(gettype($parameter->getDefaultValue()));
+                return new TypeToken(\gettype($parameter->getDefaultValue()));
             }
         }
 

@@ -93,13 +93,12 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
      *
      * @param JsonReadable $reader
      * @return object
-     * @throws \InvalidArgumentException
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function read(JsonReadable $reader)
     {
         if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
+            $reader->nextNull();
+            return null;
         }
 
         $object = $this->objectConstructor->construct();
@@ -168,8 +167,6 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
      * @param JsonWritable $writer
      * @param object $value
      * @return void
-     * @throws \InvalidArgumentException
-     * @throws \Tebru\PhpType\Exception\MalformedTypeException If the type cannot be parsed
      */
     public function write(JsonWritable $writer, $value): void
     {

@@ -29,7 +29,8 @@ final class FloatTypeAdapter extends TypeAdapter
     public function read(JsonReadable $reader): ?float
     {
         if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
+            $reader->nextNull();
+            return null;
         }
 
         return $reader->nextDouble();

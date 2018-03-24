@@ -41,8 +41,9 @@ final class PropertyCollection implements IteratorAggregate
 
     /**
      * @param Property $property
+     * @return void
      */
-    public function add(Property $property)
+    public function add(Property $property): void
     {
         $this->elements[$property->getSerializedName()] = $property;
     }
@@ -67,9 +68,9 @@ final class PropertyCollection implements IteratorAggregate
      *
      * @return Property[]
      */
-    public function toArray()
+    public function toArray(): array
     {
-        return array_values($this->elements);
+        return \array_values($this->elements);
     }
 
     /**
