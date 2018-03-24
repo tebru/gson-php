@@ -80,7 +80,7 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
             return false;
         }
 
-        return class_exists($type->getRawType());
+        return \class_exists($type->getRawType());
     }
 
     /**

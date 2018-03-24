@@ -70,7 +70,7 @@ final class PropertyCollection implements IteratorAggregate
      */
     public function toArray(): array
     {
-        return array_values($this->elements);
+        return \array_values($this->elements);
     }
 
     /**

@@ -68,5 +68,7 @@ final class PropertyNamingPolicy
         self::UPPER_CAMEL_CASE_WITH_SPACES,
     ];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 }

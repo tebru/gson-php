@@ -50,7 +50,7 @@ final class JsonTypeAdapterFactory implements TypeAdapterFactory
             return false;
         }
 
-        if (!class_exists($type->getRawType())) {
+        if (!\class_exists($type->getRawType())) {
             return false;
         }
 

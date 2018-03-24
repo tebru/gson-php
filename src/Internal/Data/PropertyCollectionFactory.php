@@ -123,7 +123,7 @@ final class PropertyCollectionFactory
     public function create(TypeToken $phpType): PropertyCollection
     {
         $class = $phpType->getRawType();
-        $key = 'gson.properties.'.str_replace('\\', '', $class);
+        $key = 'gson.properties.'.\str_replace('\\', '', $class);
 
         $data = $this->cache->get($key);
         if ($data !== null) {

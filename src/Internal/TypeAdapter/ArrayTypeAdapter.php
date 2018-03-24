@@ -66,7 +66,7 @@ final class ArrayTypeAdapter extends TypeAdapter
         $generics = $this->type->getGenerics();
 
         if (\count($generics) > 2) {
-            throw new LogicException(sprintf('Array may not have more than 2 generic types at "%s"', $reader->getPath()));
+            throw new LogicException(\sprintf('Array may not have more than 2 generic types at "%s"', $reader->getPath()));
         }
 
         switch ($token) {
@@ -102,12 +102,12 @@ final class ArrayTypeAdapter extends TypeAdapter
                             $keyType = $generics[0];
 
                             if (!$keyType->isString() && !$keyType->isInteger()) {
-                                throw new LogicException(sprintf('Array keys must be strings or integers at "%s"', $reader->getPath()));
+                                throw new LogicException(\sprintf('Array keys must be strings or integers at "%s"', $reader->getPath()));
                             }
 
                             if ($keyType->isInteger()) {
-                                if (!ctype_digit($name)) {
-                                    throw new JsonSyntaxException(sprintf('Expected integer, but found string for key at "%s"', $reader->getPath()));
+                                if (!\ctype_digit($name)) {
+                                    throw new JsonSyntaxException(\sprintf('Expected integer, but found string for key at "%s"', $reader->getPath()));
                                 }
 
                                 $name = (int)$name;
@@ -140,7 +140,7 @@ final class ArrayTypeAdapter extends TypeAdapter
 
                             break;
                         default:
-                            throw new LogicException(sprintf('An array may only specify a generic type for the value at "%s"', $reader->getPath()));
+                            throw new LogicException(\sprintf('An array may only specify a generic type for the value at "%s"', $reader->getPath()));
                     }
                 }
 
@@ -148,7 +148,7 @@ final class ArrayTypeAdapter extends TypeAdapter
 
                 break;
             default:
-                throw new JsonSyntaxException(sprintf('Could not parse json, expected array or object but found "%s" at "%s"', $token, $reader->getPath()));
+                throw new JsonSyntaxException(\sprintf('Could not parse json, expected array or object but found "%s" at "%s"', $token, $reader->getPath()));
         }
 
         return $array;
@@ -236,6 +236,6 @@ final class ArrayTypeAdapter extends TypeAdapter
             return true;
         }
 
-        return \is_string(key($array));
+        return \is_string(\key($array));
     }
 }

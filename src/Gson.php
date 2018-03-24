@@ -114,7 +114,7 @@ class Gson
      */
     public function toArray($object): array
     {
-        return (array)json_decode($this->toJson($object), true);
+        return (array)\json_decode($this->toJson($object), true);
     }
 
     /**
@@ -126,6 +126,6 @@ class Gson
      */
     public function fromArray(array $jsonArray, $type)
     {
-        return $this->fromJson(json_encode($jsonArray), $type);
+        return $this->fromJson(\json_encode($jsonArray), $type);
     }
 }

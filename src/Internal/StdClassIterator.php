@@ -24,7 +24,7 @@ final class StdClassIterator extends AbstractIterator
      */
     public function __construct(stdClass $class)
     {
-        $vars = get_object_vars($class);
+        $vars = \get_object_vars($class);
         foreach ($vars as $key => $var) {
             $this->queue[] = [$key, $var];
             $this->total++;

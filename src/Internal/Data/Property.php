@@ -115,8 +115,7 @@ final class Property
         AnnotationCollection $annotations,
         int $modifiers,
         bool $virtual
-    )
-    {
+    ) {
         $this->realName = $realName;
         $this->serializedName = $serializedName;
         $this->type = $type;

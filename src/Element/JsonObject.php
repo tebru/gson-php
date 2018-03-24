@@ -216,7 +216,7 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
      */
     public function getAsArray(string $property): array
     {
-        return json_decode(json_encode($this->get($property)), true);
+        return \json_decode(\json_encode($this->get($property)), true);
     }
 
     /**

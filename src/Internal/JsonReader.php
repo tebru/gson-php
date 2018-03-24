@@ -202,10 +202,10 @@ abstract class JsonReader implements JsonReadable
     protected function pop()
     {
         $this->stackSize--;
-        array_pop($this->stackTypes);
+        \array_pop($this->stackTypes);
         $this->currentToken = null;
 
-        return array_pop($this->stack);
+        return \array_pop($this->stack);
     }
 
     /**
@@ -226,7 +226,7 @@ abstract class JsonReader implements JsonReadable
         $this->incrementPathIndex();
 
         throw new JsonSyntaxException(
-            sprintf('Expected "%s", but found "%s" at "%s"', $expectedToken, $this->peek(), $this->getPath())
+            \sprintf('Expected "%s", but found "%s" at "%s"', $expectedToken, $this->peek(), $this->getPath())
         );
     }
 

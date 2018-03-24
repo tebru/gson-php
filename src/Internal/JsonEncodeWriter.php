@@ -255,7 +255,7 @@ final class JsonEncodeWriter implements JsonWritable
      */
     public function __toString(): string
     {
-        return json_encode($this->result);
+        return \json_encode($this->result);
     }
 
     /**
@@ -304,7 +304,7 @@ final class JsonEncodeWriter implements JsonWritable
      */
     private function pop(): void
     {
-        array_splice($this->stack, $this->last(), 1);
+        \array_splice($this->stack, $this->last(), 1);
         $this->stackSize--;
     }
 

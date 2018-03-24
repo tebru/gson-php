@@ -192,7 +192,7 @@ class GsonBuilder
             return $this;
         }
 
-        throw new InvalidArgumentException(sprintf('Handler of type "%s" is not supported', \get_class($handler)));
+        throw new InvalidArgumentException(\sprintf('Handler of type "%s" is not supported', \get_class($handler)));
     }
 
     /**
@@ -422,9 +422,8 @@ class GsonBuilder
         AnnotationReaderAdapter $annotationReader,
         MetadataFactory $metadataFactory,
         ConstructorConstructor $constructorConstructor
-    ): array
-    {
-        return array_merge(
+    ): array {
+        return \array_merge(
             [
                 new ExcluderTypeAdapterFactory($excluder, $metadataFactory),
                 new JsonTypeAdapterFactory($annotationReader),

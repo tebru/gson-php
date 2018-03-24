@@ -71,7 +71,8 @@ final class WildcardTypeAdapter extends TypeAdapter
                 break;
             default:
                 throw new JsonSyntaxException(
-                    sprintf('Could not parse token "%s" at "%s"',
+                    \sprintf(
+                        'Could not parse token "%s" at "%s"',
                         $reader->peek(),
                         $reader->getPath()
                     )

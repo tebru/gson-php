@@ -91,7 +91,7 @@ final class TypeAdapterProvider
             return $adapter;
         }
 
-        throw new InvalidArgumentException(sprintf(
+        throw new InvalidArgumentException(\sprintf(
             'The type "%s" could not be handled by any of the registered type adapters',
             (string)$type
         ));
@@ -131,7 +131,7 @@ final class TypeAdapterProvider
             return new CustomWrappedTypeAdapter($type, $this, null, $object);
         }
 
-        throw new InvalidArgumentException(sprintf(
+        throw new InvalidArgumentException(\sprintf(
             'The type adapter must be an instance of TypeAdapter, TypeAdapterFactory, JsonSerializer, or JsonDeserializer, but "%s" was found',
             \get_class($object)
         ));

@@ -249,7 +249,7 @@ final class Excluder
         return
             null !== $sinceAnnotation
             && null !== $this->version
-            && version_compare($this->version, $sinceAnnotation->getValue(), '<');
+            && \version_compare($this->version, $sinceAnnotation->getValue(), '<');
     }
 
     /**
@@ -265,6 +265,6 @@ final class Excluder
         return
             null !== $untilAnnotation
             && null !== $this->version
-            && version_compare($this->version, $untilAnnotation->getValue(), '>=');
+            && \version_compare($this->version, $untilAnnotation->getValue(), '>=');
     }
 }
