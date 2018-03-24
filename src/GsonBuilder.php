@@ -14,8 +14,7 @@ use InvalidArgumentException;
 use LogicException;
 use ReflectionProperty;
 use Symfony\Component\Cache\Simple\ArrayCache;
-use Symfony\Component\Cache\Simple\ChainCache;
-use Symfony\Component\Cache\Simple\FilesystemCache;
+use Symfony\Component\Cache\Simple\PhpFilesCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
@@ -24,8 +23,8 @@ use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
+use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
@@ -374,7 +373,7 @@ class GsonBuilder
 
         $cache = false === $this->enableCache
             ? new ArrayCache()
-            : new ChainCache([new ArrayCache(), new FilesystemCache('', 0, $this->cacheDir)]);
+            : new PhpFilesCache('', 0, $this->cacheDir);
 
         $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), $cache);
         $excluder = new Excluder();
