@@ -343,22 +343,22 @@
         },
         {
             "name": "tebru/doctrine-annotation-reader",
-            "version": "v0.3.2",
+            "version": "v0.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tebru/doctrine-annotation-reader.git",
-                "reference": "678d98232ad72508e6ada143f398505a78b4e506"
+                "reference": "e56cea8d6a7ee7acd1bb26bc22ef774a5d3fe8cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tebru/doctrine-annotation-reader/zipball/678d98232ad72508e6ada143f398505a78b4e506",
-                "reference": "678d98232ad72508e6ada143f398505a78b4e506",
+                "url": "https://api.github.com/repos/tebru/doctrine-annotation-reader/zipball/e56cea8d6a7ee7acd1bb26bc22ef774a5d3fe8cc",
+                "reference": "e56cea8d6a7ee7acd1bb26bc22ef774a5d3fe8cc",
                 "shasum": ""
             },
             "require": {
                 "doctrine/annotations": "^1.2",
                 "php": ">= 7.1",
-                "symfony/cache": "^3.3"
+                "symfony/cache": "^3.3|^4.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8"
@@ -380,20 +380,20 @@
                 }
             ],
             "description": "Provides a cleaner API for reading Doctrine annotations",
-            "time": "2018-01-19T18:26:41+00:00"
+            "time": "2018-03-24T05:02:45+00:00"
         },
         {
             "name": "tebru/php-type",
-            "version": "v0.1.3",
+            "version": "v0.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tebru/php-type.git",
-                "reference": "00527f67e290f4e33b5d079fd77c5aec051f036e"
+                "reference": "5a97e16f3f111f93f78a632e358f648d58c36bb0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tebru/php-type/zipball/00527f67e290f4e33b5d079fd77c5aec051f036e",
-                "reference": "00527f67e290f4e33b5d079fd77c5aec051f036e",
+                "url": "https://api.github.com/repos/tebru/php-type/zipball/5a97e16f3f111f93f78a632e358f648d58c36bb0",
+                "reference": "5a97e16f3f111f93f78a632e358f648d58c36bb0",
                 "shasum": ""
             },
             "require": {
@@ -419,7 +419,7 @@
                 }
             ],
             "description": "A type wrapper for PHP that support generic syntax",
-            "time": "2018-01-19T18:20:10+00:00"
+            "time": "2018-03-24T05:00:07+00:00"
         }
     ],
     "packages-dev": [
