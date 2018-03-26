@@ -3,10 +3,12 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
-master
+v0.5.3
 ------
 
 * ADDED: `@VirtualProperty` value will be used if `@SerializedName` doesn't exist
+* ADDED: Ability to set custom cache on builder
+* CHANGE: Default cache to php file cache
 
 v0.5.2
 ------
