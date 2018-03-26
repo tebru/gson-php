@@ -12,6 +12,7 @@ use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
 use InvalidArgumentException;
 use LogicException;
+use Psr\SimpleCache\CacheInterface;
 use ReflectionProperty;
 use Symfony\Component\Cache\Simple\ArrayCache;
 use Symfony\Component\Cache\Simple\PhpFilesCache;
@@ -127,6 +128,15 @@ class GsonBuilder
      * @var string
      */
     private $dateTimeFormat = DateTime::ATOM;
+
+    /**
+     * A cache interface to be used in place of defaults
+     *
+     * If this is set, [@see GsonBuilder::$enableCache] will be ignored
+     *
+     * @var CacheInterface
+     */
+    private $cache;
 
     /**
      * True if we should be caching
@@ -331,6 +341,20 @@ class GsonBuilder
     }
 
     /**
+     * Override default cache adapters
+     *
+     * @param CacheInterface $cache
+     * @return GsonBuilder
+     */
+    public function setCache(CacheInterface $cache): GsonBuilder
+    {
+        $this->cache = $cache;
+
+        return $this;
+    }
+
+
+    /**
      * Set whether caching is enabled
      *
      * @param bool $enableCache
@@ -371,11 +395,13 @@ class GsonBuilder
         $propertyNamingStrategy = $this->propertyNamingStrategy ?? new DefaultPropertyNamingStrategy($this->propertyNamingPolicy);
         $methodNamingStrategy = $this->methodNamingStrategy ?? new UpperCaseMethodNamingStrategy();
 
-        $cache = false === $this->enableCache
-            ? new ArrayCache()
-            : new PhpFilesCache('', 0, $this->cacheDir);
+        if ($this->cache === null) {
+            $this->cache = false === $this->enableCache
+                ? new ArrayCache()
+                : new PhpFilesCache('', 0, $this->cacheDir);
+        }
 
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), $cache);
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), $this->cache);
         $excluder = new Excluder();
         $excluder->setVersion($this->version);
         $excluder->setExcludedModifiers($this->excludedModifiers);
@@ -394,7 +420,7 @@ class GsonBuilder
             new AccessorStrategyFactory(),
             new PhpTypeFactory(),
             $excluder,
-            $cache
+            $this->cache
         );
         $constructorConstructor = new ConstructorConstructor($this->instanceCreators);
         $typeAdapterProvider = new TypeAdapterProvider(
