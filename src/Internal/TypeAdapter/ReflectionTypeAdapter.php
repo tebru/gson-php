@@ -112,7 +112,8 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
 
         $reader->beginObject();
 
-        if ($this->classMetadata->getAnnotation(VirtualProperty::class) !== null) {
+        $virtualProperty = $this->classMetadata->getAnnotation(VirtualProperty::class);
+        if ($virtualProperty !== null) {
             $reader->nextName();
             $reader->beginObject();
         }
@@ -154,7 +155,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
         }
         $reader->endObject();
 
-        if ($this->classMetadata->getAnnotation(VirtualProperty::class) !== null) {
+        if ($virtualProperty !== null) {
             $reader->endObject();
         }
 
