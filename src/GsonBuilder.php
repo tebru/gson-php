@@ -15,6 +15,7 @@ use LogicException;
 use Psr\SimpleCache\CacheInterface;
 use ReflectionProperty;
 use Symfony\Component\Cache\Simple\ArrayCache;
+use Symfony\Component\Cache\Simple\ChainCache;
 use Symfony\Component\Cache\Simple\PhpFilesCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
@@ -397,8 +398,8 @@ class GsonBuilder
 
         if ($this->cache === null) {
             $this->cache = false === $this->enableCache
-                ? new ArrayCache()
-                : new PhpFilesCache('', 0, $this->cacheDir);
+                ? new ArrayCache(0, false)
+                : new ChainCache([new ArrayCache(0, false), new PhpFilesCache('', 0, $this->cacheDir)]);
         }
 
         $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), $this->cache);

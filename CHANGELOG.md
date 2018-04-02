@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.5.4
+------
+
+* CHANGE: Default cache to chain cache with array and php file cache
+
 v0.5.3
 ------
 

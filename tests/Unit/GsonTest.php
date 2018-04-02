@@ -11,8 +11,8 @@ use InvalidArgumentException;
 use LogicException;
 use PHPUnit_Framework_TestCase;
 use ReflectionProperty;
+use Symfony\Component\Cache\Simple\ChainCache;
 use Symfony\Component\Cache\Simple\NullCache;
-use Symfony\Component\Cache\Simple\PhpFilesCache;
 use Tebru\Gson\Gson;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\PropertyNamingPolicy;
@@ -892,7 +892,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
             ->enableCache(true);
         $gsonBuilder->build();
 
-        self::assertAttributeInstanceOf(PhpFilesCache::class, 'cache', $gsonBuilder);
+        self::assertAttributeInstanceOf(ChainCache::class, 'cache', $gsonBuilder);
     }
 
     public function testEnableCacheWithoutDirectoryThrowsException()
