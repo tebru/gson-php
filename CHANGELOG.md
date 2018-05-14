@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.5.5
+------
+
+* FIXED: DateTimeTypeAdapter now works for any DateTimeInterface
+
 v0.5.4
 ------
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use DateTime;
+use DateTimeInterface;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonReadable;
@@ -49,10 +50,10 @@ final class DateTimeTypeAdapter extends TypeAdapter
      * Read the next value, convert it to its type and return it
      *
      * @param JsonReadable $reader
-     * @return DateTime|null
+     * @return DateTimeInterface|null
      * @throws \Tebru\Gson\Exception\JsonSyntaxException If the DateTime could not be created from format
      */
-    public function read(JsonReadable $reader): ?DateTime
+    public function read(JsonReadable $reader): ?DateTimeInterface
     {
         if ($reader->peek() === JsonToken::NULL) {
             $reader->nextNull();
@@ -83,7 +84,7 @@ final class DateTimeTypeAdapter extends TypeAdapter
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param DateTime $value
+     * @param DateTimeInterface $value
      * @return void
      */
     public function write(JsonWritable $writer, $value): void
