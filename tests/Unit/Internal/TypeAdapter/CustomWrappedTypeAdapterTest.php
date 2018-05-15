@@ -28,7 +28,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
-            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), null, new MockDeserializer())]
+            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, null, new MockDeserializer())]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */
@@ -55,7 +55,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
-            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class))]
+            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false)]
         );
 
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
@@ -75,7 +75,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
-            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), new MockSerializer())]
+            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, new MockSerializer())]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */
@@ -88,7 +88,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
-            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), new MockSerializer())]
+            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, new MockSerializer())]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */
@@ -104,7 +104,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
-            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class))]
+            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false)]
         );
 
         /** @var CustomWrappedTypeAdapter $adapter */

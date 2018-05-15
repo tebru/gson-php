@@ -57,10 +57,18 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
 
     public function testGetTypeAdapterInterface()
     {
-        $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class))]);
+        $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), false)]);
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(TypeAdapterMock::class));
 
         self::assertInstanceOf(TypeAdapterMock::class, $adapter);
+    }
+
+    public function testGetTypeAdapterStrict()
+    {
+        $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), true)]);
+        $adapter = $typeAdapterProvider->getAdapter(new TypeToken(TypeAdapterMock::class));
+
+        self::assertNotInstanceOf(TypeAdapterMock::class, $adapter);
     }
 
     public function testGetTypeAdapterThrowsException()

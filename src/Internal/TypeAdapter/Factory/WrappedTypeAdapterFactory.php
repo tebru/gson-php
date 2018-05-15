@@ -29,17 +29,23 @@ class WrappedTypeAdapterFactory implements TypeAdapterFactory
      * @var TypeToken
      */
     private $type;
+    /**
+     * @var bool
+     */
+    private $strict;
 
     /**
      * Constructor
      *
      * @param TypeAdapter $typeAdapter
      * @param TypeToken $type
+     * @param bool $strict
      */
-    public function __construct(TypeAdapter $typeAdapter, TypeToken $type)
+    public function __construct(TypeAdapter $typeAdapter, TypeToken $type, bool $strict)
     {
         $this->typeAdapter = $typeAdapter;
         $this->type = $type;
+        $this->strict = $strict;
     }
 
     /**
@@ -51,7 +57,9 @@ class WrappedTypeAdapterFactory implements TypeAdapterFactory
      */
     public function supports(TypeToken $type): bool
     {
-        return $type->isA($this->type->getRawType());
+        return $this->strict
+            ? $type->getRawType() === $this->type->getRawType()
+            : $type->isA($this->type->getRawType());
     }
 
     /**

@@ -169,35 +169,37 @@ class GsonBuilder
     /**
      * Add custom handling for a specific type
      *
-     * Handler objects may be of types: TypeAdapter, JsonSerializer, or JsonDeserializer
+     * Handler objects may be of types: TypeAdapter, JsonSerializer, or JsonDeserializer. Passing
+     * $strict=true will match the specified type exactly, as opposed to checking anywhere in the
+     * inheritance chain.
      *
      * @param string $type
      * @param $handler
+     * @param bool $strict
      * @return GsonBuilder
-     * @throws \InvalidArgumentException
      */
-    public function registerType(string $type, $handler): GsonBuilder
+    public function registerType(string $type, $handler, bool $strict = false): GsonBuilder
     {
         if ($handler instanceof TypeAdapter) {
-            $this->typeAdapterFactories[] = new WrappedTypeAdapterFactory($handler, new TypeToken($type));
+            $this->typeAdapterFactories[] = new WrappedTypeAdapterFactory($handler, new TypeToken($type), $strict);
 
             return $this;
         }
 
         if ($handler instanceof JsonSerializer && $handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $handler, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $strict, $handler, $handler);
 
             return $this;
         }
 
         if ($handler instanceof JsonSerializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $strict, $handler);
 
             return $this;
         }
 
         if ($handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), null, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $strict, null, $handler);
 
             return $this;
         }

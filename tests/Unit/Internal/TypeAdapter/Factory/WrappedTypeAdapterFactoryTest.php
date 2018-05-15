@@ -27,7 +27,7 @@ class WrappedTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class));
+        $this->wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), false);
     }
 
     public function testSupportsTrue()
@@ -38,6 +38,18 @@ class WrappedTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
     public function testSupportsFalse()
     {
         self::assertFalse($this->wrappedTypeAdapterFactory->supports(new TypeToken(Gson::class)));
+    }
+
+    public function testSupportsStrict()
+    {
+        $wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMock::class), true);
+        self::assertTrue($wrappedTypeAdapterFactory->supports(new TypeToken(TypeAdapterMock::class)));
+    }
+
+    public function testIgnoresStrict()
+    {
+        $wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), true);
+        self::assertFalse($wrappedTypeAdapterFactory->supports(new TypeToken(TypeAdapterMock::class)));
     }
 
     public function testSupportsFalseString()

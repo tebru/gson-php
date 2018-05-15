@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+master
+------
+
+* ADDED: Ability to change type checking strictness for registered types
+
 v0.5.5
 ------
 

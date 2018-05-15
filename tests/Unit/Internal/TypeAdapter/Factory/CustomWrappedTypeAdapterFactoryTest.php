@@ -12,6 +12,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\Test\Mock\ChildClass;
+use Tebru\Gson\Test\Mock\ChildClassParent;
 use Tebru\Gson\Test\Mock\MockDeserializer;
 use Tebru\Gson\Test\Mock\MockSerializer;
 use Tebru\Gson\Test\Mock\UserMock;
@@ -28,28 +29,42 @@ class CustomWrappedTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testSupportsObject()
     {
-        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), null, new MockDeserializer());
+        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, null, new MockDeserializer());
 
         self::assertTrue($factory->supports(new TypeToken(UserMock::class)));
     }
 
+    public function testSupportsParent()
+    {
+        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(ChildClassParent::class), false, null, new MockDeserializer());
+
+        self::assertTrue($factory->supports(new TypeToken(ChildClass::class)));
+    }
+
+    public function testIgnoresParentStrict()
+    {
+        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(ChildClassParent::class), true, null, new MockDeserializer());
+
+        self::assertFalse($factory->supports(new TypeToken(ChildClass::class)));
+    }
+
     public function testSupportsObjectFalse()
     {
-        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), null, new MockDeserializer());
+        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, null, new MockDeserializer());
 
         self::assertFalse($factory->supports(new TypeToken(ChildClass::class)));
     }
 
     public function testSupportsMismatchType()
     {
-        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), null, new MockDeserializer());
+        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, null, new MockDeserializer());
 
         self::assertFalse($factory->supports(new TypeToken('int')));
     }
 
     public function testCreate()
     {
-        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), new MockSerializer(), new MockDeserializer());
+        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, new MockSerializer(), new MockDeserializer());
         $adapter = $factory->create(new TypeToken(UserMock::class), MockProvider::typeAdapterProvider());
 
         self::assertInstanceOf(CustomWrappedTypeAdapter::class, $adapter);

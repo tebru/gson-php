@@ -35,6 +35,33 @@ Gson::builder()
     ->build();
 ```
 
+By default, if you register a class, all children will also by
+registered for that type. By passing in `true` as the 3rd argument, you
+can enable stricter type checking so that only exactly class matches
+will be registered.
+
+```php
+Gson::builder()
+    ->registerType(MyBaseClass::class, new FooDeserializer(), true)
+    ->build();
+```
+
+One example of this being useful is when using custom deserializers. You
+can specify a base class or interface as the registered type, then
+within the deserializer, delegate deserialization for the concrete.
+
+```php
+class FooDeserializer implements JsonDeserializer
+{
+    public function deserialize(JsonElement $jsonElement, PhpType $type, JsonDeserializationContext $context)
+    {
+        return $jsonElement->asJsonObject()->getAsBoolean('property')
+            ? $context->deserialize($jsonElement, Foo::class)
+            : $context->deserialize($jsonElement, Bar::class);
+    }
+}
+```
+
 Add an Instance Creator
 -----------------------
 

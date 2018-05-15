@@ -39,17 +39,28 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
     private $deserializer;
 
     /**
+     * @var bool
+     */
+    private $strict;
+
+    /**
      * Constructor
      *
      * @param TypeToken $type
+     * @param bool $strict
      * @param JsonSerializer|null $serializer
      * @param JsonDeserializer|null $deserializer
      */
-    public function __construct(TypeToken $type, JsonSerializer $serializer = null, JsonDeserializer $deserializer = null)
-    {
+    public function __construct(
+        TypeToken $type,
+        bool $strict,
+        JsonSerializer $serializer = null,
+        JsonDeserializer $deserializer = null
+    ) {
         $this->type = $type;
         $this->serializer = $serializer;
         $this->deserializer = $deserializer;
+        $this->strict = $strict;
     }
 
     /**
@@ -61,7 +72,9 @@ final class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
      */
     public function supports(TypeToken $type): bool
     {
-        return $type->isA($this->type->getRawType());
+        return $this->strict
+            ? $type->getRawType() === $this->type->getRawType()
+            : $type->isA($this->type->getRawType());
     }
 
     /**
