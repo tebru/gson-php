@@ -119,8 +119,8 @@ Gson::builder()
     ->build();
 ```
 
-Set Excluded Modfiers
----------------------
+Set Excluded Modifiers
+----------------------
 
 ```php
 Gson::builder()

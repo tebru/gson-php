@@ -6,6 +6,39 @@ types (int vs integer) and defining generic types.  You should not have
 to interact with this class too often, but any type provided as a string
 will ultimately be routed through this class.
 
+Resolving Types
+---------------
+
+Gson uses many methods to resolve the type of a property. In order,
+they are:
+
+- `@Type` annotation
+- Setter typehint
+- Getter return type
+- Setter default value
+- Property `@var` annotation
+- Getter `@return` annotation
+- Setter `@param` annotation
+
+If the type could not be resolved, it defaults to a wildcard type, which
+checks the type at runtime. If the type is ever `array`, Gson will
+check the docblocks to see if the array element types are defined.
+
+Gson expects the generic array syntax to use square brackets after the
+type.
+
+An array of integers
+
+```
+int[]
+```
+
+An array of arrays of MyClass objects
+
+```
+MyClass[][]
+```
+
 Generic Types
 -------------
 

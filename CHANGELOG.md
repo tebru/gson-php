@@ -3,11 +3,12 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
-master
+v0.5.6
 ------
 
 * ADDED: Ability to change type checking strictness for registered types
 * ADDED: Discriminator interface to handle polymorphic deserializations
+* ADDED: Additional type check of docblocks
 
 v0.5.5
 ------

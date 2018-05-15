@@ -148,7 +148,7 @@ final class PropertyCollectionFactory
             $setterMethod = $this->accessorMethodProvider->setterMethod($reflectionClass, $reflectionProperty, $annotations);
             $getterStrategy = $this->accessorStrategyFactory->getterStrategy($reflectionProperty, $getterMethod);
             $setterStrategy = $this->accessorStrategyFactory->setterStrategy($reflectionProperty, $setterMethod);
-            $type = $this->phpTypeFactory->create($annotations, $getterMethod, $setterMethod);
+            $type = $this->phpTypeFactory->create($annotations, $getterMethod, $setterMethod, $reflectionProperty);
 
             $property = new Property(
                 $reflectionProperty->getName(),
