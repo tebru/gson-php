@@ -3,9 +3,16 @@ sudo: false
 language: php
 php:
   - 7.1
+  - 7.2
+
+matrix:
+  include:
+      - php: 7.1
+        env: dependencies=lowest
 
 before_script:
   - composer install --no-interaction -o
+  - if [ "$dependencies" = "lowest" ]; then composer update -o --prefer-lowest; fi;
 
 script:
   - mkdir -p build/logs
