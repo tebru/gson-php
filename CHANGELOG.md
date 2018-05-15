@@ -7,6 +7,7 @@ master
 ------
 
 * ADDED: Ability to change type checking strictness for registered types
+* ADDED: Discriminator interface to handle polymorphic deserializations
 
 v0.5.5
 ------

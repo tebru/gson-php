@@ -33,6 +33,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
+use Tebru\Gson\Internal\DiscriminatorDeserializer;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\FloatTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
@@ -162,6 +163,25 @@ class GsonBuilder
     public function addTypeAdapterFactory(TypeAdapterFactory $typeAdapterFactory): GsonBuilder
     {
         $this->typeAdapterFactories[] = $typeAdapterFactory;
+
+        return $this;
+    }
+
+    /**
+     * Adds a [@see Discriminator] as a type adapter factory
+     *
+     * @param string $type
+     * @param Discriminator $discriminator
+     * @return GsonBuilder
+     */
+    public function addDiscriminator(string $type, Discriminator $discriminator): GsonBuilder
+    {
+        $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(
+            new TypeToken($type),
+            true,
+            null,
+            new DiscriminatorDeserializer($discriminator)
+        );
 
         return $this;
     }

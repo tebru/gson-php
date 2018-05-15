@@ -62,6 +62,34 @@ class FooDeserializer implements JsonDeserializer
 }
 ```
 
+Adding Discriminators
+---------------------
+
+Discriminators leverage the custom deserialization system. Implementing
+it and adding it to the builder provides a simpler interface for
+choosing how to deserialize polymorphics.
+
+```php
+Gson::builder()
+    ->addDiscriminator(BaseClass::class, new FooDiscriminator())
+    ->build();
+```
+
+```php
+class FooDiscriminator implements Discriminator
+{
+    public function getClass(JsonObject $object): string
+    {
+        switch ($object->getAsString('status')) {
+            case 'foo':
+                return Child1::class;
+            case 'bar':
+                return Child2::class;
+        }
+    }
+}
+```
+
 Add an Instance Creator
 -----------------------
 
