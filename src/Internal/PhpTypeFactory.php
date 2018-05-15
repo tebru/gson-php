@@ -41,7 +41,7 @@ final class PhpTypeFactory
      * - Defaults to wildcard type
      *
      * @param AnnotationCollection $annotations
-     * @param ReflectionProperty $property
+     * @param ReflectionProperty|null $property
      * @param ReflectionMethod|null $getterMethod
      * @param ReflectionMethod|null $setterMethod
      * @return TypeToken
