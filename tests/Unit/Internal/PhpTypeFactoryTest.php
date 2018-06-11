@@ -107,6 +107,16 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::FLOAT, $phpType->getRawType());
     }
 
+    public function testCreateFromDocblockMixed()
+    {
+        $annotations = new AnnotationCollection();
+        $factory = new PhpTypeFactory();
+        $property = new ReflectionProperty(DocblockMock::class, 'mixed');
+        $phpType = $factory->create($annotations, null, null, $property);
+
+        self::assertSame(TypeToken::WILDCARD, $phpType->getRawType());
+    }
+
     public function testCreateFromDocblockMultipleTypes()
     {
         $annotations = new AnnotationCollection();
@@ -257,7 +267,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
 
         self::assertSame(TypeToken::HASH, $phpType->getRawType());
         self::assertSame(TypeToken::HASH, $phpType->getGenerics()[0]->getRawType());
-        self::assertSame(TypeToken::STRING, $phpType->getGenerics()[0]->getGenerics()[0]->getRawType());
+        self::assertSame(TypeToken::WILDCARD, $phpType->getGenerics()[0]->getGenerics()[0]->getRawType());
     }
 
     public function testCreateFromDocblockClassArray()

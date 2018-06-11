@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.5.7
+------
+
+* FIXED: Issue with `mixed` type hint
+
 v0.5.6
 ------
 

@@ -44,6 +44,11 @@ class DocblockMock
     private $nullableScalar2;
 
     /**
+     * @var mixed
+     */
+    private $mixed;
+
+    /**
      * @var float|null|int
      */
     private $multipleTypes;
@@ -114,7 +119,7 @@ class DocblockMock
     private $typedArray;
 
     /**
-     * @var string[][]
+     * @var mixed[][]
      */
     private $nestedArray;
 

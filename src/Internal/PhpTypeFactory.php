@@ -228,7 +228,8 @@ final class PhpTypeFactory
     {
         // if not in array syntax
         if (\strpos($type, '[]') === false) {
-            return $type;
+            // convert mixed to wildcard
+            return $type === 'mixed' ? TypeToken::WILDCARD : $type;
         }
 
         $parts = \explode('[]', $type);
