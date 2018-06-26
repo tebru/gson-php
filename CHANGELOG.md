@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.5.8
+------
+
+* FIXED: Issue with `@Type` array not overriding docblocks
+
 v0.5.7
 ------
 

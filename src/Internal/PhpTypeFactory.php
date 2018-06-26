@@ -56,12 +56,7 @@ final class PhpTypeFactory
         $typeAnnotation = $annotations->get(Type::class);
 
         if (null !== $typeAnnotation) {
-            return $this->checkGenericArray(
-                $typeAnnotation->getType(),
-                $property,
-                $getterMethod,
-                $setterMethod
-            );
+            return $typeAnnotation->getType();
         }
 
         if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
