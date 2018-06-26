@@ -39,7 +39,7 @@ class DocblockMock
     private $nullableScalar;
 
     /**
-     * @var float|null
+     * @var float|NULL
      */
     private $nullableScalar2;
 
@@ -59,7 +59,7 @@ class DocblockMock
     private $multipleTypes2;
 
     /**
-     * @var DocblockFoo
+     * @var DocblockFoo|null
      */
     private $classSameNamespace;
 

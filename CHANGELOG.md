@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.5.9
+------
+
+* FIXED: Issue with strtolower type check in docblock
+
 v0.5.8
 ------
 

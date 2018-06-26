@@ -193,14 +193,14 @@ final class PhpTypeFactory
         }
 
         // if one of the types is not null
-        if (\stripos($type, 'null') === false) {
+        if (\stripos(\strtolower($type), 'null') === false) {
             return null;
         }
 
         // return the non-null type
         foreach(\explode('|', $type) as $potentialType) {
-            $potentialType = \strtolower(\trim($potentialType));
-            if ($potentialType !== 'null') {
+            $potentialType = \trim($potentialType);
+            if (\strtolower($potentialType) !== 'null') {
                 return $potentialType;
             }
         }
