@@ -109,7 +109,7 @@ final class TypeAdapterProvider
      */
     public function getAdapterFromAnnotation(TypeToken $type, JsonAdapter $jsonAdapterAnnotation): TypeAdapter
     {
-        $object = $this->constructorConstructor->get(new TypeToken($jsonAdapterAnnotation->getValue()))->construct();
+        $object = $this->constructorConstructor->get(TypeToken::create($jsonAdapterAnnotation->getValue()))->construct();
 
         if ($object instanceof TypeAdapter) {
             return $object;

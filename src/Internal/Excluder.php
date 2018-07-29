@@ -140,10 +140,20 @@ final class Excluder
      * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function excludeClassByStrategy(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
+    public function excludeClassBySerializationStrategy(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
     {
-        $strategies = $exclusionData->isSerialize() ? $this->serializationStrategies : $this->deserializationStrategies;
-        foreach ($strategies as $exclusionStrategy) {
+        foreach ($this->serializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy->shouldSkipClass($classMetadata, $exclusionData)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function excludeClassByDeserializationStrategy(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
+    {
+        foreach ($this->deserializationStrategies as $exclusionStrategy) {
             if ($exclusionStrategy->shouldSkipClass($classMetadata, $exclusionData)) {
                 return true;
             }
@@ -178,16 +188,45 @@ final class Excluder
      * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function excludePropertyByStrategy(PropertyMetadata $property, ExclusionData $exclusionData): bool
+    public function excludePropertyBySerializationStrategy(PropertyMetadata $property, ExclusionData $exclusionData): bool
     {
-        $strategies = $exclusionData->isSerialize() ? $this->serializationStrategies : $this->deserializationStrategies;
-        foreach ($strategies as $exclusionStrategy) {
+        foreach ($this->serializationStrategies as $exclusionStrategy) {
             if ($exclusionStrategy->shouldSkipProperty($property, $exclusionData)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Returns true if we should exclude the class for a given serialization direction
+     *
+     * Uses user-defined strategies
+     *
+     * @param PropertyMetadata $property
+     * @param ExclusionData $exclusionData
+     * @return bool
+     */
+    public function excludePropertyByDeserializationStrategy(PropertyMetadata $property, ExclusionData $exclusionData): bool
+    {
+        foreach ($this->deserializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy->shouldSkipProperty($property, $exclusionData)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasSerializationStrategies(): bool
+    {
+        return $this->serializationStrategies !== [];
+    }
+
+    public function hasDeserializationStrategies(): bool
+    {
+        return $this->deserializationStrategies !== [];
     }
 
     /**

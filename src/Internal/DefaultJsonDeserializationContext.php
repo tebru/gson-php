@@ -45,7 +45,7 @@ final class DefaultJsonDeserializationContext implements JsonDeserializationCont
      */
     public function deserialize(JsonElement $jsonElement, string $type)
     {
-        $typeAdapter = $this->typeAdapterProvider->getAdapter(new TypeToken($type));
+        $typeAdapter = $this->typeAdapterProvider->getAdapter(TypeToken::create($type));
 
         return $typeAdapter->readFromJsonElement($jsonElement);
     }

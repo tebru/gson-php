@@ -49,25 +49,25 @@ final class WildcardTypeAdapter extends TypeAdapter
     {
         switch ($reader->peek()) {
             case JsonToken::BEGIN_ARRAY:
-                $type = new TypeToken(TypeToken::HASH);
+                $type = TypeToken::create(TypeToken::HASH);
                 break;
             case JsonToken::BEGIN_OBJECT:
-                $type = new TypeToken(TypeToken::OBJECT);
+                $type = TypeToken::create(TypeToken::OBJECT);
                 break;
             case JsonToken::STRING:
-                $type = new TypeToken(TypeToken::STRING);
+                $type = TypeToken::create(TypeToken::STRING);
                 break;
             case JsonToken::NAME:
-                $type = new TypeToken(TypeToken::STRING);
+                $type = TypeToken::create(TypeToken::STRING);
                 break;
             case JsonToken::BOOLEAN:
-                $type = new TypeToken(TypeToken::BOOLEAN);
+                $type = TypeToken::create(TypeToken::BOOLEAN);
                 break;
             case JsonToken::NUMBER:
-                $type = new TypeToken(TypeToken::FLOAT);
+                $type = TypeToken::create(TypeToken::FLOAT);
                 break;
             case JsonToken::NULL:
-                $type = new TypeToken(TypeToken::NULL);
+                $type = TypeToken::create(TypeToken::NULL);
                 break;
             default:
                 throw new JsonSyntaxException(

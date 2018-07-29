@@ -32,7 +32,42 @@ final class JsonElementReader extends JsonReader
     public function __construct(JsonElement $jsonElement)
     {
         $this->payload = $jsonElement;
-        $this->push($jsonElement);
+        $this->stack[$this->stackSize] = null;
+        $this->stackTypes[$this->stackSize++] = JsonToken::END_DOCUMENT;
+        $this->updateStack($jsonElement);
+        $this->stackSize = \count($this->stack);
+    }
+
+    /**
+     * Update internal stack and stack types, appending values
+     *
+     * @param mixed $jsonElement
+     */
+    private function updateStack(JsonElement $jsonElement): void
+    {
+        if ($jsonElement->isJsonObject()) {
+            $this->stack[$this->stackSize] = null;
+            $this->stackTypes[$this->stackSize++] = JsonToken::END_OBJECT;
+            $this->stack[$this->stackSize] = $jsonElement;
+            $this->stackTypes[$this->stackSize++] = JsonToken::BEGIN_OBJECT;
+        } elseif ($jsonElement->isJsonArray()) {
+            $this->stack[$this->stackSize] = null;
+            $this->stackTypes[$this->stackSize++] = JsonToken::END_ARRAY;
+            $this->stack[$this->stackSize] = $jsonElement;
+            $this->stackTypes[$this->stackSize++] = JsonToken::BEGIN_ARRAY;
+        } elseif ($jsonElement->isNumber()) {
+            $this->stack[$this->stackSize] = $jsonElement;
+            $this->stackTypes[$this->stackSize++] = JsonToken::NUMBER;
+        } elseif ($jsonElement->isString()) {
+            $this->stack[$this->stackSize] = $jsonElement;
+            $this->stackTypes[$this->stackSize++] = JsonToken::STRING;
+        } elseif ($jsonElement->isBoolean()) {
+            $this->stack[$this->stackSize] = $jsonElement;
+            $this->stackTypes[$this->stackSize++] = JsonToken::BOOLEAN;
+        } else {
+            $this->stack[$this->stackSize] = null;
+            $this->stackTypes[$this->stackSize++] = JsonToken::NULL;
+        }
     }
 
     /**
@@ -42,12 +77,15 @@ final class JsonElementReader extends JsonReader
      */
     public function beginArray(): void
     {
-        $this->expect(JsonToken::BEGIN_ARRAY);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::BEGIN_ARRAY) {
+            $this->assertionFailed(JsonToken::BEGIN_ARRAY);
+        }
 
-        /** @var JsonArray $jsonArray */
-        $jsonArray = $this->pop();
-        $this->push($jsonArray->getIterator(), ArrayIterator::class);
-        $this->pathIndices[$this->stackSize - 1] = 0;
+        $jsonArray = $this->stack[--$this->stackSize];
+        $size = \count($jsonArray);
+        for ($i = $size - 1; $i >= 0; $i--) {
+            $this->updateStack($jsonArray[$i]);
+        }
     }
 
     /**
@@ -57,12 +95,16 @@ final class JsonElementReader extends JsonReader
      */
     public function beginObject(): void
     {
-        $this->expect(JsonToken::BEGIN_OBJECT);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::BEGIN_OBJECT) {
+            $this->assertionFailed(JsonToken::BEGIN_OBJECT);
+        }
 
-        /** @var JsonObject $jsonObject */
-        $jsonObject = $this->pop();
-
-        $this->push(new JsonObjectIterator($jsonObject), JsonObjectIterator::class);
+        $jsonObject = $this->stack[--$this->stackSize];
+        foreach ($jsonObject as $key => $value) {
+            $this->updateStack($value);
+            $this->stack[$this->stackSize] = $key;
+            $this->stackTypes[$this->stackSize++] = JsonToken::NAME;
+        }
     }
 
     /**
@@ -72,10 +114,12 @@ final class JsonElementReader extends JsonReader
      */
     public function nextBoolean(): bool
     {
-        $this->expect(JsonToken::BOOLEAN);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::BOOLEAN) {
+            $this->assertionFailed(JsonToken::BOOLEAN);
+        }
 
         /** @var JsonPrimitive $primitive */
-        $primitive = $this->pop();
+        $primitive = $this->stack[--$this->stackSize];
 
         $this->incrementPathIndex();
 
@@ -89,10 +133,12 @@ final class JsonElementReader extends JsonReader
      */
     public function nextDouble(): float
     {
-        $this->expect(JsonToken::NUMBER);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::NUMBER) {
+            $this->assertionFailed(JsonToken::NUMBER);
+        }
 
         /** @var JsonPrimitive $primitive */
-        $primitive = $this->pop();
+        $primitive = $this->stack[--$this->stackSize];
 
         $this->incrementPathIndex();
 
@@ -106,10 +152,12 @@ final class JsonElementReader extends JsonReader
      */
     public function nextInteger(): int
     {
-        $this->expect(JsonToken::NUMBER);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::NUMBER) {
+            $this->assertionFailed(JsonToken::NUMBER);
+        }
 
         /** @var JsonPrimitive $primitive */
-        $primitive = $this->pop();
+        $primitive = $this->stack[--$this->stackSize];
 
         $this->incrementPathIndex();
 
@@ -123,15 +171,12 @@ final class JsonElementReader extends JsonReader
      */
     public function nextString(): string
     {
-        $peek = $this->peek();
-        if ($peek === JsonToken::NAME) {
-            return $this->nextName();
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::STRING) {
+            $this->assertionFailed(JsonToken::STRING);
         }
 
-        $this->expect(JsonToken::STRING);
-
         /** @var JsonPrimitive $primitive */
-        $primitive = $this->pop();
+        $primitive = $this->stack[--$this->stackSize];
 
         $this->incrementPathIndex();
 
@@ -145,63 +190,7 @@ final class JsonElementReader extends JsonReader
      */
     public function peek(): string
     {
-        if (null !== $this->currentToken) {
-            /** @noinspection PhpStrictTypeCheckingInspection */
-            return $this->currentToken;
-        }
-
-        if (0 === $this->stackSize) {
-            $this->currentToken = JsonToken::END_DOCUMENT;
-
-            return $this->currentToken;
-        }
-
-        $token = null;
-        $element = $this->stack[$this->stackSize - 1];
-
-        switch ($this->stackTypes[$this->stackSize - 1]) {
-            case JsonArray::class:
-                $token = JsonToken::BEGIN_ARRAY;
-                break;
-            case JsonNull::class:
-                $token = JsonToken::NULL;
-                break;
-            case JsonObject::class:
-                $token = JsonToken::BEGIN_OBJECT;
-                break;
-            case JsonPrimitive::class:
-                /** @var JsonPrimitive $element */
-                if ($element->isString()) {
-                    $token = JsonToken::STRING;
-                } elseif ($element->isBoolean()) {
-                    $token = JsonToken::BOOLEAN;
-                } elseif ($element->isNumber()) {
-                    $token = JsonToken::NUMBER;
-                }
-
-                break;
-            case JsonObjectIterator::class:
-                /** @var JsonObjectIterator $element */
-                $token = $element->valid() ? JsonToken::NAME : JsonToken::END_OBJECT;
-
-                break;
-            case ArrayIterator::class:
-                /** @var ArrayIterator $element */
-                if ($element->valid()) {
-                    $this->push($element->current());
-                    $element->next();
-
-                    $token = $this->peek();
-                } else {
-                    $token = JsonToken::END_ARRAY;
-                }
-
-                break;
-        }
-
-        $this->currentToken = $token;
-
-        return $this->currentToken;
+        return $this->stackTypes[$this->stackSize - 1];
     }
 
     /**
@@ -213,33 +202,15 @@ final class JsonElementReader extends JsonReader
     {
         $result = '$';
         foreach ($this->stack as $index => $item) {
-            if ($item instanceof ArrayIterator && isset($this->pathIndices[$index])) {
+            if ($item instanceof JsonArray && isset($this->pathIndices[$index])) {
                 $result .= '['.$this->pathIndices[$index].']';
             }
 
-            if ($item instanceof JsonObjectIterator && isset($this->pathNames[$index])) {
+            if ($item instanceof JsonObject && isset($this->pathNames[$index])) {
                 $result .= '.'.$this->pathNames[$index];
             }
         }
 
         return $result;
-    }
-
-    /**
-     * Push an element onto the stack
-     *
-     * @param JsonElement|Iterator $element
-     * @param string|null $type
-     */
-    protected function push($element, $type = null): void
-    {
-        if (null === $type) {
-            $type = \get_class($element);
-        }
-
-        $this->stack[$this->stackSize] = $element;
-        $this->stackTypes[$this->stackSize] = $type;
-        $this->stackSize++;
-        $this->currentToken = null;
     }
 }

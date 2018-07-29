@@ -89,24 +89,17 @@ abstract class JsonReader implements JsonReadable
     abstract public function getPath(): string;
 
     /**
-     * Push an element onto the stack
-     *
-     * @param JsonElement|Iterator $element
-     * @param string|null $type
-     * @return void
-     */
-    abstract protected function push($element, $type = null): void;
-
-    /**
      * Consumes the next token and asserts it's the end of an array
      *
      * @return void
      */
     public function endArray(): void
     {
-        $this->expect(JsonToken::END_ARRAY);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::END_ARRAY) {
+            $this->assertionFailed(JsonToken::END_ARRAY);
+        }
 
-        $this->pop();
+        $this->stackSize--;
         $this->incrementPathIndex();
     }
 
@@ -117,9 +110,11 @@ abstract class JsonReader implements JsonReadable
      */
     public function endObject(): void
     {
-        $this->expect(JsonToken::END_OBJECT);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::END_OBJECT) {
+            $this->assertionFailed(JsonToken::END_OBJECT);
+        }
 
-        $this->pop();
+        $this->stackSize--;
         $this->incrementPathIndex();
     }
 
@@ -132,7 +127,7 @@ abstract class JsonReader implements JsonReadable
      */
     public function hasNext(): bool
     {
-        $peek = $this->peek();
+        $peek = $this->stackTypes[$this->stackSize - 1];
 
         return $peek !== JsonToken::END_OBJECT && $peek !== JsonToken::END_ARRAY;
     }
@@ -144,19 +139,11 @@ abstract class JsonReader implements JsonReadable
      */
     public function nextName(): string
     {
-        $this->expect(JsonToken::NAME);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::NAME) {
+            $this->assertionFailed(JsonToken::NAME);
+        }
 
-        /** @var Iterator $iterator */
-        $iterator = $this->stack[$this->stackSize - 1];
-        $key = $iterator->key();
-        $value = $iterator->current();
-        $iterator->next();
-
-        $this->pathNames[$this->stackSize - 1] = $key;
-
-        $this->push($value);
-
-        return (string)$key;
+        return (string)$this->stack[--$this->stackSize];
     }
 
     /**
@@ -166,9 +153,11 @@ abstract class JsonReader implements JsonReadable
      */
     public function nextNull(): void
     {
-        $this->expect(JsonToken::NULL);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::NULL) {
+            $this->assertionFailed(JsonToken::NULL);
+        }
 
-        $this->pop();
+        $this->stackSize--;
 
         $this->incrementPathIndex();
     }
@@ -181,7 +170,7 @@ abstract class JsonReader implements JsonReadable
      */
     public function skipValue(): void
     {
-        $this->pop();
+        $this->stackSize--;
     }
 
     /**
@@ -215,18 +204,14 @@ abstract class JsonReader implements JsonReadable
      * @return void
      * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not the expectation
      */
-    protected function expect(string $expectedToken): void
+    protected function assertionFailed(string $expectedToken): void
     {
-        if ($this->peek() === $expectedToken) {
-            return;
-        }
-
         // increment the path index because exceptions are thrown before this value is increased. We
         // want to display the current index that has a problem.
         $this->incrementPathIndex();
 
         throw new JsonSyntaxException(
-            \sprintf('Expected "%s", but found "%s" at "%s"', $expectedToken, $this->peek(), $this->getPath())
+            \sprintf('Expected "%s", but found "%s" at "%s"', $expectedToken, $this->stackTypes[$this->stackSize - 1], $this->getPath())
         );
     }
 

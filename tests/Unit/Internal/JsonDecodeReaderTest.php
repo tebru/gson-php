@@ -69,7 +69,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->beginArray();
         $reader->endArray();
 
-        self::assertAttributeCount(0, 'stack', $reader);
+        self::assertAttributeSame(0, 'stackSize', $reader);
     }
 
     public function testEndArrayNonEmpty()
@@ -79,7 +79,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->nextInteger();
         $reader->endArray();
 
-        self::assertAttributeCount(0, 'stack', $reader);
+        self::assertAttributeSame(0, 'stackSize', $reader);
     }
 
     public function testEndArrayInvalidToken()
@@ -126,7 +126,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->beginObject();
         $reader->endObject();
 
-        self::assertAttributeCount(0, 'stack', $reader);
+        self::assertAttributeSame(0, 'stackSize', $reader);
     }
 
     public function testEndObjectNonEmpty()
@@ -137,7 +137,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->nextInteger();
         $reader->endObject();
 
-        self::assertAttributeCount(0, 'stack', $reader);
+        self::assertAttributeSame(0, 'stackSize', $reader);
     }
 
     public function testEndObjectInvalidToken()

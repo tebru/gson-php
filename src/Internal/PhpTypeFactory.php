@@ -63,7 +63,7 @@ final class PhpTypeFactory
             $parameter = $setterMethod->getParameters()[0];
             if (null !== $parameter->getType()) {
                 return $this->checkGenericArray(
-                    new TypeToken((string)$parameter->getType()),
+                    TypeToken::create((string)$parameter->getType()),
                     $property,
                     $getterMethod,
                     $setterMethod
@@ -73,7 +73,7 @@ final class PhpTypeFactory
 
         if (null !== $getterMethod && null !== $getterMethod->getReturnType()) {
             return $this->checkGenericArray(
-                new TypeToken((string)$getterMethod->getReturnType()),
+                TypeToken::create((string)$getterMethod->getReturnType()),
                 $property,
                 $getterMethod,
                 $setterMethod
@@ -84,7 +84,7 @@ final class PhpTypeFactory
             $parameter = $setterMethod->getParameters()[0];
             if ($parameter->isDefaultValueAvailable() && null !== $parameter->getDefaultValue()) {
                 return $this->checkGenericArray(
-                    new TypeToken(\gettype($parameter->getDefaultValue())),
+                    TypeToken::create(\gettype($parameter->getDefaultValue())),
                     $property,
                     $getterMethod,
                     $setterMethod
@@ -102,7 +102,7 @@ final class PhpTypeFactory
             );
         }
 
-        return new TypeToken(TypeToken::WILDCARD);
+        return TypeToken::create(TypeToken::WILDCARD);
     }
 
     /**
@@ -248,7 +248,7 @@ final class PhpTypeFactory
     {
         // convert syntax if generic array
         $type = $this->unwrapArray($type, $namespace, $filename);
-        $typeToken = new TypeToken($type);
+        $typeToken = TypeToken::create($type);
 
         if (!$typeToken->isObject()) {
             return $typeToken;
@@ -256,7 +256,7 @@ final class PhpTypeFactory
 
         $firstSlash = strpos($type, '\\');
         if ($firstSlash === 0) {
-            return new TypeToken(substr($type, 1));
+            return TypeToken::create(substr($type, 1));
         }
 
         if ($firstSlash === false && (class_exists($type) || interface_exists($type))) {
@@ -268,25 +268,25 @@ final class PhpTypeFactory
 
         // normal use statement syntax
         if (!empty($matches['default'])) {
-            return new TypeToken($matches['default']);
+            return TypeToken::create($matches['default']);
         }
 
         // aliased use statement
         if (!empty($matches['alias'])) {
-            return new TypeToken($matches['alias']);
+            return TypeToken::create($matches['alias']);
         }
 
         // group use statement
         if (!empty($matches['group'])) {
-            return new TypeToken($matches['group'].$type);
+            return TypeToken::create($matches['group'].$type);
         }
 
         // grouped aliased use statement
         if (!empty($matches['namespace']) && !empty($matches['classname'])) {
-            return new TypeToken($matches['namespace'].$matches['classname']);
+            return TypeToken::create($matches['namespace'].$matches['classname']);
         }
 
-        return new TypeToken($namespace.'\\'.$type);
+        return TypeToken::create($namespace.'\\'.$type);
     }
 
     /**

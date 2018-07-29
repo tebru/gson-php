@@ -33,6 +33,6 @@ class Type extends AbstractAnnotation
      */
     public function getType(): TypeToken
     {
-        return new TypeToken($this->getValue());
+        return TypeToken::create($this->getValue());
     }
 }

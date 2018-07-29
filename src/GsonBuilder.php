@@ -177,7 +177,7 @@ class GsonBuilder
     public function addDiscriminator(string $type, Discriminator $discriminator): GsonBuilder
     {
         $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(
-            new TypeToken($type),
+            TypeToken::create($type),
             true,
             null,
             new DiscriminatorDeserializer($discriminator)
@@ -201,25 +201,25 @@ class GsonBuilder
     public function registerType(string $type, $handler, bool $strict = false): GsonBuilder
     {
         if ($handler instanceof TypeAdapter) {
-            $this->typeAdapterFactories[] = new WrappedTypeAdapterFactory($handler, new TypeToken($type), $strict);
+            $this->typeAdapterFactories[] = new WrappedTypeAdapterFactory($handler, TypeToken::create($type), $strict);
 
             return $this;
         }
 
         if ($handler instanceof JsonSerializer && $handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $strict, $handler, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(TypeToken::create($type), $strict, $handler, $handler);
 
             return $this;
         }
 
         if ($handler instanceof JsonSerializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $strict, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(TypeToken::create($type), $strict, $handler);
 
             return $this;
         }
 
         if ($handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $strict, null, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(TypeToken::create($type), $strict, null, $handler);
 
             return $this;
         }
@@ -236,7 +236,7 @@ class GsonBuilder
      */
     public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
     {
-        $phpType = new TypeToken($type);
+        $phpType = TypeToken::create($type);
         $this->instanceCreators[$phpType->getRawType()] = $instanceCreator;
 
         return $this;

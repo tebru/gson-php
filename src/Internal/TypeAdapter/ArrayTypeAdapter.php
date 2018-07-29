@@ -30,9 +30,21 @@ final class ArrayTypeAdapter extends TypeAdapter
     private $type;
 
     /**
+     * @var string
+     */
+    private $typeString;
+
+    /**
      * @var TypeAdapterProvider
      */
     private $typeAdapterProvider;
+
+    /**
+     * An array of cached type adapters
+     *
+     * @var TypeAdapter[]
+     */
+    private $adapters = [];
 
     /**
      * Constructor
@@ -43,6 +55,7 @@ final class ArrayTypeAdapter extends TypeAdapter
     public function __construct(TypeToken $type, TypeAdapterProvider $typeAdapterProvider)
     {
         $this->type = $type;
+        $this->typeString = (string)$type;
         $this->typeAdapterProvider = $typeAdapterProvider;
     }
 
@@ -56,17 +69,32 @@ final class ArrayTypeAdapter extends TypeAdapter
      */
     public function read(JsonReadable $reader): ?array
     {
-        if ($reader->peek() === JsonToken::NULL) {
+        $token = $reader->peek();
+        if ($token === JsonToken::NULL) {
             $reader->nextNull();
             return null;
         }
 
         $array = [];
-        $token = $reader->peek();
         $generics = $this->type->getGenerics();
+        $numberOfGenerics = \count($generics);
 
-        if (\count($generics) > 2) {
+        if ($numberOfGenerics > 2) {
             throw new LogicException(\sprintf('Array may not have more than 2 generic types at "%s"', $reader->getPath()));
+        }
+
+        $adapter = $this->adapters[$this->typeString] ?? null;
+        if ($adapter === null) {
+            switch ($numberOfGenerics) {
+                case 1:
+                    $adapter = $this->typeAdapterProvider->getAdapter($generics[0]);
+                    $this->adapters[$this->typeString] = $adapter;
+                    break;
+                case 2:
+                    $adapter = $this->typeAdapterProvider->getAdapter($generics[1]);
+                    $this->adapters[$this->typeString] = $adapter;
+                    break;
+            }
         }
 
         switch ($token) {
@@ -76,15 +104,15 @@ final class ArrayTypeAdapter extends TypeAdapter
                 while ($reader->hasNext()) {
                     $name = $reader->nextName();
 
-                    switch (\count($generics)) {
+                    switch ($numberOfGenerics) {
                         // no generics specified
                         case 0:
                             // By now we know that we're deserializing a json object to an array.
                             // If there is a nested object, continue deserializing to an array,
                             // otherwise guess the type using the wildcard
                             $type = $reader->peek() === JsonToken::BEGIN_OBJECT
-                                ? new TypeToken(TypeToken::HASH)
-                                : new TypeToken(TypeToken::WILDCARD);
+                                ? TypeToken::create(TypeToken::HASH)
+                                : TypeToken::create(TypeToken::WILDCARD);
 
                             $adapter = $this->typeAdapterProvider->getAdapter($type);
                             $array[$name] = $adapter->read($reader);
@@ -92,7 +120,6 @@ final class ArrayTypeAdapter extends TypeAdapter
                             break;
                         // generic for value specified
                         case 1:
-                            $adapter = $this->typeAdapterProvider->getAdapter($generics[0]);
                             $array[$name] = $adapter->read($reader);
 
                             break;
@@ -113,8 +140,7 @@ final class ArrayTypeAdapter extends TypeAdapter
                                 $name = (int)$name;
                             }
 
-                            $valueAdapter = $this->typeAdapterProvider->getAdapter($generics[1]);
-                            $array[$name] = $valueAdapter->read($reader);
+                            $array[$name] = $adapter->read($reader);
 
                             break;
                     }
@@ -127,15 +153,14 @@ final class ArrayTypeAdapter extends TypeAdapter
                 $reader->beginArray();
 
                 while ($reader->hasNext()) {
-                    switch (\count($generics)) {
+                    switch ($numberOfGenerics) {
                         // no generics specified
                         case 0:
-                            $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(TypeToken::WILDCARD));
+                            $adapter = $this->typeAdapterProvider->getAdapter(TypeToken::create(TypeToken::WILDCARD));
                             $array[] = $adapter->read($reader);
 
                             break;
                         case 1:
-                            $adapter = $this->typeAdapterProvider->getAdapter($generics[0]);
                             $array[] = $adapter->read($reader);
 
                             break;
@@ -171,17 +196,31 @@ final class ArrayTypeAdapter extends TypeAdapter
         }
 
         $generics = $this->type->getGenerics();
-        if (\count($generics) > 2) {
+        $numberOfGenerics = \count($generics);
+        if ($numberOfGenerics > 2) {
             throw new LogicException('Array may not have more than 2 generic types');
         }
 
-        $numberOfGenerics = \count($generics);
         $arrayIsObject = $this->isArrayObject($value, $numberOfGenerics);
 
         if ($arrayIsObject) {
             $writer->beginObject();
         } else {
             $writer->beginArray();
+        }
+
+        $adapter = $this->adapters[$this->typeString] ?? null;
+        if ($adapter === null) {
+            switch ($numberOfGenerics) {
+                case 1:
+                    $adapter = $this->typeAdapterProvider->getAdapter($generics[0]);
+                    $this->adapters[$this->typeString] = $adapter;
+                    break;
+                case 2:
+                    $adapter = $this->typeAdapterProvider->getAdapter($generics[1]);
+                    $this->adapters[$this->typeString] = $adapter;
+                    break;
+            }
         }
 
         foreach ($value as $key => $item) {
@@ -202,16 +241,13 @@ final class ArrayTypeAdapter extends TypeAdapter
                         $writer->name((string)$key);
                     }
 
-                    $adapter = $this->typeAdapterProvider->getAdapter($generics[0]);
                     $adapter->write($writer, $item);
 
                     break;
                 // generic for key and value specified
                 case 2:
                     $writer->name($key);
-
-                    $valueAdapter = $this->typeAdapterProvider->getAdapter($generics[1]);
-                    $valueAdapter->write($writer, $item);
+                    $adapter->write($writer, $item);
 
                     break;
             }
