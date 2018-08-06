@@ -8,9 +8,8 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
-use ArrayIterator;
-use stdClass;
 use Tebru\Gson\Exception\JsonParseException;
+use Tebru\Gson\ReaderContext;
 use Tebru\Gson\JsonToken;
 
 /**
@@ -24,9 +23,10 @@ final class JsonDecodeReader extends JsonReader
      * Constructor
      *
      * @param string $json
+     * @param ReaderContext $context
      * @throws \Tebru\Gson\Exception\JsonParseException If the json cannot be decoded
      */
-    public function __construct(string $json)
+    public function __construct(string $json, ReaderContext $context)
     {
         $decodedJson = \json_decode($json);
 
@@ -35,7 +35,49 @@ final class JsonDecodeReader extends JsonReader
         }
 
         $this->payload = $decodedJson;
-        $this->push($decodedJson);
+        $this->context = $context;
+        $this->updateStack($decodedJson);
+    }
+
+    /**
+     * Update internal stack and stack types, appending values
+     *
+     * @param mixed $decodedJson
+     */
+    private function updateStack($decodedJson): void
+    {
+        $type = \gettype($decodedJson);
+
+        switch ($type) {
+            case 'object':
+                $this->stack[$this->stackSize] = null;
+                $this->stackTypes[$this->stackSize++] = JsonToken::END_OBJECT;
+                $this->stack[$this->stackSize] = $decodedJson;
+                $this->stackTypes[$this->stackSize++] = JsonToken::BEGIN_OBJECT;
+                break;
+            case 'array':
+                $this->stack[$this->stackSize] = null;
+                $this->stackTypes[$this->stackSize++] = JsonToken::END_ARRAY;
+                $this->stack[$this->stackSize] = $decodedJson;
+                $this->stackTypes[$this->stackSize++] = JsonToken::BEGIN_ARRAY;
+                break;
+            case 'string':
+                $this->stack[$this->stackSize] = $decodedJson;
+                $this->stackTypes[$this->stackSize++] = JsonToken::STRING;
+                break;
+            case 'boolean':
+                $this->stack[$this->stackSize] = $decodedJson;
+                $this->stackTypes[$this->stackSize++] = JsonToken::BOOLEAN;
+                break;
+            case 'integer':
+            case 'double':
+                $this->stack[$this->stackSize] = $decodedJson;
+                $this->stackTypes[$this->stackSize++] = JsonToken::NUMBER;
+                break;
+            default:
+                $this->stack[$this->stackSize] = null;
+                $this->stackTypes[$this->stackSize++] = JsonToken::NULL;
+        }
     }
 
     /**
@@ -45,11 +87,18 @@ final class JsonDecodeReader extends JsonReader
      */
     public function beginArray(): void
     {
-        $this->expect(JsonToken::BEGIN_ARRAY);
+        $this->pathIndices[$this->pathIndex++]++;
+        $this->pathIndices[$this->pathIndex] = -1;
 
-        $array = $this->pop();
-        $this->push(new ArrayIterator($array), ArrayIterator::class);
-        $this->pathIndices[$this->stackSize - 1] = 0;
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::BEGIN_ARRAY) {
+            $this->assertionFailed(JsonToken::BEGIN_ARRAY);
+        }
+
+        $array = $this->stack[--$this->stackSize];
+        $size = \count($array);
+        for ($i = $size - 1; $i >= 0; $i--) {
+            $this->updateStack($array[$i]);
+        }
     }
 
     /**
@@ -59,9 +108,19 @@ final class JsonDecodeReader extends JsonReader
      */
     public function beginObject(): void
     {
-        $this->expect(JsonToken::BEGIN_OBJECT);
+        $this->pathIndices[$this->pathIndex++]++;
+        $this->pathIndices[$this->pathIndex] = -1;
 
-        $this->push(new StdClassIterator($this->pop()), StdClassIterator::class);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::BEGIN_OBJECT) {
+            $this->assertionFailed(JsonToken::BEGIN_OBJECT);
+        }
+
+        $vars = \array_reverse(\get_object_vars($this->stack[--$this->stackSize]), true);
+        foreach ($vars as $key => $value) {
+            $this->updateStack($value);
+            $this->stack[$this->stackSize] = $key;
+            $this->stackTypes[$this->stackSize++] = JsonToken::NAME;
+        }
     }
 
     /**
@@ -71,13 +130,13 @@ final class JsonDecodeReader extends JsonReader
      */
     public function nextBoolean(): bool
     {
-        $this->expect(JsonToken::BOOLEAN);
+        $this->pathIndices[$this->pathIndex]++;
 
-        $result = (bool)$this->pop();
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::BOOLEAN) {
+            $this->assertionFailed(JsonToken::BOOLEAN);
+        }
 
-        $this->incrementPathIndex();
-
-        return $result;
+        return (bool)$this->stack[--$this->stackSize];
     }
 
     /**
@@ -87,13 +146,13 @@ final class JsonDecodeReader extends JsonReader
      */
     public function nextDouble(): float
     {
-        $this->expect(JsonToken::NUMBER);
+        $this->pathIndices[$this->pathIndex]++;
 
-        $result = (float)$this->pop();
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::NUMBER) {
+            $this->assertionFailed(JsonToken::NUMBER);
+        }
 
-        $this->incrementPathIndex();
-
-        return $result;
+        return (float)$this->stack[--$this->stackSize];
     }
 
     /**
@@ -103,13 +162,13 @@ final class JsonDecodeReader extends JsonReader
      */
     public function nextInteger(): int
     {
-        $this->expect(JsonToken::NUMBER);
+        $this->pathIndices[$this->pathIndex]++;
 
-        $result = (int)$this->pop();
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::NUMBER) {
+            $this->assertionFailed(JsonToken::NUMBER);
+        }
 
-        $this->incrementPathIndex();
-
-        return $result;
+        return (int)$this->stack[--$this->stackSize];
     }
 
     /**
@@ -119,124 +178,16 @@ final class JsonDecodeReader extends JsonReader
      */
     public function nextString(): string
     {
-        $peek = $this->peek();
-        if ($peek === JsonToken::NAME) {
-            return $this->nextName();
-        }
+        $this->pathIndices[$this->pathIndex]++;
 
-        $this->expect(JsonToken::STRING);
-
-        $result = (string)$this->pop();
-
-        $this->incrementPathIndex();
-
-        return $result;
-    }
-
-    /**
-     * Returns an enum representing the type of the next token without consuming it
-     *
-     * @return string
-     */
-    public function peek(): string
-    {
-        if (null !== $this->currentToken) {
-            /** @noinspection PhpStrictTypeCheckingInspection */
-            return $this->currentToken;
-        }
-
-        if (0 === $this->stackSize) {
-            $this->currentToken = JsonToken::END_DOCUMENT;
-
-            return $this->currentToken;
-        }
-
-        $token = null;
-        $element = $this->stack[$this->stackSize - 1];
-
-        switch ($this->stackTypes[$this->stackSize - 1]) {
-            case 'array':
-                $token = JsonToken::BEGIN_ARRAY;
-                break;
-            case 'string':
-                $token = JsonToken::STRING;
-                break;
-            case 'double':
-                $token = JsonToken::NUMBER;
-                break;
-            case 'integer':
-                $token = JsonToken::NUMBER;
-                break;
-            case 'boolean':
-                return JsonToken::BOOLEAN;
-            case 'NULL':
-                $token = JsonToken::NULL;
-                break;
-            case StdClassIterator::class:
-                /** @var StdClassIterator $element */
-                $token = $element->valid() ? JsonToken::NAME : JsonToken::END_OBJECT;
-                break;
-            case ArrayIterator::class:
-                /** @var ArrayIterator $element */
-                if ($element->valid()) {
-                    $this->push($element->current());
-                    $element->next();
-
-                    $token = $this->peek();
-                } else {
-                    $token = JsonToken::END_ARRAY;
-                }
-                break;
-            case 'object':
-                switch (\get_class($element)) {
-                    case stdClass::class:
-                        $token = JsonToken::BEGIN_OBJECT;
-                        break;
-                }
-                break;
-        }
-
-        $this->currentToken = $token;
-
-        return $this->currentToken;
-    }
-
-    /**
-     * Get the current read path in json xpath format
-     *
-     * @return string
-     */
-    public function getPath(): string
-    {
-        $result = '$';
-        foreach ($this->stack as $index => $item) {
-            if ($item instanceof ArrayIterator && isset($this->pathIndices[$index])) {
-                $result .= '['.$this->pathIndices[$index].']';
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::STRING) {
+            if ($this->stackTypes[$this->stackSize - 1] === JsonToken::NAME) {
+                return $this->nextName();
             }
 
-            if ($item instanceof StdClassIterator && isset($this->pathNames[$index])) {
-                $result .= '.'.$this->pathNames[$index];
-            }
+            $this->assertionFailed(JsonToken::STRING);
         }
 
-        return $result;
-    }
-
-    /**
-     * Push an element onto the stack
-     *
-     * @param mixed $element
-     * @param string|null $type
-     */
-    protected function push($element, $type = null): void
-    {
-        if (null === $type) {
-            $type = \gettype($element);
-        }
-
-        $this->stack[$this->stackSize] = $element;
-        $this->stackTypes[$this->stackSize] = $type;
-        $this->stackSize++;
-        $this->currentToken = null;
+        return (string)$this->stack[--$this->stackSize];
     }
 }

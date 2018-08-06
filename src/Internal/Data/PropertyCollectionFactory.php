@@ -13,12 +13,12 @@ use ReflectionClass;
 use ReflectionProperty;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Annotation\VirtualProperty;
+use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\SetByNull;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\PropertyMetadata;
@@ -43,11 +43,6 @@ final class PropertyCollectionFactory
      * @var AnnotationReaderAdapter
      */
     private $annotationReader;
-
-    /**
-     * @var MetadataFactory
-     */
-    private $metadataFactory;
 
     /**
      * @var PropertyNamer
@@ -84,7 +79,6 @@ final class PropertyCollectionFactory
      *
      * @param ReflectionPropertySetFactory $reflectionPropertySetFactory
      * @param AnnotationReaderAdapter $annotationReader
-     * @param MetadataFactory $metadataFactory
      * @param PropertyNamer $propertyNamer
      * @param AccessorMethodProvider $accessorMethodProvider
      * @param AccessorStrategyFactory $accessorStrategyFactory
@@ -95,7 +89,6 @@ final class PropertyCollectionFactory
     public function __construct(
         ReflectionPropertySetFactory $reflectionPropertySetFactory,
         AnnotationReaderAdapter $annotationReader,
-        MetadataFactory $metadataFactory,
         PropertyNamer $propertyNamer,
         AccessorMethodProvider $accessorMethodProvider,
         AccessorStrategyFactory $accessorStrategyFactory,
@@ -105,7 +98,6 @@ final class PropertyCollectionFactory
     ) {
         $this->reflectionPropertySetFactory = $reflectionPropertySetFactory;
         $this->annotationReader = $annotationReader;
-        $this->metadataFactory = $metadataFactory;
         $this->propertyNamer = $propertyNamer;
         $this->accessorMethodProvider = $accessorMethodProvider;
         $this->accessorStrategyFactory = $accessorStrategyFactory;
@@ -118,9 +110,10 @@ final class PropertyCollectionFactory
      * Create a [@see PropertyCollection] based on the properties of the provided type
      *
      * @param TypeToken $phpType
+     * @param ClassMetadata $classMetadata
      * @return PropertyCollection
      */
-    public function create(TypeToken $phpType): PropertyCollection
+    public function create(TypeToken $phpType, ClassMetadata $classMetadata): PropertyCollection
     {
         $class = $phpType->getRawType();
         $key = 'gson.properties.'.\str_replace('\\', '', $class);
@@ -158,14 +151,12 @@ final class PropertyCollectionFactory
                 $setterStrategy,
                 $annotations,
                 $reflectionProperty->getModifiers(),
-                false
+                false,
+                $classMetadata
             );
 
-            $classMetadata = $this->metadataFactory->createClassMetadata($reflectionProperty->getDeclaringClass()->getName());
-            $propertyMetadata = $this->metadataFactory->createPropertyMetadata($property, $classMetadata);
-
-            $skipSerialize = $this->excludeProperty($propertyMetadata, true);
-            $skipDeserialize = $this->excludeProperty($propertyMetadata, false);
+            $skipSerialize = $this->excludeProperty($property, true);
+            $skipDeserialize = $this->excludeProperty($property, false);
 
             // if we're skipping serialization and deserialization, we don't need
             // to add the property to the collection
@@ -204,14 +195,12 @@ final class PropertyCollectionFactory
                 $setterStrategy,
                 $annotations,
                 $reflectionMethod->getModifiers(),
-                true
+                true,
+                $classMetadata
             );
 
-            $classMetadata = $this->metadataFactory->createClassMetadata($reflectionMethod->getDeclaringClass()->getName());
-            $propertyMetadata = $this->metadataFactory->createPropertyMetadata($property, $classMetadata);
-
-            $skipSerialize = $this->excludeProperty($propertyMetadata, true);
-            $skipDeserialize = $this->excludeProperty($propertyMetadata, false);
+            $skipSerialize = $this->excludeProperty($property, true);
+            $skipDeserialize = $this->excludeProperty($property, false);
 
             // if we're skipping serialization and deserialization, we don't need
             // to add the property to the collection

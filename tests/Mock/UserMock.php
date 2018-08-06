@@ -44,6 +44,7 @@ class UserMock
     private $address;
 
     /**
+     * @Gson\JsonAdapter("Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter")
      * @var string
      */
     private $phone;
@@ -72,9 +73,9 @@ class UserMock
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }

@@ -124,7 +124,7 @@ final class Excluder
     }
 
     /**
-     * Returns true if we should exclude the class for a given serialization direction
+     * Compile time exclusion checking of classes
      *
      * @param ClassMetadata $classMetadata
      * @param bool $serialize
@@ -136,14 +136,17 @@ final class Excluder
     }
 
     /**
+     * Runtime exclusion checking of classes by strategy during serialization
+     *
+     * Uses user-defined strategies
+     *
      * @param ClassMetadata $classMetadata
      * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function excludeClassByStrategy(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
+    public function excludeClassBySerializationStrategy(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
     {
-        $strategies = $exclusionData->isSerialize() ? $this->serializationStrategies : $this->deserializationStrategies;
-        foreach ($strategies as $exclusionStrategy) {
+        foreach ($this->serializationStrategies as $exclusionStrategy) {
             if ($exclusionStrategy->shouldSkipClass($classMetadata, $exclusionData)) {
                 return true;
             }
@@ -153,7 +156,27 @@ final class Excluder
     }
 
     /**
-     * Returns true if we should exclude the class for a given serialization direction
+     * Runtime exclusion checking of classes by strategy during deserialization
+     *
+     * Uses user-defined strategies
+     *
+     * @param ClassMetadata $classMetadata
+     * @param ExclusionData $exclusionData
+     * @return bool
+     */
+    public function excludeClassByDeserializationStrategy(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
+    {
+        foreach ($this->deserializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy->shouldSkipClass($classMetadata, $exclusionData)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Compile time exclusion checking of properties
      *
      * @param PropertyMetadata $propertyMetadata
      * @param bool $serialize
@@ -170,7 +193,7 @@ final class Excluder
     }
 
     /**
-     * Returns true if we should exclude the class for a given serialization direction
+     * Runtime exclusion checking of properties by strategy during serialization
      *
      * Uses user-defined strategies
      *
@@ -178,16 +201,55 @@ final class Excluder
      * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function excludePropertyByStrategy(PropertyMetadata $property, ExclusionData $exclusionData): bool
+    public function excludePropertyBySerializationStrategy(PropertyMetadata $property, ExclusionData $exclusionData): bool
     {
-        $strategies = $exclusionData->isSerialize() ? $this->serializationStrategies : $this->deserializationStrategies;
-        foreach ($strategies as $exclusionStrategy) {
+        foreach ($this->serializationStrategies as $exclusionStrategy) {
             if ($exclusionStrategy->shouldSkipProperty($property, $exclusionData)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Runtime exclusion checking of properties by strategy during deserialization
+     *
+     * Uses user-defined strategies
+     *
+     * @param PropertyMetadata $property
+     * @param ExclusionData $exclusionData
+     * @return bool
+     */
+    public function excludePropertyByDeserializationStrategy(PropertyMetadata $property, ExclusionData $exclusionData): bool
+    {
+        foreach ($this->deserializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy->shouldSkipProperty($property, $exclusionData)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns true if serialization strategies exist
+     *
+     * @return bool
+     */
+    public function hasSerializationStrategies(): bool
+    {
+        return $this->serializationStrategies !== [];
+    }
+
+    /**
+     * Returns true if deserialization strategies exist
+     *
+     * @return bool
+     */
+    public function hasDeserializationStrategies(): bool
+    {
+        return $this->deserializationStrategies !== [];
     }
 
     /**

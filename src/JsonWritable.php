@@ -15,6 +15,10 @@ namespace Tebru\Gson;
  */
 interface JsonWritable
 {
+    public const STATE_OBJECT_NAME = 0;
+    public const STATE_OBJECT_VALUE = 1;
+    public const STATE_ARRAY = 2;
+
     /**
      * Begin writing array
      *

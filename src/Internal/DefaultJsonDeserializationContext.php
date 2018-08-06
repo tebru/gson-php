@@ -10,6 +10,7 @@ namespace Tebru\Gson\Internal;
 
 use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\JsonDeserializationContext;
+use Tebru\Gson\ReaderContext;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -25,13 +26,20 @@ final class DefaultJsonDeserializationContext implements JsonDeserializationCont
     private $typeAdapterProvider;
 
     /**
+     * @var ReaderContext
+     */
+    private $context;
+
+    /**
      * Constructor
      *
      * @param TypeAdapterProvider $typeAdapterProvider
+     * @param ReaderContext $context
      */
-    public function __construct(TypeAdapterProvider $typeAdapterProvider)
+    public function __construct(TypeAdapterProvider $typeAdapterProvider, ReaderContext $context)
     {
         $this->typeAdapterProvider = $typeAdapterProvider;
+        $this->context = $context;
     }
 
     /**
@@ -45,8 +53,8 @@ final class DefaultJsonDeserializationContext implements JsonDeserializationCont
      */
     public function deserialize(JsonElement $jsonElement, string $type)
     {
-        $typeAdapter = $this->typeAdapterProvider->getAdapter(new TypeToken($type));
+        $typeAdapter = $this->typeAdapterProvider->getAdapter(TypeToken::create($type));
 
-        return $typeAdapter->readFromJsonElement($jsonElement);
+        return $typeAdapter->readFromJsonElement($jsonElement, $this->context);
     }
 }

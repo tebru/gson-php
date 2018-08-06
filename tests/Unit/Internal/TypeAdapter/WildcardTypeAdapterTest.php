@@ -10,6 +10,7 @@ use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\JsonDecodeReader;
+use Tebru\Gson\Internal\DefaultReaderContext;
 use Tebru\Gson\Internal\TypeAdapter\WildcardTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\MockProvider;
@@ -63,7 +64,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeName()
     {
-        $reader = new JsonDecodeReader('{"key": "value"}');
+        $reader = new JsonDecodeReader('{"key": "value"}', new DefaultReaderContext());
         $reader->beginObject();
         $adapter = new WildcardTypeAdapter($this->typeAdapterProvider);
         $result = $adapter->read($reader);
@@ -118,7 +119,7 @@ class WildcardTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeException()
     {
-        $reader = new JsonDecodeReader('{"key": "value"}');
+        $reader = new JsonDecodeReader('{"key": "value"}', new DefaultReaderContext());
         $reader->beginObject();
         $reader->nextName();
         $reader->nextString();

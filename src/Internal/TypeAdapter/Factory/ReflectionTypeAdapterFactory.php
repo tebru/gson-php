@@ -8,12 +8,13 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
+use Tebru\AnnotationReader\AnnotationReaderAdapter;
+use Tebru\Gson\Annotation\JsonAdapter;
+use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
-use Tebru\Gson\Internal\Data\Property;
-use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
+use Tebru\Gson\Internal\DefaultClassMetadata;
+use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;
@@ -38,9 +39,9 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
     private $propertyCollectionFactory;
 
     /**
-     * @var MetadataFactory
+     * @var AnnotationReaderAdapter
      */
-    private $metadataFactory;
+    private $annotationReader;
 
     /**
      * @var Excluder
@@ -52,18 +53,18 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      *
      * @param ConstructorConstructor $constructorConstructor
      * @param PropertyCollectionFactory $propertyCollectionFactory
-     * @param MetadataFactory $metadataFactory
+     * @param AnnotationReaderAdapter $annotationReader
      * @param Excluder $excluder
      */
     public function __construct(
         ConstructorConstructor $constructorConstructor,
         PropertyCollectionFactory $propertyCollectionFactory,
-        MetadataFactory $metadataFactory,
+        AnnotationReaderAdapter $annotationReader,
         Excluder $excluder
     ) {
         $this->constructorConstructor = $constructorConstructor;
         $this->propertyCollectionFactory = $propertyCollectionFactory;
-        $this->metadataFactory = $metadataFactory;
+        $this->annotationReader = $annotationReader;
         $this->excluder = $excluder;
     }
 
@@ -89,28 +90,36 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
-     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        $properties = $this->propertyCollectionFactory->create($type);
-        $objectConstructor = $this->constructorConstructor->get($type);
+        $class = $type->getRawType();
+        $classAnnotations = $this->annotationReader->readClass($class, true);
 
-        $classMetadata = $this->metadataFactory->createClassMetadata($type->getRawType());
-        $metadataPropertyCollection = new MetadataPropertyCollection();
-
-        /** @var Property $property */
-        foreach ($properties as $property) {
-            $metadataPropertyCollection->add($this->metadataFactory->createPropertyMetadata($property, $classMetadata));
+        // if class uses a JsonAdapter annotation, use that instead
+        /** @var JsonAdapter $jsonAdapterAnnotation */
+        $jsonAdapterAnnotation = $classAnnotations->get(JsonAdapter::class);
+        if ($jsonAdapterAnnotation !== null) {
+            return $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation);
         }
+
+        $classMetadata = new DefaultClassMetadata($class, $classAnnotations);
+        $properties = $this->propertyCollectionFactory->create($type, $classMetadata);
+        $objectConstructor = $this->constructorConstructor->get($type);
+        $classVirtualProperty = $classMetadata->getAnnotation(VirtualProperty::class);
+
+        $skipSerialize = $this->excluder->excludeClass($classMetadata, true);
+        $skipDeserialize = $this->excluder->excludeClass($classMetadata, false);
 
         return new ReflectionTypeAdapter(
             $objectConstructor,
             $properties,
-            $metadataPropertyCollection,
             $classMetadata,
             $this->excluder,
-            $typeAdapterProvider
+            $typeAdapterProvider,
+            $classVirtualProperty ? $classVirtualProperty->getValue() : null,
+            $skipSerialize,
+            $skipDeserialize
         );
     }
 }

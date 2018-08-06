@@ -10,6 +10,7 @@ namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
 use stdClass;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
+use Tebru\Gson\Internal\TypeAdapter\WildcardTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
@@ -48,6 +49,22 @@ final class ArrayTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        return new ArrayTypeAdapter($type, $typeAdapterProvider);
+        $genericTypes = $type->getGenerics();
+        $numberOfGenericTypes = \count($genericTypes);
+        $keyType = TypeToken::create(TypeToken::WILDCARD);
+
+        switch ($numberOfGenericTypes) {
+            case 1:
+                $valueTypeAdapter = $typeAdapterProvider->getAdapter($genericTypes[0]);
+                break;
+            case 2:
+                $keyType = $genericTypes[0];
+                $valueTypeAdapter = $typeAdapterProvider->getAdapter($genericTypes[1]);
+                break;
+            default:
+                $valueTypeAdapter = new WildcardTypeAdapter($typeAdapterProvider);
+        }
+
+        return new ArrayTypeAdapter($typeAdapterProvider, $keyType, $valueTypeAdapter, $numberOfGenericTypes);
     }
 }

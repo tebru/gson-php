@@ -12,6 +12,8 @@ use stdClass;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 
+use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
+use Tebru\Gson\Internal\TypeAdapter\WildcardTypeAdapter;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
 
@@ -51,8 +53,35 @@ class ArrayTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
         $typeAdapterProvider = MockProvider::typeAdapterProvider();
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
-        self::assertInstanceOf(ArrayTypeAdapter::class, $adapter);
-        self::assertAttributeSame($phpType, 'type', $adapter);
         self::assertAttributeSame($typeAdapterProvider, 'typeAdapterProvider', $adapter);
+        self::assertAttributeSame(TypeToken::create(TypeToken::WILDCARD), 'keyType', $adapter);
+        self::assertAttributeEquals(new WildcardTypeAdapter($typeAdapterProvider), 'valueTypeAdapter', $adapter);
+        self::assertAttributeSame(0, 'numberOfGenerics', $adapter);
+    }
+
+    public function testCreateOneGenericType()
+    {
+        $factory = new ArrayTypeAdapterFactory();
+        $phpType = new TypeToken('array<int>');
+        $typeAdapterProvider = MockProvider::typeAdapterProvider();
+        $adapter = $factory->create($phpType, $typeAdapterProvider);
+
+        self::assertAttributeSame($typeAdapterProvider, 'typeAdapterProvider', $adapter);
+        self::assertAttributeSame(TypeToken::create(TypeToken::WILDCARD), 'keyType', $adapter);
+        self::assertAttributeEquals(new IntegerTypeAdapter(), 'valueTypeAdapter', $adapter);
+        self::assertAttributeSame(1, 'numberOfGenerics', $adapter);
+    }
+
+    public function testCreateTwoGenericTypes()
+    {
+        $factory = new ArrayTypeAdapterFactory();
+        $phpType = new TypeToken('array<string, int>');
+        $typeAdapterProvider = MockProvider::typeAdapterProvider();
+        $adapter = $factory->create($phpType, $typeAdapterProvider);
+
+        self::assertAttributeSame($typeAdapterProvider, 'typeAdapterProvider', $adapter);
+        self::assertAttributeSame(TypeToken::create('string'), 'keyType', $adapter);
+        self::assertAttributeEquals(new IntegerTypeAdapter(), 'valueTypeAdapter', $adapter);
+        self::assertAttributeSame(2, 'numberOfGenerics', $adapter);
     }
 }

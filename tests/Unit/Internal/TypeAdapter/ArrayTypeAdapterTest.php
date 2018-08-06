@@ -10,6 +10,8 @@ use LogicException;
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
+use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
+use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
@@ -142,7 +144,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeMoreThanTwoGenericTypes()
     {
-        $adapter = new ArrayTypeAdapter(new TypeToken('array<string, string, string>'), $this->typeAdapterProvider);
+        $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('string'), new StringTypeAdapter(), 3);
         try {
             $adapter->readFromJson('{}');
         } catch (LogicException $exception) {
@@ -154,11 +156,11 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeMoreThanOneGenericTypeForArray()
     {
-        $adapter = new ArrayTypeAdapter(new TypeToken('array<string, string>'), $this->typeAdapterProvider);
+        $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('string'), new StringTypeAdapter(), 2);
         try {
             $adapter->readFromJson('[1]');
         } catch (LogicException $exception) {
-            self::assertSame('An array may only specify a generic type for the value at "$[0]"', $exception->getMessage());
+            self::assertSame('An array may only specify a generic type for the value at "$"', $exception->getMessage());
             return;
         }
         self::assertTrue(false);
@@ -166,7 +168,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeNonArrayOrObject()
     {
-        $adapter = new ArrayTypeAdapter(new TypeToken('array'), $this->typeAdapterProvider);
+        $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('?'), new IntegerTypeAdapter(), 1);
         try {
             $adapter->readFromJson('1');
         } catch (JsonSyntaxException $exception) {
@@ -242,7 +244,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeTooManyGenerics()
     {
-        $adapter = new ArrayTypeAdapter(new TypeToken('array<int, string, int>'), $this->typeAdapterProvider);
+        $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('string'), new StringTypeAdapter(), 3);
         try {
             $adapter->writeToJson([], false);
         } catch (LogicException $exception) {

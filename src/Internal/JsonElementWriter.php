@@ -46,6 +46,13 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
     private $stackSize = 0;
 
     /**
+     * A cache of the parsing state corresponding to the stack
+     *
+     * @var int[]
+     */
+    private $stackStates = [];
+
+    /**
      * When serializing an object, store the name that should be serialized
      *
      * @var
@@ -67,13 +74,14 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     public function beginArray(): JsonWritable
     {
-        if ($this->topIsObjectStart()) {
+        if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
             throw new LogicException('Cannot call beginArray() before name() during object serialization');
         }
 
         $array = new JsonArray();
         $this->push($array);
         $this->stack[] = $array;
+        $this->stackStates[$this->stackSize] = self::STATE_ARRAY;
         $this->stackSize++;
 
         return $this;
@@ -87,11 +95,12 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     public function endArray(): JsonWritable
     {
-        if (!$this->topIsArray()) {
+        if ($this->stackSize === 0 || $this->stackStates[$this->stackSize - 1] !== self::STATE_ARRAY) {
             throw new LogicException('Cannot call endArray() if not serializing array');
         }
 
-        $this->pop();
+        \array_pop($this->stack);
+        $this->stackSize--;
 
         return $this;
     }
@@ -104,13 +113,14 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     public function beginObject(): JsonWritable
     {
-        if ($this->topIsObjectStart()) {
+        if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
             throw new LogicException('Cannot call beginObject() before name() during object serialization');
         }
 
         $class = new JsonObject();
         $this->push($class);
-        $this->stack[] = $class;
+        $this->stack[$this->stackSize] = $class;
+        $this->stackStates[$this->stackSize] = self::STATE_OBJECT_NAME;
         $this->stackSize++;
 
         return $this;
@@ -124,11 +134,12 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     public function endObject(): JsonWritable
     {
-        if (!$this->topIsObject()) {
+        if ($this->stackSize === 0 || $this->stackStates[$this->stackSize - 1] !== self::STATE_OBJECT_NAME) {
             throw new LogicException('Cannot call endObject() if not serializing object');
         }
 
-        $this->pop();
+        \array_pop($this->stack);
+        $this->stackSize--;
 
         return $this;
     }
@@ -142,11 +153,12 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     public function name(string $name): JsonWritable
     {
-        if (!$this->topIsObjectStart()) {
+        if ($this->stackStates[$this->stackSize - 1] !== self::STATE_OBJECT_NAME) {
             throw new LogicException('Cannot call name() at this point.  Either name() has already been called or object serialization has not been started');
         }
 
         $this->pendingName = $name;
+        $this->stackStates[$this->stackSize - 1] = self::STATE_OBJECT_VALUE;
 
         return $this;
     }
@@ -160,7 +172,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     public function writeInteger(int $value): JsonWritable
     {
-        if ($this->topIsObjectStart()) {
+        if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
             throw new LogicException('Cannot call writeInteger() before name() during object serialization');
         }
 
@@ -176,7 +188,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     public function writeFloat(float $value): JsonWritable
     {
-        if ($this->topIsObjectStart()) {
+        if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
             throw new LogicException('Cannot call writeFloat() before name() during object serialization');
         }
 
@@ -192,7 +204,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     public function writeString(string $value): JsonWritable
     {
-        if ($this->topIsObjectStart()) {
+        if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
             throw new LogicException('Cannot call writeString() before name() during object serialization');
         }
 
@@ -208,7 +220,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     public function writeBoolean(bool $value): JsonWritable
     {
-        if ($this->topIsObjectStart()) {
+        if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
             throw new LogicException('Cannot call writeBoolean() before name() during object serialization');
         }
 
@@ -225,7 +237,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
      */
     public function writeNull(): JsonWritable
     {
-        if ($this->topIsObjectStart()) {
+        if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
             throw new LogicException('Cannot call writeNull() before name() during object serialization');
         }
 
@@ -235,6 +247,7 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
 
         // if we're not serializing nulls
         if (null !== $this->pendingName) {
+            $this->stackStates[$this->stackSize - 1] = self::STATE_OBJECT_NAME;
             $this->pendingName = null;
         }
 
@@ -277,16 +290,6 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
     }
 
     /**
-     * Get the last index of the stack
-     *
-     * @return int
-     */
-    private function last(): int
-    {
-        return $this->stackSize - 1;
-    }
-
-    /**
      * Push a value to the result or current array/object
      *
      * @param JsonElement $value
@@ -305,66 +308,19 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
             return $this;
         }
 
-        if (null !== $this->pendingName) {
-            $this->stack[$this->last()]->add($this->pendingName, $value);
-            $this->pendingName = null;
-        }
+        switch ($this->stackStates[$this->stackSize - 1]) {
+            case self::STATE_OBJECT_VALUE:
+                $this->stack[$this->stackSize - 1]->add($this->pendingName, $value);
+                $this->stackStates[$this->stackSize - 1] = self::STATE_OBJECT_NAME;
+                $this->pendingName = null;
+                break;
+            case self::STATE_ARRAY:
+                $this->stack[$this->stackSize - 1]->addJsonElement($value);
+                $this->stackStates[$this->stackSize - 1] = self::STATE_ARRAY;
+                break;
 
-        if ($this->topIsArray()) {
-            $this->stack[$this->last()]->addJsonElement($value);
         }
 
         return $this;
-    }
-
-    /**
-     * Remove the last element of the stack
-     */
-    private function pop(): void
-    {
-        \array_splice($this->stack, $this->last(), 1);
-        $this->stackSize--;
-    }
-
-    /**
-     * Returns true if an object is the top element of the stack and we haven't called name() yet
-     *
-     * @return bool
-     */
-    private function topIsObjectStart(): bool
-    {
-        if (0 === $this->stackSize) {
-            return false;
-        }
-
-        return $this->stack[$this->last()] instanceof JsonObject && null === $this->pendingName;
-    }
-
-    /**
-     * Returns true if an object is the top element of the stack
-     *
-     * @return bool
-     */
-    private function topIsObject(): bool
-    {
-        if (0 === $this->stackSize) {
-            return false;
-        }
-
-        return $this->stack[$this->last()] instanceof JsonObject;
-    }
-
-    /**
-     * Returns true if an array is the top element of the stack
-     *
-     * @return bool
-     */
-    private function topIsArray(): bool
-    {
-        if (0 === $this->stackSize) {
-            return false;
-        }
-
-        return $this->stack[$this->last()] instanceof JsonArray;
     }
 }

@@ -23,8 +23,8 @@ use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
+use Tebru\Gson\Internal\DiscriminatorDeserializer;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
@@ -33,12 +33,9 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
-use Tebru\Gson\Internal\DiscriminatorDeserializer;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\FloatTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\JsonElementTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\JsonTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
@@ -177,7 +174,7 @@ class GsonBuilder
     public function addDiscriminator(string $type, Discriminator $discriminator): GsonBuilder
     {
         $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(
-            new TypeToken($type),
+            TypeToken::create($type),
             true,
             null,
             new DiscriminatorDeserializer($discriminator)
@@ -201,25 +198,25 @@ class GsonBuilder
     public function registerType(string $type, $handler, bool $strict = false): GsonBuilder
     {
         if ($handler instanceof TypeAdapter) {
-            $this->typeAdapterFactories[] = new WrappedTypeAdapterFactory($handler, new TypeToken($type), $strict);
+            $this->typeAdapterFactories[] = new WrappedTypeAdapterFactory($handler, TypeToken::create($type), $strict);
 
             return $this;
         }
 
         if ($handler instanceof JsonSerializer && $handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $strict, $handler, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(TypeToken::create($type), $strict, $handler, $handler);
 
             return $this;
         }
 
         if ($handler instanceof JsonSerializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $strict, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(TypeToken::create($type), $strict, $handler);
 
             return $this;
         }
 
         if ($handler instanceof JsonDeserializer) {
-            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(new TypeToken($type), $strict, null, $handler);
+            $this->typeAdapterFactories[] = new CustomWrappedTypeAdapterFactory(TypeToken::create($type), $strict, null, $handler);
 
             return $this;
         }
@@ -236,7 +233,7 @@ class GsonBuilder
      */
     public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
     {
-        $phpType = new TypeToken($type);
+        $phpType = TypeToken::create($type);
         $this->instanceCreators[$phpType->getRawType()] = $instanceCreator;
 
         return $this;
@@ -433,11 +430,9 @@ class GsonBuilder
             $excluder->addExclusionStrategy($strategy[0], $strategy[1], $strategy[2]);
         }
 
-        $metadataFactory = new MetadataFactory($annotationReader);
         $propertyCollectionFactory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationReader,
-            $metadataFactory,
             new PropertyNamer($propertyNamingStrategy),
             new AccessorMethodProvider($methodNamingStrategy),
             new AccessorStrategyFactory(),
@@ -447,7 +442,7 @@ class GsonBuilder
         );
         $constructorConstructor = new ConstructorConstructor($this->instanceCreators);
         $typeAdapterProvider = new TypeAdapterProvider(
-            $this->getTypeAdapterFactories($propertyCollectionFactory, $excluder, $annotationReader, $metadataFactory, $constructorConstructor),
+            $this->getTypeAdapterFactories($propertyCollectionFactory, $excluder, $annotationReader, $constructorConstructor),
             $constructorConstructor
         );
 
@@ -460,7 +455,6 @@ class GsonBuilder
      * @param PropertyCollectionFactory $propertyCollectionFactory
      * @param Excluder $excluder
      * @param AnnotationReaderAdapter $annotationReader
-     * @param MetadataFactory $metadataFactory
      * @param ConstructorConstructor $constructorConstructor
      * @return array|TypeAdapterFactory[]
      */
@@ -468,14 +462,9 @@ class GsonBuilder
         PropertyCollectionFactory $propertyCollectionFactory,
         Excluder $excluder,
         AnnotationReaderAdapter $annotationReader,
-        MetadataFactory $metadataFactory,
         ConstructorConstructor $constructorConstructor
     ): array {
         return \array_merge(
-            [
-                new ExcluderTypeAdapterFactory($excluder, $metadataFactory),
-                new JsonTypeAdapterFactory($annotationReader),
-            ],
             $this->typeAdapterFactories,
             [
                 new StringTypeAdapterFactory(),
@@ -489,7 +478,7 @@ class GsonBuilder
                 new ReflectionTypeAdapterFactory(
                     $constructorConstructor,
                     $propertyCollectionFactory,
-                    $metadataFactory,
+                    $annotationReader,
                     $excluder
                 ),
                 new WildcardTypeAdapterFactory(),

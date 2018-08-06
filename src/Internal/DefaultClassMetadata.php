@@ -41,7 +41,7 @@ final class DefaultClassMetadata implements ClassMetadata
      *
      * @var PropertyMetadata[]
      */
-    private $propertyMetadata;
+    private $propertyMetadata = [];
 
     /**
      * Constructor

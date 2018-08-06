@@ -8,10 +8,12 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 use PHPUnit_Framework_TestCase;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Test\Mock\ChildClass;
+use Tebru\Gson\Test\Mock\JsonAdapterClassMock;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
 
@@ -60,5 +62,12 @@ class ReflectionTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(ChildClass::class));
 
         self::assertInstanceOf(ReflectionTypeAdapter::class, $adapter);
+    }
+
+    public function testCreateJsonAdapter()
+    {
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(JsonAdapterClassMock::class));
+
+        self::assertInstanceOf(StringTypeAdapter::class, $adapter);
     }
 }
