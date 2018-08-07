@@ -54,18 +54,11 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
     private $skip;
 
     /**
-     * Cached instance of the delegate serializer
+     * Cached instance of the delegate type adapter
      *
      * @var TypeAdapter
      */
-    private $delegateSerializer;
-
-    /**
-     * Cached instance of the delegate deserializer
-     *
-     * @var TypeAdapter
-     */
-    private $delegateDeserializer;
+    private $delegateTypeAdapter;
 
     /**
      * Constructor
@@ -99,10 +92,9 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
     public function read(JsonReadable $reader)
     {
         if (null === $this->deserializer) {
-            $adapter = $this->delegateDeserializer
-                ?? $this->delegateDeserializer = $this->typeAdapterProvider->getAdapter($this->type, $this->skip);
+            $this->delegateTypeAdapter = $this->delegateTypeAdapter ?? $this->typeAdapterProvider->getAdapter($this->type, $this->skip);
 
-            return $adapter->read($reader);
+            return $this->delegateTypeAdapter->read($reader);
         }
 
         $jsonElementTypeAdapter = new JsonElementTypeAdapter();
@@ -125,10 +117,9 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
     public function write(JsonWritable $writer, $value): void
     {
         if (null === $this->serializer) {
-            $adapter = $this->delegateSerializer
-                ?? $this->delegateSerializer = $this->typeAdapterProvider->getAdapter($this->type, $this->skip);
+            $this->delegateTypeAdapter = $this->delegateTypeAdapter ?? $this->typeAdapterProvider->getAdapter($this->type, $this->skip);
 
-            $adapter->write($writer, $value);
+            $this->delegateTypeAdapter->write($writer, $value);
 
             return;
         }
