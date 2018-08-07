@@ -62,7 +62,7 @@ abstract class JsonReader implements JsonReadable
      *
      * @var int
      */
-    protected  $pathIndex = 0;
+    protected $pathIndex = 0;
 
     /**
      * A cache of the current [@see JsonToken].  This should get nulled out
@@ -203,7 +203,7 @@ abstract class JsonReader implements JsonReadable
      */
     public function getPath(): string
     {
-        $result[] = '$';
+        $result = ['$'];
 
         for ($index = 1; $index <= $this->pathIndex; $index++) {
             if (!empty($this->pathNames[$index])) {

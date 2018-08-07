@@ -318,7 +318,6 @@ final class JsonElementWriter implements JsonWritable, JsonSerializable
                 $this->stack[$this->stackSize - 1]->addJsonElement($value);
                 $this->stackStates[$this->stackSize - 1] = self::STATE_ARRAY;
                 break;
-
         }
 
         return $this;

@@ -176,7 +176,7 @@ final class PhpTypeFactory
 
         \preg_match($pattern, $comment, $matches);
 
-        /** @var string $type */
+        /** @var string|null $type */
         $type = $matches[1] ?? null;
         if ($type === null) {
             return null;
@@ -198,7 +198,7 @@ final class PhpTypeFactory
         }
 
         // return the non-null type
-        foreach(\explode('|', $type) as $potentialType) {
+        foreach (\explode('|', $type) as $potentialType) {
             $potentialType = \trim($potentialType);
             if (\strtolower($potentialType) !== 'null') {
                 return $potentialType;
@@ -254,12 +254,12 @@ final class PhpTypeFactory
             return $typeToken;
         }
 
-        $firstSlash = strpos($type, '\\');
+        $firstSlash = \strpos($type, '\\');
         if ($firstSlash === 0) {
             return TypeToken::create(substr($type, 1));
         }
 
-        if ($firstSlash === false && (class_exists($type) || interface_exists($type))) {
+        if ($firstSlash === false && (\class_exists($type) || \interface_exists($type))) {
             return $typeToken;
         }
 

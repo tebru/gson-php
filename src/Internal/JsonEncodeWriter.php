@@ -300,7 +300,6 @@ final class JsonEncodeWriter implements JsonWritable
                 $this->stack[$this->stackSize - 1][] = &$value;
                 $this->stackStates[$this->stackSize - 1] = self::STATE_ARRAY;
                 break;
-
         }
 
         return $this;
