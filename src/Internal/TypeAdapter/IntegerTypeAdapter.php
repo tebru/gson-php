@@ -40,7 +40,7 @@ final class IntegerTypeAdapter extends TypeAdapter
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param int $value
+     * @param int|null $value
      * @return void
      */
     public function write(JsonWritable $writer, $value): void

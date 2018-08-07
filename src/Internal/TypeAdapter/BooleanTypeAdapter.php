@@ -40,7 +40,7 @@ final class BooleanTypeAdapter extends TypeAdapter
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param boolean $value
+     * @param boolean|null $value
      * @return void
      */
     public function write(JsonWritable $writer, $value): void

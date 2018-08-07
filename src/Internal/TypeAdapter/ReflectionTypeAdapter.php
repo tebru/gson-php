@@ -203,13 +203,13 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             }
 
             if ($adapter instanceof ObjectConstructorAware && $usesExisting) {
-                $nestedObject = null;
                 try {
                     $nestedObject = $property->get($object);
                 } /** @noinspection BadExceptionsProcessingInspection */ catch (TypeError $error) {
                     // this may occur when attempting to get a nested object that doesn't exist and
                     // the method return is not nullable. The type error only occurs because we are
                     // may be calling the getter before data exists.
+                    $nestedObject = null;
                 }
 
                 if ($nestedObject !== null) {

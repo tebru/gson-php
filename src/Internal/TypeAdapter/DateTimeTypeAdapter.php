@@ -62,9 +62,9 @@ final class DateTimeTypeAdapter extends TypeAdapter
 
         $formattedDateTime = $reader->nextString();
 
-        /** @var DateTime $class */
         $class = $this->type->getRawType();
 
+        /** @noinspection PhpUndefinedMethodInspection */
         $dateTime = $class::createFromFormat($this->format, $formattedDateTime);
 
         if ($dateTime !== false) {

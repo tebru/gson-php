@@ -40,7 +40,7 @@ final class FloatTypeAdapter extends TypeAdapter
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param float $value
+     * @param float|null $value
      * @return void
      */
     public function write(JsonWritable $writer, $value): void
