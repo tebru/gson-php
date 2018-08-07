@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Tebru\Gson;
 
 use Tebru\Gson\Element\JsonElement;
+use Tebru\Gson\Internal\DefaultReaderContext;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstance;
 use Tebru\Gson\Internal\ObjectConstructorAware;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -81,14 +82,16 @@ class Gson
     public function fromJson(string $json, $type)
     {
         $isObject = \is_object($type);
-        $typeToken = $isObject ? new TypeToken(\get_class($type)) : new TypeToken($type);
+        $typeToken = $isObject ? TypeToken::create(\get_class($type)) : TypeToken::create($type);
         $typeAdapter = $this->typeAdapterProvider->getAdapter($typeToken);
+        $context = new DefaultReaderContext();
+        $context->setUsesExistingObject($isObject);
 
         if ($isObject && $typeAdapter instanceof ObjectConstructorAware) {
             $typeAdapter->setObjectConstructor(new CreateFromInstance($type));
         }
 
-        return $typeAdapter->readFromJson($json);
+        return $typeAdapter->readFromJson($json, $context);
     }
 
     /**

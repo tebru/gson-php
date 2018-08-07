@@ -272,6 +272,16 @@ class JsonObject extends JsonElement implements IteratorAggregate, Countable
     }
 
     /**
+     * Get the object properties
+     *
+     * @return JsonElement[]
+     */
+    public function getProperties(): array
+    {
+        return $this->properties;
+    }
+
+    /**
      * Returns the number of properties in object
      *
      * @return int

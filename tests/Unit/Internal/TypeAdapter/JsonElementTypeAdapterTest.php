@@ -12,6 +12,7 @@ use Tebru\Gson\Element\JsonNull;
 use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\Element\JsonPrimitive;
 use Tebru\Gson\Internal\JsonDecodeReader;
+use Tebru\Gson\Internal\DefaultReaderContext;
 use Tebru\Gson\Internal\TypeAdapter\JsonElementTypeAdapter;
 
 /**
@@ -113,7 +114,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeException()
     {
-        $reader = new JsonDecodeReader('{}');
+        $reader = new JsonDecodeReader('{}', new DefaultReaderContext());
         $reader->beginObject();
 
         $typeAdapter = new JsonElementTypeAdapter();

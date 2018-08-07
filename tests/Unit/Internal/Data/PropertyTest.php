@@ -9,6 +9,7 @@ namespace Tebru\Gson\Test\Unit\Internal\Data;
 use PHPUnit_Framework_TestCase;
 use stdClass;
 use Tebru\AnnotationReader\AnnotationCollection;
+use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\AccessorStrategy\GetByClosure;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
@@ -18,6 +19,7 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ChildClassParent;
+use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -34,6 +36,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $serializedName = 'foo_bar';
         $type = new TypeToken(stdClass::class);
         $annotations = new AnnotationCollection();
+        $annotations->add(new VirtualProperty([]));
 
         $property = new Property(
             $realName,
@@ -43,14 +46,18 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             $annotations,
             0,
-            false
+            false,
+            MockProvider::classMetadata(stdClass::class)
         );
 
-        self::assertSame($realName, $property->getRealName());
+        self::assertSame($realName, $property->getName());
         self::assertSame($serializedName, $property->getSerializedName());
         self::assertSame($type, $property->getType());
+        self::assertSame(stdClass::class, $property->getTypeName());
+        self::assertSame(stdClass::class, $property->getDeclaringClassName());
         self::assertSame(0, $property->getModifiers());
         self::assertSame($annotations, $property->getAnnotations());
+        self::assertEquals(new VirtualProperty([]), $property->getAnnotation(VirtualProperty::class));
         self::assertFalse($property->skipSerialize());
         self::assertFalse($property->skipDeserialize());
         self::assertFalse($property->isVirtual());
@@ -71,7 +78,8 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             $annotations,
             0,
-            false
+            false,
+            MockProvider::classMetadata(stdClass::class)
         );
 
         $property->setSkipSerialize(true);
@@ -96,7 +104,8 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationCollection(),
             0,
-            false
+            false,
+            MockProvider::classMetadata(stdClass::class)
         );
 
         $property->set($mock, 'bar');
@@ -118,7 +127,8 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByMethod('setOverridden'),
             new AnnotationCollection(),
             0,
-            false
+            false,
+            MockProvider::classMetadata(stdClass::class)
         );
 
         $property->set($mock, 'bar');
@@ -140,7 +150,8 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('qux'),
             new AnnotationCollection(),
             0,
-            false
+            false,
+            MockProvider::classMetadata(stdClass::class)
         );
 
         $property->set($mock, 'bar');
@@ -164,7 +175,8 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $setter,
             new AnnotationCollection(),
             0,
-            false
+            false,
+            MockProvider::classMetadata(stdClass::class)
         );
 
         $property->set($mock, 'bar');
@@ -188,7 +200,8 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $setter,
             new AnnotationCollection(),
             0,
-            false
+            false,
+            MockProvider::classMetadata(stdClass::class)
         );
 
         $property->set($mock, 'bar');
@@ -210,7 +223,8 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationCollection(),
             0,
-            false
+            false,
+            MockProvider::classMetadata(stdClass::class)
         );
 
         $property->set($mock, null);

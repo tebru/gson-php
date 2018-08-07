@@ -97,7 +97,7 @@ interface JsonReadable
     public function nextName(): string;
 
     /**
-     * Returns an enum representing the type of the next token without consuming it
+     * Returns the type of the next token without consuming it
      *
      * @return string
      */
@@ -124,4 +124,11 @@ interface JsonReadable
      * @return mixed
      */
     public function getPayload();
+
+    /**
+     * Get context to be used during deserialization
+     *
+     * @return ReaderContext
+     */
+    public function getContext(): ReaderContext;
 }

@@ -8,10 +8,9 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
-use Iterator;
-use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\JsonReadable;
+use Tebru\Gson\ReaderContext;
 use Tebru\Gson\JsonToken;
 
 /**
@@ -26,21 +25,21 @@ abstract class JsonReader implements JsonReadable
      *
      * @var array
      */
-    protected $stack = [];
+    protected $stack = [null];
 
     /**
      * An array of types that map to the position in the stack
      *
      * @var array
      */
-    protected $stackTypes = [];
+    protected $stackTypes = [JsonToken::END_DOCUMENT];
 
     /**
      * The current size of the stack
      *
      * @var int
      */
-    protected $stackSize = 0;
+    protected $stackSize = 1;
 
     /**
      * An array of path names that correspond to the current stack
@@ -52,11 +51,18 @@ abstract class JsonReader implements JsonReadable
     /**
      * An array of path indices that correspond to the current stack. This array could contain invalid
      * values at indexes outside the current stack. It could also contain incorrect values at indexes
-     * where a path name is used. Data should only be fetched by referencing the current position in the stack.
+     * where a path name is used. Data should only be fetched by referencing the $pathIndex
      *
-     * @var array
+     * @var int[]
      */
-    protected $pathIndices = [];
+    protected $pathIndices = [-1];
+
+    /**
+     * The current path index corresponding to the pathIndices array
+     *
+     * @var int
+     */
+    protected  $pathIndex = 0;
 
     /**
      * A cache of the current [@see JsonToken].  This should get nulled out
@@ -75,27 +81,11 @@ abstract class JsonReader implements JsonReadable
     protected $payload;
 
     /**
-     * Returns an enum representing the type of the next token without consuming it
+     * Runtime context to be used while reading
      *
-     * @return string
+     * @var ReaderContext
      */
-    abstract public function peek(): string;
-
-    /**
-     * Get the current read path in json xpath format
-     *
-     * @return string
-     */
-    abstract public function getPath(): string;
-
-    /**
-     * Push an element onto the stack
-     *
-     * @param JsonElement|Iterator $element
-     * @param string|null $type
-     * @return void
-     */
-    abstract protected function push($element, $type = null): void;
+    protected $context;
 
     /**
      * Consumes the next token and asserts it's the end of an array
@@ -104,10 +94,13 @@ abstract class JsonReader implements JsonReadable
      */
     public function endArray(): void
     {
-        $this->expect(JsonToken::END_ARRAY);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::END_ARRAY) {
+            $this->pathIndices[$this->pathIndex]++;
+            $this->assertionFailed(JsonToken::END_ARRAY);
+        }
 
-        $this->pop();
-        $this->incrementPathIndex();
+        $this->stackSize--;
+        $this->pathIndex--;
     }
 
     /**
@@ -117,10 +110,12 @@ abstract class JsonReader implements JsonReadable
      */
     public function endObject(): void
     {
-        $this->expect(JsonToken::END_OBJECT);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::END_OBJECT) {
+            $this->assertionFailed(JsonToken::END_OBJECT);
+        }
 
-        $this->pop();
-        $this->incrementPathIndex();
+        $this->stackSize--;
+        $this->pathNames[$this->pathIndex--] = null;
     }
 
     /**
@@ -132,7 +127,7 @@ abstract class JsonReader implements JsonReadable
      */
     public function hasNext(): bool
     {
-        $peek = $this->peek();
+        $peek = $this->stackTypes[$this->stackSize - 1];
 
         return $peek !== JsonToken::END_OBJECT && $peek !== JsonToken::END_ARRAY;
     }
@@ -144,19 +139,15 @@ abstract class JsonReader implements JsonReadable
      */
     public function nextName(): string
     {
-        $this->expect(JsonToken::NAME);
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::NAME) {
+            $this->assertionFailed(JsonToken::NAME);
+        }
 
-        /** @var Iterator $iterator */
-        $iterator = $this->stack[$this->stackSize - 1];
-        $key = $iterator->key();
-        $value = $iterator->current();
-        $iterator->next();
+        $name = (string)$this->stack[--$this->stackSize];
 
-        $this->pathNames[$this->stackSize - 1] = $key;
+        $this->pathNames[$this->pathIndex] = $name;
 
-        $this->push($value);
-
-        return (string)$key;
+        return $name;
     }
 
     /**
@@ -166,11 +157,13 @@ abstract class JsonReader implements JsonReadable
      */
     public function nextNull(): void
     {
-        $this->expect(JsonToken::NULL);
+        $this->pathIndices[$this->pathIndex]++;
 
-        $this->pop();
+        if ($this->stackTypes[$this->stackSize - 1] !== JsonToken::NULL) {
+            $this->assertionFailed(JsonToken::NULL);
+        }
 
-        $this->incrementPathIndex();
+        $this->stackSize--;
     }
 
     /**
@@ -181,7 +174,52 @@ abstract class JsonReader implements JsonReadable
      */
     public function skipValue(): void
     {
-        $this->pop();
+        $this->stackSize--;
+
+        switch ($this->stackTypes[$this->stackSize]) {
+            case JsonToken::BEGIN_OBJECT:
+            case JsonToken::BEGIN_ARRAY:
+                $this->stackSize--;
+                break;
+        }
+
+        $this->pathIndices[$this->pathIndex]--;
+    }
+
+    /**
+     * Returns the type of the next token without consuming it
+     *
+     * @return string
+     */
+    public function peek(): string
+    {
+        return $this->stackTypes[$this->stackSize - 1];
+    }
+
+    /**
+     * Get the current read path in json xpath format
+     *
+     * @return string
+     */
+    public function getPath(): string
+    {
+        $result[] = '$';
+
+        for ($index = 1; $index <= $this->pathIndex; $index++) {
+            if (!empty($this->pathNames[$index])) {
+                $result[] .= '.'.$this->pathNames[$index];
+                continue;
+            }
+
+            // skip initial value
+            if ($this->pathIndices[$this->pathIndex] === -1) {
+                continue;
+            }
+
+            $result[] .= '['.$this->pathIndices[$index].']';
+        }
+
+        return implode($result);
     }
 
     /**
@@ -195,17 +233,13 @@ abstract class JsonReader implements JsonReadable
     }
 
     /**
-     * Pop the last element off the stack and return it
+     * Get context to be used during deserialization
      *
-     * @return JsonElement|Iterator|mixed
+     * @return ReaderContext
      */
-    protected function pop()
+    public function getContext(): ReaderContext
     {
-        $this->stackSize--;
-        \array_pop($this->stackTypes);
-        $this->currentToken = null;
-
-        return \array_pop($this->stack);
+        return $this->context;
     }
 
     /**
@@ -215,32 +249,15 @@ abstract class JsonReader implements JsonReadable
      * @return void
      * @throws \Tebru\Gson\Exception\JsonSyntaxException If the next token is not the expectation
      */
-    protected function expect(string $expectedToken): void
+    protected function assertionFailed(string $expectedToken): void
     {
-        if ($this->peek() === $expectedToken) {
-            return;
-        }
-
-        // increment the path index because exceptions are thrown before this value is increased. We
-        // want to display the current index that has a problem.
-        $this->incrementPathIndex();
-
         throw new JsonSyntaxException(
-            \sprintf('Expected "%s", but found "%s" at "%s"', $expectedToken, $this->peek(), $this->getPath())
+            \sprintf(
+                'Expected "%s", but found "%s" at "%s"',
+                $expectedToken,
+                $this->stackTypes[$this->stackSize - 1],
+                $this->getPath()
+            )
         );
-    }
-
-    /**
-     * Increment the path index. This should be called any time a new value is parsed.
-     */
-    protected function incrementPathIndex(): void
-    {
-        $index = $this->stackSize - 1;
-        if ($index >= 0) {
-            if (!isset($this->pathIndices[$index])) {
-                $this->pathIndices[$index] = 0;
-            }
-            $this->pathIndices[$index]++;
-        }
     }
 }

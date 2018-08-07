@@ -25,7 +25,6 @@ use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\MetadataFactory;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
@@ -67,7 +66,10 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
     }
     public function testCreate()
     {
-        $collection = $this->propertyCollectionFactory->create(new TypeToken(PropertyCollectionMock::class));
+        $collection = $this->propertyCollectionFactory->create(
+            new TypeToken(PropertyCollectionMock::class),
+            MockProvider::classMetadata(PropertyCollectionMock::class)
+        );
 
         /** @var Property[] $elements */
         $elements = $collection->toArray();
@@ -77,25 +79,25 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         // todo: change to array destructuring syntax when supported in ide
         list($changedAccessors, $changedName, $type, $virtual) = $elements;
 
-        self::assertSame('changedAccessors', $changedAccessors->getRealName());
+        self::assertSame('changedAccessors', $changedAccessors->getName());
         self::assertSame('changed_accessors', $changedAccessors->getSerializedName());
         self::assertSame('boolean', (string) $changedAccessors->getType());
         self::assertAttributeInstanceOf(GetByMethod::class, 'getterStrategy', $changedAccessors);
         self::assertAttributeInstanceOf(SetByMethod::class, 'setterStrategy', $changedAccessors);
 
-        self::assertSame('changedName', $changedName->getRealName());
+        self::assertSame('changedName', $changedName->getName());
         self::assertSame('changedname', $changedName->getSerializedName());
         self::assertSame('?', (string) $changedName->getType());
         self::assertAttributeInstanceOf(GetByPublicProperty::class, 'getterStrategy', $changedName);
         self::assertAttributeInstanceOf(SetByPublicProperty::class, 'setterStrategy', $changedName);
 
-        self::assertSame('type', $type->getRealName());
+        self::assertSame('type', $type->getName());
         self::assertSame('type', $type->getSerializedName());
         self::assertSame('integer', (string) $type->getType());
         self::assertAttributeInstanceOf(GetByClosure::class, 'getterStrategy', $type);
         self::assertAttributeInstanceOf(SetByClosure::class, 'setterStrategy', $type);
 
-        self::assertSame('virtualProperty', $virtual->getRealName());
+        self::assertSame('virtualProperty', $virtual->getName());
         self::assertSame('new_virtual_property', $virtual->getSerializedName());
         self::assertSame('string', (string) $virtual->getType());
         self::assertAttributeInstanceOf(GetByMethod::class, 'getterStrategy', $virtual);
@@ -105,12 +107,12 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateUsesCache()
     {
         $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
+        $classMetadata = MockProvider::classMetadata(PropertyCollectionMock::class);
         $cache = new ArrayCache();
 
         $factory = new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             $annotationReader,
-            new MetadataFactory($annotationReader),
             new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES)),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
@@ -122,14 +124,14 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
         $cacheKey = 'gson.properties.'.str_replace('\\', '', PropertyCollectionMock::class);
 
         // assert data is stored in cache
-        $factory->create(new TypeToken(PropertyCollectionMock::class));
+        $factory->create(new TypeToken(PropertyCollectionMock::class), $classMetadata);
         self::assertCount(4, $cache->get($cacheKey)->toArray());
 
         // overwrite cache
         $cache->set($cacheKey, new PropertyCollection());
 
         // assert we use the new cache
-        $collection = $factory->create(new TypeToken(PropertyCollectionMock::class));
+        $collection = $factory->create(new TypeToken(PropertyCollectionMock::class), $classMetadata);
         self::assertCount(0, $collection->toArray());
     }
 }

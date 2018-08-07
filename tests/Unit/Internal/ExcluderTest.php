@@ -13,16 +13,16 @@ use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Annotation\Until;
-use Tebru\Gson\Internal\DefaultClassMetadata;
+use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
+use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
+use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\DefaultExclusionData;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\Internal\DefaultPropertyMetadata;
+use Tebru\Gson\Test\Mock\ExcluderExcludeSerializeMock;
+use Tebru\Gson\Test\Mock\ExcluderExposeMock;
 use Tebru\Gson\Test\Mock\ExcluderVersionMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\BarPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcludeClassMockExclusionStrategy;
-use Tebru\Gson\Test\Mock\ExcluderExcludeSerializeMock;
-use Tebru\Gson\Test\Mock\ExcluderExposeMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\Foo;
@@ -42,11 +42,6 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
      * @var Excluder
      */
     private $excluder;
-    
-    /**
-     * @var MetadataFactory
-     */
-    private $metadataFactory;
 
     /**
      * Set up dependencies
@@ -54,12 +49,11 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->excluder = MockProvider::excluder();
-        $this->metadataFactory = MockProvider::metadataFactory();
     }
 
     public function testExcludeClassWithoutVersion()
     {
-        $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
+        $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class);
 
         self::assertFalse($this->excluder->excludeClass($classMetadata, true));
         self::assertFalse($this->excluder->excludeClass($classMetadata, false));
@@ -68,7 +62,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     public function testExcludeClassWithVersionLow()
     {
         $this->excluder->setVersion('0.1.0');
-        $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
+        $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class);
         
         self::assertTrue($this->excluder->excludeClass($classMetadata, true));
         self::assertTrue($this->excluder->excludeClass($classMetadata, false));
@@ -77,7 +71,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     public function testExcludeClassWithVersionEqualSince()
     {
         $this->excluder->setVersion('1');
-        $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
+        $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class);
         
         self::assertFalse($this->excluder->excludeClass($classMetadata, true));
         self::assertFalse($this->excluder->excludeClass($classMetadata, false));
@@ -86,7 +80,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     public function testExcludeClassWithVersionBetween()
     {
         $this->excluder->setVersion('1.5');
-        $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
+        $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class);
 
         self::assertFalse($this->excluder->excludeClass($classMetadata, true));
         self::assertFalse($this->excluder->excludeClass($classMetadata, false));
@@ -95,7 +89,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     public function testExcludeClassWithVersionEqualUntil()
     {
         $this->excluder->setVersion('2');
-        $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
+        $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class);
 
         self::assertTrue($this->excluder->excludeClass($classMetadata, true));
         self::assertTrue($this->excluder->excludeClass($classMetadata, false));
@@ -104,7 +98,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     public function testExcludeClassWithVersionHigh()
     {
         $this->excluder->setVersion('3');
-        $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
+        $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class);
 
         self::assertTrue($this->excluder->excludeClass($classMetadata, true));
         self::assertTrue($this->excluder->excludeClass($classMetadata, false));
@@ -112,7 +106,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
 
     public function testExcludeClassWithExcludeAnnotation()
     {
-        $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderExcludeSerializeMock::class);
+        $classMetadata = MockProvider::classMetadata(ExcluderExcludeSerializeMock::class);
 
         self::assertTrue($this->excluder->excludeClass($classMetadata, true));
         self::assertFalse($this->excluder->excludeClass($classMetadata, false));
@@ -121,7 +115,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     public function testExcludeClassWithExposeAnnotation()
     {
         $this->excluder->setRequireExpose(true);
-        $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderExposeMock::class);
+        $classMetadata = MockProvider::classMetadata(ExcluderExposeMock::class);
 
         self::assertFalse($this->excluder->excludeClass($classMetadata, true));
         self::assertTrue($this->excluder->excludeClass($classMetadata, false));
@@ -131,90 +125,102 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
     {
         $this->excluder->addExclusionStrategy(new FooExclusionStrategy(), true, false);
         $this->excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), true, false);
-        $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
+        $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class);
 
-        self::assertTrue($this->excluder->excludeClassByStrategy($classMetadata, new DefaultExclusionData(true, null)));
-        self::assertFalse($this->excluder->excludeClassByStrategy($classMetadata, new DefaultExclusionData(false, null)));
+        self::assertTrue($this->excluder->hasSerializationStrategies());
+        self::assertFalse($this->excluder->hasDeserializationStrategies());
+        self::assertTrue($this->excluder->excludeClassBySerializationStrategy($classMetadata, new DefaultExclusionData(true, null)));
+        self::assertFalse($this->excluder->excludeClassByDeserializationStrategy($classMetadata, new DefaultExclusionData(false, null)));
     }
 
     public function testExcludeClassWithStrategyDeserialization()
     {
         $this->excluder->addExclusionStrategy(new FooExclusionStrategy(), false, true);
         $this->excluder->addExclusionStrategy(new ExcludeClassMockExclusionStrategy(), false, true);
-        $classMetadata = $this->metadataFactory->createClassMetadata(ExcluderVersionMock::class);
+        $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class);
 
-        self::assertFalse($this->excluder->excludeClassByStrategy($classMetadata, new DefaultExclusionData(true, null)));
-        self::assertTrue($this->excluder->excludeClassByStrategy($classMetadata, new DefaultExclusionData(false, null)));
+        self::assertFalse($this->excluder->hasSerializationStrategies());
+        self::assertTrue($this->excluder->hasDeserializationStrategies());
+        self::assertFalse($this->excluder->excludeClassBySerializationStrategy($classMetadata, new DefaultExclusionData(true, null)));
+        self::assertTrue($this->excluder->excludeClassByDeserializationStrategy($classMetadata, new DefaultExclusionData(false, null)));
     }
 
     public function testExcludePropertyDefaultModifiers()
     {
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_STATIC,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             new AnnotationCollection(),
-            false
+            ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_STATIC,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludeProperty($property, true));
+        self::assertTrue($this->excluder->excludeProperty($property, false));
     }
 
     public function testExcludePrivateProperties()
     {
         $this->excluder->setExcludedModifiers(ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             new AnnotationCollection(),
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludeProperty($property, true));
+        self::assertTrue($this->excluder->excludeProperty($property, false));
     }
 
     public function testExcludeProtectedProperties()
     {
         $this->excluder->setExcludedModifiers(ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PROTECTED,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             new AnnotationCollection(),
-            false
+            ReflectionProperty::IS_PROTECTED,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludeProperty($property, true));
+        self::assertTrue($this->excluder->excludeProperty($property, false));
     }
 
     public function testDoNotExcludeWithoutSinceUntilAnnotations()
     {
         $this->excluder->setVersion(1);
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             new AnnotationCollection(),
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertFalse($this->excluder->excludeProperty($property, true));
+        self::assertFalse($this->excluder->excludeProperty($property, false));
     }
 
     public function testDoNotExcludeWithoutVersion()
@@ -222,18 +228,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Until(['value' => '2']));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertFalse($this->excluder->excludeProperty($property, true));
+        self::assertFalse($this->excluder->excludeProperty($property, false));
     }
 
     public function testExcludeBeforeSince()
@@ -243,18 +251,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Since(['value' => '1.0.1']));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludeProperty($property, true));
+        self::assertTrue($this->excluder->excludeProperty($property, false));
     }
 
     public function testDoNotExcludeEqualToSince()
@@ -264,18 +274,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Since(['value' => '1.0.1']));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertFalse($this->excluder->excludeProperty($property, true));
+        self::assertFalse($this->excluder->excludeProperty($property, false));
     }
 
     public function testDoNotExcludeAfterSince()
@@ -285,18 +297,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Since(['value' => '1.0.1']));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertFalse($this->excluder->excludeProperty($property, true));
+        self::assertFalse($this->excluder->excludeProperty($property, false));
     }
 
     public function testDoNotExcludeBeforeUntil()
@@ -306,18 +320,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Until(['value' => '2.0.0']));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertFalse($this->excluder->excludeProperty($property, true));
+        self::assertFalse($this->excluder->excludeProperty($property, false));
     }
 
     public function testExcludeEqualToUntil()
@@ -327,18 +343,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Until(['value' => '2.0.0']));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            false,
+            ReflectionProperty::IS_PRIVATE,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludeProperty($property, true));
+        self::assertTrue($this->excluder->excludeProperty($property, false));
     }
 
     public function testExcludeGreaterThanUntil()
@@ -348,18 +366,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Until(['value' => '2.0.0']));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludeProperty($property, true));
+        self::assertTrue($this->excluder->excludeProperty($property, false));
     }
 
     public function testExcludeWithExcludeAnnotation()
@@ -367,18 +387,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Exclude([]));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludeProperty($property, true));
+        self::assertTrue($this->excluder->excludeProperty($property, false));
     }
 
     public function testExcludeWithExcludeAnnotationOnlySerialize()
@@ -386,18 +408,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Exclude(['deserialize' => false]));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludeProperty($property, true));
+        self::assertFalse($this->excluder->excludeProperty($property, false));
     }
 
     public function testExcludeWithExcludeAnnotationOnlyDeserialize()
@@ -405,18 +429,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Exclude(['serialize' => false]));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertFalse($this->excluder->excludeProperty($property, true));
+        self::assertTrue($this->excluder->excludeProperty($property, false));
     }
 
     public function testDoNotExcludeWithExposeAnnotation()
@@ -426,18 +452,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Expose([]));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertFalse($this->excluder->excludeProperty($property, true));
+        self::assertFalse($this->excluder->excludeProperty($property, false));
     }
 
     public function testDoNotExcludeWithExposeAnnotationOnlySerialize()
@@ -447,18 +475,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Expose(['deserialize' => false]));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertFalse($this->excluder->excludeProperty($property, true));
+        self::assertTrue($this->excluder->excludeProperty($property, false));
     }
 
     public function testDoNotExcludeWithExposeAnnotationOnlyDeserialize()
@@ -468,18 +498,20 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Expose(['serialize' => false]));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludeProperty($property, true));
+        self::assertFalse($this->excluder->excludeProperty($property, false));
     }
 
     public function testDoNotExcludeWithExposeAnnotationWithoutRequireExpose()
@@ -487,36 +519,40 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add(new Expose(['serialize' => false]));
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             $annotations,
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertFalse($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertFalse($this->excluder->excludeProperty($property, true));
+        self::assertFalse($this->excluder->excludeProperty($property, false));
     }
 
     public function testExcludeWithoutExposeAnnotationWithRequireExpose()
     {
         $this->excluder->setRequireExpose(true);
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             new AnnotationCollection(),
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, true));
-        self::assertTrue($this->excluder->excludeProperty($propertyMetadata, false));
+        self::assertTrue($this->excluder->excludeProperty($property, true));
+        self::assertTrue($this->excluder->excludeProperty($property, false));
     }
 
     public function testExcludeFromStrategy()
@@ -524,37 +560,41 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $this->excluder->addExclusionStrategy(new BarPropertyExclusionStrategy(), true, true);
         $this->excluder->addExclusionStrategy(new FooPropertyExclusionStrategy(), true, true);
 
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             new AnnotationCollection(),
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
         $serializeExclusionData = new DefaultExclusionData(true, new UserMock());
         $deserializeExclusionData = new DefaultExclusionData(false, new UserMock(), ['name' => 'John Doe']);
-        self::assertTrue($this->excluder->excludePropertyByStrategy($propertyMetadata, $serializeExclusionData));
-        self::assertTrue($this->excluder->excludePropertyByStrategy($propertyMetadata, $deserializeExclusionData));
+        self::assertTrue($this->excluder->excludePropertyBySerializationStrategy($property, $serializeExclusionData));
+        self::assertTrue($this->excluder->excludePropertyByDeserializationStrategy($property, $deserializeExclusionData));
     }
 
     public function testExcludeFromStrategyFalse()
     {
-        $propertyMetadata = new DefaultPropertyMetadata(
+        $property = new Property(
             'foo',
             'foo',
             new TypeToken('string'),
-            ReflectionProperty::IS_PRIVATE,
-            new DefaultClassMetadata(Foo::class, new AnnotationCollection()),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
             new AnnotationCollection(),
-            false
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class)
         );
 
         $serializeExclusionData = new DefaultExclusionData(true, new UserMock());
         $deserializeExclusionData = new DefaultExclusionData(false, new UserMock(), ['name' => 'John Doe']);
-        self::assertFalse($this->excluder->excludePropertyByStrategy($propertyMetadata, $serializeExclusionData));
-        self::assertFalse($this->excluder->excludePropertyByStrategy($propertyMetadata, $deserializeExclusionData));
+        self::assertFalse($this->excluder->excludePropertyBySerializationStrategy($property, $serializeExclusionData));
+        self::assertFalse($this->excluder->excludePropertyByDeserializationStrategy($property, $deserializeExclusionData));
     }
 }

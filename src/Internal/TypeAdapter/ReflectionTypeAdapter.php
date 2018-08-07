@@ -9,9 +9,7 @@ declare(strict_types=1);
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use Tebru\Gson\Annotation\JsonAdapter;
-use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\ClassMetadata;
-use Tebru\Gson\Internal\Data\MetadataPropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\DefaultExclusionData;
 use Tebru\Gson\Internal\Excluder;
@@ -44,11 +42,6 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
     private $properties;
 
     /**
-     * @var MetadataPropertyCollection
-     */
-    private $metadataPropertyCollection;
-
-    /**
      * @var ClassMetadata
      */
     private $classMetadata;
@@ -64,29 +57,77 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
     private $typeAdapterProvider;
 
     /**
+     * @var null|string
+     */
+    private $classVirtualProperty;
+
+    /**
+     * @var bool
+     */
+    private $skipSerialize;
+
+    /**
+     * @var bool
+     */
+    private $skipDeserialize;
+
+    /**
+     * @var bool
+     */
+    private $hasSerializationStrategies;
+
+    /**
+     * @var bool
+     */
+    private $hasDeserializationStrategies;
+
+    /**
+     * An memory cache of used type adapters
+     *
+     * @var TypeAdapter[]
+     */
+    private $adapters = [];
+
+    /**
+     * A memory cache of read properties
+     *
+     * @var Property[]
+     */
+    private $propertyCache = [];
+
+    /**
      * Constructor
      *
      * @param ObjectConstructor $objectConstructor
      * @param PropertyCollection $properties
-     * @param MetadataPropertyCollection $metadataPropertyCollection
      * @param ClassMetadata $classMetadata
      * @param Excluder $excluder
      * @param TypeAdapterProvider $typeAdapterProvider
+     * @param null|string $classVirtualProperty
+     * @param bool $skipSerialize
+     * @param bool $skipDeserialize
      */
     public function __construct(
         ObjectConstructor $objectConstructor,
         PropertyCollection $properties,
-        MetadataPropertyCollection $metadataPropertyCollection,
         ClassMetadata $classMetadata,
         Excluder $excluder,
-        TypeAdapterProvider $typeAdapterProvider
+        TypeAdapterProvider $typeAdapterProvider,
+        ?string $classVirtualProperty,
+        bool $skipSerialize,
+        bool $skipDeserialize
     ) {
         $this->objectConstructor = $objectConstructor;
         $this->properties = $properties;
-        $this->metadataPropertyCollection = $metadataPropertyCollection;
         $this->classMetadata = $classMetadata;
         $this->excluder = $excluder;
         $this->typeAdapterProvider = $typeAdapterProvider;
+        $this->classVirtualProperty = $classVirtualProperty;
+        $this->skipSerialize = $skipSerialize;
+        $this->skipDeserialize = $skipDeserialize;
+
+        $this->hasSerializationStrategies = $this->excluder->hasSerializationStrategies();
+        $this->hasDeserializationStrategies = $this->excluder->hasDeserializationStrategies();
     }
     /**
      * Read the next value, convert it to its type and return it
@@ -96,15 +137,22 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
      */
     public function read(JsonReadable $reader)
     {
+        if ($this->skipDeserialize) {
+            $reader->skipValue();
+            return null;
+        }
+
         if ($reader->peek() === JsonToken::NULL) {
             $reader->nextNull();
             return null;
         }
 
         $object = $this->objectConstructor->construct();
-        $exclusionData = new DefaultExclusionData(false, clone $object, $reader->getPayload());
+        $exclusionData = $this->hasDeserializationStrategies
+            ? new DefaultExclusionData(false, clone $object, $reader->getPayload())
+            : null;
 
-        if ($this->excluder->excludeClassByStrategy($this->classMetadata, $exclusionData)) {
+        if ($exclusionData && $this->excluder->excludeClassByDeserializationStrategy($this->classMetadata, $exclusionData)) {
             $reader->skipValue();
 
             return null;
@@ -112,31 +160,49 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
 
         $reader->beginObject();
 
-        $virtualProperty = $this->classMetadata->getAnnotation(VirtualProperty::class);
-        if ($virtualProperty !== null) {
+        if ($this->classVirtualProperty !== null) {
             $reader->nextName();
             $reader->beginObject();
         }
 
+        $usesExisting = $reader->getContext()->usesExistingObject();
+
         while ($reader->hasNext()) {
             $name = $reader->nextName();
-            $property = $this->properties->getBySerializedName($name);
+            $property = $this->propertyCache[$name] ?? $this->propertyCache[$name] = $this->properties->getBySerializedName($name);
+
+            if ($property === null) {
+                $reader->skipValue();
+                continue;
+            }
+
+            $realName = $property->getName();
+
             if (
-                null === $property
-                || $property->skipDeserialize()
-                || $this->excluder->excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), $exclusionData)
+                $property->skipDeserialize()
+                || (
+                    $exclusionData
+                    && $this->excluder->excludePropertyByDeserializationStrategy($property, $exclusionData)
+                )
             ) {
                 $reader->skipValue();
                 continue;
             }
 
-            /** @var JsonAdapter $jsonAdapterAnnotation */
-            $jsonAdapterAnnotation = $property->getAnnotations()->get(JsonAdapter::class);
-            $adapter = null === $jsonAdapterAnnotation
-                ? $this->typeAdapterProvider->getAdapter($property->getType())
-                : $this->typeAdapterProvider->getAdapterFromAnnotation($property->getType(), $jsonAdapterAnnotation);
+            $adapter = $this->adapters[$realName] ?? null;
+            if ($adapter === null) {
+                /** @var JsonAdapter $jsonAdapterAnnotation */
+                $jsonAdapterAnnotation = $property->getAnnotations()->get(JsonAdapter::class);
+                $adapter = null === $jsonAdapterAnnotation
+                    ? $this->typeAdapterProvider->getAdapter($property->getType())
+                    : $this->typeAdapterProvider->getAdapterFromAnnotation(
+                        $property->getType(),
+                        $jsonAdapterAnnotation
+                    );
+                $this->adapters[$realName] = $adapter;
+            }
 
-            if ($adapter instanceof ObjectConstructorAware) {
+            if ($adapter instanceof ObjectConstructorAware && $usesExisting) {
                 $nestedObject = null;
                 try {
                     $nestedObject = $property->get($object);
@@ -155,7 +221,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
         }
         $reader->endObject();
 
-        if ($virtualProperty !== null) {
+        if ($this->classVirtualProperty !== null) {
             $reader->endObject();
         }
 
@@ -171,52 +237,62 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
      */
     public function write(JsonWritable $writer, $value): void
     {
-        if (null === $value) {
+        if ($this->skipSerialize || $value === null) {
             $writer->writeNull();
-
             return;
         }
 
-        $exclusionData = new DefaultExclusionData(true, $value);
+        $exclusionData = $this->hasSerializationStrategies
+            ? new DefaultExclusionData(true, $value)
+            : null;
 
-        if ($this->excluder->excludeClassByStrategy($this->classMetadata, $exclusionData)) {
+        if (
+            $exclusionData
+            && $this->excluder->excludeClassBySerializationStrategy($this->classMetadata, $exclusionData)
+        ) {
             $writer->writeNull();
-
             return;
         }
 
         $writer->beginObject();
 
-        $virtualProperty = $this->classMetadata->getAnnotation(VirtualProperty::class) ;
-        if ($virtualProperty !== null) {
-            $writer->name($virtualProperty->getValue());
+        if ($this->classVirtualProperty !== null) {
+            $writer->name($this->classVirtualProperty);
             $writer->beginObject();
         }
 
         /** @var Property $property */
         foreach ($this->properties as $property) {
+            $realName = $property->getName();
             $writer->name($property->getSerializedName());
 
             if (
                 $property->skipSerialize()
-                || $this->excluder->excludePropertyByStrategy($this->metadataPropertyCollection->get($property->getRealName()), $exclusionData)
+                || (
+                    $exclusionData
+                    && $this->excluder->excludePropertyBySerializationStrategy($property, $exclusionData)
+                )
             ) {
                 $writer->writeNull();
 
                 continue;
             }
 
-            /** @var JsonAdapter $jsonAdapterAnnotation */
-            $jsonAdapterAnnotation = $property->getAnnotations()->get(JsonAdapter::class);
-            $adapter = null === $jsonAdapterAnnotation
-                ? $this->typeAdapterProvider->getAdapter($property->getType())
-                : $this->typeAdapterProvider->getAdapterFromAnnotation($property->getType(), $jsonAdapterAnnotation);
+            $adapter = $this->adapters[$realName] ?? null;
+            if (!isset($this->adapters[$realName])) {
+                /** @var JsonAdapter $jsonAdapterAnnotation */
+                $jsonAdapterAnnotation = $property->getAnnotations()->get(JsonAdapter::class);
+                $adapter = null === $jsonAdapterAnnotation
+                    ? $this->typeAdapterProvider->getAdapter($property->getType())
+                    : $this->typeAdapterProvider->getAdapterFromAnnotation($property->getType(), $jsonAdapterAnnotation);
+                $this->adapters[$realName] = $adapter;
+            }
             $adapter->write($writer, $property->get($value));
         }
 
         $writer->endObject();
 
-        if ($virtualProperty !== null) {
+        if ($this->classVirtualProperty !== null) {
             $writer->endObject();
         }
     }

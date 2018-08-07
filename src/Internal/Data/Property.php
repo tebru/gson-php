@@ -8,9 +8,12 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal\Data;
 
+use Tebru\AnnotationReader\AbstractAnnotation;
 use Tebru\AnnotationReader\AnnotationCollection;
+use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\GetterStrategy;
 use Tebru\Gson\Internal\SetterStrategy;
+use Tebru\Gson\PropertyMetadata;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -21,7 +24,7 @@ use Tebru\PhpType\TypeToken;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class Property
+final class Property implements PropertyMetadata
 {
     /**
      * The actual name of the property
@@ -75,6 +78,13 @@ final class Property
     private $modifiers;
 
     /**
+     * The property's class metadata
+     *
+     * @var ClassMetadata
+     */
+    private $classMetadata;
+
+    /**
      * True if the property should be skipped during serialization
      *
      * @var bool
@@ -105,6 +115,7 @@ final class Property
      * @param AnnotationCollection $annotations
      * @param int $modifiers
      * @param bool $virtual
+     * @param ClassMetadata $classMetadata
      */
     public function __construct(
         string $realName,
@@ -114,7 +125,8 @@ final class Property
         SetterStrategy $setterStrategy,
         AnnotationCollection $annotations,
         int $modifiers,
-        bool $virtual
+        bool $virtual,
+        ClassMetadata $classMetadata
     ) {
         $this->realName = $realName;
         $this->serializedName = $serializedName;
@@ -124,6 +136,9 @@ final class Property
         $this->annotations = $annotations;
         $this->modifiers = $modifiers;
         $this->virtual = $virtual;
+        $this->classMetadata = $classMetadata;
+
+        $classMetadata->addPropertyMetadata($this);
     }
 
     /**
@@ -131,7 +146,7 @@ final class Property
      *
      * @return string
      */
-    public function getRealName(): string
+    public function getName(): string
     {
         return $this->realName;
     }
@@ -157,13 +172,13 @@ final class Property
     }
 
     /**
-     * Return the collection of annotations
+     * Get the property type as a string
      *
-     * @return AnnotationCollection
+     * @return string
      */
-    public function getAnnotations(): AnnotationCollection
+    public function getTypeName(): string
     {
-        return $this->annotations;
+        return (string)$this->type;
     }
 
     /**
@@ -174,6 +189,47 @@ final class Property
     public function getModifiers(): int
     {
         return $this->modifiers;
+    }
+
+    /**
+     * Get full declaring class metadata
+     *
+     * @return ClassMetadata
+     */
+    public function getDeclaringClassMetadata(): ClassMetadata
+    {
+        return $this->classMetadata;
+    }
+
+    /**
+     * Get the declaring class name
+     *
+     * @return string
+     */
+    public function getDeclaringClassName(): string
+    {
+        return $this->classMetadata->getName();
+    }
+
+    /**
+     * Return the collection of annotations
+     *
+     * @return AnnotationCollection
+     */
+    public function getAnnotations(): AnnotationCollection
+    {
+        return $this->annotations;
+    }
+
+    /**
+     * Get a single annotation, returns null if the annotation doesn't exist
+     *
+     * @param string $annotationName
+     * @return null|AbstractAnnotation
+     */
+    public function getAnnotation(string $annotationName): ?AbstractAnnotation
+    {
+        return $this->annotations->get($annotationName);
     }
 
     /**

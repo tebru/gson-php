@@ -13,6 +13,7 @@ use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\Data\Property;
+use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -47,7 +48,8 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             new SetByPublicProperty('foo'),
             new AnnotationCollection(),
             0,
-            false
+            false,
+            MockProvider::classMetadata(stdClass::class)
         );
         $this->propertyCollection = new PropertyCollection([$this->property]);
     }

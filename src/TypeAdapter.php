@@ -13,6 +13,7 @@ use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\Internal\JsonElementReader;
 use Tebru\Gson\Internal\JsonElementWriter;
 use Tebru\Gson\Internal\JsonEncodeWriter;
+use Tebru\Gson\Internal\DefaultReaderContext;
 
 /**
  * Class TypeAdapter
@@ -47,22 +48,24 @@ abstract class TypeAdapter
      * Constructs a JsonReader for a given string of json and passes it to ::read()
      *
      * @param string $json
+     * @param ReaderContext|null $context
      * @return mixed
      */
-    public function readFromJson($json)
+    public function readFromJson($json, ?ReaderContext $context = null)
     {
-        return $this->read(new JsonDecodeReader($json));
+        return $this->read(new JsonDecodeReader($json, $context ?? new DefaultReaderContext()));
     }
 
     /**
      * Constructs a JsonElementReader with a JsonElement and passes it to ::read()
      *
      * @param JsonElement $jsonElement
+     * @param null|ReaderContext $context
      * @return mixed
      */
-    public function readFromJsonElement(JsonElement $jsonElement)
+    public function readFromJsonElement(JsonElement $jsonElement, ?ReaderContext $context = null)
     {
-        return $this->read(new JsonElementReader($jsonElement));
+        return $this->read(new JsonElementReader($jsonElement, $context ?? new DefaultReaderContext()));
     }
 
     /**

@@ -10,28 +10,28 @@ use DateTime;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Cache\Simple\NullCache;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
+use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
 use Tebru\Gson\Internal\DefaultJsonSerializationContext;
+use Tebru\Gson\Internal\DefaultReaderContext;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\MetadataFactory;
-use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
+use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ExcluderTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\FloatTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\JsonElementTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\JsonTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
@@ -55,9 +55,10 @@ class MockProvider
         return new AnnotationReaderAdapter(new AnnotationReader(), $cache);
     }
 
-    public static function metadataFactory()
+    public static function classMetadata($class)
     {
-        return new MetadataFactory(self::annotationReader());
+        $annotations = self::annotationReader()->readClass($class, true);
+        return new DefaultClassMetadata($class, $annotations);
     }
 
     public static function excluder()
@@ -70,7 +71,6 @@ class MockProvider
         return new PropertyCollectionFactory(
             new ReflectionPropertySetFactory(),
             self::annotationReader(),
-            self::metadataFactory(),
             new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES)),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
@@ -82,7 +82,7 @@ class MockProvider
 
     public static function reflectionTypeAdapterFactory(Excluder $excluder)
     {
-        return new ReflectionTypeAdapterFactory(new ConstructorConstructor(), self::propertyCollectionFactory($excluder), self::metadataFactory(), $excluder);
+        return new ReflectionTypeAdapterFactory(new ConstructorConstructor(), self::propertyCollectionFactory($excluder), self::annotationReader(), $excluder);
     }
 
     public static function typeAdapterProvider(Excluder $excluder = null, array $factories = [])
@@ -93,10 +93,6 @@ class MockProvider
 
         return new TypeAdapterProvider(
             array_merge(
-                [
-                    new ExcluderTypeAdapterFactory($excluder, self::metadataFactory()),
-                    new JsonTypeAdapterFactory(self::annotationReader()),
-                ],
                 $factories,
                 [
                     new StringTypeAdapterFactory(),
@@ -110,7 +106,7 @@ class MockProvider
                     new ReflectionTypeAdapterFactory(
                         new ConstructorConstructor(),
                         self::propertyCollectionFactory($excluder),
-                        self::metadataFactory(),
+                        self::annotationReader(),
                         $excluder
                     ),
                     new WildcardTypeAdapterFactory(),
@@ -122,7 +118,7 @@ class MockProvider
 
     public static function deserializationContext(Excluder $excluder)
     {
-        return new DefaultJsonDeserializationContext(self::typeAdapterProvider($excluder));
+        return new DefaultJsonDeserializationContext(self::typeAdapterProvider($excluder), new DefaultReaderContext());
     }
 
     public static function serializationContext(Excluder $excluder)

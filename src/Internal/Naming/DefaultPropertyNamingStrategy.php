@@ -65,7 +65,6 @@ final class DefaultPropertyNamingStrategy implements PropertyNamingStrategy
                 return \ucfirst($this->prependUpperCaseWith($propertyName, ' '));
         }
 
-        /** @noinspection ExceptionsAnnotatingAndHandlingInspection */
         throw new RuntimeException('Gson: This property naming strategy is not supported');
     }
 
