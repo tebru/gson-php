@@ -248,7 +248,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         try {
             $adapter->writeToJson([], false);
         } catch (LogicException $exception) {
-            self::assertSame('Array may not have more than 2 generic types', $exception->getMessage());
+            self::assertSame('Array may not have more than 2 generic types at "$"', $exception->getMessage());
             return;
         }
         self::assertTrue(false);

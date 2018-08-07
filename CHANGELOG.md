@@ -7,6 +7,7 @@ master
 ------
 
 * Various performance improvements
+* ADDED: getPath() to JsonWritable
 
 v0.5.9
 ------

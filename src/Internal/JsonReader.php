@@ -20,6 +20,8 @@ use Tebru\Gson\JsonToken;
  */
 abstract class JsonReader implements JsonReadable
 {
+    use JsonPath;
+
     /**
      * A stack representing the next element to be consumed
      *
@@ -40,38 +42,6 @@ abstract class JsonReader implements JsonReadable
      * @var int
      */
     protected $stackSize = 1;
-
-    /**
-     * An array of path names that correspond to the current stack
-     *
-     * @var array
-     */
-    protected $pathNames = [];
-
-    /**
-     * An array of path indices that correspond to the current stack. This array could contain invalid
-     * values at indexes outside the current stack. It could also contain incorrect values at indexes
-     * where a path name is used. Data should only be fetched by referencing the $pathIndex
-     *
-     * @var int[]
-     */
-    protected $pathIndices = [-1];
-
-    /**
-     * The current path index corresponding to the pathIndices array
-     *
-     * @var int
-     */
-    protected $pathIndex = 0;
-
-    /**
-     * A cache of the current [@see JsonToken].  This should get nulled out
-     * whenever a new token should be returned with the subsequent call
-     * to [@see JsonDecodeReader::peek]
-     *
-     * @var int|null
-     */
-    protected $currentToken;
 
     /**
      * The original payload
@@ -194,32 +164,6 @@ abstract class JsonReader implements JsonReadable
     public function peek(): string
     {
         return $this->stackTypes[$this->stackSize - 1];
-    }
-
-    /**
-     * Get the current read path in json xpath format
-     *
-     * @return string
-     */
-    public function getPath(): string
-    {
-        $result = ['$'];
-
-        for ($index = 1; $index <= $this->pathIndex; $index++) {
-            if (!empty($this->pathNames[$index])) {
-                $result[] .= '.'.$this->pathNames[$index];
-                continue;
-            }
-
-            // skip initial value
-            if ($this->pathIndices[$this->pathIndex] === -1) {
-                continue;
-            }
-
-            $result[] .= '['.$this->pathIndices[$index].']';
-        }
-
-        return implode($result);
     }
 
     /**

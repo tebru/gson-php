@@ -8,12 +8,11 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal\TypeAdapter;
 
-use DateTime;
 use DateTimeInterface;
 use Tebru\Gson\Exception\JsonSyntaxException;
-use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\TypeAdapter;
 use Tebru\PhpType\TypeToken;
 
