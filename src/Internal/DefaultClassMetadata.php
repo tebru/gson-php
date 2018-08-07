@@ -11,6 +11,7 @@ namespace Tebru\Gson\Internal;
 use Tebru\AnnotationReader\AbstractAnnotation;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\PropertyMetadata;
 
 /**
@@ -37,22 +38,32 @@ final class DefaultClassMetadata implements ClassMetadata
     private $annotations;
 
     /**
-     * An array of [@see PropertyMetadata] objects
-     *
-     * @var PropertyMetadata[]
+     * @var PropertyCollection
      */
-    private $propertyMetadata = [];
+    private $properties;
+
+    /**
+     * @var bool
+     */
+    private $skipSerialize = false;
+
+    /**
+     * @var bool
+     */
+    private $skipDeserialize = false;
 
     /**
      * Constructor
      *
      * @param string $name
      * @param AnnotationCollection $annotations
+     * @param PropertyCollection $properties
      */
-    public function __construct(string $name, AnnotationCollection $annotations)
+    public function __construct(string $name, AnnotationCollection $annotations, PropertyCollection $properties)
     {
         $this->name = $name;
         $this->annotations = $annotations;
+        $this->properties = $properties;
     }
 
     /**
@@ -88,13 +99,23 @@ final class DefaultClassMetadata implements ClassMetadata
     }
 
     /**
+     * Get the [@see PropertyCollection] for class
+     *
+     * @return PropertyCollection
+     */
+    public function getPropertyCollection(): PropertyCollection
+    {
+        return $this->properties;
+    }
+
+    /**
      * Returns an array of [@see PropertyMetadata] objects
      *
-     * @return array
+     * @return PropertyMetadata[]
      */
     public function getPropertyMetadata(): array
     {
-        return $this->propertyMetadata;
+        return $this->properties->toArray();
     }
 
     /**
@@ -105,23 +126,46 @@ final class DefaultClassMetadata implements ClassMetadata
      */
     public function getProperty(string $propertyName): ?PropertyMetadata
     {
-        foreach ($this->propertyMetadata as $property) {
-            if ($property->getName() === $propertyName) {
-                return $property;
-            }
-        }
-
-        return null;
+        return $this->properties->getByName($propertyName);
     }
 
     /**
-     * Add [@see PropertyMetadata] link
+     * If the class should be skipped during serialization
      *
-     * @param PropertyMetadata $propertyMetadata
-     * @return void
+     * @return bool
      */
-    public function addPropertyMetadata(PropertyMetadata $propertyMetadata): void
+    public function skipSerialize(): bool
     {
-        $this->propertyMetadata[] = $propertyMetadata;
+        return $this->skipSerialize;
+    }
+
+    /**
+     * Set if we should skip serialization
+     *
+     * @param bool $skipSerialize
+     */
+    public function setSkipSerialize(bool $skipSerialize): void
+    {
+        $this->skipSerialize = $skipSerialize;
+    }
+
+    /**
+     * If the class should be skipped during deserialization
+     *
+     * @return bool
+     */
+    public function skipDeserialize(): bool
+    {
+        return $this->skipDeserialize;
+    }
+
+    /**
+     * Set if we should skip deserialization
+     *
+     * @param bool $skipDeserialize
+     */
+    public function setSkipDeserialize(bool $skipDeserialize): void
+    {
+        $this->skipDeserialize = $skipDeserialize;
     }
 }

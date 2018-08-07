@@ -46,7 +46,7 @@ interface ClassMetadata
     /**
      * Returns an array of [@see PropertyMetadata] objects
      *
-     * @return array
+     * @return PropertyMetadata[]
      */
     public function getPropertyMetadata(): array;
 
@@ -59,10 +59,16 @@ interface ClassMetadata
     public function getProperty(string $propertyName): ?PropertyMetadata;
 
     /**
-     * Add [@see PropertyMetadata] link
+     * If the class should be skipped during serialization
      *
-     * @param PropertyMetadata $propertyMetadata
-     * @return void
+     * @return bool
      */
-    public function addPropertyMetadata(PropertyMetadata $propertyMetadata): void;
+    public function skipSerialize(): bool;
+
+    /**
+     * If the class should be skipped during deserialization
+     *
+     * @return bool
+     */
+    public function skipDeserialize(): bool;
 }

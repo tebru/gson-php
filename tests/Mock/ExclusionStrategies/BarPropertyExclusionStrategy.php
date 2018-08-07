@@ -6,9 +6,8 @@
 
 namespace Tebru\Gson\Test\Mock\ExclusionStrategies;
 
-use Tebru\Gson\ClassMetadata;
-use Tebru\Gson\ExclusionData;
-use Tebru\Gson\ExclusionStrategy;
+use Tebru\Gson\Exclusion\PropertyDeserializationExclusionStrategy;
+use Tebru\Gson\Exclusion\PropertySerializationExclusionStrategy;
 use Tebru\Gson\PropertyMetadata;
 
 /**
@@ -16,29 +15,37 @@ use Tebru\Gson\PropertyMetadata;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class BarPropertyExclusionStrategy implements ExclusionStrategy
+class BarPropertyExclusionStrategy implements PropertySerializationExclusionStrategy, PropertyDeserializationExclusionStrategy
 {
     /**
-     * Return true if the class should be ignored
+     * Return true if the result of the strategy should be cached
      *
-     * @param ClassMetadata $classMetadata
-     * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function shouldSkipClass(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
+    public function shouldCache(): bool
     {
         return false;
     }
 
     /**
-     * Return true if the property should be ignored
+     * Returns true if the property should be skipped during deserialization
      *
-     * @param PropertyMetadata $propertyMetadata
-     * @param ExclusionData $exclusionData
+     * @param PropertyMetadata $property
      * @return bool
      */
-    public function shouldSkipProperty(PropertyMetadata $propertyMetadata, ExclusionData $exclusionData): bool
+    public function skipDeserializingProperty(PropertyMetadata $property): bool
     {
-        return 'bar' === $propertyMetadata->getName();
+        return 'bar' === $property->getName();
+    }
+
+    /**
+     * Returns true if the property should be skipped during serialization
+     *
+     * @param PropertyMetadata $property
+     * @return bool
+     */
+    public function skipSerializingProperty(PropertyMetadata $property): bool
+    {
+        return 'bar' === $property->getName();
     }
 }

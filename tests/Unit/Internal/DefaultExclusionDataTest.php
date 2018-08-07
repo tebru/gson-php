@@ -13,6 +13,7 @@ use Tebru\Gson\Internal\DefaultExclusionData;
  * Class DefaultExclusionDataTest
  *
  * @author Nate Brunette <n@tebru.net>
+ * @covers \Tebru\Gson\Internal\DefaultExclusionData
  */
 class DefaultExclusionDataTest extends PHPUnit_Framework_TestCase
 {

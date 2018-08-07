@@ -10,6 +10,7 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Cache\Simple\ArrayCache;
 use Symfony\Component\Cache\Simple\NullCache;
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategy\GetByClosure;
@@ -22,8 +23,9 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Data\PropertyCollection;
-use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
+use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
+use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
@@ -39,9 +41,9 @@ use Tebru\PhpType\TypeToken;
  * Class PropertyCollectionFactoryTest
  *
  * @author Nate Brunette <n@tebru.net>
- * @covers \Tebru\Gson\Internal\Data\PropertyCollectionFactory
+ * @covers \Tebru\Gson\Internal\Data\ClassMetadataFactory
  */
-class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
+class ClassMetadataFactoryTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Excluder
@@ -49,9 +51,9 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
     private $excluder;
 
     /**
-     * @var PropertyCollectionFactory
+     * @var ClassMetadataFactory
      */
-    private $propertyCollectionFactory;
+    private $classMetadataFactory;
 
     /**
      * @var TypeAdapterProvider
@@ -61,18 +63,17 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->excluder = MockProvider::excluder();
-        $this->propertyCollectionFactory = MockProvider::propertyCollectionFactory($this->excluder);
+        $this->classMetadataFactory = MockProvider::classMetadataFactory($this->excluder);
         $this->typeAdapterProvider = MockProvider::typeAdapterProvider($this->excluder);
     }
     public function testCreate()
     {
-        $collection = $this->propertyCollectionFactory->create(
-            new TypeToken(PropertyCollectionMock::class),
-            MockProvider::classMetadata(PropertyCollectionMock::class)
-        );
+        $classMetadata = $this->classMetadataFactory->create(new TypeToken(PropertyCollectionMock::class));
+
+        self::assertSame(PropertyCollectionMock::class, $classMetadata->getName());
 
         /** @var Property[] $elements */
-        $elements = $collection->toArray();
+        $elements = $classMetadata->getPropertyCollection()->toArray();
 
         self::assertCount(4, $elements);
 
@@ -107,10 +108,9 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateUsesCache()
     {
         $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
-        $classMetadata = MockProvider::classMetadata(PropertyCollectionMock::class);
         $cache = new ArrayCache();
 
-        $factory = new PropertyCollectionFactory(
+        $factory = new ClassMetadataFactory(
             new ReflectionPropertySetFactory(),
             $annotationReader,
             new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES)),
@@ -121,17 +121,17 @@ class PropertyCollectionFactoryTest extends PHPUnit_Framework_TestCase
             $cache
         );
 
-        $cacheKey = 'gson.properties.'.str_replace('\\', '', PropertyCollectionMock::class);
+        $cacheKey = 'gson.classmetadata.'.str_replace('\\', '', PropertyCollectionMock::class);
 
         // assert data is stored in cache
-        $factory->create(new TypeToken(PropertyCollectionMock::class), $classMetadata);
-        self::assertCount(4, $cache->get($cacheKey)->toArray());
+        $factory->create(new TypeToken(PropertyCollectionMock::class));
+        self::assertCount(4, $cache->get($cacheKey)->getPropertyCollection()->toArray());
 
         // overwrite cache
-        $cache->set($cacheKey, new PropertyCollection());
+        $cache->set($cacheKey, new DefaultClassMetadata('foo', new AnnotationCollection(), new PropertyCollection()));
 
         // assert we use the new cache
-        $collection = $factory->create(new TypeToken(PropertyCollectionMock::class), $classMetadata);
-        self::assertCount(0, $collection->toArray());
+        $collection = $factory->create(new TypeToken(PropertyCollectionMock::class));
+        self::assertCount(0, $collection->getPropertyCollection()->toArray());
     }
 }

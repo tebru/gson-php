@@ -16,15 +16,21 @@ use Psr\SimpleCache\CacheInterface;
 use ReflectionProperty;
 use Symfony\Component\Cache\Simple\ArrayCache;
 use Symfony\Component\Cache\Simple\ChainCache;
+use Symfony\Component\Cache\Simple\NullCache;
 use Symfony\Component\Cache\Simple\PhpFilesCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
+use Tebru\Gson\Exclusion\DeserializationExclusionDataAware;
+use Tebru\Gson\Exclusion\ExclusionStrategy;
+use Tebru\Gson\Exclusion\SerializationExclusionDataAware;
+use Tebru\Gson\ExclusionStrategy as DeprecatedExclusionStrategy;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
+use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\DiscriminatorDeserializer;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\ExclusionStrategyAdapter;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
@@ -113,6 +119,13 @@ class GsonBuilder
      * @var ExclusionStrategy[]
      */
     private $exclusionStrategies = [];
+
+    /**
+     * An array of Cacheable [@see ExclusionStrategy] objects
+     *
+     * @var ExclusionStrategy[]
+     */
+    private $cachedExclusionStrategies = [];
 
     /**
      * If we should serialize nulls, defaults to false
@@ -284,14 +297,42 @@ class GsonBuilder
     /**
      * Add an exclusion strategy that should be used during serialization/deserialization
      *
-     * @param ExclusionStrategy $strategy
+     * @param DeprecatedExclusionStrategy $strategy
      * @param bool $serialization
      * @param bool $deserialization
      * @return GsonBuilder
+     * @deprecated Since v0.6.0 to be removed in v0.7.0. Use GsonBuilder::addExclusion() instead.
      */
-    public function addExclusionStrategy(ExclusionStrategy $strategy, bool $serialization, bool $deserialization): GsonBuilder
+    public function addExclusionStrategy(DeprecatedExclusionStrategy $strategy, bool $serialization, bool $deserialization): GsonBuilder
     {
-        $this->exclusionStrategies[] = [$strategy, $serialization, $deserialization];
+        @trigger_error('Gson: GsonBuilder::addExclusionStrategy() is deprecated since v0.6.0 and will be removed in v0.7.0. Use GsonBuilder::addExclusion() instead.', E_USER_DEPRECATED);
+
+        $this->addExclusion(new ExclusionStrategyAdapter($strategy, $serialization, $deserialization));
+
+        return $this;
+    }
+
+    /**
+     * Add an [@see ExclusionStrategy]
+     *
+     * @param ExclusionStrategy $exclusionStrategy
+     * @return GsonBuilder
+     */
+    public function addExclusion(ExclusionStrategy $exclusionStrategy): GsonBuilder
+    {
+        if (!$exclusionStrategy->shouldCache()) {
+            $this->exclusionStrategies[] = $exclusionStrategy;
+            return $this;
+        }
+
+        if (
+            $exclusionStrategy instanceof SerializationExclusionDataAware
+            || $exclusionStrategy instanceof DeserializationExclusionDataAware
+        ) {
+            throw new LogicException('Gson: Cacheable exclusion strategies must not implement *DataAware interfaces');
+        }
+
+        $this->cachedExclusionStrategies[] = $exclusionStrategy;
 
         return $this;
     }
@@ -421,16 +462,22 @@ class GsonBuilder
                 : new ChainCache([new ArrayCache(0, false), new PhpFilesCache('', 0, $this->cacheDir)]);
         }
 
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), $this->cache);
+        // no need to cache the annotations as they get cached with the class/properties
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
         $excluder = new Excluder();
         $excluder->setVersion($this->version);
         $excluder->setExcludedModifiers($this->excludedModifiers);
         $excluder->setRequireExpose($this->requireExpose);
+
         foreach ($this->exclusionStrategies as $strategy) {
-            $excluder->addExclusionStrategy($strategy[0], $strategy[1], $strategy[2]);
+            $excluder->addExclusionStrategy($strategy);
         }
 
-        $propertyCollectionFactory = new PropertyCollectionFactory(
+        foreach ($this->cachedExclusionStrategies as $strategy) {
+            $excluder->addCachedExclusionStrategy($strategy);
+        }
+
+        $classMetadataFactory = new ClassMetadataFactory(
             new ReflectionPropertySetFactory(),
             $annotationReader,
             new PropertyNamer($propertyNamingStrategy),
@@ -442,7 +489,7 @@ class GsonBuilder
         );
         $constructorConstructor = new ConstructorConstructor($this->instanceCreators);
         $typeAdapterProvider = new TypeAdapterProvider(
-            $this->getTypeAdapterFactories($propertyCollectionFactory, $excluder, $annotationReader, $constructorConstructor),
+            $this->getTypeAdapterFactories($classMetadataFactory, $excluder, $constructorConstructor),
             $constructorConstructor
         );
 
@@ -452,16 +499,14 @@ class GsonBuilder
     /**
      * Merges default factories with user provided factories
      *
-     * @param PropertyCollectionFactory $propertyCollectionFactory
+     * @param ClassMetadataFactory $classMetadataFactory
      * @param Excluder $excluder
-     * @param AnnotationReaderAdapter $annotationReader
      * @param ConstructorConstructor $constructorConstructor
      * @return array|TypeAdapterFactory[]
      */
     private function getTypeAdapterFactories(
-        PropertyCollectionFactory $propertyCollectionFactory,
+        ClassMetadataFactory $classMetadataFactory,
         Excluder $excluder,
-        AnnotationReaderAdapter $annotationReader,
         ConstructorConstructor $constructorConstructor
     ): array {
         return \array_merge(
@@ -477,8 +522,7 @@ class GsonBuilder
                 new JsonElementTypeAdapterFactory(),
                 new ReflectionTypeAdapterFactory(
                     $constructorConstructor,
-                    $propertyCollectionFactory,
-                    $annotationReader,
+                    $classMetadataFactory,
                     $excluder
                 ),
                 new WildcardTypeAdapterFactory(),

@@ -28,24 +28,29 @@ final class PropertyCollection implements IteratorAggregate
     private $elements = [];
 
     /**
-     * Constructor
-     *
-     * @param array $properties
-     */
-    public function __construct(array $properties = [])
-    {
-        foreach ($properties as $property) {
-            $this->add($property);
-        }
-    }
-
-    /**
      * @param Property $property
      * @return void
      */
     public function add(Property $property): void
     {
         $this->elements[$property->getSerializedName()] = $property;
+    }
+
+    /**
+     * Get [@see Property] by property name
+     *
+     * @param string $propertyName
+     * @return Property|null
+     */
+    public function getByName(string $propertyName): ?Property
+    {
+        foreach ($this->elements as $property) {
+            if ($property->getName() === $propertyName) {
+                return $property;
+            }
+        }
+
+        return null;
     }
 
     /**

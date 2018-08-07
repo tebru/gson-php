@@ -8,6 +8,9 @@ master
 
 * Various performance improvements
 * ADDED: getPath() to JsonWritable
+* BC BREAK: Removed DefaultClassMetadata::addPropertyMetadata()
+* Split ExclusionStrategy into multiple specific interfaces
+* Added deprecations for ExclusionStrategy/ExclusionData
 
 v0.5.9
 ------

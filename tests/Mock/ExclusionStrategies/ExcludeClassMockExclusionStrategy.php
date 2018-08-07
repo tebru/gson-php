@@ -7,9 +7,8 @@
 namespace Tebru\Gson\Test\Mock\ExclusionStrategies;
 
 use Tebru\Gson\ClassMetadata;
-use Tebru\Gson\ExclusionData;
-use Tebru\Gson\ExclusionStrategy;
-use Tebru\Gson\PropertyMetadata;
+use Tebru\Gson\Exclusion\ClassDeserializationExclusionStrategy;
+use Tebru\Gson\Exclusion\ClassSerializationExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExcluderVersionMock;
 
 /**
@@ -17,28 +16,36 @@ use Tebru\Gson\Test\Mock\ExcluderVersionMock;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class ExcludeClassMockExclusionStrategy implements ExclusionStrategy
+class ExcludeClassMockExclusionStrategy implements ClassSerializationExclusionStrategy, ClassDeserializationExclusionStrategy
 {
     /**
-     * Return true if the class should be ignored
+     * Returns true if the class should be skipped during deserialization
      *
-     * @param ClassMetadata $classMetadata
-     * @param ExclusionData $exclusionData
+     * @param ClassMetadata $class
      * @return bool
      */
-    public function shouldSkipClass(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
+    public function skipDeserializingClass(ClassMetadata $class): bool
     {
-        return ExcluderVersionMock::class === $classMetadata->getName();
+        return ExcluderVersionMock::class === $class->getName();
     }
 
     /**
-     * Return true if the property should be ignored
+     * Returns true if the class should be skipped during serialization
      *
-     * @param PropertyMetadata $propertyMetadata
-     * @param ExclusionData $exclusionData
+     * @param ClassMetadata $class
      * @return bool
      */
-    public function shouldSkipProperty(PropertyMetadata $propertyMetadata, ExclusionData $exclusionData): bool
+    public function skipSerializingClass(ClassMetadata $class): bool
+    {
+        return ExcluderVersionMock::class === $class->getName();
+    }
+
+    /**
+     * Return true if the result of the strategy should be cached
+     *
+     * @return bool
+     */
+    public function shouldCache(): bool
     {
         return false;
     }

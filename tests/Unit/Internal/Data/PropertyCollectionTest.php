@@ -40,6 +40,7 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         $serializedName = 'foo_bar';
         $type = new TypeToken(stdClass::class);
 
+        $this->propertyCollection = new PropertyCollection();
         $this->property = new Property(
             $realName,
             $serializedName,
@@ -49,9 +50,9 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
             new AnnotationCollection(),
             0,
             false,
-            MockProvider::classMetadata(stdClass::class)
+            MockProvider::classMetadata(stdClass::class, $this->propertyCollection)
         );
-        $this->propertyCollection = new PropertyCollection([$this->property]);
+        $this->propertyCollection->add($this->property);
     }
 
     public function testGetters()

@@ -4,18 +4,21 @@
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
 
+declare(strict_types=1);
+
 namespace Tebru\Gson\Test\Mock\ExclusionStrategies;
 
-use Tebru\Gson\Exclusion\PropertyDeserializationExclusionStrategy;
 use Tebru\Gson\Exclusion\PropertySerializationExclusionStrategy;
+use Tebru\Gson\Exclusion\SerializationExclusionData;
+use Tebru\Gson\Exclusion\SerializationExclusionDataAware;
 use Tebru\Gson\PropertyMetadata;
 
 /**
- * Class UserEmailExclusionStrategy
+ * Class CacheableDataAwareExclusionStrategy
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class UserEmailExclusionStrategy implements PropertySerializationExclusionStrategy, PropertyDeserializationExclusionStrategy
+class CacheableDataAwareExclusionStrategy implements PropertySerializationExclusionStrategy, SerializationExclusionDataAware
 {
     /**
      * Return true if the result of the strategy should be cached
@@ -24,7 +27,7 @@ class UserEmailExclusionStrategy implements PropertySerializationExclusionStrate
      */
     public function shouldCache(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -35,17 +38,16 @@ class UserEmailExclusionStrategy implements PropertySerializationExclusionStrate
      */
     public function skipSerializingProperty(PropertyMetadata $property): bool
     {
-        return $property->getName() === 'email';
+        return true;
     }
 
     /**
-     * Returns true if the property should be skipped during deserialization
+     * Sets the serialization exclusion data
      *
-     * @param PropertyMetadata $property
-     * @return bool
+     * @param SerializationExclusionData $data
+     * @return void
      */
-    public function skipDeserializingProperty(PropertyMetadata $property): bool
+    public function setSerializationExclusionData(SerializationExclusionData $data): void
     {
-        return $property->getName() === 'email';
     }
 }

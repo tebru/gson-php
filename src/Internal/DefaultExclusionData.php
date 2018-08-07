@@ -14,6 +14,7 @@ use Tebru\Gson\ExclusionData;
  * Class DefaultExclusionData
  *
  * @author Nate Brunette <n@tebru.net>
+ * @deprecated
  */
 final class DefaultExclusionData implements ExclusionData
 {
@@ -47,6 +48,8 @@ final class DefaultExclusionData implements ExclusionData
      */
     public function __construct(bool $serialize, $data, $payload = null)
     {
+        @trigger_error('Gson: \Tebru\Gson\ExclusionData is deprecated since v0.6.0 and will be removed in v0.7.0. Use on of \Tebru\Gson\Exclusion\*ExclusionData instead.', E_USER_DEPRECATED);
+
         $this->serialize = $serialize;
         $this->data = $data;
         $this->payload = $payload;
@@ -56,9 +59,12 @@ final class DefaultExclusionData implements ExclusionData
      * Returns true if the data is available during serialization
      *
      * @return bool
+     * @deprecated
      */
     public function isSerialize(): bool
     {
+        @trigger_error('Gson: \Tebru\Gson\ExclusionData is deprecated since v0.6.0 and will be removed in v0.7.0. Use on of \Tebru\Gson\Exclusion\*ExclusionData instead.', E_USER_DEPRECATED);
+
         return $this->serialize;
     }
 
@@ -71,6 +77,8 @@ final class DefaultExclusionData implements ExclusionData
      */
     public function getData()
     {
+        @trigger_error('Gson: \Tebru\Gson\ExclusionData is deprecated since v0.6.0 and will be removed in v0.7.0. Use on of \Tebru\Gson\Exclusion\*ExclusionData instead.', E_USER_DEPRECATED);
+
         return $this->data;
     }
 
@@ -82,6 +90,8 @@ final class DefaultExclusionData implements ExclusionData
      */
     public function getDeserializePayload()
     {
+        @trigger_error('Gson: \Tebru\Gson\ExclusionData is deprecated since v0.6.0 and will be removed in v0.7.0. Use on of \Tebru\Gson\Exclusion\*ExclusionData instead.', E_USER_DEPRECATED);
+
         return $this->payload;
     }
 }
