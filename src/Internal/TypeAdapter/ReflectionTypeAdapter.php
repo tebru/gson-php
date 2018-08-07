@@ -279,7 +279,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             }
 
             $adapter = $this->adapters[$realName] ?? null;
-            if (!isset($this->adapters[$realName])) {
+            if ($adapter === null) {
                 /** @var JsonAdapter $jsonAdapterAnnotation */
                 $jsonAdapterAnnotation = $property->getAnnotations()->get(JsonAdapter::class);
                 $adapter = null === $jsonAdapterAnnotation

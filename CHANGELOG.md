@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+master
+------
+
+* Various performance improvements
+
 v0.5.9
 ------
 
