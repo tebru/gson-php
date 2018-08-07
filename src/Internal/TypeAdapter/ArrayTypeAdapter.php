@@ -176,7 +176,7 @@ final class ArrayTypeAdapter extends TypeAdapter
         }
 
         if ($this->numberOfGenerics > 2) {
-            throw new LogicException('Array may not have more than 2 generic types');
+            throw new LogicException(\sprintf('Array may not have more than 2 generic types at "%s"', $writer->getPath()));
         }
 
         $arrayIsObject = $this->isArrayObject($value, $this->numberOfGenerics);

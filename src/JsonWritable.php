@@ -97,6 +97,13 @@ interface JsonWritable
     public function writeNull(): JsonWritable;
 
     /**
+     * Get the current path
+     *
+     * @return string
+     */
+    public function getPath(): string;
+
+    /**
      * Sets whether nulls are serialized
      *
      * @param bool $serializeNull

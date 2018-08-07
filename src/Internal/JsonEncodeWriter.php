@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
-use LogicException;
 use stdClass;
 use Tebru\Gson\JsonWritable;
 
@@ -17,50 +16,8 @@ use Tebru\Gson\JsonWritable;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class JsonEncodeWriter implements JsonWritable
+final class JsonEncodeWriter extends JsonWriter
 {
-    /**
-     * True if we should serialize nulls
-     *
-     * @var bool
-     */
-    private $serializeNull = false;
-
-    /**
-     * Stack of values to be written
-     *
-     * @var array
-     */
-    private $stack = [];
-
-    /**
-     * Size of the stack array
-     *
-     * @var int
-     */
-    private $stackSize = 0;
-
-    /**
-     * A cache of the parsing state corresponding to the stack
-     *
-     * @var int[]
-     */
-    private $stackStates = [];
-
-    /**
-     * When serializing an object, store the name that should be serialized
-     *
-     * @var
-     */
-    private $pendingName;
-
-    /**
-     * The final result that will be json encoded
-     *
-     * @var mixed
-     */
-    private $result;
-    
     /**
      * Begin writing array
      *
@@ -70,7 +27,7 @@ final class JsonEncodeWriter implements JsonWritable
     public function beginArray(): JsonWritable
     {
         if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
-            throw new LogicException('Cannot call beginArray() before name() during object serialization');
+            $this->assertionFailed('Cannot call beginArray() before name() during object serialization');
         }
 
         $array = [];
@@ -78,6 +35,8 @@ final class JsonEncodeWriter implements JsonWritable
         $this->stack[$this->stackSize] = &$array;
         $this->stackStates[$this->stackSize] = self::STATE_ARRAY;
         $this->stackSize++;
+        $this->pathIndices[$this->pathIndex++]++;
+        $this->pathIndices[$this->pathIndex] = -1;
 
         return $this;
     }
@@ -91,11 +50,12 @@ final class JsonEncodeWriter implements JsonWritable
     public function endArray(): JsonWritable
     {
         if ($this->stackSize === 0 || $this->stackStates[$this->stackSize - 1] !== self::STATE_ARRAY) {
-            throw new LogicException('Cannot call endArray() if not serializing array');
+            $this->assertionFailed('Cannot call endArray() if not serializing array');
         }
 
         \array_pop($this->stack);
         $this->stackSize--;
+        $this->pathIndex--;
 
         return $this;
     }
@@ -109,7 +69,7 @@ final class JsonEncodeWriter implements JsonWritable
     public function beginObject(): JsonWritable
     {
         if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
-            throw new LogicException('Cannot call beginObject() before name() during object serialization');
+            $this->assertionFailed('Cannot call beginObject() before name() during object serialization');
         }
 
         $class = new stdClass();
@@ -117,6 +77,8 @@ final class JsonEncodeWriter implements JsonWritable
         $this->stack[$this->stackSize] = $class;
         $this->stackStates[$this->stackSize] = self::STATE_OBJECT_NAME;
         $this->stackSize++;
+        $this->pathIndices[$this->pathIndex++]++;
+        $this->pathIndices[$this->pathIndex] = -1;
 
         return $this;
     }
@@ -130,30 +92,12 @@ final class JsonEncodeWriter implements JsonWritable
     public function endObject(): JsonWritable
     {
         if ($this->stackSize === 0 || $this->stackStates[$this->stackSize - 1] !== self::STATE_OBJECT_NAME) {
-            throw new LogicException('Cannot call endObject() if not serializing object');
+            $this->assertionFailed('Cannot call endObject() if not serializing object');
         }
 
         \array_pop($this->stack);
         $this->stackSize--;
-
-        return $this;
-    }
-
-    /**
-     * Writes a property name
-     *
-     * @param string $name
-     * @return JsonWritable
-     * @throws \LogicException
-     */
-    public function name(string $name): JsonWritable
-    {
-        if ($this->stackStates[$this->stackSize - 1] !== self::STATE_OBJECT_NAME) {
-            throw new LogicException('Cannot call name() at this point.  Either name() has already been called or object serialization has not been started');
-        }
-
-        $this->pendingName = $name;
-        $this->stackStates[$this->stackSize - 1] = self::STATE_OBJECT_VALUE;
+        $this->pathNames[$this->pathIndex--] = null;
 
         return $this;
     }
@@ -168,8 +112,10 @@ final class JsonEncodeWriter implements JsonWritable
     public function writeInteger(int $value): JsonWritable
     {
         if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
-            throw new LogicException('Cannot call writeInteger() before name() during object serialization');
+            $this->assertionFailed('Cannot call writeInteger() before name() during object serialization');
         }
+
+        $this->pathIndices[$this->pathIndex]++;
 
         return $this->push($value);
     }
@@ -184,8 +130,10 @@ final class JsonEncodeWriter implements JsonWritable
     public function writeFloat(float $value): JsonWritable
     {
         if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
-            throw new LogicException('Cannot call writeFloat() before name() during object serialization');
+            $this->assertionFailed('Cannot call writeFloat() before name() during object serialization');
         }
+
+        $this->pathIndices[$this->pathIndex]++;
 
         return $this->push($value);
     }
@@ -200,8 +148,10 @@ final class JsonEncodeWriter implements JsonWritable
     public function writeString(string $value): JsonWritable
     {
         if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
-            throw new LogicException('Cannot call writeString() before name() during object serialization');
+            $this->assertionFailed('Cannot call writeString() before name() during object serialization');
         }
+
+        $this->pathIndices[$this->pathIndex]++;
 
         return $this->push($value);
     }
@@ -216,8 +166,10 @@ final class JsonEncodeWriter implements JsonWritable
     public function writeBoolean(bool $value): JsonWritable
     {
         if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
-            throw new LogicException('Cannot call writeBoolean() before name() during object serialization');
+            $this->assertionFailed('Cannot call writeBoolean() before name() during object serialization');
         }
+
+        $this->pathIndices[$this->pathIndex]++;
 
         return $this->push($value);
     }
@@ -233,10 +185,11 @@ final class JsonEncodeWriter implements JsonWritable
     public function writeNull(): JsonWritable
     {
         if ($this->stackSize > 0 && $this->stackStates[$this->stackSize - 1] === self::STATE_OBJECT_NAME) {
-            throw new LogicException('Cannot call writeNull() before name() during object serialization');
+            $this->assertionFailed('Cannot call writeNull() before name() during object serialization');
         }
 
         if ($this->serializeNull) {
+            $this->pathIndices[$this->pathIndex]++;
             $null = null;
             return $this->push($null);
         }
@@ -248,17 +201,6 @@ final class JsonEncodeWriter implements JsonWritable
         }
 
         return $this;
-    }
-
-    /**
-     * Sets whether nulls are serialized
-     *
-     * @param bool $serializeNull
-     * @return void
-     */
-    public function setSerializeNull(bool $serializeNull): void
-    {
-        $this->serializeNull = $serializeNull;
     }
 
     /**
@@ -282,7 +224,7 @@ final class JsonEncodeWriter implements JsonWritable
     {
         if (0 === $this->stackSize) {
             if (null !== $this->result) {
-                throw new LogicException('Attempting to write two different types');
+                $this->assertionFailed('Attempting to write two different types');
             }
 
             $this->result = &$value;
