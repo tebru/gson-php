@@ -15,13 +15,13 @@ use Tebru\Gson\Annotation\Type;
 use Tebru\PhpType\TypeToken;
 
 /**
- * Class PhpTypeFactory
+ * Class TypeToken
  *
- * Creates a [@see PhpType] for a property
+ * Creates a [@see TypeToken] for a property
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class PhpTypeFactory
+final class TypeTokenFactory
 {
     /**
      * Regex to get full class names from imported use statements
@@ -31,13 +31,14 @@ final class PhpTypeFactory
     /**
      * Attempts to guess a property type based method type hints, defaults to wildcard type
      *
-     * - Uses a @Type annotation if it exists
-     * - Uses setter typehint if it exists
-     * - Uses getter return type if it exists
-     * - Uses setter default value if it exists
-     * - Uses property docblock
-     * - Uses getter docblock
-     * - Uses setter docblock
+     * - @Type annotation if it exists
+     * - Getter return type if it exists
+     * - Setter typehint if it exists
+     * - Getter docblock
+     * - Setter docblock
+     * - Property docblock
+     * - Property default value if it exists
+     * - Setter default value if it exists
      * - Defaults to wildcard type
      *
      * @param AnnotationCollection $annotations
@@ -59,36 +60,16 @@ final class PhpTypeFactory
             return $typeAnnotation->getType();
         }
 
+        if (null !== $getterMethod && null !== $getterMethod->getReturnType()) {
+            $getterType = TypeToken::create((string)$getterMethod->getReturnType());
+            return $this->checkGenericArray($getterType, $property, $getterMethod, $setterMethod);
+        }
+
         if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
             $parameter = $setterMethod->getParameters()[0];
             if (null !== $parameter->getType()) {
-                return $this->checkGenericArray(
-                    TypeToken::create((string)$parameter->getType()),
-                    $property,
-                    $getterMethod,
-                    $setterMethod
-                );
-            }
-        }
-
-        if (null !== $getterMethod && null !== $getterMethod->getReturnType()) {
-            return $this->checkGenericArray(
-                TypeToken::create((string)$getterMethod->getReturnType()),
-                $property,
-                $getterMethod,
-                $setterMethod
-            );
-        }
-
-        if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
-            $parameter = $setterMethod->getParameters()[0];
-            if ($parameter->isDefaultValueAvailable() && null !== $parameter->getDefaultValue()) {
-                return $this->checkGenericArray(
-                    TypeToken::create(\gettype($parameter->getDefaultValue())),
-                    $property,
-                    $getterMethod,
-                    $setterMethod
-                );
+                $setterType = TypeToken::create((string)$parameter->getType());
+                return $this->checkGenericArray($setterType, $property, $getterMethod, $setterMethod);
             }
         }
 
@@ -100,6 +81,26 @@ final class PhpTypeFactory
                 $getterMethod,
                 $setterMethod
             );
+        }
+
+        if ($property !== null && $property->isDefault()) {
+            $defaultProperty = $property->getDeclaringClass()->getDefaultProperties()[$property->getName()];
+            if ($defaultProperty !== null) {
+                return $this->checkGenericArray(
+                    TypeToken::createFromVariable($defaultProperty),
+                    $property,
+                    $getterMethod,
+                    $setterMethod
+                );
+            }
+        }
+
+        if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
+            $parameter = $setterMethod->getParameters()[0];
+            if ($parameter->isDefaultValueAvailable() && null !== $parameter->getDefaultValue()) {
+                $setterType = TypeToken::create(\gettype($parameter->getDefaultValue()));
+                return $this->checkGenericArray($setterType, $property, $getterMethod, $setterMethod);
+            }
         }
 
         return TypeToken::create(TypeToken::WILDCARD);
@@ -123,14 +124,6 @@ final class PhpTypeFactory
         ?ReflectionMethod $getter,
         ?ReflectionMethod $setter
     ): ?TypeToken {
-        if ($property !== null) {
-            $type = $this->getType($property->getDocComment() ?: null, 'var');
-            if ($type !== null) {
-                $class = $property->getDeclaringClass();
-                return $this->getTypeToken($type, $class->getNamespaceName(), $class->getFileName());
-            }
-        }
-
         if ($getter !== null) {
             $type = $this->getType($getter->getDocComment() ?: null, 'return');
             if ($type !== null) {
@@ -147,6 +140,14 @@ final class PhpTypeFactory
                     $class = $setter->getDeclaringClass();
                     return $this->getTypeToken($type, $class->getNamespaceName(), $class->getFileName());
                 }
+            }
+        }
+
+        if ($property !== null) {
+            $type = $this->getType($property->getDocComment() ?: null, 'var');
+            if ($type !== null) {
+                $class = $property->getDeclaringClass();
+                return $this->getTypeToken($type, $class->getNamespaceName(), $class->getFileName());
             }
         }
 

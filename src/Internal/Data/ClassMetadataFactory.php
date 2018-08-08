@@ -21,7 +21,7 @@ use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
-use Tebru\Gson\Internal\PhpTypeFactory;
+use Tebru\Gson\Internal\TypeTokenFactory;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -60,7 +60,7 @@ final class ClassMetadataFactory
     private $accessorStrategyFactory;
 
     /**
-     * @var PhpTypeFactory
+     * @var TypeTokenFactory
      */
     private $phpTypeFactory;
 
@@ -82,7 +82,7 @@ final class ClassMetadataFactory
      * @param PropertyNamer $propertyNamer
      * @param AccessorMethodProvider $accessorMethodProvider
      * @param AccessorStrategyFactory $accessorStrategyFactory
-     * @param PhpTypeFactory $phpTypeFactory
+     * @param TypeTokenFactory $phpTypeFactory
      * @param Excluder $excluder
      * @param CacheInterface $cache
      */
@@ -92,7 +92,7 @@ final class ClassMetadataFactory
         PropertyNamer $propertyNamer,
         AccessorMethodProvider $accessorMethodProvider,
         AccessorStrategyFactory $accessorStrategyFactory,
-        PhpTypeFactory $phpTypeFactory,
+        TypeTokenFactory $phpTypeFactory,
         Excluder $excluder,
         CacheInterface $cache
     ) {

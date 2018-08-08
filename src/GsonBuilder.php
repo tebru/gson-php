@@ -34,7 +34,6 @@ use Tebru\Gson\Internal\ExclusionStrategyAdapter;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
-use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
@@ -48,6 +47,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\Internal\TypeTokenFactory;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -483,7 +483,7 @@ class GsonBuilder
             new PropertyNamer($propertyNamingStrategy),
             new AccessorMethodProvider($methodNamingStrategy),
             new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
+            new TypeTokenFactory(),
             $excluder,
             $this->cache
         );

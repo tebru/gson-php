@@ -35,6 +35,8 @@ class ChildClass extends ChildClassParent
 
     private $withTypehint;
 
+    private $default = 1;
+
     public function getBaz()
     {
         return $this->baz;

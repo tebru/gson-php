@@ -139,6 +139,16 @@ class DocblockMock
     private $noTypes;
 
     /**
+     * @var ArrayObject
+     */
+    private $differentGetter;
+
+    /**
+     * @var ArrayObject
+     */
+    private $differentSetter;
+
+    /**
      * @return int
      */
     public function getFoo()
@@ -151,5 +161,21 @@ class DocblockMock
      */
     public function setFoo($var): void
     {
+    }
+
+    /**
+     * @return DocblockFoo[]
+     */
+    public function getDifferentGetter(): array
+    {
+        return $this->differentGetter->getArrayCopy();
+    }
+
+    /**
+     * @param DocblockFoo[] $foos
+     */
+    public function setDifferentSetter(array $foos): void
+    {
+        $this->differentSetter = $foos;
     }
 }
