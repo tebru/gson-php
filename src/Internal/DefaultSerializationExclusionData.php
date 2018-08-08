@@ -18,13 +18,16 @@ use Tebru\Gson\JsonWritable;
  */
 class DefaultSerializationExclusionData implements SerializationExclusionData
 {
-
     /**
+     * The object that's currently being serialized
+     *
      * @var object
      */
     private $objectToSerialize;
 
     /**
+     * Instance of the current writer
+     *
      * @var JsonWritable
      */
     private $writer;
