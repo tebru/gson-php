@@ -110,8 +110,7 @@ composer require tebru/gson-php
 Be sure and set up the annotation loader in one of your initial scripts.
 
 ```
-use Doctrine\Common\Annotations\AnnotationRegistry;
-AnnotationRegistry::registerLoader('class_exists');
+\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
 ```
 
 License
