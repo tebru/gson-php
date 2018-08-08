@@ -8,12 +8,10 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
-use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\Data\PropertyCollectionFactory;
-use Tebru\Gson\Internal\DefaultClassMetadata;
+use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -34,14 +32,9 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
     private $constructorConstructor;
 
     /**
-     * @var PropertyCollectionFactory
+     * @var ClassMetadataFactory
      */
-    private $propertyCollectionFactory;
-
-    /**
-     * @var AnnotationReaderAdapter
-     */
-    private $annotationReader;
+    private $classMetadataFactory;
 
     /**
      * @var Excluder
@@ -52,19 +45,16 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      * Constructor
      *
      * @param ConstructorConstructor $constructorConstructor
-     * @param PropertyCollectionFactory $propertyCollectionFactory
-     * @param AnnotationReaderAdapter $annotationReader
+     * @param ClassMetadataFactory $propertyCollectionFactory
      * @param Excluder $excluder
      */
     public function __construct(
         ConstructorConstructor $constructorConstructor,
-        PropertyCollectionFactory $propertyCollectionFactory,
-        AnnotationReaderAdapter $annotationReader,
+        ClassMetadataFactory $propertyCollectionFactory,
         Excluder $excluder
     ) {
         $this->constructorConstructor = $constructorConstructor;
-        $this->propertyCollectionFactory = $propertyCollectionFactory;
-        $this->annotationReader = $annotationReader;
+        $this->classMetadataFactory = $propertyCollectionFactory;
         $this->excluder = $excluder;
     }
 
@@ -93,33 +83,24 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
     {
-        $class = $type->getRawType();
-        $classAnnotations = $this->annotationReader->readClass($class, true);
+        $classMetadata = $this->classMetadataFactory->create($type);
 
         // if class uses a JsonAdapter annotation, use that instead
         /** @var JsonAdapter $jsonAdapterAnnotation */
-        $jsonAdapterAnnotation = $classAnnotations->get(JsonAdapter::class);
+        $jsonAdapterAnnotation = $classMetadata->getAnnotation(JsonAdapter::class);
         if ($jsonAdapterAnnotation !== null) {
             return $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation);
         }
 
-        $classMetadata = new DefaultClassMetadata($class, $classAnnotations);
-        $properties = $this->propertyCollectionFactory->create($type, $classMetadata);
         $objectConstructor = $this->constructorConstructor->get($type);
         $classVirtualProperty = $classMetadata->getAnnotation(VirtualProperty::class);
 
-        $skipSerialize = $this->excluder->excludeClass($classMetadata, true);
-        $skipDeserialize = $this->excluder->excludeClass($classMetadata, false);
-
         return new ReflectionTypeAdapter(
             $objectConstructor,
-            $properties,
             $classMetadata,
             $this->excluder,
             $typeAdapterProvider,
-            $classVirtualProperty ? $classVirtualProperty->getValue() : null,
-            $skipSerialize,
-            $skipDeserialize
+            $classVirtualProperty ? $classVirtualProperty->getValue() : null
         );
     }
 }

@@ -17,6 +17,8 @@ use Tebru\Gson\Gson;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\PropertyNamingPolicy;
 use Tebru\Gson\Test\Mock\ChildClass;
+use Tebru\Gson\Test\Mock\ExclusionStrategies\CacheableDataAwareExclusionStrategy;
+use Tebru\Gson\Test\Mock\ExclusionStrategies\CacheableGsonMockExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\GsonMockExclusionStrategyMock;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
 use Tebru\Gson\Test\Mock\GsonMock;
@@ -38,6 +40,7 @@ use Tebru\Gson\Test\Mock\TypeAdapter\Integer1TypeAdapterFactory;
  * @covers \Tebru\Gson\Internal\ObjectConstructorAwareTrait
  * @covers \Tebru\Gson\Gson
  * @covers \Tebru\Gson\GsonBuilder
+ * @covers \Tebru\Gson\Internal\ExclusionStrategyAdapter
  */
 class GsonTest extends PHPUnit_Framework_TestCase
 {
@@ -414,6 +417,46 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertNull($gsonMock->getExclude());
         self::assertNull($gsonMock->getExcludeFromStrategy());
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
+    }
+
+    public function testDeserializeWithCachedExclusionStrategy()
+    {
+        $gson = Gson::builder()
+            ->addExclusion(new CacheableGsonMockExclusionStrategy())
+            ->build();
+
+        /** @var GsonMock $gsonMock */
+        $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
+
+        self::assertSame(1, $gsonMock->getInteger());
+        self::assertSame(3.2, $gsonMock->getFloat());
+        self::assertSame('foo', $gsonMock->getString());
+        self::assertFalse($gsonMock->getBoolean());
+        self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
+        self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
+        self::assertSame('public', $gsonMock->public);
+        self::assertAttributeSame('protected', 'protected', $gsonMock);
+        self::assertSame('since', $gsonMock->getSince());
+        self::assertSame('until', $gsonMock->getUntil());
+        self::assertSame('accessor', $gsonMock->getMyAccessor());
+        self::assertSame('serializedname', $gsonMock->getSerializedname());
+        self::assertSame([1, 2, 3], $gsonMock->getType());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getJsonAdapter());
+        self::assertFalse($gsonMock->getExpose());
+        self::assertNull($gsonMock->getExclude());
+        self::assertNull($gsonMock->getExcludeFromStrategy());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
+    }
+
+    public function testCachedDataAwareExclusionStrategy()
+    {
+        try {
+            Gson::builder()->addExclusion(new CacheableDataAwareExclusionStrategy());
+        } catch (LogicException $exception) {
+            self::assertSame('Gson: Cacheable exclusion strategies must not implement *DataAware interfaces', $exception->getMessage());
+            return;
+        }
+        self::fail('Exception not thrown');
     }
 
     public function testDeserializeWithPropertyNamingPolicy()

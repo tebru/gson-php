@@ -137,8 +137,6 @@ final class Property implements PropertyMetadata
         $this->modifiers = $modifiers;
         $this->virtual = $virtual;
         $this->classMetadata = $classMetadata;
-
-        $classMetadata->addPropertyMetadata($this);
     }
 
     /**

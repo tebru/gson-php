@@ -15,8 +15,15 @@ use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Annotation\Until;
 use Tebru\Gson\ClassMetadata;
-use Tebru\Gson\ExclusionData;
-use Tebru\Gson\ExclusionStrategy;
+use Tebru\Gson\Exclusion\ClassDeserializationExclusionStrategy;
+use Tebru\Gson\Exclusion\ClassSerializationExclusionStrategy;
+use Tebru\Gson\Exclusion\DeserializationExclusionData;
+use Tebru\Gson\Exclusion\DeserializationExclusionDataAware;
+use Tebru\Gson\Exclusion\ExclusionStrategy;
+use Tebru\Gson\Exclusion\PropertyDeserializationExclusionStrategy;
+use Tebru\Gson\Exclusion\PropertySerializationExclusionStrategy;
+use Tebru\Gson\Exclusion\SerializationExclusionData;
+use Tebru\Gson\Exclusion\SerializationExclusionDataAware;
 use Tebru\Gson\PropertyMetadata;
 
 /**
@@ -51,18 +58,39 @@ final class Excluder
     private $requireExpose = false;
 
     /**
-     * Exclusions strategies during serialization
+     * Class Exclusion strategies during serialization
      *
-     * @var ExclusionStrategy[]
+     * @var ClassSerializationExclusionStrategy[]
      */
-    private $serializationStrategies = [];
+    private $classSerializationStrategies = [];
 
     /**
-     * Exclusion strategies during deserialization
+     * Property Exclusion strategies during serialization
+     *
+     * @var PropertySerializationExclusionStrategy[]
+     */
+    private $propertySerializationStrategies = [];
+
+    /**
+     * Class Exclusion strategies during deserialization
+     *
+     * @var ClassDeserializationExclusionStrategy[]
+     */
+    private $classDeserializationStrategies = [];
+
+    /**
+     * Property Exclusion strategies during deserialization
+     *
+     * @var PropertyDeserializationExclusionStrategy[]
+     */
+    private $propertyDeserializationStrategies = [];
+
+    /**
+     * Exclusion strategies that can be cached
      *
      * @var ExclusionStrategy[]
      */
-    private $deserializationStrategies = [];
+    private $cachedStrategies = [];
 
 
     /**
@@ -105,34 +133,128 @@ final class Excluder
     }
 
     /**
-     * Add an exclusion strategy and specify if it should be used during serialization or deserialization
+     * Add an exclusion strategy
      *
      * @param ExclusionStrategy $strategy
-     * @param bool $serialization
-     * @param bool $deserialization
      * @return void
      */
-    public function addExclusionStrategy(ExclusionStrategy $strategy, bool $serialization, bool $deserialization): void
+    public function addExclusionStrategy(ExclusionStrategy $strategy): void
     {
-        if ($serialization) {
-            $this->serializationStrategies[] = $strategy;
+        if ($strategy instanceof ClassSerializationExclusionStrategy) {
+            $this->classSerializationStrategies[] = $strategy;
         }
 
-        if ($deserialization) {
-            $this->deserializationStrategies[] = $strategy;
+        if ($strategy instanceof PropertySerializationExclusionStrategy) {
+            $this->propertySerializationStrategies[] = $strategy;
+        }
+
+        if ($strategy instanceof ClassDeserializationExclusionStrategy) {
+            $this->classDeserializationStrategies[] = $strategy;
+        }
+
+        if ($strategy instanceof PropertyDeserializationExclusionStrategy) {
+            $this->propertyDeserializationStrategies[] = $strategy;
         }
     }
 
     /**
-     * Compile time exclusion checking of classes
+     * Add an exclusion strategy that can be cached
+     *
+     * @param ExclusionStrategy $strategy
+     */
+    public function addCachedExclusionStrategy(ExclusionStrategy $strategy): void
+    {
+        $this->cachedStrategies[] = $strategy;
+    }
+
+    /**
+     * Compile time exclusion checking of classes to determine if we should exclude during serialization
      *
      * @param ClassMetadata $classMetadata
-     * @param bool $serialize
      * @return bool
      */
-    public function excludeClass(ClassMetadata $classMetadata, bool $serialize): bool
+    public function excludeClassSerialize(ClassMetadata $classMetadata): bool
     {
-        return $this->excludeByAnnotation($classMetadata->getAnnotations(), $serialize);
+        foreach ($this->cachedStrategies as $strategy) {
+            if ($strategy instanceof ClassSerializationExclusionStrategy && $strategy->skipSerializingClass($classMetadata)) {
+                return true;
+            }
+        }
+
+        return $this->excludeByAnnotation($classMetadata->getAnnotations(), true);
+    }
+
+    /**
+     * Compile time exclusion checking of classes to determine if we should exclude during deserialization
+     *
+     * @param ClassMetadata $classMetadata
+     * @return bool
+     */
+    public function excludeClassDeserialize(ClassMetadata $classMetadata): bool
+    {
+        foreach ($this->cachedStrategies as $strategy) {
+            if ($strategy instanceof ClassDeserializationExclusionStrategy && $strategy->skipDeserializingClass($classMetadata)) {
+                return true;
+            }
+        }
+
+        return $this->excludeByAnnotation($classMetadata->getAnnotations(), false);
+    }
+
+    /**
+     * Add [@see SerializationExclusionData] to class exclusion strategies
+     *
+     * @param SerializationExclusionData $exclusionData
+     */
+    public function applyClassSerializationExclusionData(SerializationExclusionData $exclusionData): void
+    {
+        foreach ($this->classSerializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy instanceof SerializationExclusionDataAware) {
+                $exclusionStrategy->setSerializationExclusionData($exclusionData);
+            }
+        }
+    }
+
+    /**
+     * Add [@see SerializationExclusionData] to property exclusion strategies
+     *
+     * @param SerializationExclusionData $exclusionData
+     */
+    public function applyPropertySerializationExclusionData(SerializationExclusionData $exclusionData): void
+    {
+        foreach ($this->propertySerializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy instanceof SerializationExclusionDataAware) {
+                $exclusionStrategy->setSerializationExclusionData($exclusionData);
+            }
+        }
+    }
+
+    /**
+     * Add [@see SerializationExclusionData] to class deserialization strategies
+     *
+     * @param DeserializationExclusionData $exclusionData
+     */
+    public function applyClassDeserializationExclusionData(DeserializationExclusionData $exclusionData): void
+    {
+        foreach ($this->classDeserializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy instanceof DeserializationExclusionDataAware) {
+                $exclusionStrategy->setDeserializationExclusionData($exclusionData);
+            }
+        }
+    }
+
+    /**
+     * Add [@see SerializationExclusionData] to property deserialization strategies
+     *
+     * @param DeserializationExclusionData $exclusionData
+     */
+    public function applyPropertyDeserializationExclusionData(DeserializationExclusionData $exclusionData): void
+    {
+        foreach ($this->propertyDeserializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy instanceof DeserializationExclusionDataAware) {
+                $exclusionStrategy->setDeserializationExclusionData($exclusionData);
+            }
+        }
     }
 
     /**
@@ -141,13 +263,12 @@ final class Excluder
      * Uses user-defined strategies
      *
      * @param ClassMetadata $classMetadata
-     * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function excludeClassBySerializationStrategy(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
+    public function excludeClassBySerializationStrategy(ClassMetadata $classMetadata): bool
     {
-        foreach ($this->serializationStrategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipClass($classMetadata, $exclusionData)) {
+        foreach ($this->classSerializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy->skipSerializingClass($classMetadata)) {
                 return true;
             }
         }
@@ -161,13 +282,12 @@ final class Excluder
      * Uses user-defined strategies
      *
      * @param ClassMetadata $classMetadata
-     * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function excludeClassByDeserializationStrategy(ClassMetadata $classMetadata, ExclusionData $exclusionData): bool
+    public function excludeClassByDeserializationStrategy(ClassMetadata $classMetadata): bool
     {
-        foreach ($this->deserializationStrategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipClass($classMetadata, $exclusionData)) {
+        foreach ($this->classDeserializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy->skipDeserializingClass($classMetadata)) {
                 return true;
             }
         }
@@ -179,17 +299,44 @@ final class Excluder
      * Compile time exclusion checking of properties
      *
      * @param PropertyMetadata $propertyMetadata
-     * @param bool $serialize
      * @return bool
      */
-    public function excludeProperty(PropertyMetadata $propertyMetadata, bool $serialize): bool
+    public function excludePropertySerialize(PropertyMetadata $propertyMetadata): bool
     {
         // exclude the property if the property modifiers are found in the excluded modifiers
         if (0 !== ($this->excludedModifiers & $propertyMetadata->getModifiers())) {
             return true;
         }
 
-        return $this->excludeByAnnotation($propertyMetadata->getAnnotations(), $serialize);
+        foreach ($this->cachedStrategies as $strategy) {
+            if ($strategy instanceof PropertySerializationExclusionStrategy && $strategy->skipSerializingProperty($propertyMetadata)) {
+                return true;
+            }
+        }
+
+        return $this->excludeByAnnotation($propertyMetadata->getAnnotations(), true);
+    }
+
+    /**
+     * Compile time exclusion checking of properties
+     *
+     * @param PropertyMetadata $propertyMetadata
+     * @return bool
+     */
+    public function excludePropertyDeserialize(PropertyMetadata $propertyMetadata): bool
+    {
+        // exclude the property if the property modifiers are found in the excluded modifiers
+        if (0 !== ($this->excludedModifiers & $propertyMetadata->getModifiers())) {
+            return true;
+        }
+
+        foreach ($this->cachedStrategies as $strategy) {
+            if ($strategy instanceof PropertyDeserializationExclusionStrategy && $strategy->skipDeserializingProperty($propertyMetadata)) {
+                return true;
+            }
+        }
+
+        return $this->excludeByAnnotation($propertyMetadata->getAnnotations(), false);
     }
 
     /**
@@ -198,13 +345,12 @@ final class Excluder
      * Uses user-defined strategies
      *
      * @param PropertyMetadata $property
-     * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function excludePropertyBySerializationStrategy(PropertyMetadata $property, ExclusionData $exclusionData): bool
+    public function excludePropertyBySerializationStrategy(PropertyMetadata $property): bool
     {
-        foreach ($this->serializationStrategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipProperty($property, $exclusionData)) {
+        foreach ($this->propertySerializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy->skipSerializingProperty($property)) {
                 return true;
             }
         }
@@ -218,13 +364,12 @@ final class Excluder
      * Uses user-defined strategies
      *
      * @param PropertyMetadata $property
-     * @param ExclusionData $exclusionData
      * @return bool
      */
-    public function excludePropertyByDeserializationStrategy(PropertyMetadata $property, ExclusionData $exclusionData): bool
+    public function excludePropertyByDeserializationStrategy(PropertyMetadata $property): bool
     {
-        foreach ($this->deserializationStrategies as $exclusionStrategy) {
-            if ($exclusionStrategy->shouldSkipProperty($property, $exclusionData)) {
+        foreach ($this->propertyDeserializationStrategies as $exclusionStrategy) {
+            if ($exclusionStrategy->skipDeserializingProperty($property)) {
                 return true;
             }
         }
@@ -233,23 +378,43 @@ final class Excluder
     }
 
     /**
-     * Returns true if serialization strategies exist
+     * Returns true if class serialization strategies exist
      *
      * @return bool
      */
-    public function hasSerializationStrategies(): bool
+    public function hasClassSerializationStrategies(): bool
     {
-        return $this->serializationStrategies !== [];
+        return $this->classSerializationStrategies !== [];
     }
 
     /**
-     * Returns true if deserialization strategies exist
+     * Returns true if property serialization strategies exist
      *
      * @return bool
      */
-    public function hasDeserializationStrategies(): bool
+    public function hasPropertySerializationStrategies(): bool
     {
-        return $this->deserializationStrategies !== [];
+        return $this->propertySerializationStrategies !== [];
+    }
+
+    /**
+     * Returns true if class deserialization strategies exist
+     *
+     * @return bool
+     */
+    public function hasClassDeserializationStrategies(): bool
+    {
+        return $this->classDeserializationStrategies !== [];
+    }
+
+    /**
+     * Returns true if property deserialization strategies exist
+     *
+     * @return bool
+     */
+    public function hasPropertyDeserializationStrategies(): bool
+    {
+        return $this->propertyDeserializationStrategies !== [];
     }
 
     /**

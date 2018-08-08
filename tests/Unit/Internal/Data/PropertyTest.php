@@ -10,6 +10,7 @@ use PHPUnit_Framework_TestCase;
 use stdClass;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\VirtualProperty;
+use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\AccessorStrategy\GetByClosure;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
@@ -17,6 +18,7 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByClosure;
 use Tebru\Gson\Internal\AccessorStrategy\SetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\Data\Property;
+use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ChildClassParent;
 use Tebru\Gson\Test\MockProvider;
@@ -30,6 +32,22 @@ use Tebru\PhpType\TypeToken;
  */
 class PropertyTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var PropertyCollection
+     */
+    private $propertyCollection;
+
+    /**
+     * @var ClassMetadata
+     */
+    private $classMetadata;
+
+    public function setUp()
+    {
+        $this->propertyCollection = new PropertyCollection();
+        $this->classMetadata = MockProvider::classMetadata(stdClass::class, $this->propertyCollection);
+    }
+
     public function testGetters()
     {
         $realName = 'foo';
@@ -47,13 +65,15 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $annotations,
             0,
             false,
-            MockProvider::classMetadata(stdClass::class)
+            $this->classMetadata
         );
+        $this->propertyCollection->add($property);
 
         self::assertSame($realName, $property->getName());
         self::assertSame($serializedName, $property->getSerializedName());
         self::assertSame($type, $property->getType());
         self::assertSame(stdClass::class, $property->getTypeName());
+        self::assertSame($this->classMetadata, $property->getDeclaringClassMetadata());
         self::assertSame(stdClass::class, $property->getDeclaringClassName());
         self::assertSame(0, $property->getModifiers());
         self::assertSame($annotations, $property->getAnnotations());
@@ -79,8 +99,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             $annotations,
             0,
             false,
-            MockProvider::classMetadata(stdClass::class)
+            $this->classMetadata
         );
+        $this->propertyCollection->add($property);
 
         $property->setSkipSerialize(true);
         $property->setSkipDeserialize(true);
@@ -105,8 +126,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new AnnotationCollection(),
             0,
             false,
-            MockProvider::classMetadata(stdClass::class)
+            $this->classMetadata
         );
+        $this->propertyCollection->add($property);
 
         $property->set($mock, 'bar');
         self::assertSame('bar', $property->get($mock));
@@ -128,8 +150,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new AnnotationCollection(),
             0,
             false,
-            MockProvider::classMetadata(stdClass::class)
+            $this->classMetadata
         );
+        $this->propertyCollection->add($property);
 
         $property->set($mock, 'bar');
         self::assertSame('bar', $property->get($mock));
@@ -151,8 +174,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new AnnotationCollection(),
             0,
             false,
-            MockProvider::classMetadata(stdClass::class)
+            $this->classMetadata
         );
+        $this->propertyCollection->add($property);
 
         $property->set($mock, 'bar');
         self::assertSame('bar', $property->get($mock));
@@ -176,8 +200,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new AnnotationCollection(),
             0,
             false,
-            MockProvider::classMetadata(stdClass::class)
+            $this->classMetadata
         );
+        $this->propertyCollection->add($property);
 
         $property->set($mock, 'bar');
         self::assertSame('bar', $property->get($mock));
@@ -201,8 +226,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new AnnotationCollection(),
             0,
             false,
-            MockProvider::classMetadata(stdClass::class)
+            $this->classMetadata
         );
+        $this->propertyCollection->add($property);
 
         $property->set($mock, 'bar');
         self::assertSame('bar', $property->get($mock));
@@ -224,8 +250,9 @@ class PropertyTest extends PHPUnit_Framework_TestCase
             new AnnotationCollection(),
             0,
             false,
-            MockProvider::classMetadata(stdClass::class)
+            $this->classMetadata
         );
+        $this->propertyCollection->add($property);
 
         $property->set($mock, null);
         self::assertNull($property->get($mock));

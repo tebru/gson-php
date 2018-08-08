@@ -18,10 +18,10 @@ use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\SetByNull;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
+use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\PhpTypeFactory;
-use Tebru\Gson\PropertyMetadata;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -32,7 +32,7 @@ use Tebru\PhpType\TypeToken;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class PropertyCollectionFactory
+final class ClassMetadataFactory
 {
     /**
      * @var ReflectionPropertySetFactory
@@ -107,25 +107,26 @@ final class PropertyCollectionFactory
     }
 
     /**
-     * Create a [@see PropertyCollection] based on the properties of the provided type
+     * Create a new [@see ClassMetadata] with properties of the provided type
      *
      * @param TypeToken $phpType
-     * @param ClassMetadata $classMetadata
-     * @return PropertyCollection
+     * @return DefaultClassMetadata
      */
-    public function create(TypeToken $phpType, ClassMetadata $classMetadata): PropertyCollection
+    public function create(TypeToken $phpType): DefaultClassMetadata
     {
         $class = $phpType->getRawType();
-        $key = 'gson.properties.'.\str_replace('\\', '', $class);
+        $key = 'gson.classmetadata.'.\str_replace('\\', '', $class);
 
         $data = $this->cache->get($key);
         if ($data !== null) {
             return $data;
         }
 
+        $properties = new PropertyCollection();
+        $classMetadata = new DefaultClassMetadata($class, $this->annotationReader->readClass($class, true), $properties);
+
         $reflectionClass = new ReflectionClass($class);
         $reflectionProperties = $this->reflectionPropertySetFactory->create($reflectionClass);
-        $properties = new PropertyCollection();
 
         /** @var ReflectionProperty $reflectionProperty */
         foreach ($reflectionProperties as $reflectionProperty) {
@@ -155,8 +156,8 @@ final class PropertyCollectionFactory
                 $classMetadata
             );
 
-            $skipSerialize = $this->excludeProperty($property, true);
-            $skipDeserialize = $this->excludeProperty($property, false);
+            $skipSerialize = $this->excluder->excludePropertySerialize($property);
+            $skipDeserialize = $this->excluder->excludePropertyDeserialize($property);
 
             // if we're skipping serialization and deserialization, we don't need
             // to add the property to the collection
@@ -199,8 +200,8 @@ final class PropertyCollectionFactory
                 $classMetadata
             );
 
-            $skipSerialize = $this->excludeProperty($property, true);
-            $skipDeserialize = $this->excludeProperty($property, false);
+            $skipSerialize = $this->excluder->excludePropertySerialize($property);
+            $skipDeserialize = $this->excluder->excludePropertyDeserialize($property);
 
             // if we're skipping serialization and deserialization, we don't need
             // to add the property to the collection
@@ -214,25 +215,11 @@ final class PropertyCollectionFactory
             $properties->add($property);
         }
 
-        $this->cache->set($key, $properties);
+        $classMetadata->setSkipSerialize($this->excluder->excludeClassSerialize($classMetadata));
+        $classMetadata->setSkipDeserialize($this->excluder->excludeClassDeserialize($classMetadata));
 
-        return $properties;
-    }
+        $this->cache->set($key, $classMetadata);
 
-    /**
-     * Returns true if we should skip this property
-     *
-     * Asks the excluder if we should skip the property or class
-     *
-     * @param PropertyMetadata $propertyMetadata
-     * @param bool $serialize
-     * @return bool
-     */
-    private function excludeProperty(PropertyMetadata $propertyMetadata, bool $serialize): bool
-    {
-        $excludeClass = $this->excluder->excludeClass($propertyMetadata->getDeclaringClassMetadata(), $serialize);
-        $excludeProperty = $this->excluder->excludeProperty($propertyMetadata, $serialize);
-
-        return $excludeClass || $excludeProperty;
+        return $classMetadata;
     }
 }

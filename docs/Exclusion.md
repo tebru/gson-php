@@ -7,41 +7,92 @@ by excluding classes or properties on classes.
 Custom Exclusion Strategy
 -------------------------
 
-The primary way that this can be controlled is by creating a custom
-`ExclusionStrategy`.  There are two methods that need to be implemented
-on this interface.
+There are four primary interfaces for controlling if something should
+be excluded:
 
-* `shouldSkipClass` - Return true if the entire class should be skipped
-* `shouldSkipProperty` - Return true if a single property should be skipped
+* ClassSerializationExclusionStrategy
+* PropertySerializationExclusionStrategy
+* ClassDeserializationExclusionStrategy
+* PropertyDeserializationExclusionStrategy
+
+Each of these interfaces have one method that returns `true` if the
+class or property should be excluded during serialization or
+deserialization, depending on which interface you're implementing. One
+strategy can implement multiple interfaces. Each method will also
+receive metadata about the class or property to help you make the
+decision.
+
+For example, if you wanted to exclude a property from being serialized
 
 ```php
-class FooExclusionStrategy implements ExclusionStrategy
+class FooExclusionStrategy implements PropertySerializationExclusionStrategy
 {
-    public function shouldSkipClass(ClassMetadata $classMetadata): bool
+    public function skipSerializingProperty(PropertyMetadata $property): bool
     {
-        return Foo::class === $classMetadata->getName();
+        return $property->getName() === 'foo';
     }
 
-    public function shouldSkipProperty(PropertyMetadata $propertyMetadata, ExclusionData $exclusionData): bool
+    public function shouldCache(): bool
     {
-        return Foo2::class === $propertyMetadata->getDeclaringClassMetadata->getName()
-            && 'bar' === $propertyMetadata->getName();
+        return false;
     }
 }
 ```
 
-The `ExclusionData` parameter allows you to make runtime exclusion
-decisions based on data available during serialization or deserialization.
-The `getData()` method will always return an object. This object will
-be fully hydrated during serialization, but will likely be empty or
-partially hydrated during deserialization unless a hydrated object was
-provided when calling `Gson::fromJson()`.
+Or a class from being deserialized
 
-During deserialization, the `getDeserializePayload()`
-method will return the data that has been `json_decode`'d. During
-serialization, this method will return null. Additionally, there is a
-method `isSerialize()` to check if the exclusion strategy is being
-executed during serialization or deserialization.
+```php
+class FooExclusionStrategy implements ClassDeserializationExclusionStrategy
+{
+    public function skipDeserializingClass(ClassMetadata $class): bool
+    {
+        return $class->getName() === Foo::class;
+    }
+
+    public function shouldCache(): bool
+    {
+        return false;
+    }
+}
+```
+
+Exclusion strategies implement `Cacheable`, which allows the results
+to be cached between requests. This means that if you always want to
+exclude a class or property, return true from `shouldCache`. If your
+strategy may return different results depending on request data or the
+authenticated user, return false here.
+
+Additionally, strategies may implement `SerializationExclusionDataAware`
+or `DeserializationExclusionDataAware`. This will pass along
+`SerializationExclusionData` or `DeserializationExclusionData` at
+runtime, and will give you access to the payload, object that's being
+serialized, and other contextual information like the current path. This
+is not compatible with a cacheable strategy.
+
+```php
+class FooExclusionStrategy implements
+    PropertySerializationExclusionStrategy,
+    SerialzationExclusionDataAware
+{
+    private $serializationData;
+
+    public function skipSerializingProperty(PropertyMetadata $property): bool
+    {
+        return $property->getName() === 'foo'
+            && $this-serializationData->getObjectToSerialize()->getFoo() !== 5;
+    }
+
+    public function shouldCache(): bool
+    {
+        return false;
+    }
+
+    public function setSerializationExclusionData(SerializationExclusionData $data): void
+    {
+        $this->serializationData = $data;
+    }
+}
+```
 
 Options on the Builder
 ----------------------

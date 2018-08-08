@@ -192,7 +192,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeExcludeClass()
     {
-        $this->excluder->addExclusionStrategy(new UserMockExclusionStrategy(), false, true);
+        $this->excluder->addExclusionStrategy(new UserMockExclusionStrategy());
 
         /** @var ReflectionTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
@@ -220,7 +220,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testDeserializeExcludeEmail()
     {
-        $this->excluder->addExclusionStrategy(new UserEmailExclusionStrategy(), false, true);
+        $this->excluder->addExclusionStrategy(new UserEmailExclusionStrategy());
 
         /** @var ReflectionTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
@@ -338,7 +338,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
 
     public function testSerializeExcludeClass()
     {
-        $this->excluder->addExclusionStrategy(new UserMockExclusionStrategy(), true, false);
+        $this->excluder->addExclusionStrategy(new UserMockExclusionStrategy());
 
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
@@ -359,6 +359,43 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         $user->setAddress($address);
 
         self::assertSame('null', $adapter->writeToJson($user, false));
+    }
+
+    public function testSerializeExcludeProperty()
+    {
+        $this->excluder->addExclusionStrategy(new UserEmailExclusionStrategy());
+
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
+
+        $user = new UserMock();
+        $user->setId(1);
+        $user->setEmail('test@example.com');
+        $user->setPassword('password1');
+        $user->setName('John Doe');
+        $user->setPhone('(123) 456-7890');
+        $user->setEnabled(true);
+
+        $address = new AddressMock();
+        $address->setStreet('123 ABC St');
+        $address->setCity('Foo');
+        $address->setState('MN');
+        $address->setZip(12345);
+
+        $user->setAddress($address);
+
+        $expectedJson = '{
+            "id": 1,
+            "name": "John Doe",
+            "address": {
+                "street": "123 ABC St",
+                "city": "Foo",
+                "state": "MN",
+                "zip": 12345
+            },
+            "phone": "(123) 456-7890"
+        }';
+
+        self::assertJsonStringEqualsJsonString($expectedJson, $adapter->writeToJson($user, false));
     }
 
     public function testSerializeVirtual()

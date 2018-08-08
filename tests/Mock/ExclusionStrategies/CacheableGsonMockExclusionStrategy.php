@@ -4,18 +4,21 @@
  * Distributed under the MIT License (http://opensource.org/licenses/MIT)
  */
 
+declare(strict_types=1);
+
 namespace Tebru\Gson\Test\Mock\ExclusionStrategies;
 
 use Tebru\Gson\Exclusion\PropertyDeserializationExclusionStrategy;
 use Tebru\Gson\Exclusion\PropertySerializationExclusionStrategy;
 use Tebru\Gson\PropertyMetadata;
+use Tebru\Gson\Test\Mock\GsonMock;
 
 /**
- * Class FooPropertyExclusionStrategy
+ * Class CacheableGsonMockExclusionStrategy
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class FooPropertyExclusionStrategy implements PropertySerializationExclusionStrategy, PropertyDeserializationExclusionStrategy
+class CacheableGsonMockExclusionStrategy implements PropertySerializationExclusionStrategy, PropertyDeserializationExclusionStrategy
 {
     /**
      * Return true if the result of the strategy should be cached
@@ -24,7 +27,7 @@ class FooPropertyExclusionStrategy implements PropertySerializationExclusionStra
      */
     public function shouldCache(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -35,7 +38,8 @@ class FooPropertyExclusionStrategy implements PropertySerializationExclusionStra
      */
     public function skipDeserializingProperty(PropertyMetadata $property): bool
     {
-        return 'foo' === $property->getName();
+        return $property->getDeclaringClassName() === GsonMock::class
+            && $property->getName() === 'excludeFromStrategy';
     }
 
     /**
@@ -46,6 +50,7 @@ class FooPropertyExclusionStrategy implements PropertySerializationExclusionStra
      */
     public function skipSerializingProperty(PropertyMetadata $property): bool
     {
-        return 'foo' === $property->getName();
+        return $property->getDeclaringClassName() === GsonMock::class
+            && $property->getName() === 'excludeFromStrategy';
     }
 }
