@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
+use Tebru\Gson\Exception\JsonDecodeException;
 use Tebru\Gson\Exception\JsonParseException;
 use Tebru\Gson\ReaderContext;
 use Tebru\Gson\JsonToken;
@@ -31,7 +32,7 @@ final class JsonDecodeReader extends JsonReader
         $decodedJson = \json_decode($json);
 
         if (\json_last_error() !== JSON_ERROR_NONE) {
-            throw new JsonParseException(\sprintf('Could not decode json, the error message was: "%s"', \json_last_error_msg()));
+            throw new JsonDecodeException(\json_last_error_msg(), \json_last_error(), $json);
         }
 
         $this->payload = $decodedJson;
