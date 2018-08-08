@@ -8,6 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit_Framework_TestCase;
 use stdClass;
+use Tebru\Gson\Exception\JsonDecodeException;
 use Tebru\Gson\Exception\JsonParseException;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\JsonDecodeReader;
@@ -21,6 +22,7 @@ use Tebru\Gson\JsonToken;
  * @covers \Tebru\Gson\Internal\JsonDecodeReader
  * @covers \Tebru\Gson\Internal\JsonReader
  * @covers \Tebru\Gson\Internal\DefaultReaderContext
+ * @covers \Tebru\Gson\Exception\JsonDecodeException
  */
 class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
 {
@@ -28,8 +30,10 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
     {
         try {
             new JsonDecodeReader('asdf', new DefaultReaderContext());
-        } catch (JsonParseException $exception) {
+        } catch (JsonDecodeException $exception) {
             self::assertSame('Could not decode json, the error message was: "Syntax error"', $exception->getMessage());
+            self::assertSame('asdf', $exception->getPayload());
+            self::assertSame(JSON_ERROR_SYNTAX, $exception->getCode());
             return;
         }
         self::assertTrue(false);
