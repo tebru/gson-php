@@ -25,7 +25,6 @@ use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
-use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
@@ -37,6 +36,7 @@ use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\Internal\TypeTokenFactory;
 use Tebru\Gson\PropertyNamingPolicy;
 
 /**
@@ -74,7 +74,7 @@ class MockProvider
             new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES)),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
+            new TypeTokenFactory(),
             $excluder,
             new NullCache()
         );

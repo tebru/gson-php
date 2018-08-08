@@ -7,11 +7,14 @@ master
 ------
 
 * Various performance improvements
-* ADDED: getPath() to JsonWritable
+* BC BREAK: Modified Reflection and Array type adapter constructors
 * BC BREAK: Removed DefaultClassMetadata::addPropertyMetadata()
+* ADDED: getPath() to JsonWritable
 * ADDED: Split ExclusionStrategy into multiple specific interfaces
 * ADDED: deprecations for ExclusionStrategy/ExclusionData
 * ADDED: Payload on exception decoding json data
+* ADDED: Type check on property default
+* CHANGE: Order of type guessing
 
 v0.5.9
 ------

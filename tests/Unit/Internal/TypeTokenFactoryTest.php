@@ -12,7 +12,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\Type;
-use Tebru\Gson\Internal\PhpTypeFactory;
+use Tebru\Gson\Internal\TypeTokenFactory;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ChildClassParent;
 use Tebru\Gson\Test\Mock\ChildClassParent2;
@@ -29,9 +29,9 @@ use Tebru\PhpType\TypeToken;
  * Class PhpTypeFactoryTest
  *
  * @author Nate Brunette <n@tebru.net>
- * @covers \Tebru\Gson\Internal\PhpTypeFactory
+ * @covers \Tebru\Gson\Internal\TypeTokenFactory
  */
-class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
+class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testCreateFromAnnotation()
     {
@@ -39,7 +39,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         $annotations = new AnnotationCollection();
         $annotations->add($type);
 
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $phpType = $factory->create($annotations);
 
         self::assertSame(ChildClass::class, $phpType->getRawType());
@@ -48,7 +48,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromSetterTypehint()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $setter = new ReflectionMethod(ChildClass::class, 'setWithTypehint');
         $phpType = $factory->create($annotations, null, $setter);
 
@@ -58,7 +58,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromGetterReturnType()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'getWithReturnType');
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
         $phpType = $factory->create($annotations, $getter, $setter);
@@ -69,7 +69,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromSetterDefault()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'isFoo');
         $setter = new ReflectionMethod(ChildClass::class, 'setFoo');
         $phpType = $factory->create($annotations, $getter, $setter);
@@ -77,10 +77,20 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame('string', (string) $phpType);
     }
 
+    public function testCreateFromPropertyDefault()
+    {
+        $annotations = new AnnotationCollection();
+        $factory = new TypeTokenFactory();
+        $property = new ReflectionProperty(ChildClass::class, 'default');
+        $phpType = $factory->create($annotations, null, null, $property);
+
+        self::assertSame('integer', (string)$phpType);
+    }
+
     public function testCreateFromDocblockScalar()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'scalar');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -90,7 +100,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockNullableScalar()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'nullableScalar');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -100,7 +110,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockNullableScalar2()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'nullableScalar2');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -110,7 +120,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockMixed()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'mixed');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -120,7 +130,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockMultipleTypes()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'multipleTypes');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -130,7 +140,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockMultipleTypes2()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'multipleTypes2');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -140,7 +150,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassSameNamespace()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classSameNamespace');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -150,7 +160,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassImported()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classImported');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -160,7 +170,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassFullName()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classFullName');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -170,7 +180,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassAliased()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classAliased');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -180,7 +190,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassSameNamespaceAliased()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classSameNamespaceAliased');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -190,7 +200,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassGroupedOneLine()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classGroupOneLine');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -200,7 +210,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassGroupedMultipleLines1()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classGroupMultipleLines1');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -210,7 +220,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassGroupedMultipleLines2()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classGroupMultipleLines2');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -220,7 +230,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassGroupedMultipleLinesAliased()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classGroupMultipleLinesAliased');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -230,7 +240,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassGlobal()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classGlobal');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -240,7 +250,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockArray()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'array');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -250,7 +260,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockTypedArray()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'typedArray');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -261,7 +271,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockNestedArray()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'nestedArray');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -273,7 +283,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockClassArray()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'classArray');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -284,7 +294,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockOnlyNull()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'onlyNull');
         $phpType = $factory->create($annotations, null, null, $property);
 
@@ -294,17 +304,39 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromDocblockNoTypes()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'noTypes');
         $phpType = $factory->create($annotations, null, null, $property);
 
         self::assertSame(TypeToken::WILDCARD, $phpType->getRawType());
     }
 
+    public function testCreateFromDocblockDifferentGetter()
+    {
+        $annotations = new AnnotationCollection();
+        $factory = new TypeTokenFactory();
+        $property = new ReflectionProperty(DocblockMock::class, 'differentGetter');
+        $getter = new ReflectionMethod(DocblockMock::class, 'getDifferentGetter');
+        $phpType = $factory->create($annotations, $getter, null, $property);
+
+        self::assertSame('array<Tebru\Gson\Test\Mock\DocblockType\DocblockFoo>', (string)$phpType);
+    }
+
+    public function testCreateFromDocblockDifferentSetter()
+    {
+        $annotations = new AnnotationCollection();
+        $factory = new TypeTokenFactory();
+        $property = new ReflectionProperty(DocblockMock::class, 'differentSetter');
+        $setter = new ReflectionMethod(DocblockMock::class, 'setDifferentSetter');
+        $phpType = $factory->create($annotations, null, $setter, $property);
+
+        self::assertSame('array<Tebru\Gson\Test\Mock\DocblockType\DocblockFoo>', (string)$phpType);
+    }
+
     public function testCreateFromGetter()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $getter = new ReflectionMethod(DocblockMock::class, 'getFoo');
         $phpType = $factory->create($annotations, $getter);
 
@@ -314,7 +346,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateFromSetter()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $setter = new ReflectionMethod(DocblockMock::class, 'setFoo');
         $phpType = $factory->create($annotations, null, $setter);
 
@@ -324,7 +356,7 @@ class PhpTypeFactoryTest extends PHPUnit_Framework_TestCase
     public function testCreateWildcard()
     {
         $annotations = new AnnotationCollection();
-        $factory = new PhpTypeFactory();
+        $factory = new TypeTokenFactory();
         $getter = new ReflectionMethod(ChildClass::class, 'isFoo');
         $setter = new ReflectionMethod(ChildClass::class, 'set_baz');
         $phpType = $factory->create($annotations, $getter, $setter);

@@ -47,6 +47,7 @@ class ReflectionPropertySetFactoryTest extends PHPUnit_Framework_TestCase
             new ReflectionProperty(ChildClass::class, 'foo'),
             new ReflectionProperty(ChildClass::class, 'overridden'),
             new ReflectionProperty(ChildClass::class, 'withTypehint'),
+            new ReflectionProperty(ChildClass::class, 'default'),
             new ReflectionProperty(ChildClassParent::class, 'baz'),
             new ReflectionProperty(ChildClassParent2::class, 'qux'),
             new ReflectionProperty(ChildClassParent::class, 'bar'),

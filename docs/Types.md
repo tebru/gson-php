@@ -13,12 +13,13 @@ Gson uses many methods to resolve the type of a property. In order,
 they are:
 
 - `@Type` annotation
-- Setter typehint
 - Getter return type
-- Setter default value
-- Property `@var` annotation
+- Setter typehint
 - Getter `@return` annotation
 - Setter `@param` annotation
+- Property `@var` annotation
+- Property default value
+- Setter default value
 
 If the type could not be resolved, it defaults to a wildcard type, which
 checks the type at runtime. If the type is ever `array`, Gson will

@@ -21,17 +21,17 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\SetByNull;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
+use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Data\PropertyCollection;
-use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
+use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
-use Tebru\Gson\Internal\PhpTypeFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\Internal\TypeTokenFactory;
 use Tebru\Gson\PropertyNamingPolicy;
 use Tebru\Gson\Test\Mock\PropertyCollectionMock;
 use Tebru\Gson\Test\MockProvider;
@@ -116,7 +116,7 @@ class ClassMetadataFactoryTest extends PHPUnit_Framework_TestCase
             new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES)),
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
-            new PhpTypeFactory(),
+            new TypeTokenFactory(),
             new Excluder(),
             $cache
         );
