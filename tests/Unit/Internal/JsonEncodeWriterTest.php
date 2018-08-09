@@ -641,4 +641,19 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         }
         self::fail('Failed to throw exception');
     }
+
+    public function testSerializeNullDefault()
+    {
+        $writer = new JsonEncodeWriter();
+
+        self::assertFalse($writer->isSerializeNull());
+    }
+
+    public function testIsSerializeNull()
+    {
+        $writer = new JsonEncodeWriter();
+        $writer->setSerializeNull(true);
+
+        self::assertTrue($writer->isSerializeNull());
+    }
 }

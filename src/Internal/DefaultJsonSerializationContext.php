@@ -25,13 +25,20 @@ final class DefaultJsonSerializationContext implements JsonSerializationContext
     private $typeAdapterProvider;
 
     /**
+     * @var bool
+     */
+    private $serializeNull;
+
+    /**
      * Constructor
      *
      * @param TypeAdapterProvider $typeAdapterProvider
+     * @param bool $serializeNull
      */
-    public function __construct(TypeAdapterProvider $typeAdapterProvider)
+    public function __construct(TypeAdapterProvider $typeAdapterProvider, bool $serializeNull)
     {
         $this->typeAdapterProvider = $typeAdapterProvider;
+        $this->serializeNull = $serializeNull;
     }
 
     /**
@@ -45,6 +52,6 @@ final class DefaultJsonSerializationContext implements JsonSerializationContext
     {
         $typeAdapter = $this->typeAdapterProvider->getAdapter(TypeToken::createFromVariable($object));
 
-        return $typeAdapter->writeToJsonElement($object);
+        return $typeAdapter->writeToJsonElement($object, $this->serializeNull);
     }
 }

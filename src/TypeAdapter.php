@@ -75,7 +75,7 @@ abstract class TypeAdapter
      * @param bool $serializeNull
      * @return string
      */
-    public function writeToJson($var, bool $serializeNull): string
+    public function writeToJson($var, bool $serializeNull = false): string
     {
         $writer = new JsonEncodeWriter();
         $writer->setSerializeNull($serializeNull);
@@ -89,11 +89,13 @@ abstract class TypeAdapter
      * Constructs a JsonElementWriter and passes it to ::write().  Returns the JsonElement written.
      *
      * @param mixed $var
+     * @param bool $serializeNull
      * @return JsonElement
      */
-    public function writeToJsonElement($var): JsonElement
+    public function writeToJsonElement($var, bool $serializeNull = false): JsonElement
     {
         $writer = new JsonElementWriter();
+        $writer->setSerializeNull($serializeNull);
         $this->write($writer, $var);
 
         return $writer->toJsonElement();

@@ -10,6 +10,7 @@ master
 * BC BREAK: Modified Reflection and Array type adapter constructors
 * BC BREAK: Removed DefaultClassMetadata::addPropertyMetadata()
 * BC BREAK: Removed support for grouped use statements in type guessing
+* FIXED: Writing to JsonElement respects serializeNull setting
 * ADDED: getPath() to JsonWritable
 * ADDED: Split ExclusionStrategy into multiple specific interfaces
 * ADDED: deprecations for ExclusionStrategy/ExclusionData

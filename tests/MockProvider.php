@@ -122,6 +122,6 @@ class MockProvider
 
     public static function serializationContext(Excluder $excluder)
     {
-        return new DefaultJsonSerializationContext(self::typeAdapterProvider($excluder));
+        return new DefaultJsonSerializationContext(self::typeAdapterProvider($excluder), false);
     }
 }

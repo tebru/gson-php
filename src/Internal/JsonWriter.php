@@ -83,6 +83,16 @@ abstract class JsonWriter implements JsonWritable
     }
 
     /**
+     * Returns true if serializing nulls
+     *
+     * @return bool
+     */
+    public function isSerializeNull(): bool
+    {
+        return $this->serializeNull;
+    }
+
+    /**
      * Sets whether nulls are serialized
      *
      * @param bool $serializeNull

@@ -104,6 +104,13 @@ interface JsonWritable
     public function getPath(): string;
 
     /**
+     * Returns true if serializing nulls
+     *
+     * @return bool
+     */
+    public function isSerializeNull(): bool;
+
+    /**
      * Sets whether nulls are serialized
      *
      * @param bool $serializeNull

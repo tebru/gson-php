@@ -109,7 +109,7 @@ class Gson
         $type = TypeToken::createFromVariable($object);
         $typeAdapter = $this->typeAdapterProvider->getAdapter($type);
 
-        return $typeAdapter->writeToJsonElement($object);
+        return $typeAdapter->writeToJsonElement($object, $this->serializeNull);
     }
 
     /**

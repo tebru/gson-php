@@ -133,7 +133,7 @@ final class CustomWrappedTypeAdapter extends TypeAdapter
         $jsonElement = $this->serializer->serialize(
             $value,
             $this->type,
-            new DefaultJsonSerializationContext($this->typeAdapterProvider)
+            new DefaultJsonSerializationContext($this->typeAdapterProvider, $writer->isSerializeNull())
         );
 
         $jsonElementTypeAdapter = new JsonElementTypeAdapter();
