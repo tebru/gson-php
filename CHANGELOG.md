@@ -17,6 +17,7 @@ master
 * ADDED: Type check on property default
 * ADDED: phpdocumentor/reflection-docblock dependency
 * CHANGE: Order of type guessing
+* CHANGE: toJsonElement() now uses json element writer
 
 v0.5.9
 ------

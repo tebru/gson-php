@@ -72,10 +72,6 @@ $jsonElement->asObject()->addString('foo', 'bar');
 $json = json_encode($jsonElement);
 ```
 
-Note that this will do a full conversion from the object to JSON, then
-back to JsonElements.  This is done to take advantage of all custom
-serialization rules.
-
 Likewise, there are methods to operate on arrays instead of strings of json
 
 ```php

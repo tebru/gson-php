@@ -106,7 +106,10 @@ class Gson
      */
     public function toJsonElement($object): JsonElement
     {
-        return $this->fromJson($this->toJson($object), JsonElement::class);
+        $type = TypeToken::createFromVariable($object);
+        $typeAdapter = $this->typeAdapterProvider->getAdapter($type);
+
+        return $typeAdapter->writeToJsonElement($object);
     }
 
     /**
