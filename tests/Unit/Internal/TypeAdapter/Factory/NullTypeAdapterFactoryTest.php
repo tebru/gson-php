@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\TypeAdapter\NullTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
 
@@ -20,23 +20,23 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory
  */
-class NullTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
+class NullTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports()
+    public function testValidSupports(): void
     {
         $factory = new NullTypeAdapterFactory();
 
         self::assertTrue($factory->supports(new TypeToken('null')));
     }
 
-    public function testInvalidSupports()
+    public function testInvalidSupports(): void
     {
         $factory = new NullTypeAdapterFactory();
 
         self::assertFalse($factory->supports(new TypeToken('string')));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $factory = new NullTypeAdapterFactory();
         $adapter = $factory->create(new TypeToken('null'), MockProvider::typeAdapterProvider());

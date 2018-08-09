@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
 
@@ -20,23 +20,23 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory
  */
-class StringTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
+class StringTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports()
+    public function testValidSupports(): void
     {
         $factory = new StringTypeAdapterFactory();
 
         self::assertTrue($factory->supports(new TypeToken('string')));
     }
 
-    public function testInvalidSupports()
+    public function testInvalidSupports(): void
     {
         $factory = new StringTypeAdapterFactory();
 
         self::assertFalse($factory->supports(new TypeToken('int')));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $factory = new StringTypeAdapterFactory();
         $adapter = $factory->create(new TypeToken('string'), MockProvider::typeAdapterProvider());

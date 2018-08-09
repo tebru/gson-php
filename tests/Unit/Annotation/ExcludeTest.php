@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Annotation\Exclude;
 
 /**
@@ -15,9 +15,9 @@ use Tebru\Gson\Annotation\Exclude;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Annotation\Exclude
  */
-class ExcludeTest extends PHPUnit_Framework_TestCase
+class ExcludeTest extends TestCase
 {
-    public function testShouldExcludeDefault()
+    public function testShouldExcludeDefault(): void
     {
         $exclude = new Exclude([]);
 
@@ -25,7 +25,7 @@ class ExcludeTest extends PHPUnit_Framework_TestCase
         self::assertTrue($exclude->shouldExclude(false));
     }
 
-    public function testShouldExcludeSerialize()
+    public function testShouldExcludeSerialize(): void
     {
         $exclude = new Exclude(['deserialize' => false]);
 
@@ -33,7 +33,7 @@ class ExcludeTest extends PHPUnit_Framework_TestCase
         self::assertFalse($exclude->shouldExclude(false));
     }
 
-    public function testShouldExcludeDeserialize()
+    public function testShouldExcludeDeserialize(): void
     {
         $exclude = new Exclude(['serialize' => false]);
 

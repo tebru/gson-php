@@ -6,10 +6,9 @@
 
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tebru\Gson\Exception\JsonDecodeException;
-use Tebru\Gson\Exception\JsonParseException;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\Internal\DefaultReaderContext;
@@ -24,9 +23,9 @@ use Tebru\Gson\JsonToken;
  * @covers \Tebru\Gson\Internal\DefaultReaderContext
  * @covers \Tebru\Gson\Exception\JsonDecodeException
  */
-class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
+class JsonDecodeReaderTest extends TestCase
 {
-    public function testMalformedJson()
+    public function testMalformedJson(): void
     {
         try {
             new JsonDecodeReader('asdf', new DefaultReaderContext());
@@ -39,7 +38,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testBeginArray()
+    public function testBeginArray(): void
     {
         $reader = new JsonDecodeReader('[1]', new DefaultReaderContext());
         $reader->beginArray();
@@ -49,7 +48,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame([null, null, 1], $stack);
     }
 
-    public function testBeginArrayInvalidToken()
+    public function testBeginArrayInvalidToken(): void
     {
         $reader = new JsonDecodeReader('{}', new DefaultReaderContext());
         try {
@@ -61,7 +60,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testEndArrayEmpty()
+    public function testEndArrayEmpty(): void
     {
         $reader = new JsonDecodeReader('[]', new DefaultReaderContext());
         $reader->beginArray();
@@ -70,7 +69,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertAttributeSame(1, 'stackSize', $reader);
     }
 
-    public function testEndArrayNonEmpty()
+    public function testEndArrayNonEmpty(): void
     {
         $reader = new JsonDecodeReader('[1]', new DefaultReaderContext());
         $reader->beginArray();
@@ -80,7 +79,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertAttributeSame(1, 'stackSize', $reader);
     }
 
-    public function testEndArrayInvalidToken()
+    public function testEndArrayInvalidToken(): void
     {
         $reader = new JsonDecodeReader('[{}]', new DefaultReaderContext());
         $reader->beginArray();
@@ -93,7 +92,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testBeginObject()
+    public function testBeginObject(): void
     {
         $reader = new JsonDecodeReader('{"key": "value"}', new DefaultReaderContext());
         $reader->beginObject();
@@ -103,7 +102,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame([null, null, 'value', 'key'], $stack);
     }
 
-    public function testBeginObjectInvalidToken()
+    public function testBeginObjectInvalidToken(): void
     {
         $reader = new JsonDecodeReader('[]', new DefaultReaderContext());
         try {
@@ -115,7 +114,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testEndObjectEmpty()
+    public function testEndObjectEmpty(): void
     {
         $reader = new JsonDecodeReader('{}', new DefaultReaderContext());
         $reader->beginObject();
@@ -124,7 +123,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertAttributeSame(1, 'stackSize', $reader);
     }
 
-    public function testEndObjectNonEmpty()
+    public function testEndObjectNonEmpty(): void
     {
         $reader = new JsonDecodeReader('{"test": 1}', new DefaultReaderContext());
         $reader->beginObject();
@@ -135,7 +134,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertAttributeSame(1, 'stackSize', $reader);
     }
 
-    public function testEndObjectInvalidToken()
+    public function testEndObjectInvalidToken(): void
     {
         $reader = new JsonDecodeReader('{"test": 1}', new DefaultReaderContext());
         $reader->beginObject();
@@ -149,7 +148,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testHasNextObjectTrue()
+    public function testHasNextObjectTrue(): void
     {
         $reader = new JsonDecodeReader('{"test": 1}', new DefaultReaderContext());
         $reader->beginObject();
@@ -157,7 +156,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($reader->hasNext());
     }
 
-    public function testHasNextObjectFalse()
+    public function testHasNextObjectFalse(): void
     {
         $reader = new JsonDecodeReader('{}', new DefaultReaderContext());
         $reader->beginObject();
@@ -165,7 +164,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($reader->hasNext());
     }
 
-    public function testHasNextArrayTrue()
+    public function testHasNextArrayTrue(): void
     {
         $reader = new JsonDecodeReader('[1]', new DefaultReaderContext());
         $reader->beginArray();
@@ -173,7 +172,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($reader->hasNext());
     }
 
-    public function testHasNextArrayFalse()
+    public function testHasNextArrayFalse(): void
     {
         $reader = new JsonDecodeReader('[]', new DefaultReaderContext());
         $reader->beginArray();
@@ -181,21 +180,21 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($reader->hasNext());
     }
 
-    public function testNextBooleanTrue()
+    public function testNextBooleanTrue(): void
     {
         $reader = new JsonDecodeReader('true', new DefaultReaderContext());
 
         self::assertTrue($reader->nextBoolean());
     }
 
-    public function testNextBooleanFalse()
+    public function testNextBooleanFalse(): void
     {
         $reader = new JsonDecodeReader('false', new DefaultReaderContext());
 
         self::assertFalse($reader->nextBoolean());
     }
 
-    public function testNextBooleanInvalidToken()
+    public function testNextBooleanInvalidToken(): void
     {
         $reader = new JsonDecodeReader('[true, "tru"]', new DefaultReaderContext());
         $reader->beginArray();
@@ -209,21 +208,21 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testNextDouble()
+    public function testNextDouble(): void
     {
         $reader = new JsonDecodeReader('1.1', new DefaultReaderContext());
 
         self::assertSame(1.1, $reader->nextDouble());
     }
 
-    public function testNextDoubleAsInt()
+    public function testNextDoubleAsInt(): void
     {
         $reader = new JsonDecodeReader('1', new DefaultReaderContext());
 
         self::assertSame(1.0, $reader->nextDouble());
     }
 
-    public function testNextDoubleInvalidToken()
+    public function testNextDoubleInvalidToken(): void
     {
         $reader = new JsonDecodeReader('{"foo": "1.1"}', new DefaultReaderContext());
         $reader->beginObject();
@@ -237,14 +236,14 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testNextInteger()
+    public function testNextInteger(): void
     {
         $reader = new JsonDecodeReader('1', new DefaultReaderContext());
 
         self::assertSame(1, $reader->nextInteger());
     }
 
-    public function testNextIntegerInvalidToken()
+    public function testNextIntegerInvalidToken(): void
     {
         $reader = new JsonDecodeReader('["1"]', new DefaultReaderContext());
         $reader->beginArray();
@@ -257,49 +256,49 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testNextString()
+    public function testNextString(): void
     {
         $reader = new JsonDecodeReader('"test"', new DefaultReaderContext());
 
         self::assertSame('test', $reader->nextString());
     }
 
-    public function testNextStringIntType()
+    public function testNextStringIntType(): void
     {
         $reader = new JsonDecodeReader('"1"', new DefaultReaderContext());
 
         self::assertSame('1', $reader->nextString());
     }
 
-    public function testNextStringDoubleType()
+    public function testNextStringDoubleType(): void
     {
         $reader = new JsonDecodeReader('"1.1"', new DefaultReaderContext());
 
         self::assertSame('1.1', $reader->nextString());
     }
 
-    public function testNextStringBooleanTrueType()
+    public function testNextStringBooleanTrueType(): void
     {
         $reader = new JsonDecodeReader('"true"', new DefaultReaderContext());
 
         self::assertSame('true', $reader->nextString());
     }
 
-    public function testNextStringBooleanFalseType()
+    public function testNextStringBooleanFalseType(): void
     {
         $reader = new JsonDecodeReader('"false"', new DefaultReaderContext());
 
         self::assertSame('false', $reader->nextString());
     }
 
-    public function testNextStringNullType()
+    public function testNextStringNullType(): void
     {
         $reader = new JsonDecodeReader('"null"', new DefaultReaderContext());
 
         self::assertSame('null', $reader->nextString());
     }
 
-    public function testNextStringIgnoresDoubleQuote()
+    public function testNextStringIgnoresDoubleQuote(): void
     {
         $string = 'te"st';
         $reader = new JsonDecodeReader(json_encode($string), new DefaultReaderContext());
@@ -307,14 +306,14 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('te"st', $reader->nextString());
     }
 
-    public function testNextStringIgnoresOtherTerminationCharacters()
+    public function testNextStringIgnoresOtherTerminationCharacters(): void
     {
         $reader = new JsonDecodeReader('"te]},st"', new DefaultReaderContext());
 
         self::assertSame('te]},st', $reader->nextString());
     }
 
-    public function testNextStringWithEscapedCharacters()
+    public function testNextStringWithEscapedCharacters(): void
     {
         $string = 'te\\\/\b\f\n\r\t\u1234st';
         $reader = new JsonDecodeReader(json_encode($string), new DefaultReaderContext());
@@ -322,14 +321,14 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame($string, $reader->nextString());
     }
 
-    public function testNextStringWithEmoji()
+    public function testNextStringWithEmoji(): void
     {
         $reader = new JsonDecodeReader('"te👍st"', new DefaultReaderContext());
 
         self::assertSame('te👍st', $reader->nextString());
     }
 
-    public function testNextStringInvalidToken()
+    public function testNextStringInvalidToken(): void
     {
         $reader = new JsonDecodeReader('1', new DefaultReaderContext());
         try {
@@ -341,7 +340,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testNextStringName()
+    public function testNextStringName(): void
     {
         $reader = new JsonDecodeReader('{"key": "value"}', new DefaultReaderContext());
         $reader->beginObject();
@@ -349,14 +348,14 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('key', $reader->nextString());
     }
 
-    public function testNextNull()
+    public function testNextNull(): void
     {
         $reader = new JsonDecodeReader('null', new DefaultReaderContext());
 
         self::assertNull($reader->nextNull());
     }
 
-    public function testNextNullInvalidToken()
+    public function testNextNullInvalidToken(): void
     {
         $reader = new JsonDecodeReader('"test"', new DefaultReaderContext());
         try {
@@ -368,7 +367,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testNextName()
+    public function testNextName(): void
     {
         $reader = new JsonDecodeReader('{"test": 1}', new DefaultReaderContext());
         $reader->beginObject();
@@ -376,7 +375,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('test', $reader->nextName());
     }
 
-    public function testNextNameInvalidToken()
+    public function testNextNameInvalidToken(): void
     {
         $reader = new JsonDecodeReader('{"test": "test"}', new DefaultReaderContext());
         $reader->beginObject();
@@ -390,7 +389,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testPeekEmptyArrayEnding()
+    public function testPeekEmptyArrayEnding(): void
     {
         $reader = new JsonDecodeReader('[]', new DefaultReaderContext());
         $reader->beginArray();
@@ -398,7 +397,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::END_ARRAY, $reader->peek());
     }
 
-    public function testPeekEmptyArrayDefault()
+    public function testPeekEmptyArrayDefault(): void
     {
         $reader = new JsonDecodeReader('[1]', new DefaultReaderContext());
         $reader->beginArray();
@@ -406,7 +405,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::NUMBER, $reader->peek());
     }
 
-    public function testPeekNonEmptyArrayEnding()
+    public function testPeekNonEmptyArrayEnding(): void
     {
         $reader = new JsonDecodeReader('[1]', new DefaultReaderContext());
         $reader->beginArray();
@@ -415,7 +414,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::END_ARRAY, $reader->peek());
     }
 
-    public function testPeekNonEmptyArrayNext()
+    public function testPeekNonEmptyArrayNext(): void
     {
         $reader = new JsonDecodeReader('[1, 2]', new DefaultReaderContext());
         $reader->beginArray();
@@ -424,7 +423,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::NUMBER, $reader->peek());
     }
 
-    public function testPeekNonEmptyObjectEnding()
+    public function testPeekNonEmptyObjectEnding(): void
     {
         $reader = new JsonDecodeReader('{"test": true}', new DefaultReaderContext());
         $reader->beginObject();
@@ -434,7 +433,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::END_OBJECT, $reader->peek());
     }
 
-    public function testPeekNonEmptyObjectNext()
+    public function testPeekNonEmptyObjectNext(): void
     {
         $reader = new JsonDecodeReader('{"test": true, "test2": false}', new DefaultReaderContext());
         $reader->beginObject();
@@ -444,7 +443,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::NAME, $reader->peek());
     }
 
-    public function testPeekEmptyObjectEnding()
+    public function testPeekEmptyObjectEnding(): void
     {
         $reader = new JsonDecodeReader('{}', new DefaultReaderContext());
         $reader->beginObject();
@@ -452,7 +451,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::END_OBJECT, $reader->peek());
     }
 
-    public function testPeekEmptyObjectName()
+    public function testPeekEmptyObjectName(): void
     {
         $reader = new JsonDecodeReader('{"test": true}', new DefaultReaderContext());
         $reader->beginObject();
@@ -460,7 +459,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::NAME, $reader->peek());
     }
 
-    public function testPeekDanglingName()
+    public function testPeekDanglingName(): void
     {
         $reader = new JsonDecodeReader('{"test": "test2"}', new DefaultReaderContext());
         $reader->beginObject();
@@ -469,21 +468,21 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::STRING, $reader->peek());
     }
 
-    public function testPeekEmptyDocumentBeginObject()
+    public function testPeekEmptyDocumentBeginObject(): void
     {
         $reader = new JsonDecodeReader('{}', new DefaultReaderContext());
 
         self::assertEquals(JsonToken::BEGIN_OBJECT, $reader->peek());
     }
 
-    public function testPeekEmptyDocumentBeginArray()
+    public function testPeekEmptyDocumentBeginArray(): void
     {
         $reader = new JsonDecodeReader('[]', new DefaultReaderContext());
 
         self::assertEquals(JsonToken::BEGIN_ARRAY, $reader->peek());
     }
 
-    public function testPeekEmptyDocument()
+    public function testPeekEmptyDocument(): void
     {
         $reader = new JsonDecodeReader('[]', new DefaultReaderContext());
         $reader->beginArray();
@@ -492,7 +491,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::END_DOCUMENT, $reader->peek());
     }
 
-    public function testValueArray()
+    public function testValueArray(): void
     {
         $reader = new JsonDecodeReader('[[]]', new DefaultReaderContext());
         $reader->beginArray();
@@ -500,7 +499,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::BEGIN_ARRAY, $reader->peek());
     }
 
-    public function testValueObject()
+    public function testValueObject(): void
     {
         $reader = new JsonDecodeReader('[{}]', new DefaultReaderContext());
         $reader->beginArray();
@@ -508,28 +507,28 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals(JsonToken::BEGIN_OBJECT, $reader->peek());
     }
 
-    public function testValueString()
+    public function testValueString(): void
     {
         $reader = new JsonDecodeReader('"test"', new DefaultReaderContext());
 
         self::assertEquals(JsonToken::STRING, $reader->peek());
     }
 
-    public function testValueTrue()
+    public function testValueTrue(): void
     {
         $reader = new JsonDecodeReader('true', new DefaultReaderContext());
 
         self::assertEquals(JsonToken::BOOLEAN, $reader->peek());
     }
 
-    public function testValueFalse()
+    public function testValueFalse(): void
     {
         $reader = new JsonDecodeReader('false', new DefaultReaderContext());
 
         self::assertEquals(JsonToken::BOOLEAN, $reader->peek());
     }
 
-    public function testValueNull()
+    public function testValueNull(): void
     {
         $reader = new JsonDecodeReader('null', new DefaultReaderContext());
 
@@ -539,14 +538,14 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
     /**
      * @dataProvider provideValidNumbers
      */
-    public function testValueNumber($number)
+    public function testValueNumber($number): void
     {
         $reader = new JsonDecodeReader(sprintf('%s', $number), new DefaultReaderContext());
 
         self::assertEquals(JsonToken::NUMBER, $reader->peek());
     }
 
-    public function testSkipValueObject()
+    public function testSkipValueObject(): void
     {
         $array = [
             'skip' => [
@@ -566,7 +565,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('nextProp', $reader->nextName());
     }
 
-    public function testSkipValueArray()
+    public function testSkipValueArray(): void
     {
         $array = [
             'skip' => [1, 2, 3],
@@ -580,7 +579,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('nextProp', $reader->nextName());
     }
 
-    public function testSkipValueScalar()
+    public function testSkipValueScalar(): void
     {
         $array = [
             'skip' => 1,
@@ -594,7 +593,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('nextProp', $reader->nextName());
     }
 
-    public function testFormattedJson()
+    public function testFormattedJson(): void
     {
         $string = '{  
            "id": 1,
@@ -628,7 +627,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         $reader->endObject();
     }
 
-    public function testGetPathSimpleName()
+    public function testGetPathSimpleName(): void
     {
         $reader = new JsonDecodeReader('{"name": 1}', new DefaultReaderContext());
         $reader->beginObject();
@@ -639,7 +638,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.name', $path);
     }
 
-    public function testGetPathNestedName()
+    public function testGetPathNestedName(): void
     {
         $reader = new JsonDecodeReader('{"name": {"name2": 1}}', new DefaultReaderContext());
         $reader->beginObject();
@@ -652,7 +651,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.name.name2', $path);
     }
 
-    public function testGetPathSimpleArray()
+    public function testGetPathSimpleArray(): void
     {
         $reader = new JsonDecodeReader('[1, 2]', new DefaultReaderContext());
         $reader->beginArray();
@@ -663,7 +662,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[0]', $path);
     }
 
-    public function testGetPathNestedArray()
+    public function testGetPathNestedArray(): void
     {
         $reader = new JsonDecodeReader('[1, [1, 2]]', new DefaultReaderContext());
         $reader->beginArray();
@@ -676,7 +675,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[1][0]', $path);
     }
 
-    public function testComplexObject()
+    public function testComplexObject(): void
     {
         $reader = new JsonDecodeReader('
             {
@@ -717,7 +716,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.second[1].nested2[1]', $path);
     }
 
-    public function testGetPathBegin()
+    public function testGetPathBegin(): void
     {
         $reader = new JsonDecodeReader('{"name": 1}', new DefaultReaderContext());
 
@@ -726,7 +725,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$', $path);
     }
 
-    public function testGetPathBeginObject()
+    public function testGetPathBeginObject(): void
     {
         $reader = new JsonDecodeReader('{"name": 1}', new DefaultReaderContext());
         $reader->beginObject();
@@ -736,7 +735,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$', $path);
     }
 
-    public function testGetPathLastValueInObject()
+    public function testGetPathLastValueInObject(): void
     {
         $reader = new JsonDecodeReader('{"name": 1}', new DefaultReaderContext());
         $reader->beginObject();
@@ -748,7 +747,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.name', $path);
     }
 
-    public function testGetPathEndObject()
+    public function testGetPathEndObject(): void
     {
         $reader = new JsonDecodeReader('{"name": 1}', new DefaultReaderContext());
         $reader->beginObject();
@@ -761,7 +760,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$', $path);
     }
 
-    public function testGetPathBeginArray()
+    public function testGetPathBeginArray(): void
     {
         $reader = new JsonDecodeReader('[]', new DefaultReaderContext());
         $reader->beginArray();
@@ -771,7 +770,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$', $path);
     }
 
-    public function testGetPathFirstArray()
+    public function testGetPathFirstArray(): void
     {
         $reader = new JsonDecodeReader('[1, 2]', new DefaultReaderContext());
         $reader->beginArray();
@@ -782,7 +781,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[0]', $path);
     }
 
-    public function testGetPathLastArray()
+    public function testGetPathLastArray(): void
     {
         $reader = new JsonDecodeReader('[1, 2]', new DefaultReaderContext());
         $reader->beginArray();
@@ -794,7 +793,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[1]', $path);
     }
 
-    public function testGetPathEndArray()
+    public function testGetPathEndArray(): void
     {
         $reader = new JsonDecodeReader('[1, 2]', new DefaultReaderContext());
         $reader->beginArray();
@@ -807,7 +806,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertSame('$', $path);
     }
 
-    public function testGetPayload()
+    public function testGetPayload(): void
     {
         $reader = new JsonDecodeReader('{"name": 1}', new DefaultReaderContext());
 
@@ -818,7 +817,7 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertEquals($expected, $payload);
     }
 
-    public function testGetContext()
+    public function testGetContext(): void
     {
         $context = new DefaultReaderContext();
         $context->setUsesExistingObject(true);
@@ -827,14 +826,14 @@ class JsonDecodeReaderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($reader->getContext()->usesExistingObject());
     }
 
-    public function testGetContextDefaults()
+    public function testGetContextDefaults(): void
     {
         $reader = new JsonDecodeReader('{"name": 1}', new DefaultReaderContext());
 
         self::assertFalse($reader->getContext()->usesExistingObject());
     }
 
-    public function provideValidNumbers()
+    public function provideValidNumbers(): array
     {
         return [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [-1]];
     }

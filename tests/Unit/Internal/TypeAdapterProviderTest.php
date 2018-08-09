@@ -6,7 +6,7 @@
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Internal\ConstructorConstructor;
@@ -30,7 +30,7 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapterProvider
  */
-class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
+class TypeAdapterProviderTest extends TestCase
 {
     /**
      * @var TypeAdapterMock
@@ -48,14 +48,14 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         $this->typeAdapterProvider = MockProvider::typeAdapterProvider(MockProvider::excluder(), [$this->typeAdapterMock]);
     }
 
-    public function testGetTypeAdapter()
+    public function testGetTypeAdapter(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('string'));
 
         self::assertInstanceOf(TypeAdapterMock::class, $adapter);
     }
 
-    public function testGetTypeAdapterInterface()
+    public function testGetTypeAdapterInterface(): void
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), false)]);
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(TypeAdapterMock::class));
@@ -63,7 +63,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(TypeAdapterMock::class, $adapter);
     }
 
-    public function testGetTypeAdapterStrict()
+    public function testGetTypeAdapterStrict(): void
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), true)]);
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(TypeAdapterMock::class));
@@ -71,7 +71,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         self::assertNotInstanceOf(TypeAdapterMock::class, $adapter);
     }
 
-    public function testGetTypeAdapterThrowsException()
+    public function testGetTypeAdapterThrowsException(): void
     {
         $typeAdapterProvider = new TypeAdapterProvider([], new ConstructorConstructor());
         try {
@@ -83,7 +83,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testGetTypeAdapterSkipClass()
+    public function testGetTypeAdapterSkipClass(): void
     {
         $mock = new TypeAdapterMock();
         $typeAdapterProvider = new TypeAdapterProvider([$mock], new ConstructorConstructor());
@@ -96,28 +96,28 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testGetTypeAdapterUsesCache()
+    public function testGetTypeAdapterUsesCache(): void
     {
         $stringTypeAdapter = $this->typeAdapterProvider->getAdapter(new TypeToken('string'));
 
         self::assertSame($stringTypeAdapter, $this->typeAdapterProvider->getAdapter(new TypeToken('string')));
     }
 
-    public function testGetTypeAdapterFromAnnotation()
+    public function testGetTypeAdapterFromAnnotation(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapterFromAnnotation(new TypeToken('string'), new JsonAdapter(['value' => TypeAdapterMock::class]));
 
         self::assertInstanceOf(TypeAdapterMock::class, $adapter);
     }
 
-    public function testGetTypeAdapterFactoryFromAnnotation()
+    public function testGetTypeAdapterFactoryFromAnnotation(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapterFromAnnotation(new TypeToken('string'), new JsonAdapter(['value' => StringTypeAdapterFactory::class]));
 
         self::assertInstanceOf(StringTypeAdapter::class, $adapter);
     }
 
-    public function testGetJsonSerializerFromAnnotation()
+    public function testGetJsonSerializerFromAnnotation(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapterFromAnnotation(new TypeToken('string'), new JsonAdapter(['value' => MockSerializer::class]));
 
@@ -126,7 +126,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         self::assertAttributeSame(null, 'deserializer', $adapter);
     }
 
-    public function testGetJsonDeserializerFromAnnotation()
+    public function testGetJsonDeserializerFromAnnotation(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapterFromAnnotation(new TypeToken('string'), new JsonAdapter(['value' => MockDeserializer::class]));
 
@@ -135,7 +135,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         self::assertAttributeInstanceOf(MockDeserializer::class, 'deserializer', $adapter);
     }
 
-    public function testGetTypeAdapterFromAnnotationException()
+    public function testGetTypeAdapterFromAnnotationException(): void
     {
         try {
             $this->typeAdapterProvider->getAdapterFromAnnotation(new TypeToken('string'), new JsonAdapter(['value' => ChildClass::class]));
@@ -146,7 +146,7 @@ class TypeAdapterProviderTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testGetJsonSerializerAndDeserializerFromAnnotation()
+    public function testGetJsonSerializerAndDeserializerFromAnnotation(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapterFromAnnotation(new TypeToken('string'), new JsonAdapter(['value' => MockSerializerDeserializer::class]));
 

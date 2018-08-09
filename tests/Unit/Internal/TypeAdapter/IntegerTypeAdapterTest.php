@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
 
 /**
@@ -16,30 +16,30 @@ use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
  * @covers \Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class IntegerTypeAdapterTest extends PHPUnit_Framework_TestCase
+class IntegerTypeAdapterTest extends TestCase
 {
-    public function testNull()
+    public function testNull(): void
     {
         $adapter = new IntegerTypeAdapter();
 
         self::assertNull($adapter->readFromJson('null'));
     }
 
-    public function testRead()
+    public function testRead(): void
     {
         $adapter = new IntegerTypeAdapter();
 
         self::assertSame(1, $adapter->readFromJson('1'));
     }
 
-    public function testSerializeNull()
+    public function testSerializeNull(): void
     {
         $adapter = new IntegerTypeAdapter();
 
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
 
-    public function testSerializeFloat()
+    public function testSerializeFloat(): void
     {
         $adapter = new IntegerTypeAdapter();
 

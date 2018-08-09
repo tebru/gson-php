@@ -5,7 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tebru\Gson\Internal\DefaultExclusionData;
 
@@ -15,21 +15,21 @@ use Tebru\Gson\Internal\DefaultExclusionData;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\DefaultExclusionData
  */
-class DefaultExclusionDataTest extends PHPUnit_Framework_TestCase
+class DefaultExclusionDataTest extends TestCase
 {
-    public function testIsSerializeTrue()
+    public function testIsSerializeTrue(): void
     {
         $exclusionData = new DefaultExclusionData(true, new stdClass());
         self::assertTrue($exclusionData->isSerialize());
     }
 
-    public function testIsSerializeFalse()
+    public function testIsSerializeFalse(): void
     {
         $exclusionData = new DefaultExclusionData(false, new stdClass());
         self::assertFalse($exclusionData->isSerialize());
     }
 
-    public function testGetData()
+    public function testGetData(): void
     {
         $data = new stdClass();
         $data->foo = 'bar';
@@ -38,7 +38,7 @@ class DefaultExclusionDataTest extends PHPUnit_Framework_TestCase
         self::assertSame($data, $exclusionData->getData());
     }
 
-    public function testGetPayload()
+    public function testGetPayload(): void
     {
         $data = new stdClass();
         $data->foo = 'bar';

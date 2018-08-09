@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\AccessorStrategy;
 
 use Closure;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\AccessorStrategy\GetByClosure;
 use Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\GetByClosureTest\GetByClosureTestMock;
 use Throwable;
@@ -18,16 +18,16 @@ use Throwable;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\AccessorStrategy\GetByClosure
  */
-class GetByClosureTest extends PHPUnit_Framework_TestCase
+class GetByClosureTest extends TestCase
 {
-    public function testGetter()
+    public function testGetter(): void
     {
         $strategy = new GetByClosure('foo', GetByClosureTestMock::class);
 
         self::assertSame('bar', $strategy->get(new GetByClosureTestMock()));
     }
 
-    public function testGetterNoProperty()
+    public function testGetterNoProperty(): void
     {
         $strategy = new GetByClosure('foobar', GetByClosureTestMock::class);
 
@@ -40,7 +40,7 @@ class GetByClosureTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testGetterUsesCache()
+    public function testGetterUsesCache(): void
     {
         $strategy = new GetByClosure('foo', GetByClosureTestMock::class);
 

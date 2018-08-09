@@ -6,7 +6,7 @@
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use LogicException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\JsonEncodeWriter;
 
 /**
@@ -17,9 +17,9 @@ use Tebru\Gson\Internal\JsonEncodeWriter;
  * @covers \Tebru\Gson\Internal\JsonEncodeWriter
  * @covers \Tebru\Gson\Internal\JsonPath
  */
-class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
+class JsonEncodeWriterTest extends TestCase
 {
-    public function testBeginArray()
+    public function testBeginArray(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -27,7 +27,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('[]', (string) $writer);
     }
 
-    public function testBeginArrayDuringObject()
+    public function testBeginArrayDuringObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -40,7 +40,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testEndArray()
+    public function testEndArray(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -49,7 +49,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('[]', (string) $writer);
     }
 
-    public function testEndArrayDuringObject()
+    public function testEndArrayDuringObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -62,7 +62,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testEndArrayFirst()
+    public function testEndArrayFirst(): void
     {
         $writer = new JsonEncodeWriter();
         try {
@@ -74,7 +74,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testNestedArrays()
+    public function testNestedArrays(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -86,7 +86,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('[[1]]', (string) $writer);
     }
 
-    public function testBeginObject()
+    public function testBeginObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -94,7 +94,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('{}', (string) $writer);
     }
 
-    public function testBeginObjectDuringObject()
+    public function testBeginObjectDuringObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -107,7 +107,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testEndObject()
+    public function testEndObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -116,7 +116,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('{}', (string) $writer);
     }
 
-    public function testEndObjectDuringArray()
+    public function testEndObjectDuringArray(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -129,7 +129,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testEndObjectFirst()
+    public function testEndObjectFirst(): void
     {
         $writer = new JsonEncodeWriter();
         try {
@@ -141,7 +141,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testNestedObjects()
+    public function testNestedObjects(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -153,7 +153,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('{"foo":{}}', (string) $writer);
     }
 
-    public function testName()
+    public function testName(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -164,7 +164,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('{"foo":1}', (string) $writer);
     }
 
-    public function testNameTwice()
+    public function testNameTwice(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -178,7 +178,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testWriteInteger()
+    public function testWriteInteger(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeInteger(1);
@@ -186,7 +186,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('1', (string) $writer);
     }
 
-    public function testWriteIntegerDuringObject()
+    public function testWriteIntegerDuringObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -199,7 +199,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testWriteFloat()
+    public function testWriteFloat(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeFloat(1.1);
@@ -207,7 +207,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('1.1', (string) $writer);
     }
 
-    public function testWriteFloatNonDecimal()
+    public function testWriteFloatNonDecimal(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeFloat(1.0);
@@ -215,7 +215,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('1', (string) $writer);
     }
 
-    public function testWriteFloatDuringObject()
+    public function testWriteFloatDuringObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -228,7 +228,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testWriteString()
+    public function testWriteString(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeString('foo');
@@ -236,7 +236,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('"foo"', (string) $writer);
     }
 
-    public function testWriteStringDuringObject()
+    public function testWriteStringDuringObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -249,7 +249,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testWriteBoolean()
+    public function testWriteBoolean(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeBoolean(true);
@@ -257,7 +257,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('true', (string) $writer);
     }
 
-    public function testWriteBooleanFalse()
+    public function testWriteBooleanFalse(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeBoolean(false);
@@ -265,7 +265,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('false', (string) $writer);
     }
 
-    public function testWriteBooleanDuringObject()
+    public function testWriteBooleanDuringObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -278,7 +278,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testWriteNull()
+    public function testWriteNull(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeNull();
@@ -286,7 +286,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('null', (string) $writer);
     }
 
-    public function testWriteNullDuringObject()
+    public function testWriteNullDuringObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -296,7 +296,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('{}', (string) $writer);
     }
 
-    public function testWriteNullDuringObjectSerializeNulls()
+    public function testWriteNullDuringObjectSerializeNulls(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->setSerializeNull(true);
@@ -307,7 +307,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('{"foo":null}', (string) $writer);
     }
 
-    public function testWriteNullDuringArraySerializeNulls()
+    public function testWriteNullDuringArraySerializeNulls(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->setSerializeNull(true);
@@ -317,7 +317,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('[null]', (string) $writer);
     }
 
-    public function testWriteNullDuringBeginObject()
+    public function testWriteNullDuringBeginObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -330,7 +330,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testWriteTwoScalars()
+    public function testWriteTwoScalars(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeString('foo');
@@ -343,7 +343,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testWriteTwice()
+    public function testWriteTwice(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -357,14 +357,14 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testPathBeginObject()
+    public function testPathBeginObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
         self::assertSame('$', $writer->getPath());
     }
 
-    public function testPathName()
+    public function testPathName(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -372,7 +372,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.foo', $writer->getPath());
     }
 
-    public function testPathObjectValue()
+    public function testPathObjectValue(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -381,7 +381,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.foo', $writer->getPath());
     }
 
-    public function testPathObjectSecondValue()
+    public function testPathObjectSecondValue(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -392,7 +392,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.bar', $writer->getPath());
     }
 
-    public function testPathObjectSerializeNull()
+    public function testPathObjectSerializeNull(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->setSerializeNull(true);
@@ -404,7 +404,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.bar', $writer->getPath());
     }
 
-    public function testPathObjectNotSerializeNull()
+    public function testPathObjectNotSerializeNull(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->setSerializeNull(false);
@@ -419,7 +419,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.bar', $writer->getPath());
     }
 
-    public function testPathObjectInObject()
+    public function testPathObjectInObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -428,7 +428,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.foo', $writer->getPath());
     }
 
-    public function testPathObjectInObjectValue()
+    public function testPathObjectInObjectValue(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -438,7 +438,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.foo.bar', $writer->getPath());
     }
 
-    public function testPathArrayInObject()
+    public function testPathArrayInObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -447,7 +447,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.foo', $writer->getPath());
     }
 
-    public function testPathArrayInObjectValue()
+    public function testPathArrayInObjectValue(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -457,7 +457,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.foo[0]', $writer->getPath());
     }
 
-    public function testPathEndObject()
+    public function testPathEndObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -467,14 +467,14 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$', $writer->getPath());
     }
 
-    public function testPathBeginArray()
+    public function testPathBeginArray(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
         self::assertSame('$', $writer->getPath());
     }
 
-    public function testPathArrayValue()
+    public function testPathArrayValue(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -482,7 +482,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[0]', $writer->getPath());
     }
 
-    public function testPathArraySecondValue()
+    public function testPathArraySecondValue(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -491,7 +491,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[1]', $writer->getPath());
     }
 
-    public function testPathArraySerializeNull()
+    public function testPathArraySerializeNull(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->setSerializeNull(true);
@@ -501,7 +501,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[1]', $writer->getPath());
     }
 
-    public function testPathArrayNotSerializeNull()
+    public function testPathArrayNotSerializeNull(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->setSerializeNull(false);
@@ -511,7 +511,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[0]', $writer->getPath());
     }
 
-    public function testPathArrayInArray()
+    public function testPathArrayInArray(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -519,7 +519,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[0]', $writer->getPath());
     }
 
-    public function testPathArrayInArrayValue()
+    public function testPathArrayInArrayValue(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -528,7 +528,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[0][0]', $writer->getPath());
     }
 
-    public function testPathObjectInArray()
+    public function testPathObjectInArray(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -536,7 +536,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[0]', $writer->getPath());
     }
 
-    public function testPathObjectInArrayValue()
+    public function testPathObjectInArrayValue(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -545,7 +545,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$[0].foo', $writer->getPath());
     }
 
-    public function testPathEndArray()
+    public function testPathEndArray(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginArray();
@@ -555,35 +555,35 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$', $writer->getPath());
     }
 
-    public function testPathInteger()
+    public function testPathInteger(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeInteger(1);
         self::assertSame('$', $writer->getPath());
     }
 
-    public function testPathString()
+    public function testPathString(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeString('foo');
         self::assertSame('$', $writer->getPath());
     }
 
-    public function testPathFloat()
+    public function testPathFloat(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeFloat(1.5);
         self::assertSame('$', $writer->getPath());
     }
 
-    public function testPathBoolean()
+    public function testPathBoolean(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->writeBoolean(false);
         self::assertSame('$', $writer->getPath());
     }
 
-    public function testComplexObject()
+    public function testComplexObject(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -609,7 +609,7 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::assertSame('$.second[1].nested2[1]', $writer->getPath());
     }
 
-    public function testComplexObjectFail()
+    public function testComplexObjectFail(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->beginObject();
@@ -642,14 +642,14 @@ class JsonEncodeWriterTest extends PHPUnit_Framework_TestCase
         self::fail('Failed to throw exception');
     }
 
-    public function testSerializeNullDefault()
+    public function testSerializeNullDefault(): void
     {
         $writer = new JsonEncodeWriter();
 
         self::assertFalse($writer->isSerializeNull());
     }
 
-    public function testIsSerializeNull()
+    public function testIsSerializeNull(): void
     {
         $writer = new JsonEncodeWriter();
         $writer->setSerializeNull(true);

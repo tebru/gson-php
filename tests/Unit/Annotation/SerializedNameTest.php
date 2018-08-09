@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tebru\Gson\Annotation\SerializedName;
 
@@ -16,16 +16,16 @@ use Tebru\Gson\Annotation\SerializedName;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Annotation\SerializedName
  */
-class SerializedNameTest extends PHPUnit_Framework_TestCase
+class SerializedNameTest extends TestCase
 {
-    public function testCreateAnnotation()
+    public function testCreateAnnotation(): void
     {
         $annotation = new SerializedName(['value' => 'test']);
 
         self::assertSame('test', $annotation->getValue());
     }
 
-    public function testCreateThrowsException()
+    public function testCreateThrowsException(): void
     {
         try {
             new SerializedName([]);

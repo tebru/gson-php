@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use ArrayObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
 use Tebru\AnnotationReader\AnnotationCollection;
@@ -32,9 +32,9 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeTokenFactory
  */
-class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
+class TypeTokenFactoryTest extends TestCase
 {
-    public function testCreateFromAnnotation()
+    public function testCreateFromAnnotation(): void
     {
         $type = new Type(['value' => ChildClass::class]);
         $annotations = new AnnotationCollection();
@@ -46,7 +46,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(ChildClass::class, $phpType->getRawType());
     }
 
-    public function testCreateFromSetterTypehint()
+    public function testCreateFromSetterTypehint(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -56,7 +56,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(UserMock::class, $phpType->getRawType());
     }
 
-    public function testCreateFromGetterReturnType()
+    public function testCreateFromGetterReturnType(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -67,7 +67,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(UserMock::class, $phpType->getRawType());
     }
 
-    public function testCreateFromSetterDefault()
+    public function testCreateFromSetterDefault(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -78,7 +78,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame('string', (string) $phpType);
     }
 
-    public function testCreateFromPropertyDefault()
+    public function testCreateFromPropertyDefault(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -88,7 +88,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame('integer', (string)$phpType);
     }
 
-    public function testCreateFromDocblockScalar()
+    public function testCreateFromDocblockScalar(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -98,7 +98,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::INTEGER, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockNullableScalar()
+    public function testCreateFromDocblockNullableScalar(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -108,7 +108,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::STRING, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockNullableScalar2()
+    public function testCreateFromDocblockNullableScalar2(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -118,7 +118,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::FLOAT, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockMixed()
+    public function testCreateFromDocblockMixed(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -128,7 +128,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::WILDCARD, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockMultipleTypes()
+    public function testCreateFromDocblockMultipleTypes(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -138,7 +138,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::WILDCARD, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockMultipleTypes2()
+    public function testCreateFromDocblockMultipleTypes2(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -148,7 +148,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::WILDCARD, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassSameNamespace()
+    public function testCreateFromDocblockClassSameNamespace(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -158,7 +158,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(DocblockFoo::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassImported()
+    public function testCreateFromDocblockClassImported(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -168,7 +168,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(ChildClass::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassGlobalConflict()
+    public function testCreateFromDocblockClassGlobalConflict(): void
     {
         require __DIR__.'/../../Mock/DocblockType/globals.php';
 
@@ -180,7 +180,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(MyGlobalClassMock::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassFullName()
+    public function testCreateFromDocblockClassFullName(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -190,7 +190,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(ChildClass::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassAliased()
+    public function testCreateFromDocblockClassAliased(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -200,7 +200,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(ChildClassParent::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassSameNamespaceAliased()
+    public function testCreateFromDocblockClassSameNamespaceAliased(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -210,7 +210,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(DocblockAliasable::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassGroupedOneLine()
+    public function testCreateFromDocblockClassGroupedOneLine(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -220,7 +220,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(ChildClassParent2::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassGroupedMultipleLines1()
+    public function testCreateFromDocblockClassGroupedMultipleLines1(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -230,7 +230,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(ClassWithoutParent::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassGroupedMultipleLines2()
+    public function testCreateFromDocblockClassGroupedMultipleLines2(): void
     {
         $this->markTestSkipped('Skipping until grouped use statements are supported');
 
@@ -242,7 +242,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(ClassWithParametersInstanceCreator::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassGroupedMultipleLinesAliased()
+    public function testCreateFromDocblockClassGroupedMultipleLinesAliased(): void
     {
         $this->markTestSkipped('Skipping until grouped use statements are supported');
 
@@ -254,7 +254,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(ClassWithParameters::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockClassGlobal()
+    public function testCreateFromDocblockClassGlobal(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -264,7 +264,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(ArrayObject::class, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockArray()
+    public function testCreateFromDocblockArray(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -274,7 +274,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::HASH, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockTypedArray()
+    public function testCreateFromDocblockTypedArray(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -285,7 +285,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::INTEGER, $phpType->getGenerics()[0]->getRawType());
     }
 
-    public function testCreateFromDocblockNestedArray()
+    public function testCreateFromDocblockNestedArray(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -297,7 +297,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::WILDCARD, $phpType->getGenerics()[0]->getGenerics()[0]->getRawType());
     }
 
-    public function testCreateFromDocblockClassArray()
+    public function testCreateFromDocblockClassArray(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -308,7 +308,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(DocblockFoo::class, $phpType->getGenerics()[0]->getRawType());
     }
 
-    public function testCreateFromDocblockOnlyNull()
+    public function testCreateFromDocblockOnlyNull(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -318,7 +318,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::NULL, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockNoTypes()
+    public function testCreateFromDocblockNoTypes(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -328,7 +328,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::WILDCARD, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockNoTags()
+    public function testCreateFromDocblockNoTags(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -338,7 +338,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::WILDCARD, $phpType->getRawType());
     }
 
-    public function testCreateFromDocblockDifferentGetter()
+    public function testCreateFromDocblockDifferentGetter(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -349,7 +349,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame('array<Tebru\Gson\Test\Mock\DocblockType\DocblockFoo>', (string)$phpType);
     }
 
-    public function testCreateFromDocblockDifferentSetter()
+    public function testCreateFromDocblockDifferentSetter(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -360,7 +360,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame('array<Tebru\Gson\Test\Mock\DocblockType\DocblockFoo>', (string)$phpType);
     }
 
-    public function testCreateFromGetter()
+    public function testCreateFromGetter(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -370,7 +370,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::INTEGER, $phpType->getRawType());
     }
 
-    public function testCreateFromSetter()
+    public function testCreateFromSetter(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -380,7 +380,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::INTEGER, $phpType->getRawType());
     }
 
-    public function testCreateFromSetterNoVariable()
+    public function testCreateFromSetterNoVariable(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();
@@ -390,7 +390,7 @@ class TypeTokenFactoryTest extends PHPUnit_Framework_TestCase
         self::assertSame(TypeToken::WILDCARD, $phpType->getRawType());
     }
 
-    public function testCreateWildcard()
+    public function testCreateWildcard(): void
     {
         $annotations = new AnnotationCollection();
         $factory = new TypeTokenFactory();

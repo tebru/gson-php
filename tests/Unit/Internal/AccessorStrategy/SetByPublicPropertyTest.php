@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\AccessorStrategy;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\SetByPublicPropertyTest\SetByPublicPropertyTestMock;
 
@@ -16,9 +16,9 @@ use Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\SetByPublicPropertyTest\
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty
  */
-class SetByPublicPropertyTest extends PHPUnit_Framework_TestCase
+class SetByPublicPropertyTest extends TestCase
 {
-    public function testSetter()
+    public function testSetter(): void
     {
         $mock = new SetByPublicPropertyTestMock();
 
@@ -28,7 +28,7 @@ class SetByPublicPropertyTest extends PHPUnit_Framework_TestCase
         self::assertSame('bar', $mock->foo);
     }
 
-    public function testSetterNoProperty()
+    public function testSetterNoProperty(): void
     {
         $mock = new SetByPublicPropertyTestMock();
 

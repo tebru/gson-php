@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use stdClass;
 use Tebru\AnnotationReader\AnnotationCollection;
@@ -42,7 +42,7 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\Excluder
  */
-class ExcluderTest extends PHPUnit_Framework_TestCase
+class ExcluderTest extends TestCase
 {
     /**
      * @var Excluder
@@ -63,7 +63,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         $this->propertyCollection = new PropertyCollection();
     }
 
-    public function testExcludeClassWithoutVersion()
+    public function testExcludeClassWithoutVersion(): void
     {
         $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class, $this->propertyCollection);
 
@@ -71,7 +71,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludeClassDeserialize($classMetadata));
     }
 
-    public function testExcludeClassWithVersionLow()
+    public function testExcludeClassWithVersionLow(): void
     {
         $this->excluder->setVersion('0.1.0');
         $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class, $this->propertyCollection);
@@ -80,7 +80,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludeClassDeserialize($classMetadata));
     }
 
-    public function testExcludeClassWithVersionEqualSince()
+    public function testExcludeClassWithVersionEqualSince(): void
     {
         $this->excluder->setVersion('1');
         $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class, $this->propertyCollection);
@@ -89,7 +89,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludeClassDeserialize($classMetadata));
     }
 
-    public function testExcludeClassWithVersionBetween()
+    public function testExcludeClassWithVersionBetween(): void
     {
         $this->excluder->setVersion('1.5');
         $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class, $this->propertyCollection);
@@ -98,7 +98,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludeClassDeserialize($classMetadata));
     }
 
-    public function testExcludeClassWithVersionEqualUntil()
+    public function testExcludeClassWithVersionEqualUntil(): void
     {
         $this->excluder->setVersion('2');
         $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class, $this->propertyCollection);
@@ -107,7 +107,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludeClassDeserialize($classMetadata));
     }
 
-    public function testExcludeClassWithVersionHigh()
+    public function testExcludeClassWithVersionHigh(): void
     {
         $this->excluder->setVersion('3');
         $classMetadata = MockProvider::classMetadata(ExcluderVersionMock::class, $this->propertyCollection);
@@ -116,7 +116,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludeClassDeserialize($classMetadata));
     }
 
-    public function testExcludeClassWithExcludeAnnotation()
+    public function testExcludeClassWithExcludeAnnotation(): void
     {
         $classMetadata = MockProvider::classMetadata(ExcluderExcludeSerializeMock::class, $this->propertyCollection);
 
@@ -124,7 +124,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludeClassDeserialize($classMetadata));
     }
 
-    public function testExcludeClassWithExposeAnnotation()
+    public function testExcludeClassWithExposeAnnotation(): void
     {
         $this->excluder->setRequireExpose(true);
         $classMetadata = MockProvider::classMetadata(ExcluderExposeMock::class, $this->propertyCollection);
@@ -133,7 +133,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludeClassDeserialize($classMetadata));
     }
 
-    public function testExcludeClassWithStrategySerialization()
+    public function testExcludeClassWithStrategySerialization(): void
     {
         $this->excluder->addExclusionStrategy(new FooSerializationExclusionStrategy());
         $classMetadata = MockProvider::classMetadata(Foo::class, $this->propertyCollection);
@@ -146,7 +146,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludeClassByDeserializationStrategy($classMetadata));
     }
 
-    public function testExcludeClassWithStrategyDeserialization()
+    public function testExcludeClassWithStrategyDeserialization(): void
     {
         $this->excluder->addExclusionStrategy(new FooDeserializationExclusionStrategy());
         $classMetadata = MockProvider::classMetadata(Foo::class, $this->propertyCollection);
@@ -159,7 +159,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludeClassByDeserializationStrategy($classMetadata));
     }
 
-    public function testExcludeCacheable()
+    public function testExcludeCacheable(): void
     {
         $this->excluder->addCachedExclusionStrategy(new ExcludeAllCacheableExclusionStrategy());
         $classMetadata = MockProvider::classMetadata(Foo::class, $this->propertyCollection);
@@ -182,7 +182,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testClassDataAware()
+    public function testClassDataAware(): void
     {
         $strategy = new ExcludeAllCacheableExclusionStrategy();
         $this->excluder->addExclusionStrategy($strategy);
@@ -194,7 +194,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($strategy->calledDeserialize);
     }
 
-    public function testPropertyDataAware()
+    public function testPropertyDataAware(): void
     {
         $strategy = new ExcludeAllCacheableExclusionStrategy();
         $this->excluder->addExclusionStrategy($strategy);
@@ -206,7 +206,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($strategy->calledDeserialize);
     }
 
-    public function testExcludePropertyDefaultModifiers()
+    public function testExcludePropertyDefaultModifiers(): void
     {
         $property = new Property(
             'foo',
@@ -224,7 +224,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testExcludePrivateProperties()
+    public function testExcludePrivateProperties(): void
     {
         $this->excluder->setExcludedModifiers(ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
@@ -244,7 +244,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testExcludeProtectedProperties()
+    public function testExcludeProtectedProperties(): void
     {
         $this->excluder->setExcludedModifiers(ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
@@ -264,7 +264,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testDoNotExcludeWithoutSinceUntilAnnotations()
+    public function testDoNotExcludeWithoutSinceUntilAnnotations(): void
     {
         $this->excluder->setVersion(1);
 
@@ -284,7 +284,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testDoNotExcludeWithoutVersion()
+    public function testDoNotExcludeWithoutVersion(): void
     {
         $annotations = new AnnotationCollection();
         $annotations->add(new Until(['value' => '2']));
@@ -305,7 +305,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testExcludeBeforeSince()
+    public function testExcludeBeforeSince(): void
     {
         $this->excluder->setVersion('1.0.0');
 
@@ -328,7 +328,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testDoNotExcludeEqualToSince()
+    public function testDoNotExcludeEqualToSince(): void
     {
         $this->excluder->setVersion('1.0.1');
 
@@ -351,7 +351,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testDoNotExcludeAfterSince()
+    public function testDoNotExcludeAfterSince(): void
     {
         $this->excluder->setVersion('1.0.2');
 
@@ -374,7 +374,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testDoNotExcludeBeforeUntil()
+    public function testDoNotExcludeBeforeUntil(): void
     {
         $this->excluder->setVersion('1');
 
@@ -397,7 +397,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testExcludeEqualToUntil()
+    public function testExcludeEqualToUntil(): void
     {
         $this->excluder->setVersion('2.0.0');
 
@@ -420,7 +420,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testExcludeGreaterThanUntil()
+    public function testExcludeGreaterThanUntil(): void
     {
         $this->excluder->setVersion('2.0.1');
 
@@ -443,7 +443,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testExcludeWithExcludeAnnotation()
+    public function testExcludeWithExcludeAnnotation(): void
     {
         $annotations = new AnnotationCollection();
         $annotations->add(new Exclude([]));
@@ -464,7 +464,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testExcludeWithExcludeAnnotationOnlySerialize()
+    public function testExcludeWithExcludeAnnotationOnlySerialize(): void
     {
         $annotations = new AnnotationCollection();
         $annotations->add(new Exclude(['deserialize' => false]));
@@ -485,7 +485,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testExcludeWithExcludeAnnotationOnlyDeserialize()
+    public function testExcludeWithExcludeAnnotationOnlyDeserialize(): void
     {
         $annotations = new AnnotationCollection();
         $annotations->add(new Exclude(['serialize' => false]));
@@ -506,7 +506,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testDoNotExcludeWithExposeAnnotation()
+    public function testDoNotExcludeWithExposeAnnotation(): void
     {
         $this->excluder->setRequireExpose(true);
 
@@ -529,7 +529,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testDoNotExcludeWithExposeAnnotationOnlySerialize()
+    public function testDoNotExcludeWithExposeAnnotationOnlySerialize(): void
     {
         $this->excluder->setRequireExpose(true);
 
@@ -552,7 +552,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testDoNotExcludeWithExposeAnnotationOnlyDeserialize()
+    public function testDoNotExcludeWithExposeAnnotationOnlyDeserialize(): void
     {
         $this->excluder->setRequireExpose(true);
 
@@ -575,7 +575,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testDoNotExcludeWithExposeAnnotationWithoutRequireExpose()
+    public function testDoNotExcludeWithExposeAnnotationWithoutRequireExpose(): void
     {
         $annotations = new AnnotationCollection();
         $annotations->add(new Expose(['serialize' => false]));
@@ -596,7 +596,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertFalse($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testExcludeWithoutExposeAnnotationWithRequireExpose()
+    public function testExcludeWithoutExposeAnnotationWithRequireExpose(): void
     {
         $this->excluder->setRequireExpose(true);
 
@@ -616,7 +616,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
     }
 
-    public function testExcludeFromStrategy()
+    public function testExcludeFromStrategy(): void
     {
         $this->excluder->addExclusionStrategy(new BarPropertyExclusionStrategy());
         $this->excluder->addExclusionStrategy(new FooPropertyExclusionStrategy());
@@ -637,7 +637,7 @@ class ExcluderTest extends PHPUnit_Framework_TestCase
         self::assertTrue($this->excluder->excludePropertyByDeserializationStrategy($property));
     }
 
-    public function testExcludeFromStrategyFalse()
+    public function testExcludeFromStrategyFalse(): void
     {
         $property = new Property(
             'foo',

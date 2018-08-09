@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tebru\Gson\Annotation\Since;
 
@@ -16,16 +16,16 @@ use Tebru\Gson\Annotation\Since;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Annotation\Since
  */
-class SinceTest extends PHPUnit_Framework_TestCase
+class SinceTest extends TestCase
 {
-    public function testVersion()
+    public function testVersion(): void
     {
         $since = new Since(['value' => 1]);
 
         self::assertSame('1', $since->getValue());
     }
 
-    public function testNoVersion()
+    public function testNoVersion(): void
     {
         try {
             new Since([]);

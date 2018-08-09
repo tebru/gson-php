@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
@@ -22,7 +22,7 @@ use Tebru\PhpType\TypeToken;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class ClassMetadataTest extends PHPUnit_Framework_TestCase
+class ClassMetadataTest extends TestCase
 {
     /**
      * @var AnnotationCollection
@@ -46,13 +46,13 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
         $this->metadata = new DefaultClassMetadata(Foo::class, $this->annotations, $this->propertyCollection);
     }
 
-    public function testClassMetadata()
+    public function testClassMetadata(): void
     {
         self::assertSame(Foo::class, $this->metadata->getName());
         self::assertSame($this->annotations, $this->metadata->getAnnotations());
     }
 
-    public function testPropertyMetadata()
+    public function testPropertyMetadata(): void
     {
         $this->propertyCollection->add(new Property(
             'foo',
@@ -68,7 +68,7 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
         self::assertCount(1, $this->metadata->getPropertyMetadata());
     }
 
-    public function testProperty()
+    public function testProperty(): void
     {
         $property = new Property(
             'foo',
@@ -85,12 +85,12 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
         self::assertSame($property, $this->metadata->getProperty('foo'));
     }
 
-    public function testPropertyNull()
+    public function testPropertyNull(): void
     {
         self::assertNull($this->metadata->getProperty('foo'));
     }
 
-    public function testGetAnnotation()
+    public function testGetAnnotation(): void
     {
         $annotation = new FooAnnotation([]);
         $this->annotations->add($annotation);
@@ -98,7 +98,7 @@ class ClassMetadataTest extends PHPUnit_Framework_TestCase
         self::assertSame($annotation, $this->metadata->getAnnotation(FooAnnotation::class));
     }
 
-    public function testGetAnnotationNull()
+    public function testGetAnnotationNull(): void
     {
         self::assertNull($this->metadata->getAnnotation(FooAnnotation::class));
     }

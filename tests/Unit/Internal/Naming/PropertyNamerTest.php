@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\Naming;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
 use Symfony\Component\Cache\Simple\NullCache;
@@ -23,9 +23,9 @@ use Tebru\Gson\Test\Mock\AnnotatedMock;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\Naming\PropertyNamer
  */
-class PropertyNamerTest extends PHPUnit_Framework_TestCase
+class PropertyNamerTest extends TestCase
 {
-    public function testGetNameFromAnnotation()
+    public function testGetNameFromAnnotation(): void
     {
         $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
         $reflectionProperty = new ReflectionProperty(AnnotatedMock::class, 'fooBar');
@@ -40,7 +40,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
         self::assertSame('foobar', $namer->serializedName($reflectionProperty->getName(), $annotations));
     }
 
-    public function testGetNameFromVirtualAnnotationOnMethod()
+    public function testGetNameFromVirtualAnnotationOnMethod(): void
     {
         $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
         $reflectionMethod = new ReflectionMethod(AnnotatedMock::class, 'virtualFoo');
@@ -55,7 +55,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
         self::assertSame('vfoo', $namer->serializedName($reflectionMethod->getName(), $annotations));
     }
 
-    public function testGetNameFromVirtualAnnotationOnMethodUsesSerializedName()
+    public function testGetNameFromVirtualAnnotationOnMethodUsesSerializedName(): void
     {
         $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
         $reflectionMethod = new ReflectionMethod(AnnotatedMock::class, 'virtualFooWithSerializedName');
@@ -70,7 +70,7 @@ class PropertyNamerTest extends PHPUnit_Framework_TestCase
         self::assertSame('vfooOverride', $namer->serializedName($reflectionMethod->getName(), $annotations));
     }
 
-    public function testGetNameUsingStrategy()
+    public function testGetNameUsingStrategy(): void
     {
         $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
         $reflectionProperty = new ReflectionProperty(AnnotatedMock::class, 'fooBarBaz');

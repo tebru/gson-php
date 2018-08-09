@@ -5,7 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal\AccessorStrategy;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\AccessorStrategy\SetByNull;
 use Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\SetByNullTest\SetByNullTestMock;
 
@@ -15,9 +15,9 @@ use Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\SetByNullTest\SetByNullT
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\AccessorStrategy\SetByNull
  */
-class SetByNullTest extends PHPUnit_Framework_TestCase
+class SetByNullTest extends TestCase
 {
-    public function testSetDoesNothing()
+    public function testSetDoesNothing(): void
     {
         $mock = new SetByNullTestMock();
         $strategy = new SetByNull();

@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\Naming;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 
 /**
@@ -15,9 +15,9 @@ use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy
  */
-class UpperCaseMethodNamingStrategyTest extends PHPUnit_Framework_TestCase
+class UpperCaseMethodNamingStrategyTest extends TestCase
 {
-    public function testSimple()
+    public function testSimple(): void
     {
         $methodNaming = new UpperCaseMethodNamingStrategy();
 
@@ -25,7 +25,7 @@ class UpperCaseMethodNamingStrategyTest extends PHPUnit_Framework_TestCase
         self::assertSame(['setFoo'], $methodNaming->translateToSetter('foo'));
     }
 
-    public function testAlreadyUpperCase()
+    public function testAlreadyUpperCase(): void
     {
         $methodNaming = new UpperCaseMethodNamingStrategy();
 
@@ -33,7 +33,7 @@ class UpperCaseMethodNamingStrategyTest extends PHPUnit_Framework_TestCase
         self::assertSame(['setFoo'], $methodNaming->translateToSetter('Foo'));
     }
 
-    public function testUnderscore()
+    public function testUnderscore(): void
     {
         $methodNaming = new UpperCaseMethodNamingStrategy();
 

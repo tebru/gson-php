@@ -115,7 +115,7 @@ class Gson
     /**
      * Convenience method to convert an object to a json_decode'd array
      *
-     * @param object $object
+     * @param mixed $object
      * @return array
      */
     public function toArray($object): array

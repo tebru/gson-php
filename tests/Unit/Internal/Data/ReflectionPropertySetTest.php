@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\Data;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use Tebru\Gson\Internal\Data\ReflectionPropertySet;
 use Tebru\Gson\Test\Mock\ChildClass;
@@ -18,9 +18,9 @@ use Tebru\Gson\Test\Mock\ChildClassParent;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\Data\ReflectionPropertySet
  */
-class ReflectionPropertySetTest extends PHPUnit_Framework_TestCase
+class ReflectionPropertySetTest extends TestCase
 {
-    public function testAddProperty()
+    public function testAddProperty(): void
     {
         $property = new ReflectionProperty(ChildClass::class, 'foo');
         $set = new ReflectionPropertySet();
@@ -29,7 +29,7 @@ class ReflectionPropertySetTest extends PHPUnit_Framework_TestCase
         self::assertSame([$property], $set->toArray());
     }
 
-    public function testAddSamePropertyName()
+    public function testAddSamePropertyName(): void
     {
         $property = new ReflectionProperty(ChildClass::class, 'foo');
         $set = new ReflectionPropertySet();
@@ -39,7 +39,7 @@ class ReflectionPropertySetTest extends PHPUnit_Framework_TestCase
         self::assertSame([$property], $set->toArray());
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $property = new ReflectionProperty(ChildClass::class, 'foo');
         $set = new ReflectionPropertySet();
@@ -48,10 +48,11 @@ class ReflectionPropertySetTest extends PHPUnit_Framework_TestCase
         self::assertSame([$property], $set->toArray());
     }
 
-    public function testCanIterate()
+    public function testCanIterate(): void
     {
         $annotation = new ReflectionProperty(ChildClass::class, 'foo');
-        $set = new ReflectionPropertySet([$annotation]);
+        $set = new ReflectionPropertySet();
+        $set->add($annotation);
 
         foreach ($set as $element) {
             self::assertSame($annotation, $element);

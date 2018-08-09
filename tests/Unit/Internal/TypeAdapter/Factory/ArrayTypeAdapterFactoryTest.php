@@ -7,9 +7,8 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use stdClass;
-use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 
 use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
@@ -23,30 +22,30 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory
  */
-class ArrayTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
+class ArrayTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports()
+    public function testValidSupports(): void
     {
         $factory = new ArrayTypeAdapterFactory();
 
         self::assertTrue($factory->supports(new TypeToken('array')));
     }
 
-    public function testValidSupportsStdClass()
+    public function testValidSupportsStdClass(): void
     {
         $factory = new ArrayTypeAdapterFactory();
 
         self::assertTrue($factory->supports(new TypeToken(stdClass::class)));
     }
 
-    public function testInvalidSupports()
+    public function testInvalidSupports(): void
     {
         $factory = new ArrayTypeAdapterFactory();
 
         self::assertFalse($factory->supports(new TypeToken('string')));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $factory = new ArrayTypeAdapterFactory();
         $phpType = new TypeToken('array');
@@ -59,7 +58,7 @@ class ArrayTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
         self::assertAttributeSame(0, 'numberOfGenerics', $adapter);
     }
 
-    public function testCreateOneGenericType()
+    public function testCreateOneGenericType(): void
     {
         $factory = new ArrayTypeAdapterFactory();
         $phpType = new TypeToken('array<int>');
@@ -72,7 +71,7 @@ class ArrayTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
         self::assertAttributeSame(1, 'numberOfGenerics', $adapter);
     }
 
-    public function testCreateTwoGenericTypes()
+    public function testCreateTwoGenericTypes(): void
     {
         $factory = new ArrayTypeAdapterFactory();
         $phpType = new TypeToken('array<string, int>');

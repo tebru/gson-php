@@ -5,12 +5,11 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tebru\Gson\Internal\DefaultDeserializationExclusionData;
 use Tebru\Gson\Internal\DefaultReaderContext;
 use Tebru\Gson\Internal\JsonDecodeReader;
-use Tebru\Gson\Internal\JsonEncodeWriter;
 
 /**
  * Class DefaultDeserializationExclusionDataTest
@@ -18,9 +17,9 @@ use Tebru\Gson\Internal\JsonEncodeWriter;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\DefaultDeserializationExclusionData
  */
-class DefaultDeserializationExclusionDataTest extends PHPUnit_Framework_TestCase
+class DefaultDeserializationExclusionDataTest extends TestCase
 {
-    public function testGetters()
+    public function testGetters(): void
     {
         $object = new stdClass();
         $context = new DefaultReaderContext();
@@ -31,7 +30,7 @@ class DefaultDeserializationExclusionDataTest extends PHPUnit_Framework_TestCase
         self::assertSame('$', $exclusionData->getPath());
     }
 
-    public function testUpdatePath()
+    public function testUpdatePath(): void
     {
         $object = new stdClass();
         $context = new DefaultReaderContext();

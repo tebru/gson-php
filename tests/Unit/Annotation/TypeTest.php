@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
 use Tebru\Gson\Annotation\Type;
@@ -17,16 +17,16 @@ use Tebru\Gson\Annotation\Type;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Annotation\Type
  */
-class TypeTest extends PHPUnit_Framework_TestCase
+class TypeTest extends TestCase
 {
-    public function testCreateTypeAnnotation()
+    public function testCreateTypeAnnotation(): void
     {
         $type = new Type(['value' => stdClass::class]);
 
         self::assertSame(stdClass::class, (string) $type->getType());
     }
 
-    public function testCreateThrowsException()
+    public function testCreateThrowsException(): void
     {
         try {
             new Type([]);

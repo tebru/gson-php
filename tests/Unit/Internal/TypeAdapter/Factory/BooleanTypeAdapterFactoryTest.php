@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\TypeAdapter\BooleanTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
 
@@ -20,23 +20,23 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory
  */
-class BooleanTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
+class BooleanTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports()
+    public function testValidSupports(): void
     {
         $factory = new BooleanTypeAdapterFactory();
 
         self::assertTrue($factory->supports(new TypeToken('boolean')));
     }
 
-    public function testInvalidSupports()
+    public function testInvalidSupports(): void
     {
         $factory = new BooleanTypeAdapterFactory();
 
         self::assertFalse($factory->supports(new TypeToken('string')));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $factory = new BooleanTypeAdapterFactory();
         $adapter = $factory->create(new TypeToken('boolean'), MockProvider::typeAdapterProvider());

@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\Data;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
@@ -22,7 +22,7 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\Data\PropertyCollection
  */
-class PropertyCollectionTest extends PHPUnit_Framework_TestCase
+class PropertyCollectionTest extends TestCase
 {
     /**
      * @var Property
@@ -55,22 +55,22 @@ class PropertyCollectionTest extends PHPUnit_Framework_TestCase
         $this->propertyCollection->add($this->property);
     }
 
-    public function testGetters()
+    public function testGetters(): void
     {
         self::assertSame($this->property, $this->propertyCollection->getBySerializedName('foo_bar'));
     }
 
-    public function testGettersNotFound()
+    public function testGettersNotFound(): void
     {
         self::assertNull($this->propertyCollection->getBySerializedName('foo_bar2'));
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         self::assertSame([$this->property], $this->propertyCollection->toArray());
     }
 
-    public function testIterate()
+    public function testIterate(): void
     {
         foreach ($this->propertyCollection as $p) {
             self::assertSame($this->property, $p);

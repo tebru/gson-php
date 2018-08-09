@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\TypeAdapter\FloatTypeAdapter;
 
 /**
@@ -16,16 +16,16 @@ use Tebru\Gson\Internal\TypeAdapter\FloatTypeAdapter;
  * @covers \Tebru\Gson\Internal\TypeAdapter\FloatTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class FloatTypeAdapterTest extends PHPUnit_Framework_TestCase
+class FloatTypeAdapterTest extends TestCase
 {
-    public function testDeserializeNull()
+    public function testDeserializeNull(): void
     {
         $adapter = new FloatTypeAdapter();
 
         self::assertNull($adapter->readFromJson('null'));
     }
 
-    public function testDeserializeRead()
+    public function testDeserializeRead(): void
     {
         $adapter = new FloatTypeAdapter();
         $result = $adapter->readFromJson('1.1');
@@ -33,7 +33,7 @@ class FloatTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(1.1, $result);
     }
 
-    public function testDeserializeReadIntegerToFloat()
+    public function testDeserializeReadIntegerToFloat(): void
     {
         $adapter = new FloatTypeAdapter();
         $result = $adapter->readFromJson('1');
@@ -41,21 +41,21 @@ class FloatTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(1.0, $result);
     }
 
-    public function testSerializeNull()
+    public function testSerializeNull(): void
     {
         $adapter = new FloatTypeAdapter();
 
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
 
-    public function testSerializeFloat()
+    public function testSerializeFloat(): void
     {
         $adapter = new FloatTypeAdapter();
 
         self::assertSame('1.1', $adapter->writeToJson(1.1, false));
     }
 
-    public function testSerializeFloatAsInt()
+    public function testSerializeFloatAsInt(): void
     {
         $adapter = new FloatTypeAdapter();
 

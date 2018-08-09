@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\DefaultReaderContext;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstance;
@@ -29,7 +29,7 @@ use Tebru\PhpType\TypeToken;
  * @covers \Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
+class ReflectionTypeAdapterTest extends TestCase
 {
     /**
      * @var Excluder
@@ -47,7 +47,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->typeAdapterProvider = MockProvider::typeAdapterProvider($this->excluder);
     }
 
-    public function testSkipDeserialize()
+    public function testSkipDeserialize(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMockExcluded::class));
         $result = $adapter->readFromJson('{"foo": "bar"}');
@@ -55,7 +55,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertNull($result);
     }
 
-    public function testDeserializeNull()
+    public function testDeserializeNull(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
         $result = $adapter->readFromJson('null');
@@ -63,7 +63,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertNull($result);
     }
 
-    public function testDeserialize()
+    public function testDeserialize(): void
     {
         /** @var ReflectionTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
@@ -100,7 +100,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(12345, $address->getZip());
     }
 
-    public function testDeserializeOverrideObjectConstructor()
+    public function testDeserializeOverrideObjectConstructor(): void
     {
         /** @var ReflectionTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
@@ -147,7 +147,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(12345, $address->getZip());
     }
 
-    public function testDeserializeOverrideObjectConstructorWithoutInner()
+    public function testDeserializeOverrideObjectConstructorWithoutInner(): void
     {
         /** @var ReflectionTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
@@ -190,7 +190,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(12345, $address->getZip());
     }
 
-    public function testDeserializeExcludeClass()
+    public function testDeserializeExcludeClass(): void
     {
         $this->excluder->addExclusionStrategy(new UserMockExclusionStrategy());
 
@@ -218,7 +218,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertNull($user);
     }
 
-    public function testDeserializeExcludeEmail()
+    public function testDeserializeExcludeEmail(): void
     {
         $this->excluder->addExclusionStrategy(new UserEmailExclusionStrategy());
 
@@ -247,7 +247,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertNull($user->getEmail());
     }
 
-    public function testDeserializeVirtualProperty()
+    public function testDeserializeVirtualProperty(): void
     {
         /** @var ReflectionTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMockVirtual::class));
@@ -286,21 +286,21 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(12345, $address->getZip());
     }
 
-    public function testExcludeSerialize()
+    public function testExcludeSerialize(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMockExcluded::class));
 
         self::assertSame('null', $adapter->writeToJson('{"foo": "bar"}', false));
     }
 
-    public function testSerializeNull()
+    public function testSerializeNull(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
 
-    public function testSerialize()
+    public function testSerialize(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
@@ -336,7 +336,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString($expectedJson, $adapter->writeToJson($user, false));
     }
 
-    public function testSerializeExcludeClass()
+    public function testSerializeExcludeClass(): void
     {
         $this->excluder->addExclusionStrategy(new UserMockExclusionStrategy());
 
@@ -361,7 +361,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('null', $adapter->writeToJson($user, false));
     }
 
-    public function testSerializeExcludeProperty()
+    public function testSerializeExcludeProperty(): void
     {
         $this->excluder->addExclusionStrategy(new UserEmailExclusionStrategy());
 
@@ -398,7 +398,7 @@ class ReflectionTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString($expectedJson, $adapter->writeToJson($user, false));
     }
 
-    public function testSerializeVirtual()
+    public function testSerializeVirtual(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMockVirtual::class));
 

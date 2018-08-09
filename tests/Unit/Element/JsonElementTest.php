@@ -5,7 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\Element;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Element\JsonNull;
 use Tebru\Gson\Exception\UnsupportedOperationException;
 
@@ -16,10 +16,10 @@ use Tebru\Gson\Exception\UnsupportedOperationException;
  * @covers \Tebru\Gson\Element\JsonElement
  * @covers \Tebru\Gson\Element\JsonNull
  */
-class JsonElementTest extends PHPUnit_Framework_TestCase
+class JsonElementTest extends TestCase
 {
 
-    public function testIsMethods()
+    public function testIsMethods(): void
     {
         $element = new JsonNull();
 
@@ -35,7 +35,7 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
         self::assertFalse($element->isBoolean());
     }
 
-    public function testAsString()
+    public function testAsString(): void
     {
         $element = new JsonNull();
         try {
@@ -47,7 +47,7 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testAsInteger()
+    public function testAsInteger(): void
     {
         $element = new JsonNull();
         try {
@@ -59,7 +59,7 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testAsFloat()
+    public function testAsFloat(): void
     {
         $element = new JsonNull();
         try {
@@ -71,7 +71,7 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testAsBoolean()
+    public function testAsBoolean(): void
     {
         $element = new JsonNull();
         try {
@@ -83,13 +83,13 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testAsArray()
+    public function testAsArray(): void
     {
         $element = new JsonNull();
         self::assertNull($element->jsonSerialize());
     }
 
-    public function testAsJsonObject()
+    public function testAsJsonObject(): void
     {
         $element = new JsonNull();
         try {
@@ -101,7 +101,7 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testAsJsonArray()
+    public function testAsJsonArray(): void
     {
         $element = new JsonNull();
         try {
@@ -113,7 +113,7 @@ class JsonElementTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testGetValue()
+    public function testGetValue(): void
     {
         $element = new JsonNull();
         try {

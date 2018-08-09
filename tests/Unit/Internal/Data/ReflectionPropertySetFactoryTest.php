@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\Data;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionProperty;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
@@ -21,9 +21,9 @@ use Tebru\Gson\Test\Mock\ClassWithoutParent;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\Data\ReflectionPropertySetFactory
  */
-class ReflectionPropertySetFactoryTest extends PHPUnit_Framework_TestCase
+class ReflectionPropertySetFactoryTest extends TestCase
 {
-    public function testCreateWithoutParent()
+    public function testCreateWithoutParent(): void
     {
         $factory = new ReflectionPropertySetFactory();
         $properties = $factory->create(new ReflectionClass(ClassWithoutParent::class));
@@ -38,7 +38,7 @@ class ReflectionPropertySetFactoryTest extends PHPUnit_Framework_TestCase
         self::assertEquals($expected, $properties->toArray());
     }
 
-    public function testCreateWithParents()
+    public function testCreateWithParents(): void
     {
         $factory = new ReflectionPropertySetFactory();
         $properties = $factory->create(new ReflectionClass(ChildClass::class));

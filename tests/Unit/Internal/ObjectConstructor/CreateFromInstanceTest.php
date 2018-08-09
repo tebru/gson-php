@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\ObjectConstructor;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstance;
 use Tebru\Gson\Test\Mock\UserMock;
 
@@ -16,9 +16,9 @@ use Tebru\Gson\Test\Mock\UserMock;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\ObjectConstructor\CreateFromInstance
  */
-class CreateFromInstanceTest extends PHPUnit_Framework_TestCase
+class CreateFromInstanceTest extends TestCase
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $mock = new UserMock();
         $instanceCreator = new CreateFromInstance($mock);

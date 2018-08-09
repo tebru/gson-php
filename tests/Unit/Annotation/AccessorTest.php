@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tebru\Gson\Annotation\Accessor;
 
@@ -16,23 +16,23 @@ use Tebru\Gson\Annotation\Accessor;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Annotation\Accessor
  */
-class AccessorTest extends PHPUnit_Framework_TestCase
+class AccessorTest extends TestCase
 {
-    public function testCreateAnnotationGetter()
+    public function testCreateAnnotationGetter(): void
     {
         $annotation = new Accessor(['get' => 'getFoo']);
 
         self::assertSame('getFoo', $annotation->getter());
     }
 
-    public function testCreateAnnotationSetter()
+    public function testCreateAnnotationSetter(): void
     {
         $annotation = new Accessor(['set' => 'setFoo']);
 
         self::assertSame('setFoo', $annotation->setter());
     }
 
-    public function testCreateAnnotationGetterAndSetter()
+    public function testCreateAnnotationGetterAndSetter(): void
     {
         $annotation = new Accessor(['get' => 'getFoo', 'set' => 'setFoo']);
 
@@ -40,7 +40,7 @@ class AccessorTest extends PHPUnit_Framework_TestCase
         self::assertSame('setFoo', $annotation->setter());
     }
 
-    public function testCreateAnnotationThrowsException()
+    public function testCreateAnnotationThrowsException(): void
     {
         try {
             new Accessor([]);

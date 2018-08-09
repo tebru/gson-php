@@ -5,7 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\Element;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Element\JsonNull;
 use Tebru\Gson\Element\JsonPrimitive;
 
@@ -15,14 +15,14 @@ use Tebru\Gson\Element\JsonPrimitive;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Element\JsonPrimitive
  */
-class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
+class JsonPrimitiveTest extends TestCase
 {
-    public function testNull()
+    public function testNull(): void
     {
         self::assertInstanceOf(JsonNull::class, JsonPrimitive::create(null));
     }
 
-    public function testString()
+    public function testString(): void
     {
         $primitive = JsonPrimitive::create('test');
 
@@ -39,7 +39,7 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
         self::assertSame('test', $primitive->asString());
     }
 
-    public function testBooleanTrue()
+    public function testBooleanTrue(): void
     {
         $primitive = JsonPrimitive::create(true);
 
@@ -56,7 +56,7 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
         self::assertTrue($primitive->asBoolean());
     }
 
-    public function testBooleanFalse()
+    public function testBooleanFalse(): void
     {
         $primitive = JsonPrimitive::create(false);
 
@@ -73,7 +73,7 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
         self::assertFalse($primitive->asBoolean());
     }
 
-    public function testInteger()
+    public function testInteger(): void
     {
         $primitive = JsonPrimitive::create(1);
 
@@ -90,7 +90,7 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
         self::assertSame(1, $primitive->asInteger());
     }
 
-    public function testFloat()
+    public function testFloat(): void
     {
         $primitive = JsonPrimitive::create(1.1);
 
@@ -107,21 +107,21 @@ class JsonPrimitiveTest extends PHPUnit_Framework_TestCase
         self::assertSame(1.1, $primitive->asFloat());
     }
 
-    public function testIntegerAsFloat()
+    public function testIntegerAsFloat(): void
     {
         $primitive = JsonPrimitive::create(1);
 
         self::assertSame(1.0, $primitive->asFloat());
     }
 
-    public function testGetValue()
+    public function testGetValue(): void
     {
         $primitive = JsonPrimitive::create(1);
 
         self::assertSame(1, $primitive->getValue());
     }
 
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
         $primitive = JsonPrimitive::create(1);
 

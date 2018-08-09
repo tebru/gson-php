@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -23,7 +23,7 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory
  */
-class ReflectionTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
+class ReflectionTypeAdapterFactoryTest extends TestCase
 {
     /**
      * @var Excluder
@@ -47,24 +47,24 @@ class ReflectionTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
         $this->typeAdapterProvider = MockProvider::typeAdapterProvider($this->excluder);
     }
 
-    public function testValidSupports()
+    public function testValidSupports(): void
     {
         self::assertTrue($this->reflectionTypeAdapterFactory->supports(new TypeToken(ChildClass::class)));
     }
 
-    public function testNonClassSupports()
+    public function testNonClassSupports(): void
     {
         self::assertFalse($this->reflectionTypeAdapterFactory->supports(new TypeToken('string')));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(ChildClass::class));
 
         self::assertInstanceOf(ReflectionTypeAdapter::class, $adapter);
     }
 
-    public function testCreateJsonAdapter()
+    public function testCreateJsonAdapter(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(JsonAdapterClassMock::class));
 

@@ -6,7 +6,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use LogicException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Element\JsonArray;
 use Tebru\Gson\Element\JsonNull;
 use Tebru\Gson\Element\JsonObject;
@@ -22,9 +22,9 @@ use Tebru\Gson\Internal\TypeAdapter\JsonElementTypeAdapter;
  * @covers \Tebru\Gson\Internal\TypeAdapter\JsonElementTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
+class JsonElementTypeAdapterTest extends TestCase
 {
-    public function testDeserializeObject()
+    public function testDeserializeObject(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
         $result = $typeAdapter->readFromJson('{"key": "value"}');
@@ -33,7 +33,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertCount(1, $result);
     }
 
-    public function testDeserializeObjectEmpty()
+    public function testDeserializeObjectEmpty(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
         $result = $typeAdapter->readFromJson('{}');
@@ -42,7 +42,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertCount(0, $result);
     }
 
-    public function testDeserializeArray()
+    public function testDeserializeArray(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
         $result = $typeAdapter->readFromJson('[1]');
@@ -50,7 +50,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(JsonArray::class, $result);
     }
 
-    public function testDeserializeArrayEmpty()
+    public function testDeserializeArrayEmpty(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
         $result = $typeAdapter->readFromJson('[]');
@@ -59,7 +59,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertCount(0, $result);
     }
 
-    public function testDeserializeString()
+    public function testDeserializeString(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
         $result = $typeAdapter->readFromJson('"foo"');
@@ -68,7 +68,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('foo', $result->asString());
     }
 
-    public function testDeserializeInteger()
+    public function testDeserializeInteger(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
         $result = $typeAdapter->readFromJson('1');
@@ -77,7 +77,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(1, $result->asInteger());
     }
 
-    public function testDeserializeFloat()
+    public function testDeserializeFloat(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
         $result = $typeAdapter->readFromJson('1.1');
@@ -86,7 +86,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(1.1, $result->asFloat());
     }
 
-    public function testDeserializeBooleanTrue()
+    public function testDeserializeBooleanTrue(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
         $result = $typeAdapter->readFromJson('true');
@@ -95,7 +95,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertTrue($result->asBoolean());
     }
 
-    public function testDeserializeBooleanFalse()
+    public function testDeserializeBooleanFalse(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
         $result = $typeAdapter->readFromJson('false');
@@ -104,7 +104,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertFalse($result->asBoolean());
     }
 
-    public function testDeserializeNull()
+    public function testDeserializeNull(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
         $result = $typeAdapter->readFromJson('null');
@@ -112,7 +112,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(JsonNull::class, $result);
     }
 
-    public function testDeserializeException()
+    public function testDeserializeException(): void
     {
         $reader = new JsonDecodeReader('{}', new DefaultReaderContext());
         $reader->beginObject();
@@ -127,21 +127,21 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testSerializeNull()
+    public function testSerializeNull(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
         self::assertSame('null', $typeAdapter->writeToJson(null, false));
     }
 
-    public function testSerializeNullObject()
+    public function testSerializeNullObject(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
         self::assertSame('null', $typeAdapter->writeToJson(new JsonNull(), false));
     }
 
-    public function testSerializeObject()
+    public function testSerializeObject(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
@@ -151,7 +151,7 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('{"foo":"bar"}', $typeAdapter->writeToJson($object, false));
     }
 
-    public function testSerializeArray()
+    public function testSerializeArray(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
@@ -161,42 +161,42 @@ class JsonElementTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('["foo"]', $typeAdapter->writeToJson($object, false));
     }
 
-    public function testSerializeString()
+    public function testSerializeString(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
         self::assertSame('"foo"', $typeAdapter->writeToJson(JsonPrimitive::create('foo'), false));
     }
 
-    public function testSerializeInteger()
+    public function testSerializeInteger(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
         self::assertSame('1', $typeAdapter->writeToJson(JsonPrimitive::create(1), false));
     }
 
-    public function testSerializeFloat()
+    public function testSerializeFloat(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
         self::assertSame('1.1', $typeAdapter->writeToJson(JsonPrimitive::create(1.1), false));
     }
 
-    public function testSerializeBooleanTrue()
+    public function testSerializeBooleanTrue(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
         self::assertSame('true', $typeAdapter->writeToJson(JsonPrimitive::create(true), false));
     }
 
-    public function testSerializeBooleanFalse()
+    public function testSerializeBooleanFalse(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
 
         self::assertSame('false', $typeAdapter->writeToJson(JsonPrimitive::create(false), false));
     }
 
-    public function testSerializeNested()
+    public function testSerializeNested(): void
     {
         $typeAdapter = new JsonElementTypeAdapter();
 

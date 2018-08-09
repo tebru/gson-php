@@ -5,7 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\Test\Mock\AddressMock;
 use Tebru\Gson\Test\MockProvider;
@@ -17,9 +17,9 @@ use Tebru\Gson\Test\MockProvider;
  * @covers \Tebru\Gson\Internal\DefaultJsonSerializationContext
  * @covers \Tebru\Gson\TypeAdapter
  */
-class DefaultJsonSerializationContextTest extends PHPUnit_Framework_TestCase
+class DefaultJsonSerializationContextTest extends TestCase
 {
-    public function testSerialize()
+    public function testSerialize(): void
     {
         $address = new AddressMock();
         $address->setStreet('123 ABC St');

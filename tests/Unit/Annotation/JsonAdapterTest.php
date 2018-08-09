@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Test\Mock\MockSerializer;
@@ -17,16 +17,16 @@ use Tebru\Gson\Test\Mock\MockSerializer;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Annotation\JsonAdapter
  */
-class JsonAdapterTest extends PHPUnit_Framework_TestCase
+class JsonAdapterTest extends TestCase
 {
-    public function testCreateAnnotation()
+    public function testCreateAnnotation(): void
     {
         $type = new JsonAdapter(['value' => MockSerializer::class]);
 
         self::assertSame(MockSerializer::class, $type->getValue());
     }
 
-    public function testCreateThrowsException()
+    public function testCreateThrowsException(): void
     {
         try {
             new JsonAdapter([]);

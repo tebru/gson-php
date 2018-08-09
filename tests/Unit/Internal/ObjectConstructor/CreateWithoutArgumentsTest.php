@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\ObjectConstructor;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\ObjectConstructor\CreateWithoutArguments;
 use Tebru\Gson\Test\Mock\ChildClass;
 
@@ -16,9 +16,9 @@ use Tebru\Gson\Test\Mock\ChildClass;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\ObjectConstructor\CreateWithoutArguments
  */
-class CreateWithoutArgumentsTest extends PHPUnit_Framework_TestCase
+class CreateWithoutArgumentsTest extends TestCase
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $instanceCreator = new CreateWithoutArguments(ChildClass::class);
         $object = $instanceCreator->construct();

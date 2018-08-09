@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Annotation\VirtualProperty;
 
 /**
@@ -15,16 +15,16 @@ use Tebru\Gson\Annotation\VirtualProperty;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Annotation\VirtualProperty
  */
-class VirtualPropertyTest extends PHPUnit_Framework_TestCase
+class VirtualPropertyTest extends TestCase
 {
-    public function testCreateAnnotation()
+    public function testCreateAnnotation(): void
     {
         $type = new VirtualProperty([]);
 
         self::assertInstanceOf(VirtualProperty::class, $type);
     }
 
-    public function testGetAnnotationData()
+    public function testGetAnnotationData(): void
     {
         $annotation = new VirtualProperty(['value' => 'foo']);
 

@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\Data;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Simple\ArrayCache;
 use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\AnnotationReader\AnnotationCollection;
@@ -43,7 +43,7 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\Data\ClassMetadataFactory
  */
-class ClassMetadataFactoryTest extends PHPUnit_Framework_TestCase
+class ClassMetadataFactoryTest extends TestCase
 {
     /**
      * @var Excluder
@@ -66,7 +66,7 @@ class ClassMetadataFactoryTest extends PHPUnit_Framework_TestCase
         $this->classMetadataFactory = MockProvider::classMetadataFactory($this->excluder);
         $this->typeAdapterProvider = MockProvider::typeAdapterProvider($this->excluder);
     }
-    public function testCreate()
+    public function testCreate(): void
     {
         $classMetadata = $this->classMetadataFactory->create(new TypeToken(PropertyCollectionMock::class));
 
@@ -78,7 +78,7 @@ class ClassMetadataFactoryTest extends PHPUnit_Framework_TestCase
         self::assertCount(4, $elements);
 
         // todo: change to array destructuring syntax when supported in ide
-        list($changedAccessors, $changedName, $type, $virtual) = $elements;
+        [$changedAccessors, $changedName, $type, $virtual] = $elements;
 
         self::assertSame('changedAccessors', $changedAccessors->getName());
         self::assertSame('changed_accessors', $changedAccessors->getSerializedName());
@@ -105,7 +105,7 @@ class ClassMetadataFactoryTest extends PHPUnit_Framework_TestCase
         self::assertAttributeInstanceOf(SetByNull::class, 'setterStrategy', $virtual);
     }
 
-    public function testCreateUsesCache()
+    public function testCreateUsesCache(): void
     {
         $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
         $cache = new ArrayCache();

@@ -5,7 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\Test\Mock\AddressMock;
@@ -22,9 +22,9 @@ use Tebru\PhpType\TypeToken;
  * @covers \Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
+class CustomWrappedTypeAdapterTest extends TestCase
 {
-    public function testUsesDeserializer()
+    public function testUsesDeserializer(): void
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
@@ -51,7 +51,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(12345, $address->getZip());
     }
 
-    public function testDelegatesDeserializer()
+    public function testDelegatesDeserializer(): void
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
@@ -71,7 +71,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertNull($user->getPassword());
     }
 
-    public function testUsesSerializerNull()
+    public function testUsesSerializerNull(): void
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
@@ -84,7 +84,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
 
-    public function testUsesSerializer()
+    public function testUsesSerializer(): void
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),
@@ -100,7 +100,7 @@ class CustomWrappedTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($expected), $adapter->writeToJson($this->user(), false));
     }
 
-    public function testDelegatesSerialization()
+    public function testDelegatesSerialization(): void
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
             MockProvider::excluder(),

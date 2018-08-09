@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\Accessor;
@@ -20,9 +20,9 @@ use Tebru\Gson\Test\Mock\ChildClass;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\AccessorMethodProvider
  */
-class AccessorMethodProviderTest extends PHPUnit_Framework_TestCase
+class AccessorMethodProviderTest extends TestCase
 {
-    public function testGetterWithoutAnnotation()
+    public function testGetterWithoutAnnotation(): void
     {
         $reflectionClass = new ReflectionClass(ChildClass::class);
         $reflectionProperty = $reflectionClass->getProperty('baz');
@@ -32,7 +32,7 @@ class AccessorMethodProviderTest extends PHPUnit_Framework_TestCase
         self::assertSame('getBaz', $method->getName());
     }
 
-    public function testGetterWithAnnotation()
+    public function testGetterWithAnnotation(): void
     {
         $reflectionClass = new ReflectionClass(ChildClass::class);
         $reflectionProperty = $reflectionClass->getProperty('baz');
@@ -44,7 +44,7 @@ class AccessorMethodProviderTest extends PHPUnit_Framework_TestCase
         self::assertSame('baz', $method->getName());
     }
 
-    public function testGetterNull()
+    public function testGetterNull(): void
     {
         $reflectionClass = new ReflectionClass(ChildClass::class);
         $reflectionProperty = $reflectionClass->getProperty('foo');
@@ -54,7 +54,7 @@ class AccessorMethodProviderTest extends PHPUnit_Framework_TestCase
         self::assertNull($method);
     }
 
-    public function testSetterWithoutAnnotation()
+    public function testSetterWithoutAnnotation(): void
     {
         $reflectionClass = new ReflectionClass(ChildClass::class);
         $reflectionProperty = $reflectionClass->getProperty('baz');
@@ -64,7 +64,7 @@ class AccessorMethodProviderTest extends PHPUnit_Framework_TestCase
         self::assertSame('setBaz', $method->getName());
     }
 
-    public function testSetterWithAnnotation()
+    public function testSetterWithAnnotation(): void
     {
         $reflectionClass = new ReflectionClass(ChildClass::class);
         $reflectionProperty = $reflectionClass->getProperty('baz');
@@ -76,7 +76,7 @@ class AccessorMethodProviderTest extends PHPUnit_Framework_TestCase
         self::assertSame('set_baz', $method->getName());
     }
 
-    public function testSetterNull()
+    public function testSetterNull(): void
     {
         $reflectionClass = new ReflectionClass(ChildClass::class);
         $reflectionProperty = $reflectionClass->getProperty('foo');

@@ -5,7 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Gson;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedTypeAdapterFactory;
 use Tebru\Gson\Test\Mock\TypeAdapterMock;
@@ -18,7 +18,7 @@ use Tebru\PhpType\TypeToken;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class WrappedTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
+class WrappedTypeAdapterFactoryTest extends TestCase
 {
     /**
      * @var WrappedTypeAdapterFactory
@@ -30,34 +30,34 @@ class WrappedTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
         $this->wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), false);
     }
 
-    public function testSupportsTrue()
+    public function testSupportsTrue(): void
     {
         self::assertTrue($this->wrappedTypeAdapterFactory->supports(new TypeToken(TypeAdapterMock::class)));
     }
 
-    public function testSupportsFalse()
+    public function testSupportsFalse(): void
     {
         self::assertFalse($this->wrappedTypeAdapterFactory->supports(new TypeToken(Gson::class)));
     }
 
-    public function testSupportsStrict()
+    public function testSupportsStrict(): void
     {
         $wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMock::class), true);
         self::assertTrue($wrappedTypeAdapterFactory->supports(new TypeToken(TypeAdapterMock::class)));
     }
 
-    public function testIgnoresStrict()
+    public function testIgnoresStrict(): void
     {
         $wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), true);
         self::assertFalse($wrappedTypeAdapterFactory->supports(new TypeToken(TypeAdapterMock::class)));
     }
 
-    public function testSupportsFalseString()
+    public function testSupportsFalseString(): void
     {
         self::assertFalse($this->wrappedTypeAdapterFactory->supports(new TypeToken('string')));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         self::assertInstanceOf(TypeAdapterMock::class, $this->wrappedTypeAdapterFactory->create(new TypeToken(TypeAdapterMock::class), MockProvider::typeAdapterProvider()));
     }

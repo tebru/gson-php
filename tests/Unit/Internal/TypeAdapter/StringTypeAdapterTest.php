@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 
 /**
@@ -16,37 +16,37 @@ use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
  * @covers \Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class StringTypeAdapterTest extends PHPUnit_Framework_TestCase
+class StringTypeAdapterTest extends TestCase
 {
-    public function testNull()
+    public function testNull(): void
     {
         $adapter = new StringTypeAdapter();
 
         self::assertNull($adapter->readFromJson('null'));
     }
 
-    public function testRead()
+    public function testRead(): void
     {
         $adapter = new StringTypeAdapter();
 
         self::assertSame('foo', $adapter->readFromJson('"foo"'));
     }
 
-    public function testReadNumberInString()
+    public function testReadNumberInString(): void
     {
         $adapter = new StringTypeAdapter();
 
         self::assertSame('1', $adapter->readFromJson('"1"'));
     }
 
-    public function testSerializeNull()
+    public function testSerializeNull(): void
     {
         $adapter = new StringTypeAdapter();
 
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
 
-    public function testSerializeFloat()
+    public function testSerializeFloat(): void
     {
         $adapter = new StringTypeAdapter();
 

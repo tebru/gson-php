@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\AccessorStrategy;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
 use Tebru\Gson\Test\Mock\Unit\Internal\AccessorStrategy\GetByPublicPropertyTest\GetByPublicPropertyTestMock;
 use Throwable;
@@ -17,16 +17,16 @@ use Throwable;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty
  */
-class GetByPublicPropertyTest extends PHPUnit_Framework_TestCase
+class GetByPublicPropertyTest extends TestCase
 {
-    public function testGetter()
+    public function testGetter(): void
     {
         $strategy = new GetByPublicProperty('foo');
 
         self::assertSame('bar', $strategy->get(new GetByPublicPropertyTestMock()));
     }
 
-    public function testGetterNoProperty()
+    public function testGetterNoProperty(): void
     {
         $strategy = new GetByPublicProperty('foo2');
 

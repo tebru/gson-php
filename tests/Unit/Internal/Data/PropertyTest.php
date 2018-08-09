@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal\Data;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\VirtualProperty;
@@ -30,7 +30,7 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\Data\Property
  */
-class PropertyTest extends PHPUnit_Framework_TestCase
+class PropertyTest extends TestCase
 {
     /**
      * @var PropertyCollection
@@ -48,7 +48,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         $this->classMetadata = MockProvider::classMetadata(stdClass::class, $this->propertyCollection);
     }
 
-    public function testGetters()
+    public function testGetters(): void
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
@@ -83,7 +83,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         self::assertFalse($property->isVirtual());
     }
 
-    public function testSetSkipSerializeAndDeserialize()
+    public function testSetSkipSerializeAndDeserialize(): void
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';
@@ -110,7 +110,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         self::assertTrue($property->skipDeserialize());
     }
 
-    public function testSetAndGet()
+    public function testSetAndGet(): void
     {
         $mock = new class { public $foo; };
         $realName = 'foo';
@@ -134,7 +134,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         self::assertSame('bar', $property->get($mock));
     }
 
-    public function testSetAndGetFromParentMethod()
+    public function testSetAndGetFromParentMethod(): void
     {
         $mock = new ChildClass();
         $realName = 'foo';
@@ -158,7 +158,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         self::assertSame('bar', $property->get($mock));
     }
 
-    public function testSetAndGetFromParentPublic()
+    public function testSetAndGetFromParentPublic(): void
     {
         $mock = new ChildClass();
         $realName = 'foo';
@@ -182,7 +182,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         self::assertSame('bar', $property->get($mock));
     }
 
-    public function testSetAndGetFromParentClosure()
+    public function testSetAndGetFromParentClosure(): void
     {
         $mock = new ChildClass();
         $realName = 'foo';
@@ -208,7 +208,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         self::assertSame('bar', $property->get($mock));
     }
 
-    public function testSetAndGetFromParentClosureScopedFromChild()
+    public function testSetAndGetFromParentClosureScopedFromChild(): void
     {
         $mock = new ChildClass();
         $realName = 'foo';
@@ -234,7 +234,7 @@ class PropertyTest extends PHPUnit_Framework_TestCase
         self::assertSame('bar', $property->get($mock));
     }
 
-    public function testSetNull()
+    public function testSetNull(): void
     {
         $mock = new class { public $foo; };
         $realName = 'foo';

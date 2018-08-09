@@ -5,7 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\Element;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Element\JsonArray;
 use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\Element\JsonPrimitive;
@@ -16,9 +16,9 @@ use Tebru\Gson\Element\JsonPrimitive;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Element\JsonArray
  */
-class JsonArrayTest extends PHPUnit_Framework_TestCase
+class JsonArrayTest extends TestCase
 {
-    public function testAddString()
+    public function testAddString(): void
     {
         $jsonArray = new JsonArray();
         $jsonArray->addString('test');
@@ -26,7 +26,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertTrue($jsonArray->get(0)->isString());
     }
 
-    public function testAddInteger()
+    public function testAddInteger(): void
     {
         $jsonArray = new JsonArray();
         $jsonArray->addInteger(1);
@@ -34,7 +34,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertTrue($jsonArray->get(0)->isInteger());
     }
 
-    public function testAddFloat()
+    public function testAddFloat(): void
     {
         $jsonArray = new JsonArray();
         $jsonArray->addFloat(1.1);
@@ -42,7 +42,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertTrue($jsonArray->get(0)->isFloat());
     }
 
-    public function testAddIntegerAsFloat()
+    public function testAddIntegerAsFloat(): void
     {
         $jsonArray = new JsonArray();
         $jsonArray->addFloat(1);
@@ -50,7 +50,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertTrue($jsonArray->get(0)->isFloat());
     }
 
-    public function testAddBoolean()
+    public function testAddBoolean(): void
     {
         $jsonArray = new JsonArray();
         $jsonArray->addBoolean(true);
@@ -58,7 +58,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertTrue($jsonArray->get(0)->isBoolean());
     }
 
-    public function testAddObject()
+    public function testAddObject(): void
     {
         $jsonArray = new JsonArray();
         $jsonArray->addJsonElement(new JsonObject());
@@ -66,7 +66,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertTrue($jsonArray->get(0)->isJsonObject());
     }
 
-    public function testAddArray()
+    public function testAddArray(): void
     {
         $jsonArray = new JsonArray();
         $jsonArray2 = new JsonArray();
@@ -77,7 +77,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertCount(1, $jsonArray);
     }
 
-    public function testContainsTrue()
+    public function testContainsTrue(): void
     {
         $jsonObject = new JsonObject();
         $jsonObject->addInteger('foo', 1);
@@ -87,7 +87,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertTrue($jsonArray->contains($jsonObject));
     }
 
-    public function testContainsFalse()
+    public function testContainsFalse(): void
     {
         $jsonObject = new JsonObject();
         $jsonObject->addInteger('foo', 1);
@@ -99,7 +99,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertFalse($jsonArray->contains($jsonObject2));
     }
 
-    public function testHas()
+    public function testHas(): void
     {
         $jsonArray = new JsonArray();
         $jsonArray->addInteger(1);
@@ -108,7 +108,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertFalse($jsonArray->has(1));
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $jsonArray = new JsonArray();
         $jsonArray->addInteger(1);
@@ -116,7 +116,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertSame(1, $jsonArray->get(0)->asInteger());
     }
 
-    public function testSet()
+    public function testSet(): void
     {
         $primitive = JsonPrimitive::create(2);
         $jsonArray = new JsonArray();
@@ -126,7 +126,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertSame(2, $jsonArray->get(0)->asInteger());
     }
 
-    public function testRemove()
+    public function testRemove(): void
     {
         $jsonObject = new JsonObject();
         $jsonObject->addInteger('foo', 1);
@@ -137,7 +137,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertFalse($jsonArray->remove($jsonObject));
     }
 
-    public function testCount()
+    public function testCount(): void
     {
         $jsonArray = new JsonArray();
         $jsonArray->addInteger(1);
@@ -145,7 +145,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertCount(1, $jsonArray);
     }
 
-    public function testAsJsonArray()
+    public function testAsJsonArray(): void
     {
         $jsonArray = new JsonArray();
         $result = $jsonArray->asJsonArray();
@@ -153,7 +153,7 @@ class JsonArrayTest extends PHPUnit_Framework_TestCase
         self::assertSame($jsonArray, $result);
     }
 
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
         $object = new JsonObject();
         $object->addFloat('float', 2);

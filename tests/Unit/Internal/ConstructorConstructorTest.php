@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\InstanceCreator;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstanceCreator;
@@ -23,9 +23,9 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\ConstructorConstructor
  */
-class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
+class ConstructorConstructorTest extends TestCase
 {
-    public function testCreateFromInstanceCreator()
+    public function testCreateFromInstanceCreator(): void
     {
         $instanceCreators = [ClassWithParameters::class => new ClassWithParametersInstanceCreator()];
         $constructorConstructor = new ConstructorConstructor($instanceCreators);
@@ -34,7 +34,7 @@ class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(CreateFromInstanceCreator::class, $object);
     }
 
-    public function testCreateFromInstanceCreatorInterface()
+    public function testCreateFromInstanceCreatorInterface(): void
     {
         $instanceCreators = [InstanceCreator::class => new ClassWithParametersInstanceCreator()];
         $constructorConstructor = new ConstructorConstructor($instanceCreators);
@@ -43,7 +43,7 @@ class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(CreateFromInstanceCreator::class, $object);
     }
 
-    public function testCreateWithoutArguments()
+    public function testCreateWithoutArguments(): void
     {
         $constructorConstructor = new ConstructorConstructor();
         $object = $constructorConstructor->get(new TypeToken(ChildClass::class));
@@ -51,7 +51,7 @@ class ConstructorConstructorTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(CreateWithoutArguments::class, $object);
     }
 
-    public function testCreateFromReflectionClass()
+    public function testCreateFromReflectionClass(): void
     {
         $constructorConstructor = new ConstructorConstructor();
         $object = $constructorConstructor->get(new TypeToken(ClassWithParameters::class));

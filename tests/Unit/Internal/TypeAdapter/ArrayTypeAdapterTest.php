@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use LogicException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
@@ -23,7 +23,7 @@ use Tebru\PhpType\TypeToken;
  * @covers \Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
+class ArrayTypeAdapterTest extends TestCase
 {
     /**
      * @var TypeAdapterProvider
@@ -35,7 +35,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         $this->typeAdapterProvider = MockProvider::typeAdapterProvider(MockProvider::excluder());
     }
     
-    public function testDeserializeNull()
+    public function testDeserializeNull(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
 
@@ -44,7 +44,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertNull($result);
     }
 
-    public function testDeserializeSimpleArray()
+    public function testDeserializeSimpleArray(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -53,7 +53,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame([1.0, 2.0, 3.0], $result);
     }
 
-    public function testDeserializeSimpleArrayAsInteger()
+    public function testDeserializeSimpleArrayAsInteger(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<int>'));
@@ -62,7 +62,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame([1, 2, 3], $result);
     }
 
-    public function testDeserializeNestedArray()
+    public function testDeserializeNestedArray(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<array<int>>'));
@@ -71,7 +71,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame([[1], [2], [3]], $result);
     }
 
-    public function testDeserializeSimpleObject()
+    public function testDeserializeSimpleObject(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -80,7 +80,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(['key' => 'value'], $result);
     }
 
-    public function testDeserializeNestedObject()
+    public function testDeserializeNestedObject(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -89,7 +89,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
     }
 
-    public function testDeserializeNestedObjectWithGeneric()
+    public function testDeserializeNestedObjectWithGeneric(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<array>'));
@@ -98,7 +98,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
     }
 
-    public function testDeserializeNestedObjectWithKeyAndValueTypes()
+    public function testDeserializeNestedObjectWithKeyAndValueTypes(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<string, array<string, string>>'));
@@ -107,7 +107,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
     }
 
-    public function testDeserializeArrayWithNonStringOrIntegerKey()
+    public function testDeserializeArrayWithNonStringOrIntegerKey(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<float, string>'));
@@ -120,7 +120,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testDeserializeArrayWithIntegerKeyPassedString()
+    public function testDeserializeArrayWithIntegerKeyPassedString(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<int, string>'));
@@ -133,7 +133,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testDeserializeArrayWithIntegerKey()
+    public function testDeserializeArrayWithIntegerKey(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<int, string>'));
@@ -142,7 +142,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame([1 => 'foo'], $result);
     }
 
-    public function testDeserializeMoreThanTwoGenericTypes()
+    public function testDeserializeMoreThanTwoGenericTypes(): void
     {
         $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('string'), new StringTypeAdapter(), 3);
         try {
@@ -154,7 +154,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testDeserializeMoreThanOneGenericTypeForArray()
+    public function testDeserializeMoreThanOneGenericTypeForArray(): void
     {
         $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('string'), new StringTypeAdapter(), 2);
         try {
@@ -166,7 +166,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testDeserializeNonArrayOrObject()
+    public function testDeserializeNonArrayOrObject(): void
     {
         $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('?'), new IntegerTypeAdapter(), 1);
         try {
@@ -178,7 +178,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testSerializeNull()
+    public function testSerializeNull(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -186,7 +186,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
 
-    public function testSerializeArrayInts()
+    public function testSerializeArrayInts(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -194,7 +194,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('[1,2,3]', $adapter->writeToJson([1, 2, 3], false));
     }
 
-    public function testSerializeArrayVariableTypes()
+    public function testSerializeArrayVariableTypes(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -202,7 +202,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('[1,"foo"]', $adapter->writeToJson([1, 'foo', null], false));
     }
 
-    public function testSerializeArrayVariableTypesNull()
+    public function testSerializeArrayVariableTypesNull(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -210,7 +210,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('[1,"foo",null]', $adapter->writeToJson([1, 'foo', null], true));
     }
 
-    public function testSerializeArrayAsObject()
+    public function testSerializeArrayAsObject(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -218,7 +218,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('{"foo":"bar","bar":1}', $adapter->writeToJson(['foo' => 'bar', 'bar' => 1], false));
     }
 
-    public function testSerializeArrayOneGenericType()
+    public function testSerializeArrayOneGenericType(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<int>'));
@@ -226,7 +226,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('[1,2,3]', $adapter->writeToJson([1, 2, 3], false));
     }
 
-    public function testSerializeArrayAsObjectOneGenericType()
+    public function testSerializeArrayAsObjectOneGenericType(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<string>'));
@@ -234,7 +234,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('{"foo":"bar"}', $adapter->writeToJson(['foo' => 'bar'], false));
     }
 
-    public function testSerializeArrayTwoGenericTypes()
+    public function testSerializeArrayTwoGenericTypes(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<string, string>'));
@@ -242,7 +242,7 @@ class ArrayTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('{"foo":"bar"}', $adapter->writeToJson(['foo' => 'bar'], false));
     }
 
-    public function testSerializeTooManyGenerics()
+    public function testSerializeTooManyGenerics(): void
     {
         $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('string'), new StringTypeAdapter(), 3);
         try {

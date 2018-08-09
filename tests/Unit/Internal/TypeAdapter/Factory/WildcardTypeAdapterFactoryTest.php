@@ -7,7 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\TypeAdapter\WildcardTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
 
@@ -20,23 +20,23 @@ use Tebru\PhpType\TypeToken;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory
  */
-class WildcardTypeAdapterFactoryTest extends PHPUnit_Framework_TestCase
+class WildcardTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports()
+    public function testValidSupports(): void
     {
         $factory = new WildcardTypeAdapterFactory();
 
         self::assertTrue($factory->supports(new TypeToken('?')));
     }
 
-    public function testInvalidSupports()
+    public function testInvalidSupports(): void
     {
         $factory = new WildcardTypeAdapterFactory();
 
         self::assertFalse($factory->supports(new TypeToken('string')));
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $factory = new WildcardTypeAdapterFactory();
         $adapter = $factory->create(new TypeToken('?'), MockProvider::typeAdapterProvider());

@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
 use Tebru\Gson\Internal\AccessorStrategy\GetByClosure;
@@ -24,9 +24,9 @@ use Tebru\Gson\Test\Mock\ChildClass;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Internal\AccessorStrategyFactory
  */
-class AccessorStrategyFactoryTest extends PHPUnit_Framework_TestCase
+class AccessorStrategyFactoryTest extends TestCase
 {
-    public function testGetterWithMethod()
+    public function testGetterWithMethod(): void
     {
         $property = new ReflectionProperty(ChildClass::class, 'foo');
         $method = new ReflectionMethod(ChildClass::class, 'isFoo');
@@ -37,7 +37,7 @@ class AccessorStrategyFactoryTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(GetByMethod::class, $strategy);
     }
 
-    public function testGetterWithProperty()
+    public function testGetterWithProperty(): void
     {
         $property = new ReflectionProperty(ChildClass::class, 'overridden');
 
@@ -47,7 +47,7 @@ class AccessorStrategyFactoryTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(GetByPublicProperty::class, $strategy);
     }
 
-    public function testGetterWithClosure()
+    public function testGetterWithClosure(): void
     {
         $property = new ReflectionProperty(ChildClass::class, 'foo');
 
@@ -57,7 +57,7 @@ class AccessorStrategyFactoryTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(GetByClosure::class, $strategy);
     }
 
-    public function testSetterWithMethod()
+    public function testSetterWithMethod(): void
     {
         $property = new ReflectionProperty(ChildClass::class, 'foo');
         $method = new ReflectionMethod(ChildClass::class, 'setFoo');
@@ -68,7 +68,7 @@ class AccessorStrategyFactoryTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(SetByMethod::class, $strategy);
     }
 
-    public function testSetterWithProperty()
+    public function testSetterWithProperty(): void
     {
         $property = new ReflectionProperty(ChildClass::class, 'overridden');
 
@@ -78,7 +78,7 @@ class AccessorStrategyFactoryTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(SetByPublicProperty::class, $strategy);
     }
 
-    public function testSetterWithClosure()
+    public function testSetterWithClosure(): void
     {
         $property = new ReflectionProperty(ChildClass::class, 'foo');
 

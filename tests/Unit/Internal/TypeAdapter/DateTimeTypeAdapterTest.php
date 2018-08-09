@@ -8,7 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use DateTime;
 use DateTimeImmutable;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter;
 use Tebru\PhpType\TypeToken;
@@ -20,16 +20,16 @@ use Tebru\PhpType\TypeToken;
  * @covers \Tebru\Gson\Internal\TypeAdapter\DateTimeTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class DateTimeTypeAdapterTest extends PHPUnit_Framework_TestCase
+class DateTimeTypeAdapterTest extends TestCase
 {
-    public function testDeserializeNull()
+    public function testDeserializeNull(): void
     {
         $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
 
         self::assertNull($adapter->readFromJson('null'));
     }
 
-    public function testDeserializeCreateDatetimeDefault()
+    public function testDeserializeCreateDatetimeDefault(): void
     {
         $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
         $result = $adapter->readFromJson('"2016-01-02T12:23:53-06:00"');
@@ -37,7 +37,7 @@ class DateTimeTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('2016-01-02T12:23:53-06:00', $result->format(DateTime::ATOM));
     }
 
-    public function testDeserializeCreateDatetimeImmutable()
+    public function testDeserializeCreateDatetimeImmutable(): void
     {
         $adapter = new DateTimeTypeAdapter(new TypeToken(DateTimeImmutable::class), DateTime::ATOM);
         $result = $adapter->readFromJson('"2016-01-02T12:23:53-06:00"');
@@ -45,7 +45,7 @@ class DateTimeTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('2016-01-02T12:23:53-06:00', $result->format(DateTime::ATOM));
     }
 
-    public function testDeserializeException()
+    public function testDeserializeException(): void
     {
         $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
         try {
@@ -57,7 +57,7 @@ class DateTimeTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testSerializeNull()
+    public function testSerializeNull(): void
     {
         $type = new TypeToken(DateTime::class);
         $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
@@ -65,7 +65,7 @@ class DateTimeTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('null', $adapter->writeToJson(null, false));
     }
 
-    public function testSerializeDefault()
+    public function testSerializeDefault(): void
     {
         $type = new TypeToken(DateTime::class);
         $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
@@ -75,7 +75,7 @@ class DateTimeTypeAdapterTest extends PHPUnit_Framework_TestCase
         self::assertSame('"2016-01-02T12:23:53-06:00"', $adapter->writeToJson($dateTime, false));
     }
 
-    public function testSerializeImmutable()
+    public function testSerializeImmutable(): void
     {
         $type = new TypeToken(DateTime::class);
         $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);

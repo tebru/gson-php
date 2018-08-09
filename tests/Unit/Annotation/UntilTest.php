@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Tebru\Gson\Annotation\Until;
 
@@ -16,16 +16,16 @@ use Tebru\Gson\Annotation\Until;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Annotation\Until
  */
-class UntilTest extends PHPUnit_Framework_TestCase
+class UntilTest extends TestCase
 {
-    public function testVersion()
+    public function testVersion(): void
     {
         $until = new Until(['value' => 1]);
 
         self::assertSame('1', $until->getValue());
     }
 
-    public function testNoVersion()
+    public function testNoVersion(): void
     {
         try {
             new Until([]);

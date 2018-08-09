@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Test\Unit\Internal;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Gson;
 use Tebru\Gson\Test\Mock\Polymorphic\Base;
 use Tebru\Gson\Test\Mock\Polymorphic\PolymorphicChild1;
@@ -20,9 +20,9 @@ use Tebru\Gson\Test\Mock\Polymorphic\PolymorphicDiscriminator;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class PolymorphicDeserializationTest extends PHPUnit_Framework_TestCase
+class PolymorphicDeserializationTest extends TestCase
 {
-    public function testCanDeserializeBasedOnProperty()
+    public function testCanDeserializeBasedOnProperty(): void
     {
         $gson = Gson::builder()
             ->addDiscriminator(Base::class, new PolymorphicDiscriminator())
@@ -33,7 +33,7 @@ class PolymorphicDeserializationTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(PolymorphicChild1::class, $object);
     }
 
-    public function testCanDeserializeBasedOnPropertySwitch()
+    public function testCanDeserializeBasedOnPropertySwitch(): void
     {
         $gson = Gson::builder()
             ->addDiscriminator(Base::class, new PolymorphicDiscriminator())
@@ -44,7 +44,7 @@ class PolymorphicDeserializationTest extends PHPUnit_Framework_TestCase
         self::assertInstanceOf(PolymorphicChild2::class, $object);
     }
 
-    public function testCanDeserializeNested()
+    public function testCanDeserializeNested(): void
     {
         $gson = Gson::builder()
             ->addDiscriminator(Base::class, new PolymorphicDiscriminator())

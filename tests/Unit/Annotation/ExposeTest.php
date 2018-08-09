@@ -6,7 +6,7 @@
 
 namespace Tebru\Gson\Test\Unit\Annotation;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Annotation\Expose;
 
 /**
@@ -15,9 +15,9 @@ use Tebru\Gson\Annotation\Expose;
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\Annotation\Expose
  */
-class ExposeTest extends PHPUnit_Framework_TestCase
+class ExposeTest extends TestCase
 {
-    public function testShouldExposeDefault()
+    public function testShouldExposeDefault(): void
     {
         $Expose = new Expose([]);
 
@@ -25,7 +25,7 @@ class ExposeTest extends PHPUnit_Framework_TestCase
         self::assertTrue($Expose->shouldExpose(false));
     }
 
-    public function testShouldExposeSerialize()
+    public function testShouldExposeSerialize(): void
     {
         $Expose = new Expose(['deserialize' => false]);
 
@@ -33,7 +33,7 @@ class ExposeTest extends PHPUnit_Framework_TestCase
         self::assertFalse($Expose->shouldExpose(false));
     }
 
-    public function testShouldExposeDeserialize()
+    public function testShouldExposeDeserialize(): void
     {
         $Expose = new Expose(['serialize' => false]);
 

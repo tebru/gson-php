@@ -9,7 +9,7 @@ namespace Tebru\Gson\Test\Unit;
 use DateTime;
 use InvalidArgumentException;
 use LogicException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use Symfony\Component\Cache\Simple\ChainCache;
 use Symfony\Component\Cache\Simple\NullCache;
@@ -42,9 +42,9 @@ use Tebru\Gson\Test\Mock\TypeAdapter\Integer1TypeAdapterFactory;
  * @covers \Tebru\Gson\GsonBuilder
  * @covers \Tebru\Gson\Internal\ExclusionStrategyAdapter
  */
-class GsonTest extends PHPUnit_Framework_TestCase
+class GsonTest extends TestCase
 {
-    public function testSimpleDeserialize()
+    public function testSimpleDeserialize(): void
     {
         $gson = Gson::builder()->build();
 
@@ -71,7 +71,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeNotSince()
+    public function testDeserializeNotSince(): void
     {
         $gson = Gson::builder()
             ->setVersion(1)
@@ -100,7 +100,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeNotUntil()
+    public function testDeserializeNotUntil(): void
     {
         $gson = Gson::builder()
             ->setVersion(2)
@@ -129,7 +129,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeNoProtected()
+    public function testDeserializeNoProtected(): void
     {
         $gson = Gson::builder()
             ->setExcludedModifier(ReflectionProperty::IS_PROTECTED)
@@ -158,7 +158,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeRequireExpose()
+    public function testDeserializeRequireExpose(): void
     {
         $gson = Gson::builder()
             ->requireExposeAnnotation()
@@ -187,7 +187,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(null, $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeCustomTypeAdapter()
+    public function testDeserializeCustomTypeAdapter(): void
     {
         $gson = Gson::builder()
             ->registerType('int', new Integer1TypeAdapter())
@@ -216,7 +216,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeCustomTypeInterface()
+    public function testDeserializeCustomTypeInterface(): void
     {
         $gson = Gson::builder()
             ->registerType(GsonObjectMockable::class, new GsonObjectMockTypeAdapterMock())
@@ -245,7 +245,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeCustomTypeAdapterFactory()
+    public function testDeserializeCustomTypeAdapterFactory(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new Integer1TypeAdapterFactory())
@@ -274,7 +274,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeCustomDeserializer()
+    public function testDeserializeCustomDeserializer(): void
     {
         $gson = Gson::builder()
             ->registerType(GsonMock::class, new Integer1Deserializer())
@@ -303,7 +303,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeCustomDeserializerBoth()
+    public function testDeserializeCustomDeserializerBoth(): void
     {
         $gson = Gson::builder()
             ->registerType(GsonMock::class, new Integer1SerializerDeserializer())
@@ -332,7 +332,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeUsingInstanceCreator()
+    public function testDeserializeUsingInstanceCreator(): void
     {
         $gson = Gson::builder()
             ->addInstanceCreator(GsonObjectMock::class, new GsonObjectMockInstanceCreatorMock())
@@ -361,7 +361,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeUsingInstanceCreatorInterface()
+    public function testDeserializeUsingInstanceCreatorInterface(): void
     {
         $gson = Gson::builder()
             ->addInstanceCreator(GsonObjectMockable::class, new GsonObjectMockInstanceCreatorMock())
@@ -390,7 +390,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeWithExclusionStrategy()
+    public function testDeserializeWithExclusionStrategy(): void
     {
         $gson = Gson::builder()
             ->addExclusionStrategy(new GsonMockExclusionStrategyMock(), true, true)
@@ -419,7 +419,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeWithCachedExclusionStrategy()
+    public function testDeserializeWithCachedExclusionStrategy(): void
     {
         $gson = Gson::builder()
             ->addExclusion(new CacheableGsonMockExclusionStrategy())
@@ -448,7 +448,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testCachedDataAwareExclusionStrategy()
+    public function testCachedDataAwareExclusionStrategy(): void
     {
         try {
             Gson::builder()->addExclusion(new CacheableDataAwareExclusionStrategy());
@@ -459,7 +459,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::fail('Exception not thrown');
     }
 
-    public function testDeserializeWithPropertyNamingPolicy()
+    public function testDeserializeWithPropertyNamingPolicy(): void
     {
         $gson = Gson::builder()
             ->setPropertyNamingPolicy(PropertyNamingPolicy::IDENTITY)
@@ -511,7 +511,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeWithPropertyNamingStrategy()
+    public function testDeserializeWithPropertyNamingStrategy(): void
     {
         $gson = Gson::builder()
             ->setPropertyNamingStrategy(new TwoPropertyNamingStrategy())
@@ -563,7 +563,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testDeserializeWithMethodNamingStrategy()
+    public function testDeserializeWithMethodNamingStrategy(): void
     {
         $gson = Gson::builder()
             ->setMethodNamingStrategy(new UpperCaseMethodNamingStrategy())
@@ -594,7 +594,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
 
 
 
-    public function testDeserializeUsesSameObject()
+    public function testDeserializeUsesSameObject(): void
     {
         $gsonMock = new GsonMock();
         $gsonMock->setExclude(false);
@@ -607,7 +607,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame($gsonMock, $returnedObject);
     }
 
-    public function testDeserializeUsesSameObjectNested()
+    public function testDeserializeUsesSameObjectNested(): void
     {
         $gsonMock = new GsonMock();
         $gsonMock->setExclude(false);
@@ -621,7 +621,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame($gsonMock, $returnedObject);
     }
 
-    public function testSimpleDeserializeArray()
+    public function testSimpleDeserializeArray(): void
     {
         $gson = Gson::builder()->build();
 
@@ -648,7 +648,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
-    public function testSerializeSimple()
+    public function testSerializeSimple(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -661,7 +661,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
-    public function testSerializeDateTimeFormat()
+    public function testSerializeDateTimeFormat(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -676,7 +676,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
-    public function testSerializeNulls()
+    public function testSerializeNulls(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -710,7 +710,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString($expected, $result);
     }
 
-    public function testSerializeNotSince()
+    public function testSerializeNotSince(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -725,7 +725,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
-    public function testSerializeNotUntil()
+    public function testSerializeNotUntil(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -740,7 +740,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
-    public function testSerializeNotProtected()
+    public function testSerializeNotProtected(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -755,7 +755,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
-    public function testSerializeRequireExpose()
+    public function testSerializeRequireExpose(): void
     {
         $gson = Gson::builder()
             ->requireExposeAnnotation()
@@ -766,7 +766,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString('{"expose": false}', $result);
     }
 
-    public function testSerializeCustomTypeAdapter()
+    public function testSerializeCustomTypeAdapter(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -783,7 +783,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
-    public function testSerializeCustomTypeAdapterFactory()
+    public function testSerializeCustomTypeAdapterFactory(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -800,7 +800,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
-    public function testSerializeCustomSerializer()
+    public function testSerializeCustomSerializer(): void
     {
         $gson = Gson::builder()
             ->registerType(GsonMock::class, new Integer1Serializer())
@@ -815,7 +815,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
-    public function testSerializeWithInvalidHandler()
+    public function testSerializeWithInvalidHandler(): void
     {
         try {
             Gson::builder()
@@ -828,7 +828,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testSerializeWithExclusionStrategy()
+    public function testSerializeWithExclusionStrategy(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -843,7 +843,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
-    public function testSerializeSimpleArray()
+    public function testSerializeSimpleArray(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -856,7 +856,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame($jsonArray, $result);
     }
 
-    public function testSerializeIntegerArray()
+    public function testSerializeIntegerArray(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -866,7 +866,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame([1], $result);
     }
 
-    public function testSerializeBooleanArray()
+    public function testSerializeBooleanArray(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -876,7 +876,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame([false], $result);
     }
 
-    public function testSerializeStringArray()
+    public function testSerializeStringArray(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -886,7 +886,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertSame(['foo'], $result);
     }
 
-    public function testToJsonElement()
+    public function testToJsonElement(): void
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
@@ -899,7 +899,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), json_encode($result));
     }
 
-    public function testDifferentInstancesWillUseDifferentTypeAdapterCaches()
+    public function testDifferentInstancesWillUseDifferentTypeAdapterCaches(): void
     {
         $exclusionStrategy = new GsonMockExclusionStrategyMock();
         $gson = Gson::builder()
@@ -921,14 +921,14 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertNotEquals($result, $result2);
     }
 
-    public function testCanSetCacheDirectory()
+    public function testCanSetCacheDirectory(): void
     {
         $gsonBuilder = Gson::builder()->setCacheDir('/tmp');
 
         self::assertAttributeSame('/tmp/gson', 'cacheDir', $gsonBuilder);
     }
 
-    public function testWillUseFileCache()
+    public function testWillUseFileCache(): void
     {
         $gsonBuilder = Gson::builder()
             ->setCacheDir('/tmp')
@@ -938,7 +938,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertAttributeInstanceOf(ChainCache::class, 'cache', $gsonBuilder);
     }
 
-    public function testEnableCacheWithoutDirectoryThrowsException()
+    public function testEnableCacheWithoutDirectoryThrowsException(): void
     {
         try {
             Gson::builder()
@@ -951,7 +951,7 @@ class GsonTest extends PHPUnit_Framework_TestCase
         self::assertTrue(false);
     }
 
-    public function testCanOverrideCache()
+    public function testCanOverrideCache(): void
     {
         $gson = Gson::builder()
             ->setCache(new NullCache())
