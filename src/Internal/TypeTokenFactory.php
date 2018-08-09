@@ -8,8 +8,18 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
+use InvalidArgumentException;
+use phpDocumentor\Reflection\DocBlock\Tag;
+use phpDocumentor\Reflection\DocBlock\Tags\Param;
+use phpDocumentor\Reflection\DocBlock\Tags\Return_;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
+use phpDocumentor\Reflection\DocBlockFactory;
+use phpDocumentor\Reflection\Types\Compound;
+use phpDocumentor\Reflection\Types\ContextFactory;
+use phpDocumentor\Reflection\Types\Null_;
 use ReflectionMethod;
 use ReflectionProperty;
+use Reflector;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\Type;
 use Tebru\PhpType\TypeToken;
@@ -24,9 +34,26 @@ use Tebru\PhpType\TypeToken;
 final class TypeTokenFactory
 {
     /**
-     * Regex to get full class names from imported use statements
+     * @var DocBlockFactory
      */
-    private const USE_PATTERN = '/use\s+(?:(?<namespace>[^;]+\\\\)[^;]*[\s,{](?<classname>\w+)\s+as\s+:REPLACE:[^;]*};|(?<group>[^;]+\\\\){[^;]*:REPLACE:[^;]*};|(?<alias>[^;]+)\s+as\s+:REPLACE:;|(?<default>[^;]+:REPLACE:);)/';
+    private $docBlockFactory;
+
+    /**
+     * @var ContextFactory
+     */
+    private $contextFactory;
+
+    /**
+     * Constructor
+     *
+     * @param null|DocBlockFactory $docBlockFactory
+     * @param null|ContextFactory $contextFactory
+     */
+    public function __construct(?DocBlockFactory $docBlockFactory = null, ?ContextFactory $contextFactory = null)
+    {
+        $this->docBlockFactory = $docBlockFactory ?? DocBlockFactory::createInstance();
+        $this->contextFactory = $contextFactory ?? new ContextFactory();
+    }
 
     /**
      * Attempts to guess a property type based method type hints, defaults to wildcard type
@@ -125,29 +152,29 @@ final class TypeTokenFactory
         ?ReflectionMethod $setter
     ): ?TypeToken {
         if ($getter !== null) {
-            $type = $this->getType($getter->getDocComment() ?: null, 'return');
-            if ($type !== null) {
-                $class = $getter->getDeclaringClass();
-                return $this->getTypeToken($type, $class->getNamespaceName(), $class->getFileName());
+            $docComment = $getter->getDocComment() ?: null;
+            $tag = $this->getTypeFromDoc($getter, $docComment, 'return');
+            if ($tag !== null) {
+                return $tag;
             }
         }
 
         if ($setter !== null) {
+            $docComment = $setter->getDocComment() ?: null;
             $parameters = $setter->getParameters();
             if (\count($parameters) === 1) {
-                $type = $this->getType($setter->getDocComment() ?: null, 'param', $parameters[0]->getName());
-                if ($type !== null) {
-                    $class = $setter->getDeclaringClass();
-                    return $this->getTypeToken($type, $class->getNamespaceName(), $class->getFileName());
+                $tag = $this->getTypeFromDoc($setter, $docComment, 'param', $parameters[0]->getName());
+                if ($tag !== null) {
+                    return $tag;
                 }
             }
         }
 
         if ($property !== null) {
-            $type = $this->getType($property->getDocComment() ?: null, 'var');
-            if ($type !== null) {
-                $class = $property->getDeclaringClass();
-                return $this->getTypeToken($type, $class->getNamespaceName(), $class->getFileName());
+            $docComment = $property->getDocComment() ?: null;
+            $tag = $this->getTypeFromDoc($property, $docComment, 'var');
+            if ($tag !== null) {
+                return $tag;
             }
         }
 
@@ -155,72 +182,106 @@ final class TypeTokenFactory
     }
 
     /**
-     * Parse docblock and return type for parameter
+     * Get [@see TypeToken] from docblock
      *
-     * @param string $comment
-     * @param string $annotation
-     * @param null|string $parameter
-     * @return null|string
+     * @param Reflector $reflector
+     * @param null|string $docComment
+     * @param string $tagName
+     * @param null|string $variableName
+     * @return null|TypeToken
      */
-    private function getType(?string $comment, string $annotation, ?string $parameter = null): ?string
-    {
-        if ($comment === null) {
+    private function getTypeFromDoc(
+        Reflector $reflector,
+        ?string $docComment,
+        string $tagName,
+        ?string $variableName = null
+    ): ?TypeToken {
+        if ($docComment === null || $docComment === '') {
             return null;
         }
 
-        // for setters, we look for the param name as well
-        $pattern = '/@'.$annotation.'\s+([a-zA-Z0-9|\[\]\\\\]+)';
-        if ($parameter !== null) {
-            $pattern .= '\s+\$'.$parameter;
-        }
-        $pattern .= '/';
-
-        \preg_match($pattern, $comment, $matches);
-
-        /** @var string|null $type */
-        $type = $matches[1] ?? null;
-        if ($type === null) {
+        try {
+            $docblock = $this->docBlockFactory->create(
+                $docComment,
+                $this->contextFactory->createFromReflector($reflector)
+            );
+        } /** @noinspection BadExceptionsProcessingInspection */ catch (InvalidArgumentException $exception) {
+            // exception likely caused by an empty type
             return null;
         }
 
-        // if not nullable
-        if (\strpos($type, '|') === false) {
-            return $type;
-        }
+        $tags = $docblock->getTagsByName($tagName);
 
-        // if > 2 types
-        if (\substr_count($type, '|') !== 1) {
+        if (empty($tags)) {
             return null;
         }
 
-        // if one of the types is not null
-        if (\stripos(\strtolower($type), 'null') === false) {
-            return null;
+        if ($tagName !== 'param') {
+            return $this->getTypeFromTag($tags[0]);
         }
 
-        // return the non-null type
-        foreach (\explode('|', $type) as $potentialType) {
-            $potentialType = \trim($potentialType);
-            if (\strtolower($potentialType) !== 'null') {
-                return $potentialType;
+        /** @var Param $tag */
+        foreach ($tags as $tag) {
+            if ($tag->getVariableName() === $variableName) {
+                return $this->getTypeFromTag($tag);
             }
         }
 
-        // The should never be hit
-        // @codeCoverageIgnoreStart
         return null;
-        // @codeCoverageIgnoreEnd
+    }
+
+    /**
+     * Get the type token from tag
+     *
+     * @param Var_|Param|Return_|Tag $tag
+     * @return null|TypeToken
+     */
+    private function getTypeFromTag(Tag $tag): ?TypeToken
+    {
+        $type = $tag->getType();
+        if (!$type instanceof Compound) {
+             $type = $this->stripSlashes((string)$type);
+
+            return TypeToken::create($this->unwrapArray($type));
+        }
+
+        $types = \iterator_to_array($type->getIterator());
+        $types = \array_values(\array_filter($types, function ($innerType) {
+            return !$innerType instanceof Null_;
+        }));
+        $count = \count($types);
+
+        if ($count !== 1) {
+            return null;
+        }
+
+        $type = $this->stripSlashes((string)$types[0]);
+
+        return TypeToken::create($this->unwrapArray($type));
+    }
+
+    /**
+     * Remove the initial '\' if it exists
+     *
+     * @param string $type
+     * @return string
+     */
+    private function stripSlashes(string $type): string
+    {
+        if ($type[0] === '\\') {
+            $type = substr($type, 1);
+        }
+
+        return $type;
     }
 
     /**
      * Converts types as int[] to array<int>
      *
      * @param string $type
-     * @param string $namespace
-     * @param string $filename
      * @return string
      */
-    private function unwrapArray(string $type, string $namespace, string $filename): string
+    private function unwrapArray(string $type): string
     {
         // if not in array syntax
         if (\strpos($type, '[]') === false) {
@@ -230,64 +291,16 @@ final class TypeTokenFactory
 
         $parts = \explode('[]', $type);
         $primaryType = \array_shift($parts);
+
         $numParts = \count($parts);
 
-        $primaryTypeToken = $this->getTypeToken($primaryType, $namespace, $filename);
-
-        return \str_repeat('array<', $numParts) . $primaryTypeToken->getRawType() . \str_repeat('>', $numParts);
-    }
-
-    /**
-     * Using the type found in docblock, attempt to resolve imported classes
-     *
-     * @param string $type
-     * @param string $namespace
-     * @param string $filename
-     * @return TypeToken
-     */
-    private function getTypeToken(string $type, string $namespace, string $filename): TypeToken
-    {
-        // convert syntax if generic array
-        $type = $this->unwrapArray($type, $namespace, $filename);
-        $typeToken = TypeToken::create($type);
-
-        if (!$typeToken->isObject()) {
-            return $typeToken;
+        // same as mixed
+        if ($primaryType === 'array') {
+            $primaryType = TypeToken::WILDCARD;
+            $numParts++;
         }
 
-        $firstSlash = \strpos($type, '\\');
-        if ($firstSlash === 0) {
-            return TypeToken::create(substr($type, 1));
-        }
-
-        if ($firstSlash === false && (\class_exists($type) || \interface_exists($type))) {
-            return $typeToken;
-        }
-
-        $pattern = \str_replace(':REPLACE:', $type, self::USE_PATTERN);
-        \preg_match($pattern, \file_get_contents($filename), $matches);
-
-        // normal use statement syntax
-        if (!empty($matches['default'])) {
-            return TypeToken::create($matches['default']);
-        }
-
-        // aliased use statement
-        if (!empty($matches['alias'])) {
-            return TypeToken::create($matches['alias']);
-        }
-
-        // group use statement
-        if (!empty($matches['group'])) {
-            return TypeToken::create($matches['group'].$type);
-        }
-
-        // grouped aliased use statement
-        if (!empty($matches['namespace']) && !empty($matches['classname'])) {
-            return TypeToken::create($matches['namespace'].$matches['classname']);
-        }
-
-        return TypeToken::create($namespace.'\\'.$type);
+        return \str_repeat('array<', $numParts) . $primaryType . \str_repeat('>', $numParts);
     }
 
     /**
