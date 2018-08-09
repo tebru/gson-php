@@ -9,11 +9,13 @@ master
 * Various performance improvements
 * BC BREAK: Modified Reflection and Array type adapter constructors
 * BC BREAK: Removed DefaultClassMetadata::addPropertyMetadata()
+* BC BREAK: Removed support for grouped use statements in type guessing
 * ADDED: getPath() to JsonWritable
 * ADDED: Split ExclusionStrategy into multiple specific interfaces
 * ADDED: deprecations for ExclusionStrategy/ExclusionData
 * ADDED: Payload on exception decoding json data
 * ADDED: Type check on property default
+* ADDED: phpdocumentor/reflection-docblock dependency
 * CHANGE: Order of type guessing
 
 v0.5.9

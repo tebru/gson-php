@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">= 7.1",
+        "phpdocumentor/reflection-docblock": "^4.2",
         "tebru/php-type": "^0.1.5",
         "tebru/doctrine-annotation-reader": "^0.3.0",
         "symfony/cache": "^3.3|^4.0"

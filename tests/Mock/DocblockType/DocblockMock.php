@@ -21,6 +21,8 @@ use Tebru\Gson\Test\Mock\{
     ClassWithParametersInstanceCreator
 };
 
+use Tebru\Gson\Test\Mock\DocblockType\Globals\MyGlobalClassMock;
+
 /**
  * Class DocblockTestClass
  *
@@ -67,6 +69,11 @@ class DocblockMock
      * @var ChildClass
      */
     private $classImported;
+
+    /**
+     * @var MyGlobalClassMock
+     */
+    private $classImportedGlobalConflict;
 
     /**
      * @var \Tebru\Gson\Test\Mock\ChildClass
@@ -139,6 +146,11 @@ class DocblockMock
     private $noTypes;
 
     /**
+     * No tags
+     */
+    private $noTags;
+
+    /**
      * @var ArrayObject
      */
     private $differentGetter;
@@ -160,6 +172,13 @@ class DocblockMock
      * @param int $var
      */
     public function setFoo($var): void
+    {
+    }
+
+    /**
+     * @param int
+     */
+    public function noVariableName($var): void
     {
     }
 
