@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace Tebru\Gson\Internal;
 
 use Tebru\Gson\Exception\JsonDecodeException;
-use Tebru\Gson\Exception\JsonParseException;
 use Tebru\Gson\ReaderContext;
 use Tebru\Gson\JsonToken;
 
