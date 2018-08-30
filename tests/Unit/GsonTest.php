@@ -20,6 +20,7 @@ use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\CacheableDataAwareExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\CacheableGsonMockExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\GsonMockExclusionStrategyMock;
+use Tebru\Gson\Test\Mock\GsonMockResponse;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
 use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\GsonObjectMockable;
@@ -661,6 +662,19 @@ class GsonTest extends TestCase
         self::assertJsonStringEqualsJsonString(json_encode($json), $result);
     }
 
+    public function testSerializeOverride(): void
+    {
+        $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
+            ->build();
+        $result = $gson->toJson($this->gsonMock(GsonMockResponse::class), GsonMock::class);
+        $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
+        unset($json['exclude']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
     public function testSerializeDateTimeFormat(): void
     {
         $gson = Gson::builder()
@@ -856,6 +870,19 @@ class GsonTest extends TestCase
         self::assertSame($jsonArray, $result);
     }
 
+    public function testSerializeSimpleArrayOverride(): void
+    {
+        $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
+            ->build();
+        $result = $gson->toArray($this->gsonMock(GsonMockResponse::class), GsonMock::class);
+        $jsonArray = json_decode($this->json(), true);
+        $jsonArray['virtual'] = 2;
+        unset($jsonArray['exclude']);
+
+        self::assertSame($jsonArray, $result);
+    }
+
     public function testSerializeIntegerArray(): void
     {
         $gson = Gson::builder()
@@ -892,6 +919,19 @@ class GsonTest extends TestCase
             ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->build();
         $result = $gson->toJsonElement($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
+        unset($json['exclude']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), json_encode($result));
+    }
+
+    public function testToJsonElementOverride(): void
+    {
+        $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
+            ->build();
+        $result = $gson->toJsonElement($this->gsonMock(GsonMockResponse::class), GsonMock::class);
         $json = json_decode($this->json(), true);
         $json['virtual'] = 2;
         unset($json['exclude']);
@@ -1006,9 +1046,9 @@ class GsonTest extends TestCase
         return json_encode($array);
     }
 
-    private function gsonMock(): GsonMock
+    private function gsonMock(?string $subclass = null): GsonMock
     {
-        $gsonMock = new GsonMock();
+        $gsonMock = $subclass ? new $subclass() : new GsonMock();
         $gsonMock->setInteger(1);
         $gsonMock->setFloat(3.2);
         $gsonMock->setString('foo');

@@ -39,6 +39,15 @@ What this is doing is using the provided `GsonBuilder` to set up the
 `Gson` object with sensible defaults.  Calling `Gson::toJson` and
 passing in an object will return a string of JSON.
 
+If you need to, you can force the type Gson will use to serialize
+
+```php
+// $object obtained elsewhere
+
+$gson = Gson::builder()->build();
+$json = $gson->toJson($object, MyCustomClass::class);
+```
+
 The reverse is very similar
 
 ```php

@@ -61,13 +61,16 @@ class Gson
     /**
      * Converts an object to a json string
      *
+     * Optionally accepts a type to force serialization to
+     *
      * @param mixed $object
+     * @param null|string $type
      * @return string
      */
-    public function toJson($object): string
+    public function toJson($object, ?string $type = null): string
     {
-        $type = TypeToken::createFromVariable($object);
-        $typeAdapter = $this->typeAdapterProvider->getAdapter($type);
+        $typeToken = $type === null ? TypeToken::createFromVariable($object) : TypeToken::create($type);
+        $typeAdapter = $this->typeAdapterProvider->getAdapter($typeToken);
 
         return $typeAdapter->writeToJson($object, $this->serializeNull);
     }
@@ -97,17 +100,16 @@ class Gson
     /**
      * Converts an object to a [@see JsonElement]
      *
-     * This is a convenience method that first converts an object to json utilizing all of the
-     * type adapters, then converts that json to a JsonElement.  From here you can modify the
-     * JsonElement and call json_encode() on it to get json.
+     * Optionally accepts a type to force serialization to
      *
      * @param mixed $object
+     * @param null|string $type
      * @return JsonElement
      */
-    public function toJsonElement($object): JsonElement
+    public function toJsonElement($object, ?string $type = null): JsonElement
     {
-        $type = TypeToken::createFromVariable($object);
-        $typeAdapter = $this->typeAdapterProvider->getAdapter($type);
+        $typeToken = $type === null ? TypeToken::createFromVariable($object) : TypeToken::create($type);
+        $typeAdapter = $this->typeAdapterProvider->getAdapter($typeToken);
 
         return $typeAdapter->writeToJsonElement($object, $this->serializeNull);
     }
@@ -115,12 +117,15 @@ class Gson
     /**
      * Convenience method to convert an object to a json_decode'd array
      *
+     * Optionally accepts a type to force serialization to
+     *
      * @param mixed $object
+     * @param null|string $type
      * @return array
      */
-    public function toArray($object): array
+    public function toArray($object, ?string $type = null): array
     {
-        return (array)\json_decode($this->toJson($object), true);
+        return (array)\json_decode($this->toJson($object, $type), true);
     }
 
     /**
