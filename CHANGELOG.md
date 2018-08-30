@@ -3,7 +3,7 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
-master
+v0.6.1
 ------
 
 * Allowing type override during serialization
