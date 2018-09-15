@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.6.2
+------
+
+* FIXED: Wildcard type adapter checks for interface
+
 v0.6.1
 ------
 

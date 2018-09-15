@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter\Factory;
 
 
+use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Internal\TypeAdapter\WildcardTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
@@ -34,6 +35,13 @@ class WildcardTypeAdapterFactoryTest extends TestCase
         $factory = new WildcardTypeAdapterFactory();
 
         self::assertFalse($factory->supports(new TypeToken('string')));
+    }
+
+    public function testSupportsInterface(): void
+    {
+        $factory = new WildcardTypeAdapterFactory();
+
+        self::assertTrue($factory->supports(new TypeToken(DateTimeInterface::class)));
     }
 
     public function testCreate(): void

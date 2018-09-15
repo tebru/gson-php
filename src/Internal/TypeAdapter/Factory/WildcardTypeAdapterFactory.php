@@ -21,7 +21,6 @@ use Tebru\PhpType\TypeToken;
  */
 final class WildcardTypeAdapterFactory implements TypeAdapterFactory
 {
-
     /**
      * Will be called before ::create() is called.  The current type will be passed
      * in.  Return false if ::create() should not be called.
@@ -31,7 +30,7 @@ final class WildcardTypeAdapterFactory implements TypeAdapterFactory
      */
     public function supports(TypeToken $type): bool
     {
-        return $type->isWildcard();
+        return $type->isWildcard() || interface_exists((string)$type);
     }
 
     /**
