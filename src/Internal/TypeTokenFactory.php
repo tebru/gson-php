@@ -151,11 +151,16 @@ final class TypeTokenFactory
         ?ReflectionMethod $getter,
         ?ReflectionMethod $setter
     ): ?TypeToken {
+        $returnTag = null;
+
         if ($getter !== null) {
             $docComment = $getter->getDocComment() ?: null;
             $tag = $this->getTypeFromDoc($getter, $docComment, 'return');
             if ($tag !== null) {
-                return $tag;
+                $returnTag = $tag;
+                if ((string)$tag !== 'array') {
+                    return $tag;
+                }
             }
         }
 
@@ -165,7 +170,10 @@ final class TypeTokenFactory
             if (\count($parameters) === 1) {
                 $tag = $this->getTypeFromDoc($setter, $docComment, 'param', $parameters[0]->getName());
                 if ($tag !== null) {
-                    return $tag;
+                    $returnTag = $tag;
+                    if ((string)$tag !== 'array') {
+                        return $tag;
+                    }
                 }
             }
         }
@@ -174,11 +182,14 @@ final class TypeTokenFactory
             $docComment = $property->getDocComment() ?: null;
             $tag = $this->getTypeFromDoc($property, $docComment, 'var');
             if ($tag !== null) {
-                return $tag;
+                $returnTag = $tag;
+                if ((string)$tag !== 'array') {
+                    return $tag;
+                }
             }
         }
 
-        return null;
+        return $returnTag;
     }
 
     /**
@@ -240,7 +251,7 @@ final class TypeTokenFactory
     {
         $type = $tag->getType();
         if (!$type instanceof Compound) {
-             $type = $this->stripSlashes((string)$type);
+            $type = $this->stripSlashes((string)$type);
 
             return TypeToken::create($this->unwrapArray($type));
         }
