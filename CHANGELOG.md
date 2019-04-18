@@ -3,6 +3,10 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.6.3
+------
+* FIXED: Docblock parsing continues checking type locations for generic array
+
 v0.6.2
 ------
 
