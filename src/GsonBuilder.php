@@ -14,10 +14,10 @@ use InvalidArgumentException;
 use LogicException;
 use Psr\SimpleCache\CacheInterface;
 use ReflectionProperty;
-use Symfony\Component\Cache\Simple\ArrayCache;
-use Symfony\Component\Cache\Simple\ChainCache;
-use Symfony\Component\Cache\Simple\NullCache;
-use Symfony\Component\Cache\Simple\PhpFilesCache;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
+use Symfony\Component\Cache\Adapter\NullAdapter;
+use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Exclusion\DeserializationExclusionDataAware;
 use Tebru\Gson\Exclusion\ExclusionStrategy;
@@ -178,11 +178,11 @@ class GsonBuilder
     }
 
     /**
-     * Adds a [@see Discriminator] as a type adapter factory
-     *
-     * @param string $type
+     * Adds a [@param string $type
      * @param Discriminator $discriminator
      * @return GsonBuilder
+     * @see Discriminator] as a type adapter factory
+     *
      */
     public function addDiscriminator(string $type, Discriminator $discriminator): GsonBuilder
     {
@@ -238,11 +238,11 @@ class GsonBuilder
     }
 
     /**
-     * Add an [@see InstanceCreator] for a given type
-     *
-     * @param string $type
+     * Add an [@param string $type
      * @param InstanceCreator $instanceCreator
      * @return GsonBuilder
+     * @see InstanceCreator] for a given type
+     *
      */
     public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
     {
@@ -253,10 +253,10 @@ class GsonBuilder
     }
 
     /**
-     * Set the version to be used with [@see Since] and [@see Until] annotations
-     *
-     * @param string $version
+     * Set the version to be used with [@param string $version
      * @return GsonBuilder
+     * @see Since] and [@see Until] annotations
+     *
      */
     public function setVersion(string $version): GsonBuilder
     {
@@ -266,14 +266,14 @@ class GsonBuilder
     }
 
     /**
-     * Set the property modifiers that should be excluded based on [@see \ReflectionProperty]
+     * Set the property modifiers that should be excluded based on [@param int $modifiers
+     * @return GsonBuilder
+     * @see \ReflectionProperty]
      *
      * This number is a bitmap, so ReflectionProperty::IS_STATIC will exclude all static properties.
      * Likewise, passing (ReflectionProperty::IS_STATIC | ReflectionProperty::IS_PRIVATE) will exclude
      * all static and private properties.
      *
-     * @param int $modifiers
-     * @return GsonBuilder
      */
     public function setExcludedModifier(int $modifiers): GsonBuilder
     {
@@ -283,9 +283,9 @@ class GsonBuilder
     }
 
     /**
-     * Require the [@see Expose] annotation to serialize or deserialize property
+     * Require the [@return GsonBuilder
+     * @see Expose] annotation to serialize or deserialize property
      *
-     * @return GsonBuilder
      */
     public function requireExposeAnnotation(): GsonBuilder
     {
@@ -313,10 +313,10 @@ class GsonBuilder
     }
 
     /**
-     * Add an [@see ExclusionStrategy]
-     *
-     * @param ExclusionStrategy $exclusionStrategy
+     * Add an [@param ExclusionStrategy $exclusionStrategy
      * @return GsonBuilder
+     * @see ExclusionStrategy]
+     *
      */
     public function addExclusion(ExclusionStrategy $exclusionStrategy): GsonBuilder
     {
@@ -351,10 +351,10 @@ class GsonBuilder
     }
 
     /**
-     * Set one of [@see PropertyNamingPolicy]
-     *
-     * @param string $policy
+     * Set one of [@param string $policy
      * @return GsonBuilder
+     * @see PropertyNamingPolicy]
+     *
      */
     public function setPropertyNamingPolicy(string $policy): GsonBuilder
     {
@@ -436,16 +436,16 @@ class GsonBuilder
      */
     public function setCacheDir(string $cacheDir): GsonBuilder
     {
-        $this->cacheDir = $cacheDir.'/gson';
+        $this->cacheDir = $cacheDir . '/gson';
 
         return $this;
     }
 
     /**
-     * Builds a new [@see Gson] object based on configuration set
-     *
-     * @return Gson
+     * Builds a new [@return Gson
      * @throws \LogicException
+     * @see Gson] object based on configuration set
+     *
      */
     public function build(): Gson
     {
@@ -458,12 +458,12 @@ class GsonBuilder
 
         if ($this->cache === null) {
             $this->cache = false === $this->enableCache
-                ? new ArrayCache(0, false)
-                : new ChainCache([new ArrayCache(0, false), new PhpFilesCache('', 0, $this->cacheDir)]);
+                ? new ArrayAdapter(0, false)
+                : new ChainAdapter([new ArrayAdapter(0, false), new PhpFilesAdapter('', 0, $this->cacheDir)]);
         }
 
         // no need to cache the annotations as they get cached with the class/properties
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullAdapter());
         $excluder = new Excluder();
         $excluder->setVersion($this->version);
         $excluder->setExcludedModifiers($this->excludedModifiers);
@@ -508,7 +508,8 @@ class GsonBuilder
         ClassMetadataFactory $classMetadataFactory,
         Excluder $excluder,
         ConstructorConstructor $constructorConstructor
-    ): array {
+    ): array
+    {
         return \array_merge(
             $this->typeAdapterFactories,
             [
