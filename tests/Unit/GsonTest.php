@@ -10,8 +10,11 @@ use DateTime;
 use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\TestCase;
+use Psr\SimpleCache\CacheInterface;
+use ReflectionObject;
 use ReflectionProperty;
-use Symfony\Component\Cache\Simple\ChainCache;
+use Symfony\Component\Cache\Adapter\ChainAdapter;
+use Symfony\Component\Cache\Psr16Cache;
 use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\Gson\Gson;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
@@ -20,9 +23,9 @@ use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\CacheableDataAwareExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\CacheableGsonMockExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\GsonMockExclusionStrategyMock;
+use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\GsonMockResponse;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
-use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\GsonObjectMockable;
 use Tebru\Gson\Test\Mock\GsonObjectMockInstanceCreatorMock;
 use Tebru\Gson\Test\Mock\Strategy\TwoPropertyNamingStrategy;
@@ -594,7 +597,6 @@ class GsonTest extends TestCase
     }
 
 
-
     public function testDeserializeUsesSameObject(): void
     {
         $gsonMock = new GsonMock();
@@ -697,7 +699,7 @@ class GsonTest extends TestCase
             ->serializeNull()
             ->build();
         $result = $gson->toJson(new GsonMock());
-        
+
         $expected = '{
             "integer": null,
             "float": null,
@@ -975,7 +977,20 @@ class GsonTest extends TestCase
             ->enableCache(true);
         $gsonBuilder->build();
 
-        self::assertAttributeInstanceOf(ChainCache::class, 'cache', $gsonBuilder);
+        // Haven't food better way to test that with all private properties
+        $reflection = new ReflectionObject($gsonBuilder);
+        $propertyCache = $reflection->getProperty('cache');
+        $propertyCache->setAccessible(true);
+        $actualCache = $propertyCache->getValue($gsonBuilder);
+
+        self::assertInstanceOf(Psr16Cache::class, $actualCache);
+
+        $reflection = new ReflectionObject($actualCache);
+        $propertyPool = $reflection->getProperty('pool');
+        $propertyPool->setAccessible(true);
+        $actualPool = $propertyPool->getValue($actualCache);
+
+        self::assertInstanceOf(ChainAdapter::class, $actualPool);
     }
 
     public function testEnableCacheWithoutDirectoryThrowsException(): void

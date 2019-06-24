@@ -25,6 +25,7 @@ use Tebru\Gson\Exclusion\SerializationExclusionDataAware;
 use Tebru\Gson\ExclusionStrategy as DeprecatedExclusionStrategy;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
+use Tebru\Gson\Internal\CacheProvider;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
@@ -456,14 +457,20 @@ class GsonBuilder
         $propertyNamingStrategy = $this->propertyNamingStrategy ?? new DefaultPropertyNamingStrategy($this->propertyNamingPolicy);
         $methodNamingStrategy = $this->methodNamingStrategy ?? new UpperCaseMethodNamingStrategy();
 
+        $cacheProvider = new CacheProvider();
         if ($this->cache === null) {
-            $this->cache = false === $this->enableCache
-                ? new ArrayCache(0, false)
-                : new ChainCache([new ArrayCache(0, false), new PhpFilesCache('', 0, $this->cacheDir)]);
+            if ($this->enableCache) {
+                $this->cache = $cacheProvider->provideChainCacheAsSimpleCache([
+                    $cacheProvider->providerArrayCacheAsCacheItemPool(0, false),
+                    $cacheProvider->providePhpFilesCacheAsCacheItemPool('', 0, $this->cacheDir)
+                ]);
+            } else {
+                $this->cache = $cacheProvider->provideArrayCacheAsSimpleCache(0, false);
+            }
         }
 
         // no need to cache the annotations as they get cached with the class/properties
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), $cacheProvider->provideNullCacheAsSimpleCache());
         $excluder = new Excluder();
         $excluder->setVersion($this->version);
         $excluder->setExcludedModifiers($this->excludedModifiers);
