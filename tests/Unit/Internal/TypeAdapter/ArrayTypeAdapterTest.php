@@ -8,6 +8,7 @@ namespace Tebru\Gson\Test\Unit\Internal\TypeAdapter;
 
 use LogicException;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapter\IntegerTypeAdapter;
@@ -216,6 +217,18 @@ class ArrayTypeAdapterTest extends TestCase
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
 
         self::assertSame('{"foo":"bar","bar":1}', $adapter->writeToJson(['foo' => 'bar', 'bar' => 1], false));
+    }
+
+    public function testSerializeStdClass(): void
+    {
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
+
+        $write = new stdClass();
+        $write->foo = 'bar';
+        $write->bar = 1;
+
+        self::assertSame('{"foo":"bar","bar":1}', $adapter->writeToJson($write));
     }
 
     public function testSerializeArrayOneGenericType(): void

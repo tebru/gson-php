@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Tebru\Gson\Internal\TypeAdapter;
 
 use LogicException;
+use stdClass;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\TypeAdapterProvider;
@@ -163,7 +164,7 @@ final class ArrayTypeAdapter extends TypeAdapter
      * Write the value to the writer for the type
      *
      * @param JsonWritable $writer
-     * @param array|null $value
+     * @param array|stdClass|null $value
      * @return void
      * @throws \LogicException
      */
@@ -226,11 +227,11 @@ final class ArrayTypeAdapter extends TypeAdapter
 
     /**
      * Returns true if the array is acting like an object
-     * @param array $array
+     * @param array|stdClass $array
      * @param int $numberOfGenerics
      * @return bool
      */
-    private function isArrayObject(array $array, int $numberOfGenerics): bool
+    private function isArrayObject($array, int $numberOfGenerics): bool
     {
         if (2 === $numberOfGenerics) {
             return true;
