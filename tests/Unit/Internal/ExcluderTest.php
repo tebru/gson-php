@@ -33,6 +33,7 @@ use Tebru\Gson\Test\Mock\ExclusionStrategies\FooDeserializationExclusionStrategy
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooSerializationExclusionStrategy;
 use Tebru\Gson\Test\Mock\Foo;
+use Tebru\Gson\Test\Mock\GsonMockChild;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
 
@@ -131,6 +132,28 @@ class ExcluderTest extends TestCase
 
         self::assertFalse($this->excluder->excludeClassSerialize($classMetadata));
         self::assertTrue($this->excluder->excludeClassDeserialize($classMetadata));
+    }
+
+    public function testDoNotExcludeClassWithPropertyExposed(): void
+    {
+        $propertyAnnotations = new AnnotationCollection();
+        $propertyAnnotations->add(new Expose([]));
+        $property = new Property(
+            'foo',
+            'foo',
+            new TypeToken('string'),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
+            $propertyAnnotations,
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(Foo::class, $this->propertyCollection)
+        );
+        $this->propertyCollection->add($property);
+        $classMetadata = MockProvider::classMetadata(GsonMockChild::class, $this->propertyCollection);
+
+        self::assertFalse($this->excluder->excludeClassSerialize($classMetadata));
+        self::assertFalse($this->excluder->excludeClassDeserialize($classMetadata));
     }
 
     public function testExcludeClassWithStrategySerialization(): void
@@ -458,6 +481,47 @@ class ExcluderTest extends TestCase
             ReflectionProperty::IS_PRIVATE,
             false,
             MockProvider::classMetadata(Foo::class, $this->propertyCollection)
+        );
+
+        self::assertTrue($this->excluder->excludePropertySerialize($property));
+        self::assertTrue($this->excluder->excludePropertyDeserialize($property));
+    }
+
+    public function testExcludeWithClassExcludeAndPropertyExpose(): void
+    {
+        $annotations = new AnnotationCollection();
+        $annotations->add(new Expose([]));
+
+        $property = new Property(
+            'foo',
+            'foo',
+            new TypeToken('string'),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
+            $annotations,
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(GsonMockChild::class, $this->propertyCollection)
+        );
+
+        self::assertFalse($this->excluder->excludePropertySerialize($property));
+        self::assertFalse($this->excluder->excludePropertyDeserialize($property));
+    }
+
+    public function testExcludeWithClassExcludeAnnotation(): void
+    {
+        $annotations = new AnnotationCollection();
+
+        $property = new Property(
+            'foo',
+            'foo',
+            new TypeToken('string'),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
+            $annotations,
+            ReflectionProperty::IS_PRIVATE,
+            false,
+            MockProvider::classMetadata(GsonMockChild::class, $this->propertyCollection)
         );
 
         self::assertTrue($this->excluder->excludePropertySerialize($property));

@@ -20,6 +20,7 @@ use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\CacheableDataAwareExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\CacheableGsonMockExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\GsonMockExclusionStrategyMock;
+use Tebru\Gson\Test\Mock\GsonMockChild;
 use Tebru\Gson\Test\Mock\GsonMockResponse;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
 use Tebru\Gson\Test\Mock\GsonMock;
@@ -49,7 +50,6 @@ class GsonTest extends TestCase
     {
         $gson = Gson::builder()->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -78,7 +78,6 @@ class GsonTest extends TestCase
             ->setVersion(1)
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -107,7 +106,6 @@ class GsonTest extends TestCase
             ->setVersion(2)
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -136,7 +134,6 @@ class GsonTest extends TestCase
             ->setExcludedModifier(ReflectionProperty::IS_PROTECTED)
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -165,7 +162,6 @@ class GsonTest extends TestCase
             ->requireExposeAnnotation()
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertNull($gsonMock->getInteger());
@@ -194,7 +190,6 @@ class GsonTest extends TestCase
             ->registerType('int', new Integer1TypeAdapter())
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(2, $gsonMock->getInteger());
@@ -223,7 +218,6 @@ class GsonTest extends TestCase
             ->registerType(GsonObjectMockable::class, new GsonObjectMockTypeAdapterMock())
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -252,7 +246,6 @@ class GsonTest extends TestCase
             ->addTypeAdapterFactory(new Integer1TypeAdapterFactory())
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(2, $gsonMock->getInteger());
@@ -281,7 +274,6 @@ class GsonTest extends TestCase
             ->registerType(GsonMock::class, new Integer1Deserializer())
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(2, $gsonMock->getInteger());
@@ -310,7 +302,6 @@ class GsonTest extends TestCase
             ->registerType(GsonMock::class, new Integer1SerializerDeserializer())
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(2, $gsonMock->getInteger());
@@ -339,7 +330,6 @@ class GsonTest extends TestCase
             ->addInstanceCreator(GsonObjectMock::class, new GsonObjectMockInstanceCreatorMock())
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -368,7 +358,6 @@ class GsonTest extends TestCase
             ->addInstanceCreator(GsonObjectMockable::class, new GsonObjectMockInstanceCreatorMock())
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -397,7 +386,6 @@ class GsonTest extends TestCase
             ->addExclusionStrategy(new GsonMockExclusionStrategyMock(), true, true)
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -426,7 +414,6 @@ class GsonTest extends TestCase
             ->addExclusion(new CacheableGsonMockExclusionStrategy())
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -489,7 +476,6 @@ class GsonTest extends TestCase
 
         $json = json_encode($array);
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($json, GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -541,7 +527,6 @@ class GsonTest extends TestCase
 
         $json = json_encode($array);
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($json, GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -570,7 +555,6 @@ class GsonTest extends TestCase
             ->setMethodNamingStrategy(new UpperCaseMethodNamingStrategy())
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -594,7 +578,6 @@ class GsonTest extends TestCase
     }
 
 
-
     public function testDeserializeUsesSameObject(): void
     {
         $gsonMock = new GsonMock();
@@ -602,7 +585,6 @@ class GsonTest extends TestCase
 
         $gson = Gson::builder()->build();
 
-        /** @var GsonMock $gsonMock */
         $returnedObject = $gson->fromJson($this->json(), $gsonMock);
 
         self::assertSame($gsonMock, $returnedObject);
@@ -616,7 +598,6 @@ class GsonTest extends TestCase
 
         $gson = Gson::builder()->build();
 
-        /** @var GsonMock $gsonMock */
         $returnedObject = $gson->fromJson($this->json(), $gsonMock);
 
         self::assertSame($gsonMock, $returnedObject);
@@ -626,7 +607,6 @@ class GsonTest extends TestCase
     {
         $gson = Gson::builder()->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromArray(json_decode($this->json(), true), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());
@@ -647,6 +627,37 @@ class GsonTest extends TestCase
         self::assertNull($gsonMock->getExclude());
         self::assertTrue($gsonMock->getExcludeFromStrategy());
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
+    }
+
+    public function testDeserializeChildExclude(): void
+    {
+        $gson = Gson::builder()->build();
+
+        $jsonArray = json_decode($this->json(), true);
+        $jsonArray['id'] = 1;
+        $jsonArray['excluded'] = true;
+
+        $gsonMock = $gson->fromJson(json_encode($jsonArray), GsonMockChild::class);
+
+        self::assertSame(1, $gsonMock->id);
+        self::assertNull($gsonMock->excluded);
+        self::assertNull($gsonMock->getInteger());
+        self::assertNull($gsonMock->getFloat());
+        self::assertNull($gsonMock->getString());
+        self::assertNull($gsonMock->getBoolean());
+        self::assertNull($gsonMock->getArray());
+        self::assertNull($gsonMock->getDate());
+        self::assertNull($gsonMock->public);
+        self::assertNull($gsonMock->getSince());
+        self::assertNull($gsonMock->getUntil());
+        self::assertNull($gsonMock->getMyAccessor());
+        self::assertNull($gsonMock->getSerializedname());
+        self::assertNull($gsonMock->getType());
+        self::assertNull($gsonMock->getJsonAdapter());
+        self::assertFalse($gsonMock->getExpose());
+        self::assertNull($gsonMock->getExclude());
+        self::assertNull($gsonMock->getExcludeFromStrategy());
+        self::assertNull($gsonMock->getGsonObjectMock());
     }
 
     public function testSerializeSimple(): void
@@ -913,6 +924,22 @@ class GsonTest extends TestCase
         self::assertSame(['foo'], $result);
     }
 
+    public function testSerializeChildExclude(): void
+    {
+        $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
+            ->build();
+
+        /** @var GsonMockChild $mock */
+        $mock = $this->gsonMock(GsonMockChild::class);
+        $mock->id = 1;
+        $mock->excluded = true;
+        $result = $gson->toJson($mock);
+        $expected = ['id' => 1, 'expose' => false];
+
+        self::assertJsonStringEqualsJsonString(json_encode($expected), $result);
+    }
+
     public function testToJsonElement(): void
     {
         $gson = Gson::builder()
@@ -997,7 +1024,6 @@ class GsonTest extends TestCase
             ->setCache(new NullCache())
             ->build();
 
-        /** @var GsonMock $gsonMock */
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertSame(1, $gsonMock->getInteger());

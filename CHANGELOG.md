@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+v0.6.5
+------
+* ADDED: PHPStorm metadata to help with auto completion
+* CHANGE: Allow `@Expose` property in `@Exclude` class
+
 v0.6.4
 ------
 * FIXED: Serializing stdClass with array adapter

@@ -127,4 +127,6 @@ Additional Annotations
 
 Like `@Expose` this will exclude properties or classes this is applied
 to.  It can also only be applied during serialization or deserialization.
+If set on a class, `@Expose` annotations may be set on properties. This
+will act like `requireExposeAnnotation` on a class level.
 
