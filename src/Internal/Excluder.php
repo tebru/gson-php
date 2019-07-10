@@ -181,7 +181,7 @@ final class Excluder
             }
         }
 
-        return $this->excludeByAnnotation($classMetadata->getAnnotations(), true);
+        return $this->excludeClass($classMetadata, true);
     }
 
     /**
@@ -198,7 +198,7 @@ final class Excluder
             }
         }
 
-        return $this->excludeByAnnotation($classMetadata->getAnnotations(), false);
+        return $this->excludeClass($classMetadata, false);
     }
 
     /**
@@ -314,7 +314,7 @@ final class Excluder
             }
         }
 
-        return $this->excludeByAnnotation($propertyMetadata->getAnnotations(), true);
+        return $this->excludeProperty($propertyMetadata, true);
     }
 
     /**
@@ -336,7 +336,7 @@ final class Excluder
             }
         }
 
-        return $this->excludeByAnnotation($propertyMetadata->getAnnotations(), false);
+        return $this->excludeProperty($propertyMetadata, false);
     }
 
     /**
@@ -418,31 +418,72 @@ final class Excluder
     }
 
     /**
+     * Check if we should exclude an entire class. Returns true if the class has an [@Exclude] annotation
+     * unless one of the properties has an [@Expose] annotation
+     *
+     * @param ClassMetadata $classMetadata
+     * @param bool $serialize
+     * @return bool
+     */
+    private function excludeClass(ClassMetadata $classMetadata, bool $serialize): bool
+    {
+        // exclude if version doesn't match
+        if (!$this->validVersion($classMetadata->getAnnotations())) {
+            return true;
+        }
+
+        // exclude if requireExpose is set and class doesn't have an expose annotation
+        $expose = $classMetadata->getAnnotation(Expose::class);
+        if ($this->requireExpose && ($expose !== null && !$expose->shouldExpose($serialize))) {
+            return true;
+        }
+
+        // don't exclude if exclude annotation doesn't exist or only exists for the other direction
+        $exclude = $classMetadata->getAnnotation(Exclude::class);
+        if ($exclude === null || !$exclude->shouldExclude($serialize)) {
+            return false;
+        }
+
+        // don't exclude if the annotation exists, but a property is exposed
+        foreach ($classMetadata->getPropertyMetadata() as $propertyMetadata) {
+            $expose = $propertyMetadata->getAnnotation(Expose::class);
+            if ($expose !== null && $expose->shouldExpose($serialize)) {
+                return false;
+            }
+        }
+
+        // exclude if an annotation is set and no properties are exposed
+        return true;
+    }
+
+    /**
      * Checks various annotations to see if the property should be excluded
      *
      * - [@see Since] / [@see Until]
      * - [@see Exclude]
      * - [@see Expose] (if requireExpose is set)
      *
-     * @param AnnotationCollection $annotations
+     * @param PropertyMetadata $propertyMetadata
      * @param bool $serialize
      * @return bool
      */
-    private function excludeByAnnotation(AnnotationCollection $annotations, bool $serialize): bool
+    private function excludeProperty(PropertyMetadata $propertyMetadata, bool $serialize): bool
     {
+        $annotations = $propertyMetadata->getAnnotations();
         if (!$this->validVersion($annotations)) {
             return true;
         }
 
-        /** @var Exclude $exclude */
+        // exclude from annotation
         $exclude = $annotations->get(Exclude::class);
         if (null !== $exclude && $exclude->shouldExclude($serialize)) {
             return true;
         }
 
+        $classExclude = $propertyMetadata->getDeclaringClassMetadata()->getAnnotation(Exclude::class);
+
         // if we need an expose annotation
-        if ($this->requireExpose) {
-            /** @var Expose $expose */
+        if ($this->requireExpose || ($classExclude !== null && $classExclude->shouldExclude($serialize))) {
             $expose = $annotations->get(Expose::class);
             if (null === $expose || !$expose->shouldExpose($serialize)) {
                 return true;

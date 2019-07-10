@@ -72,12 +72,10 @@ class ClassMetadataFactoryTest extends TestCase
 
         self::assertSame(PropertyCollectionMock::class, $classMetadata->getName());
 
-        /** @var Property[] $elements */
         $elements = $classMetadata->getPropertyCollection()->toArray();
 
         self::assertCount(4, $elements);
 
-        // todo: change to array destructuring syntax when supported in ide
         [$changedAccessors, $changedName, $type, $virtual] = $elements;
 
         self::assertSame('changedAccessors', $changedAccessors->getName());

@@ -10,6 +10,8 @@ namespace Tebru\Gson\Internal\Data;
 
 use Tebru\AnnotationReader\AbstractAnnotation;
 use Tebru\AnnotationReader\AnnotationCollection;
+use Tebru\Gson\Annotation\Exclude;
+use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\GetterStrategy;
 use Tebru\Gson\Internal\SetterStrategy;

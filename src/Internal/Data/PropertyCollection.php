@@ -81,7 +81,7 @@ final class PropertyCollection implements IteratorAggregate
     /**
      * Retrieve an external iterator
      *
-     * @return ArrayIterator
+     * @return ArrayIterator|Property[]
      */
     public function getIterator(): ArrayIterator
     {
