@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Mock;
 
 use DateTime;
+use Tebru\Gson\Annotation as Gson;
 use Tebru\Gson\Annotation\Accessor;
 use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
@@ -75,6 +76,10 @@ class GsonMock
      */
     private $exclude;
 
+    /**
+     * @Gson\ExclusionCheck()
+     * @var bool
+     */
     private $excludeFromStrategy;
 
     private $gsonObjectMock;

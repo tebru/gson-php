@@ -19,6 +19,7 @@ use Symfony\Component\Cache\Simple\ChainCache;
 use Symfony\Component\Cache\Simple\NullCache;
 use Symfony\Component\Cache\Simple\PhpFilesCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
+use Tebru\Gson\Annotation\ExclusionCheck;
 use Tebru\Gson\Exclusion\DeserializationExclusionDataAware;
 use Tebru\Gson\Exclusion\ExclusionStrategy;
 use Tebru\Gson\Exclusion\SerializationExclusionDataAware;
@@ -70,6 +71,13 @@ class GsonBuilder
     private $instanceCreators = [];
 
     /**
+     * List of visitors to manipulate class metadata when loaded
+     *
+     * @var ClassMetadataVisitor[]
+     */
+    private $classMetadataVisitors = [];
+
+    /**
      * Strategy for converting property names to serialized names
      *
      * @var PropertyNamingStrategy
@@ -112,6 +120,13 @@ class GsonBuilder
      * @var bool
      */
     private $requireExpose = false;
+
+    /**
+     * True if the [@see ExclusionCheck] annotation is required to use non-cached exclusion strategies
+     *
+     * @var bool
+     */
+    private $requireExclusionCheck = false;
 
     /**
      * An array of [@see ExclusionStrategy] objects
@@ -253,6 +268,19 @@ class GsonBuilder
     }
 
     /**
+     * Add a visitor that will be called when [@see ClassMetadata] is first loaded
+     *
+     * @param ClassMetadataVisitor $classMetadataVisitor
+     * @return GsonBuilder
+     */
+    public function addClassMetadataVisitor(ClassMetadataVisitor $classMetadataVisitor): GsonBuilder
+    {
+        $this->classMetadataVisitors[] = $classMetadataVisitor;
+
+        return $this;
+    }
+
+    /**
      * Set the version to be used with [@see Since] and [@see Until] annotations
      *
      * @param string $version
@@ -290,6 +318,18 @@ class GsonBuilder
     public function requireExposeAnnotation(): GsonBuilder
     {
         $this->requireExpose = true;
+
+        return $this;
+    }
+
+    /**
+     * Require the [@see ExclusionCheck] annotation to use non-cached exclusion strategies
+     *
+     * @return GsonBuilder
+     */
+    public function requireExclusionCheckAnnotation(): GsonBuilder
+    {
+        $this->requireExclusionCheck = true;
 
         return $this;
     }
@@ -523,7 +563,9 @@ class GsonBuilder
                 new ReflectionTypeAdapterFactory(
                     $constructorConstructor,
                     $classMetadataFactory,
-                    $excluder
+                    $excluder,
+                    $this->requireExclusionCheck,
+                    $this->classMetadataVisitors
                 ),
                 new WildcardTypeAdapterFactory(),
             ]

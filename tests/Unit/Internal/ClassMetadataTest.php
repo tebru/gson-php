@@ -21,6 +21,8 @@ use Tebru\PhpType\TypeToken;
  * Class ClassMetadataTest
  *
  * @author Nate Brunette <n@tebru.net>
+ *
+ * @covers \Tebru\Gson\Internal\DefaultClassMetadata
  */
 class ClassMetadataTest extends TestCase
 {
@@ -66,6 +68,7 @@ class ClassMetadataTest extends TestCase
             $this->metadata
         ));
         self::assertCount(1, $this->metadata->getPropertyMetadata());
+        self::assertCount(1, $this->metadata->getPropertyMetadataCollection()->toArray());
     }
 
     public function testProperty(): void

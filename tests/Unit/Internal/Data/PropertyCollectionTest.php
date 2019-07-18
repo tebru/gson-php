@@ -65,6 +65,42 @@ class PropertyCollectionTest extends TestCase
         self::assertNull($this->propertyCollection->getBySerializedName('foo_bar2'));
     }
 
+    public function testRemove(): void
+    {
+        $this->propertyCollection->remove($this->property);
+        self::assertCount(0, $this->propertyCollection);
+    }
+
+    public function testRemoveByName(): void
+    {
+        $this->propertyCollection->removeByName($this->property->getName());
+        self::assertCount(0, $this->propertyCollection);
+    }
+
+    public function testRemoveByNameMissing(): void
+    {
+        $this->propertyCollection->removeByName('foo2');
+        self::assertCount(1, $this->propertyCollection);
+    }
+
+    public function testRemoveBySerializedName(): void
+    {
+        $this->propertyCollection->removeBySerializedName($this->property->getSerializedName());
+        self::assertCount(0, $this->propertyCollection);
+    }
+
+    public function testRemoveBySerializedNameMissing(): void
+    {
+        $this->propertyCollection->removeBySerializedName('foo2');
+        self::assertCount(1, $this->propertyCollection);
+    }
+
+    public function testClear(): void
+    {
+        $this->propertyCollection->clear();
+        self::assertCount(0, $this->propertyCollection);
+    }
+
     public function testToArray(): void
     {
         self::assertSame([$this->property], $this->propertyCollection->toArray());

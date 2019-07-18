@@ -13,6 +13,7 @@ use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\PropertyMetadata;
+use Tebru\Gson\PropertyMetadataCollection;
 
 /**
  * Class DefaultClassMetadata
@@ -96,6 +97,16 @@ final class DefaultClassMetadata implements ClassMetadata
     public function getAnnotation(string $annotationClass): ?AbstractAnnotation
     {
         return $this->annotations->get($annotationClass);
+    }
+
+    /**
+     * Get the [@see PropertyMetadataCollection] for class
+     *
+     * @return PropertyMetadataCollection
+     */
+    public function getPropertyMetadataCollection(): PropertyMetadataCollection
+    {
+        return $this->properties;
     }
 
     /**

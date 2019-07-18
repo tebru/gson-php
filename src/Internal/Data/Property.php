@@ -10,8 +10,6 @@ namespace Tebru\Gson\Internal\Data;
 
 use Tebru\AnnotationReader\AbstractAnnotation;
 use Tebru\AnnotationReader\AnnotationCollection;
-use Tebru\Gson\Annotation\Exclude;
-use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\GetterStrategy;
 use Tebru\Gson\Internal\SetterStrategy;
@@ -256,10 +254,13 @@ final class Property implements PropertyMetadata
      * Set whether we should skip during serialization
      *
      * @param bool $skipSerialize
+     * @return PropertyMetadata
      */
-    public function setSkipSerialize(bool $skipSerialize): void
+    public function setSkipSerialize(bool $skipSerialize): PropertyMetadata
     {
         $this->skipSerialize = $skipSerialize;
+
+        return $this;
     }
 
     /**
@@ -276,10 +277,13 @@ final class Property implements PropertyMetadata
      * Set whether we should skip during deserialization
      *
      * @param bool $skipDeserialize
+     * @return PropertyMetadata
      */
-    public function setSkipDeserialize(bool $skipDeserialize): void
+    public function setSkipDeserialize(bool $skipDeserialize): PropertyMetadata
     {
         $this->skipDeserialize = $skipDeserialize;
+
+        return $this;
     }
 
     /**

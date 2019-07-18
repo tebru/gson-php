@@ -9,40 +9,70 @@ declare(strict_types=1);
 namespace Tebru\Gson\Internal\Data;
 
 use ArrayIterator;
-use IteratorAggregate;
+use Tebru\Gson\PropertyMetadata;
+use Tebru\Gson\PropertyMetadataCollection;
 
 /**
  * Class PropertyCollection
  *
- * A collection of [@see Property] objects
+ * A collection of [@see PropertyMetadata] objects
  *
  * @author Nate Brunette <n@tebru.net>
  */
-final class PropertyCollection implements IteratorAggregate
+final class PropertyCollection implements PropertyMetadataCollection
 {
     /**
-     * Array of [@see Property] objects
+     * Array of [@see PropertyMetadata] objects
      *
-     * @var Property[]
+     * @var PropertyMetadata[]
      */
-    private $elements = [];
+    private $elements;
 
     /**
-     * @param Property $property
+     * Constructor
+     *
+     * @param PropertyMetadata[] $elements
+     */
+    public function __construct(array $elements = [])
+    {
+        $this->elements = $elements;
+    }
+
+    /**
+     * @param PropertyMetadata $property
      * @return void
      */
-    public function add(Property $property): void
+    public function add(PropertyMetadata $property): void
     {
         $this->elements[$property->getSerializedName()] = $property;
     }
 
     /**
-     * Get [@see Property] by property name
+     * Add a property to the collection
+     *
+     * @param PropertyMetadata $property
+     * @return void
+     */
+    public function remove(PropertyMetadata $property): void
+    {
+        $this->removeBySerializedName($property->getSerializedName());
+    }
+
+    /**
+     * Clear out collection
+     */
+    public function clear(): void
+    {
+        $this->elements = [];
+    }
+
+    /**
+     * Get [@see PropertyMetadata] by property name
      *
      * @param string $propertyName
-     * @return Property|null
+     * @return PropertyMetadata|null
      */
-    public function getByName(string $propertyName): ?Property
+    public function getByName(string $propertyName): ?PropertyMetadata
     {
         foreach ($this->elements as $property) {
             if ($property->getName() === $propertyName) {
@@ -54,12 +84,28 @@ final class PropertyCollection implements IteratorAggregate
     }
 
     /**
+     * Remove property by name
+     *
+     * @param string $propertyName
+     * @return void
+     */
+    public function removeByName(string $propertyName): void
+    {
+        $property = $this->getByName($propertyName);
+        if ($property === null) {
+            return;
+        }
+
+        $this->removeBySerializedName($property->getSerializedName());
+    }
+
+    /**
      * Get [@see Property] by serialized name
      *
      * @param string $name
-     * @return Property|null
+     * @return PropertyMetadata|null
      */
-    public function getBySerializedName(string $name): ?Property
+    public function getBySerializedName(string $name): ?PropertyMetadata
     {
         if (!isset($this->elements[$name])) {
             return null;
@@ -69,9 +115,24 @@ final class PropertyCollection implements IteratorAggregate
     }
 
     /**
+     * Remove property by serialized name
+     *
+     * @param string $name
+     * @return void
+     */
+    public function removeBySerializedName(string $name): void
+    {
+        if (!isset($this->elements[$name])) {
+            return;
+        }
+
+        unset($this->elements[$name]);
+    }
+
+    /**
      * Array of Property objects
      *
-     * @return Property[]
+     * @return PropertyMetadata[]
      */
     public function toArray(): array
     {
@@ -81,7 +142,7 @@ final class PropertyCollection implements IteratorAggregate
     /**
      * Retrieve an external iterator
      *
-     * @return ArrayIterator|Property[]
+     * @return ArrayIterator|PropertyMetadata[]
      */
     public function getIterator(): ArrayIterator
     {
