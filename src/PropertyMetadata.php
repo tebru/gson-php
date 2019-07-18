@@ -91,4 +91,34 @@ interface PropertyMetadata
      * @return bool
      */
     public function isVirtual(): bool;
+
+    /**
+     * Returns should if we should skip during serialization
+     *
+     * @return bool
+     */
+    public function skipSerialize(): bool;
+
+    /**
+     * Set whether we should skip during serialization
+     *
+     * @param bool $skipSerialize
+     * @return PropertyMetadata
+     */
+    public function setSkipSerialize(bool $skipSerialize): PropertyMetadata;
+
+    /**
+     * Returns should if we should skip during deserialization
+     *
+     * @return bool
+     */
+    public function skipDeserialize(): bool;
+
+    /**
+     * Set whether we should skip during deserialization
+     *
+     * @param bool $skipDeserialize
+     * @return PropertyMetadata
+     */
+    public function setSkipDeserialize(bool $skipDeserialize): PropertyMetadata;
 }

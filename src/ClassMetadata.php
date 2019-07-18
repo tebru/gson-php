@@ -44,8 +44,16 @@ interface ClassMetadata
     public function getAnnotation(string $annotationClass): ?AbstractAnnotation;
 
     /**
+     * Get the [@see PropertyMetadataCollection] for class
+     *
+     * @return PropertyMetadataCollection
+     */
+    public function getPropertyMetadataCollection(): PropertyMetadataCollection;
+
+    /**
      * Returns an array of [@see PropertyMetadata] objects
      *
+     * @deprecated In favor of getPropertyMetadataCollection()
      * @return PropertyMetadata[]
      */
     public function getPropertyMetadata(): array;
@@ -66,9 +74,23 @@ interface ClassMetadata
     public function skipSerialize(): bool;
 
     /**
+     * Set if we should skip serialization
+     *
+     * @param bool $skipSerialize
+     */
+    public function setSkipSerialize(bool $skipSerialize): void;
+
+    /**
      * If the class should be skipped during deserialization
      *
      * @return bool
      */
     public function skipDeserialize(): bool;
+
+    /**
+     * Set if we should skip deserialization
+     *
+     * @param bool $skipDeserialize
+     */
+    public function setSkipDeserialize(bool $skipDeserialize): void;
 }

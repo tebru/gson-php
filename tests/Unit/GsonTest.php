@@ -408,6 +408,64 @@ class GsonTest extends TestCase
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
     }
 
+    public function testDeserializeWithExclusionCheckRequired(): void
+    {
+        $gson = Gson::builder()
+            ->addExclusionStrategy(new GsonMockExclusionStrategyMock(), true, true)
+            ->requireExclusionCheckAnnotation()
+            ->build();
+
+        $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
+
+        self::assertSame(1, $gsonMock->getInteger());
+        self::assertSame(3.2, $gsonMock->getFloat());
+        self::assertSame('foo', $gsonMock->getString());
+        self::assertFalse($gsonMock->getBoolean());
+        self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
+        self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
+        self::assertSame('public', $gsonMock->public);
+        self::assertAttributeSame('protected', 'protected', $gsonMock);
+        self::assertSame('since', $gsonMock->getSince());
+        self::assertSame('until', $gsonMock->getUntil());
+        self::assertSame('accessor', $gsonMock->getMyAccessor());
+        self::assertSame('serializedname', $gsonMock->getSerializedname());
+        self::assertSame([1, 2, 3], $gsonMock->getType());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getJsonAdapter());
+        self::assertFalse($gsonMock->getExpose());
+        self::assertNull($gsonMock->getExclude());
+        self::assertNull($gsonMock->getExcludeFromStrategy());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
+    }
+
+    public function testDeserializeExcludeWithVisitor(): void
+    {
+        $gson = Gson::builder()
+            ->addClassMetadataVisitor(new GsonMockExclusionStrategyMock())
+            ->requireExclusionCheckAnnotation()
+            ->build();
+
+        $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
+
+        self::assertSame(1, $gsonMock->getInteger());
+        self::assertSame(3.2, $gsonMock->getFloat());
+        self::assertSame('foo', $gsonMock->getString());
+        self::assertFalse($gsonMock->getBoolean());
+        self::assertSame(['foo' => 'bar'], $gsonMock->getArray());
+        self::assertSame('2017-01-01T12:01:23-06:00', $gsonMock->getDate()->format(DateTime::ATOM));
+        self::assertSame('public', $gsonMock->public);
+        self::assertAttributeSame('protected', 'protected', $gsonMock);
+        self::assertSame('since', $gsonMock->getSince());
+        self::assertSame('until', $gsonMock->getUntil());
+        self::assertSame('accessor', $gsonMock->getMyAccessor());
+        self::assertSame('serializedname', $gsonMock->getSerializedname());
+        self::assertSame([1, 2, 3], $gsonMock->getType());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getJsonAdapter());
+        self::assertFalse($gsonMock->getExpose());
+        self::assertNull($gsonMock->getExclude());
+        self::assertNull($gsonMock->getExcludeFromStrategy());
+        self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
+    }
+
     public function testDeserializeWithCachedExclusionStrategy(): void
     {
         $gson = Gson::builder()
@@ -858,6 +916,37 @@ class GsonTest extends TestCase
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
             ->addExclusionStrategy(new GsonMockExclusionStrategyMock(), true, true)
+            ->build();
+
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
+        unset($json['exclude'], $json['exclude_from_strategy']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeWithExclusionCheckRequired(): void
+    {
+        $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
+            ->addExclusionStrategy(new GsonMockExclusionStrategyMock(), true, true)
+            ->requireExclusionCheckAnnotation()
+            ->build();
+
+        $result = $gson->toJson($this->gsonMock());
+        $json = json_decode($this->json(), true);
+        $json['virtual'] = 2;
+        unset($json['exclude'], $json['exclude_from_strategy']);
+
+        self::assertJsonStringEqualsJsonString(json_encode($json), $result);
+    }
+
+    public function testSerializeWithVisitor(): void
+    {
+        $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
+            ->addClassMetadataVisitor(new GsonMockExclusionStrategyMock())
             ->build();
 
         $result = $gson->toJson($this->gsonMock());

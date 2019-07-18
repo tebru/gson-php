@@ -6,6 +6,7 @@
 
 namespace Tebru\Gson\Test\Mock;
 
+use Tebru\Gson\Annotation as Gson;
 use Tebru\Gson\Annotation\SerializedName;
 use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Test\Mock\Annotation\BarAnnotation;
@@ -35,6 +36,9 @@ class ChildClass extends ChildClassParent
 
     private $withTypehint;
 
+    /**
+     * @Gson\ExclusionCheck()
+     */
     private $default = 1;
 
     public function getBaz()

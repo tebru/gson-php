@@ -8,21 +8,22 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal\TypeAdapter;
 
+use Tebru\Gson\Annotation\ExclusionCheck;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Internal\Data\Property;
+use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\DefaultDeserializationExclusionData;
 use Tebru\Gson\Internal\DefaultSerializationExclusionData;
 use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\ObjectConstructor;
 use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstance;
 use Tebru\Gson\Internal\ObjectConstructorAware;
 use Tebru\Gson\Internal\ObjectConstructorAwareTrait;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\JsonWritable;
-use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\JsonReadable;
-use Tebru\Gson\Internal\ObjectConstructor;
 use Tebru\Gson\JsonToken;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\TypeAdapter;
 use TypeError;
 
@@ -107,6 +108,16 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
     private $propertyCache = [];
 
     /**
+     * @var bool
+     */
+    private $requireExclusionCheck;
+
+    /**
+     * @var bool
+     */
+    private $hasPropertyExclusionCheck;
+
+    /**
      * Constructor
      *
      * @param ObjectConstructor $objectConstructor
@@ -114,19 +125,25 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
      * @param Excluder $excluder
      * @param TypeAdapterProvider $typeAdapterProvider
      * @param null|string $classVirtualProperty
+     * @param bool $requireExclusionCheck
+     * @param bool $hasPropertyExclusionCheck
      */
     public function __construct(
         ObjectConstructor $objectConstructor,
         DefaultClassMetadata $classMetadata,
         Excluder $excluder,
         TypeAdapterProvider $typeAdapterProvider,
-        ?string $classVirtualProperty
+        ?string $classVirtualProperty,
+        bool $requireExclusionCheck,
+        bool $hasPropertyExclusionCheck
     ) {
         $this->objectConstructor = $objectConstructor;
         $this->classMetadata = $classMetadata;
         $this->excluder = $excluder;
         $this->typeAdapterProvider = $typeAdapterProvider;
         $this->classVirtualProperty = $classVirtualProperty;
+        $this->requireExclusionCheck = $requireExclusionCheck;
+        $this->hasPropertyExclusionCheck = $hasPropertyExclusionCheck;
 
         $this->properties = $classMetadata->getPropertyCollection();
         $this->skipSerialize = $classMetadata->skipSerialize();
@@ -155,11 +172,15 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
         }
 
         $object = $this->objectConstructor->construct();
-        $exclusionData = $this->hasClassDeserializationStrategies || $this->hasPropertyDeserializationStrategies
+        $classExclusionCheck = $this->hasClassDeserializationStrategies
+            && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $this->classMetadata->getAnnotation(ExclusionCheck::class) !== null));
+        $propertyExclusionCheck = $this->hasPropertyDeserializationStrategies
+            && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $this->hasPropertyExclusionCheck));
+        $exclusionData = $classExclusionCheck || $propertyExclusionCheck
             ? new DefaultDeserializationExclusionData(clone $object, $reader)
             : null;
 
-        if ($this->hasClassDeserializationStrategies && $exclusionData) {
+        if ($classExclusionCheck && $exclusionData) {
             $this->excluder->applyClassDeserializationExclusionData($exclusionData);
 
             if ($this->excluder->excludeClassByDeserializationStrategy($this->classMetadata)) {
@@ -168,7 +189,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             }
         }
 
-        if ($this->hasPropertyDeserializationStrategies && $exclusionData) {
+        if ($propertyExclusionCheck && $exclusionData) {
             $this->excluder->applyPropertyDeserializationExclusionData($exclusionData);
         }
 
@@ -185,15 +206,14 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             $name = $reader->nextName();
             $property = $this->propertyCache[$name] ?? $this->propertyCache[$name] = $this->properties->getBySerializedName($name);
 
-            if ($property === null) {
+            if ($property === null || $property->skipDeserialize()) {
                 $reader->skipValue();
                 continue;
             }
 
-            if (
-                $property->skipDeserialize()
-                || ($this->hasPropertyDeserializationStrategies && $this->excluder->excludePropertyByDeserializationStrategy($property))
-            ) {
+            $checkProperty = $this->hasPropertyDeserializationStrategies
+                && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $property->getAnnotation(ExclusionCheck::class) !== null));
+            if ($checkProperty && $this->excluder->excludePropertyByDeserializationStrategy($property)) {
                 $reader->skipValue();
                 continue;
             }
@@ -253,11 +273,15 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             return;
         }
 
-        $exclusionData = $this->hasClassSerializationStrategies || $this->hasPropertySerializationStrategies
+        $classExclusionCheck = $this->hasClassSerializationStrategies
+            && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $this->classMetadata->getAnnotation(ExclusionCheck::class) !== null));
+        $propertyExclusionCheck = $this->hasPropertySerializationStrategies
+            && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $this->hasPropertyExclusionCheck));
+        $exclusionData = $classExclusionCheck || $propertyExclusionCheck
             ? new DefaultSerializationExclusionData($value, $writer)
             : null;
 
-        if ($this->hasClassSerializationStrategies && $exclusionData) {
+        if ($classExclusionCheck && $exclusionData) {
             $this->excluder->applyClassSerializationExclusionData($exclusionData);
 
             if ($this->excluder->excludeClassBySerializationStrategy($this->classMetadata)) {
@@ -266,7 +290,7 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
             }
         }
 
-        if ($this->hasPropertySerializationStrategies && $exclusionData) {
+        if ($propertyExclusionCheck && $exclusionData) {
             $this->excluder->applyPropertySerializationExclusionData($exclusionData);
         }
 
@@ -279,18 +303,20 @@ final class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstruct
 
         /** @var Property $property */
         foreach ($this->properties as $property) {
-            $realName = $property->getName();
             $writer->name($property->getSerializedName());
-
-            if (
-                $property->skipSerialize()
-                || ($this->hasPropertySerializationStrategies && $this->excluder->excludePropertyBySerializationStrategy($property))
-            ) {
+            if ($property->skipSerialize()) {
                 $writer->writeNull();
-
                 continue;
             }
 
+            $checkProperty = $this->hasPropertySerializationStrategies
+                && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $property->getAnnotation(ExclusionCheck::class) !== null));
+            if ($checkProperty && $this->excluder->excludePropertyBySerializationStrategy($property)) {
+                $writer->writeNull();
+                continue;
+            }
+
+            $realName = $property->getName();
             $adapter = $this->adapters[$realName] ?? null;
             if ($adapter === null) {
                 /** @var JsonAdapter $jsonAdapterAnnotation */

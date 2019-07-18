@@ -80,15 +80,34 @@ class MockProvider
         );
     }
 
-    public static function reflectionTypeAdapterFactory(Excluder $excluder)
-    {
-        return new ReflectionTypeAdapterFactory(new ConstructorConstructor(), self::classMetadataFactory($excluder), $excluder);
+    public static function reflectionTypeAdapterFactory(
+        Excluder $excluder,
+        array $metadataVisitors = [],
+        bool $requireCheck = false
+    ) {
+        return new ReflectionTypeAdapterFactory(
+            new ConstructorConstructor(),
+            self::classMetadataFactory($excluder),
+            $excluder,
+            $requireCheck,
+            $metadataVisitors
+        );
     }
 
-    public static function typeAdapterProvider(Excluder $excluder = null, array $factories = [])
+    public static function typeAdapterProvider(Excluder $excluder = null, array $factories = [], ?ReflectionTypeAdapterFactory $reflectionTypeAdapterFactory = null)
     {
         if (null === $excluder) {
             $excluder = self::excluder();
+        }
+
+        if (null === $reflectionTypeAdapterFactory) {
+            $reflectionTypeAdapterFactory = new ReflectionTypeAdapterFactory(
+                new ConstructorConstructor(),
+                self::classMetadataFactory($excluder),
+                $excluder,
+                false,
+                []
+            );
         }
 
         return new TypeAdapterProvider(
@@ -103,11 +122,7 @@ class MockProvider
                     new DateTimeTypeAdapterFactory(DateTime::ATOM),
                     new ArrayTypeAdapterFactory(),
                     new JsonElementTypeAdapterFactory(),
-                    new ReflectionTypeAdapterFactory(
-                        new ConstructorConstructor(),
-                        self::classMetadataFactory($excluder),
-                        $excluder
-                    ),
+                    $reflectionTypeAdapterFactory,
                     new WildcardTypeAdapterFactory(),
                 ]
             ),

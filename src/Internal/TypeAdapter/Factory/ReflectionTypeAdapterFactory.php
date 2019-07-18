@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal\TypeAdapter\Factory;
 
+use Tebru\Gson\Annotation\ExclusionCheck;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\ConstructorConstructor;
@@ -15,6 +16,7 @@ use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\TypeAdapter\ReflectionTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\ClassMetadataVisitor;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 use Tebru\PhpType\TypeToken;
@@ -42,20 +44,36 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
     private $excluder;
 
     /**
+     * @var bool
+     */
+    private $requireExclusionCheck;
+
+    /**
+     * @var array
+     */
+    private $classMetadataVisitors;
+
+    /**
      * Constructor
      *
      * @param ConstructorConstructor $constructorConstructor
      * @param ClassMetadataFactory $propertyCollectionFactory
      * @param Excluder $excluder
+     * @param bool $requireExclusionCheck
+     * @param ClassMetadataVisitor[] $classMetadataVisitors
      */
     public function __construct(
         ConstructorConstructor $constructorConstructor,
         ClassMetadataFactory $propertyCollectionFactory,
-        Excluder $excluder
+        Excluder $excluder,
+        bool $requireExclusionCheck,
+        array $classMetadataVisitors
     ) {
         $this->constructorConstructor = $constructorConstructor;
         $this->classMetadataFactory = $propertyCollectionFactory;
         $this->excluder = $excluder;
+        $this->requireExclusionCheck = $requireExclusionCheck;
+        $this->classMetadataVisitors = $classMetadataVisitors;
     }
 
     /**
@@ -85,6 +103,10 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
     {
         $classMetadata = $this->classMetadataFactory->create($type);
 
+        foreach ($this->classMetadataVisitors as $visitor) {
+            $visitor->onLoaded($classMetadata);
+        }
+
         // if class uses a JsonAdapter annotation, use that instead
         /** @var JsonAdapter $jsonAdapterAnnotation */
         $jsonAdapterAnnotation = $classMetadata->getAnnotation(JsonAdapter::class);
@@ -95,12 +117,24 @@ final class ReflectionTypeAdapterFactory implements TypeAdapterFactory
         $objectConstructor = $this->constructorConstructor->get($type);
         $classVirtualProperty = $classMetadata->getAnnotation(VirtualProperty::class);
 
+        $propertyExclusionCheck = false;
+        if ($this->requireExclusionCheck) {
+            foreach ($classMetadata->getPropertyCollection()->toArray() as $property) {
+                if ($property->getAnnotation(ExclusionCheck::class) !== null) {
+                    $propertyExclusionCheck = true;
+                    break;
+                }
+            }
+        }
+
         return new ReflectionTypeAdapter(
             $objectConstructor,
             $classMetadata,
             $this->excluder,
             $typeAdapterProvider,
-            $classVirtualProperty ? $classVirtualProperty->getValue() : null
+            $classVirtualProperty ? $classVirtualProperty->getValue() : null,
+            $this->requireExclusionCheck,
+            $propertyExclusionCheck
         );
     }
 }

@@ -62,6 +62,11 @@ exclude a class or property, return true from `shouldCache`. If your
 strategy may return different results depending on request data or the
 authenticated user, return false here.
 
+If the strategy is not cacheable, all such strategies will be run
+on every class and/or property they target. This can cause performance
+concerns, so a `@ExclusionCheck` annotation is provided to more directly
+target which classes or properties should be checked.
+
 Additionally, strategies may implement `SerializationExclusionDataAware`
 or `DeserializationExclusionDataAware`. This will pass along
 `SerializationExclusionData` or `DeserializationExclusionData` at
@@ -79,7 +84,7 @@ class FooExclusionStrategy implements
     public function skipSerializingProperty(PropertyMetadata $property): bool
     {
         return $property->getName() === 'foo'
-            && $this-serializationData->getObjectToSerialize()->getFoo() !== 5;
+            && $this->serializationData->getObjectToSerialize()->getFoo() !== 5;
     }
 
     public function shouldCache(): bool
@@ -92,6 +97,27 @@ class FooExclusionStrategy implements
         $this->serializationData = $data;
     }
 }
+```
+
+Manipulating Properties on Load
+-------------------------------
+
+An option for excluding data based on runtime parameters (non-cacheable)
+would be to handle `ClassMetadata` after it's loaded. Here, you can
+turn on/off properties before they're passed to the type adapter.
+
+```php
+class FooVisitor implements ClassMetadataVisitor
+{
+    public function onLoaded(ClassMetadata $classMetadata): void
+    {
+        $classMetadata->getProperty('foo')
+            ->setSkipSerialize(true)
+            ->setSkipDeserialize(true);
+    }
+}
+
+Gson::builder()->addClassMetadataVisitor(new FooVisitor());
 ```
 
 Options on the Builder
@@ -117,6 +143,8 @@ are serialize/deserialized.
   a `@Expose` annotation to exist for the property or class to be
   serialized or deserialized.  It has options to limit the direction
   this annotation is enforced.
+* `requireExclusionCheck` - Require the `@ExclusionCheck` annotation
+  before running any of the uncacheable exclusion strategies.
 * `serializeNull` - By default, nulls are not serialized.  Setting this
   will change that behavior and serialize all nulls.
 

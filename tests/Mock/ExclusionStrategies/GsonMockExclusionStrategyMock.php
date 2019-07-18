@@ -7,6 +7,7 @@
 namespace Tebru\Gson\Test\Mock\ExclusionStrategies;
 
 use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\ClassMetadataVisitor;
 use Tebru\Gson\ExclusionData;
 use Tebru\Gson\ExclusionStrategy;
 use Tebru\Gson\PropertyMetadata;
@@ -17,7 +18,7 @@ use Tebru\Gson\Test\Mock\GsonMock;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class GsonMockExclusionStrategyMock implements ExclusionStrategy
+class GsonMockExclusionStrategyMock implements ExclusionStrategy, ClassMetadataVisitor
 {
     public $skipProperty = true;
 
@@ -48,5 +49,20 @@ class GsonMockExclusionStrategyMock implements ExclusionStrategy
 
         return $propertyMetadata->getDeclaringClassName() === GsonMock::class
             && $propertyMetadata->getName() === 'excludeFromStrategy';
+    }
+
+    /**
+     * Handle the class or property metadata
+     *
+     * @param ClassMetadata $classMetadata
+     */
+    public function onLoaded(ClassMetadata $classMetadata): void
+    {
+        $property = $classMetadata->getProperty('excludeFromStrategy');
+        if ($property === null) {
+            return;
+        }
+
+        $property->setSkipSerialize(true)->setSkipDeserialize(true);
     }
 }
