@@ -32,6 +32,6 @@ class StringTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return $type->isString() ? new StringTypeAdapter() : null;
+        return $type->phpType === TypeToken::STRING ? new StringTypeAdapter() : null;
     }
 }

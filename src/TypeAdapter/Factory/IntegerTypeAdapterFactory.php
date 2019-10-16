@@ -32,6 +32,6 @@ class IntegerTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return $type->isInteger() ? new IntegerTypeAdapter() : null;
+        return $type->phpType === TypeToken::INTEGER ? new IntegerTypeAdapter() : null;
     }
 }

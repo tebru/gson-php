@@ -48,7 +48,7 @@ class DateTimeTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return $type->isObject() && $type->isA(DateTimeInterface::class)
+        return $type->phpType === TypeToken::OBJECT && $type->isA(DateTimeInterface::class)
             ? new DateTimeTypeAdapter($type, $this->format)
             : null;
     }

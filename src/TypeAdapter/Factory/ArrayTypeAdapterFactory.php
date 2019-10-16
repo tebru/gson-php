@@ -34,11 +34,11 @@ class ArrayTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        if (!$type->isArray() && !$type->isA(stdClass::class)) {
+        if ($type->phpType !== TypeToken::HASH && !$type->isA(stdClass::class)) {
             return null;
         }
 
-        $genericTypes = $type->getGenerics();
+        $genericTypes = $type->genericTypes;
         $numberOfGenericTypes = \count($genericTypes);
         $keyType = TypeToken::create(TypeToken::WILDCARD);
 

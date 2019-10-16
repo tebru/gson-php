@@ -32,6 +32,6 @@ class NullTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return $type->isNull() ? new NullTypeAdapter() : null;
+        return $type->phpType === TypeToken::NULL ? new NullTypeAdapter() : null;
     }
 }

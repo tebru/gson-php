@@ -32,6 +32,6 @@ class FloatTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return $type->isFloat() ? new FloatTypeAdapter() : null;
+        return $type->phpType === TypeToken::FLOAT ? new FloatTypeAdapter() : null;
     }
 }

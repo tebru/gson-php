@@ -32,6 +32,6 @@ class JsonElementTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return $type->isObject() && $type->isA(JsonElement::class) ?new JsonElementTypeAdapter() : null;
+        return $type->phpType === TypeToken::OBJECT && $type->isA(JsonElement::class) ?new JsonElementTypeAdapter() : null;
     }
 }

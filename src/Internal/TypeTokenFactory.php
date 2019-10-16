@@ -329,7 +329,7 @@ final class TypeTokenFactory
         ?ReflectionMethod $getter,
         ?ReflectionMethod $setter
     ): TypeToken {
-        return $type->isArray()
+        return $type->phpType === TypeToken::HASH
             ? $this->checkDocBlocks($property, $getter, $setter) ?? $type
             : $type;
     }

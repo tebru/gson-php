@@ -114,7 +114,7 @@ final class ClassMetadataFactory
      */
     public function create(TypeToken $phpType): DefaultClassMetadata
     {
-        $class = $phpType->getRawType();
+        $class = $phpType->rawType;
         $key = 'gson.classmetadata.'.\str_replace('\\', '', $class);
 
         $data = $this->cache->get($key);

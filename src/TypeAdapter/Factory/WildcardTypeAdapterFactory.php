@@ -32,7 +32,7 @@ class WildcardTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return $type->isWildcard() || interface_exists((string)$type)
+        return $type->phpType === TypeToken::WILDCARD || interface_exists((string)$type)
             ? new WildcardTypeAdapter($typeAdapterProvider)
             : null;
     }

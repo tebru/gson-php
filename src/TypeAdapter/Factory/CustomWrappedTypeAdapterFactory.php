@@ -75,12 +75,12 @@ class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
         if ($this->strict) {
-            return $type->getRawType() === $this->type->getRawType()
+            return $type->rawType === $this->type->rawType
                 ? new CustomWrappedTypeAdapter($type, $typeAdapterProvider, $this->serializer, $this->deserializer, $this)
                 : null;
         }
 
-        return $type->isA($this->type->getRawType())
+        return $type->isA($this->type->rawType)
             ? new CustomWrappedTypeAdapter($type, $typeAdapterProvider, $this->serializer, $this->deserializer, $this)
             : null;
     }

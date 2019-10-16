@@ -32,6 +32,6 @@ class BooleanTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return $type->isBoolean() ? new BooleanTypeAdapter() : null;
+        return $type->phpType === TypeToken::BOOLEAN ? new BooleanTypeAdapter() : null;
     }
 }

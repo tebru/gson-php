@@ -262,7 +262,7 @@ class GsonBuilder
     public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
     {
         $phpType = TypeToken::create($type);
-        $this->instanceCreators[$phpType->getRawType()] = $instanceCreator;
+        $this->instanceCreators[$phpType->rawType] = $instanceCreator;
 
         return $this;
     }

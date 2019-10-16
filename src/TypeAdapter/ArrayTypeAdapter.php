@@ -113,11 +113,11 @@ class ArrayTypeAdapter extends TypeAdapter
                             break;
                         // generic for key and value specified
                         case 2:
-                            if (!$this->keyType->isString() && !$this->keyType->isInteger()) {
+                            if ($this->keyType->phpType !== TypeToken::STRING && $this->keyType->phpType !== TypeToken::INTEGER) {
                                 throw new LogicException(\sprintf('Array keys must be strings or integers at "%s"', $reader->getPath()));
                             }
 
-                            if ($this->keyType->isInteger()) {
+                            if ($this->keyType->phpType === TypeToken::INTEGER) {
                                 if (!\ctype_digit($name)) {
                                     throw new JsonSyntaxException(\sprintf('Expected integer, but found string for key at "%s"', $reader->getPath()));
                                 }

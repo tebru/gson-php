@@ -88,7 +88,7 @@ class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      */
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        if (!$type->isObject() || !class_exists($type->getRawType())) {
+        if (!$type->phpType === TypeToken::OBJECT || !class_exists($type->rawType)) {
             return null;
         }
 
