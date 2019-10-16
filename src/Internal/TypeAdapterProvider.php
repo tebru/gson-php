@@ -10,10 +10,10 @@ namespace Tebru\Gson\Internal;
 
 use InvalidArgumentException;
 use Tebru\Gson\Annotation\JsonAdapter;
-use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\TypeAdapter;
+use Tebru\Gson\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 use Tebru\PhpType\TypeToken;
 

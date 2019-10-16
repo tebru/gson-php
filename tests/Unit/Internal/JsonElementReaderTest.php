@@ -14,7 +14,7 @@ use Tebru\Gson\Element\JsonPrimitive;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\DefaultReaderContext;
 use Tebru\Gson\Internal\JsonElementReader;
-use Tebru\Gson\Internal\TypeAdapter\JsonElementTypeAdapter;
+use Tebru\Gson\TypeAdapter\JsonElementTypeAdapter;
 use Tebru\Gson\JsonToken;
 
 /**

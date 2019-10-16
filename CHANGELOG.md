@@ -3,6 +3,10 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+master
+------
+* CHANGE: Moved TypeAdapters out of internal namespace and removed final
+
 v0.6.6
 ------
 * ADDED: Support for listening/manipulating property collection on load
