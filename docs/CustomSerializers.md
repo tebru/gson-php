@@ -130,21 +130,15 @@ If instantiating a Type Adapter is costly, you can implement a
 only be created once and will be cached on future calls during a
 single request.
 
-Two methods need to be implemented: `supports` and `create`.  Supports
-will always be called first.  If `true` is returned, a call to create
-will be made.
+Return null from create if the type adapter does not support the
+provided type.
 
 ```php
 class IntegerTypeAdapterFactory implements TypeAdapterFactory
 {
-    public function supports(PhpType $type): bool
+    public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return $type->isInteger();
-    }
-
-    public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
-    {
-        return new IntegerTypeAdapter();
+        return $type->isInteger() ? new IntegerTypeAdapter() : null;
     }
 }
 ```

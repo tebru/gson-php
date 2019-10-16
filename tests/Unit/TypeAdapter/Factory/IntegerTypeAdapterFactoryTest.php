@@ -21,18 +21,12 @@ use Tebru\PhpType\TypeToken;
  */
 class IntegerTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports(): void
-    {
-        $factory = new IntegerTypeAdapterFactory();
-
-        self::assertTrue($factory->supports(new TypeToken('int')));
-    }
-
     public function testInvalidSupports(): void
     {
         $factory = new IntegerTypeAdapterFactory();
+        $adapter = $factory->create(new TypeToken('string'), MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken('string')));
+        self::assertNull($adapter);
     }
 
     public function testCreate(): void

@@ -21,18 +21,12 @@ use Tebru\PhpType\TypeToken;
  */
 class FloatTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports(): void
-    {
-        $factory = new FloatTypeAdapterFactory();
-
-        self::assertTrue($factory->supports(new TypeToken('float')));
-    }
-
     public function testInvalidSupports(): void
     {
         $factory = new FloatTypeAdapterFactory();
+        $adapter = $factory->create(new TypeToken('string'), MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken('string')));
+        self::assertNull($adapter);
     }
 
     public function testCreate(): void

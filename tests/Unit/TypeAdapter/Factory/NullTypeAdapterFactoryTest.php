@@ -21,18 +21,12 @@ use Tebru\PhpType\TypeToken;
  */
 class NullTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports(): void
-    {
-        $factory = new NullTypeAdapterFactory();
-
-        self::assertTrue($factory->supports(new TypeToken('null')));
-    }
-
     public function testInvalidSupports(): void
     {
         $factory = new NullTypeAdapterFactory();
+        $adapter = $factory->create(new TypeToken('string'), MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken('string')));
+        self::assertNull($adapter);
     }
 
     public function testCreate(): void

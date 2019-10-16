@@ -23,28 +23,22 @@ use Tebru\PhpType\TypeToken;
  */
 class DateTimeTypeAdapterFactoryTest extends TestCase
 {
-    /**
-     * @dataProvider getValidSupports
-     */
-    public function testValidSupports($class): void
-    {
-        $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
-
-        self::assertTrue($factory->supports(new TypeToken($class)));
-    }
-
     public function testInvalidSupports(): void
     {
         $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
+        $phpType = new TypeToken(ChildClass::class);
+        $adapter = $factory->create($phpType, MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken(ChildClass::class)));
+        self::assertNull($adapter);
     }
 
     public function testNonClassSupports(): void
     {
         $factory = new DateTimeTypeAdapterFactory(DateTime::ATOM);
+        $phpType = new TypeToken('string');
+        $adapter = $factory->create($phpType, MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken('string')));
+        self::assertNull($adapter);
     }
 
     public function testCreate(): void

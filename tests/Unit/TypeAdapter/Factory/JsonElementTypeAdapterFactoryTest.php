@@ -27,28 +27,20 @@ use Tebru\PhpType\TypeToken;
  */
 class JsonElementTypeAdapterFactoryTest extends TestCase
 {
-    /**
-     * @dataProvider getValidSupports
-     */
-    public function testValidSupports($class): void
-    {
-        $factory = new JsonElementTypeAdapterFactory();
-
-        self::assertTrue($factory->supports(new TypeToken($class)));
-    }
-
     public function testInvalidSupport(): void
     {
         $factory = new JsonElementTypeAdapterFactory();
+        $adapter = $factory->create(new TypeToken(ChildClass::class), MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken(ChildClass::class)));
+        self::assertNull($adapter);
     }
 
     public function testNonClassSupports(): void
     {
         $factory = new JsonElementTypeAdapterFactory();
+        $adapter = $factory->create(new TypeToken('string'), MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken('string')));
+        self::assertNull($adapter);
     }
 
     public function testCreate(): void

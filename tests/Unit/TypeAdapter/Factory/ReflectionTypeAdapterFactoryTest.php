@@ -62,14 +62,18 @@ class ReflectionTypeAdapterFactoryTest extends TestCase
         $this->typeAdapterProvider = MockProvider::typeAdapterProvider($this->excluder, [], $this->reflectionTypeAdapterFactory);
     }
 
-    public function testValidSupports(): void
-    {
-        self::assertTrue($this->reflectionTypeAdapterFactory->supports(new TypeToken(ChildClass::class)));
-    }
-
     public function testNonClassSupports(): void
     {
-        self::assertFalse($this->reflectionTypeAdapterFactory->supports(new TypeToken('string')));
+        $adapter = $this->reflectionTypeAdapterFactory->create(new TypeToken('string'), $this->typeAdapterProvider);
+
+        self::assertNull($adapter);
+    }
+
+    public function testNonExistentClassSupports(): void
+    {
+        $adapter = $this->reflectionTypeAdapterFactory->create(new TypeToken('Foo\Bar'), $this->typeAdapterProvider);
+
+        self::assertNull($adapter);
     }
 
     public function testCreate(): void

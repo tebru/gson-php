@@ -23,31 +23,33 @@ use Tebru\PhpType\TypeToken;
  */
 class ArrayTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports(): void
-    {
-        $factory = new ArrayTypeAdapterFactory();
-
-        self::assertTrue($factory->supports(new TypeToken('array')));
-    }
-
-    public function testValidSupportsStdClass(): void
-    {
-        $factory = new ArrayTypeAdapterFactory();
-
-        self::assertTrue($factory->supports(new TypeToken(stdClass::class)));
-    }
-
     public function testInvalidSupports(): void
     {
         $factory = new ArrayTypeAdapterFactory();
+        $phpType = new TypeToken('string');
+        $typeAdapterProvider = MockProvider::typeAdapterProvider();
+        $adapter = $factory->create($phpType, $typeAdapterProvider);
 
-        self::assertFalse($factory->supports(new TypeToken('string')));
+        self::assertNull($adapter);
     }
 
     public function testCreate(): void
     {
         $factory = new ArrayTypeAdapterFactory();
         $phpType = new TypeToken('array');
+        $typeAdapterProvider = MockProvider::typeAdapterProvider();
+        $adapter = $factory->create($phpType, $typeAdapterProvider);
+
+        self::assertAttributeSame($typeAdapterProvider, 'typeAdapterProvider', $adapter);
+        self::assertAttributeSame(TypeToken::create(TypeToken::WILDCARD), 'keyType', $adapter);
+        self::assertAttributeEquals(new WildcardTypeAdapter($typeAdapterProvider), 'valueTypeAdapter', $adapter);
+        self::assertAttributeSame(0, 'numberOfGenerics', $adapter);
+    }
+
+    public function testCreateStdClass(): void
+    {
+        $factory = new ArrayTypeAdapterFactory();
+        $phpType = new TypeToken('stdClass');
         $typeAdapterProvider = MockProvider::typeAdapterProvider();
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 

@@ -30,35 +30,57 @@ class WrappedTypeAdapterFactoryTest extends TestCase
         $this->wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), false);
     }
 
-    public function testSupportsTrue(): void
-    {
-        self::assertTrue($this->wrappedTypeAdapterFactory->supports(new TypeToken(TypeAdapterMock::class)));
-    }
-
     public function testSupportsFalse(): void
     {
-        self::assertFalse($this->wrappedTypeAdapterFactory->supports(new TypeToken(Gson::class)));
+        self::assertNull(
+            $this->wrappedTypeAdapterFactory->create(
+                new TypeToken(Gson::class),
+                MockProvider::typeAdapterProvider()
+            )
+        );
     }
 
     public function testSupportsStrict(): void
     {
         $wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMock::class), true);
-        self::assertTrue($wrappedTypeAdapterFactory->supports(new TypeToken(TypeAdapterMock::class)));
+        self::assertInstanceOf(
+            TypeAdapterMock::class,
+            $wrappedTypeAdapterFactory->create(
+                new TypeToken(TypeAdapterMock::class),
+                MockProvider::typeAdapterProvider()
+            )
+        );
     }
 
     public function testIgnoresStrict(): void
     {
         $wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), true);
-        self::assertFalse($wrappedTypeAdapterFactory->supports(new TypeToken(TypeAdapterMock::class)));
+        self::assertNull(
+            $wrappedTypeAdapterFactory->create(
+                new TypeToken(TypeAdapterMock::class),
+                MockProvider::typeAdapterProvider()
+            )
+        );
     }
 
     public function testSupportsFalseString(): void
     {
-        self::assertFalse($this->wrappedTypeAdapterFactory->supports(new TypeToken('string')));
+        self::assertNull(
+            $this->wrappedTypeAdapterFactory->create(
+                new TypeToken('string'),
+                MockProvider::typeAdapterProvider()
+            )
+        );
     }
 
     public function testCreate(): void
     {
-        self::assertInstanceOf(TypeAdapterMock::class, $this->wrappedTypeAdapterFactory->create(new TypeToken(TypeAdapterMock::class), MockProvider::typeAdapterProvider()));
+        self::assertInstanceOf(
+            TypeAdapterMock::class,
+            $this->wrappedTypeAdapterFactory->create(
+                new TypeToken(TypeAdapterMock::class),
+                MockProvider::typeAdapterProvider()
+            )
+        );
     }
 }

@@ -5,6 +5,7 @@ This document keeps track of changes between releases of the library.
 
 master
 ------
+* BC BREAK: Combined TypeAdapterFactory methods into a nullable create
 * CHANGE: Moved TypeAdapters out of internal namespace and removed final
 
 v0.6.6

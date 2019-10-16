@@ -22,25 +22,20 @@ use Tebru\PhpType\TypeToken;
  */
 class WildcardTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports(): void
-    {
-        $factory = new WildcardTypeAdapterFactory();
-
-        self::assertTrue($factory->supports(new TypeToken('?')));
-    }
-
     public function testInvalidSupports(): void
     {
         $factory = new WildcardTypeAdapterFactory();
+        $adapter = $factory->create(new TypeToken('string'), MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken('string')));
+        self::assertNull($adapter);
     }
 
-    public function testSupportsInterface(): void
+    public function testCreateInterface(): void
     {
         $factory = new WildcardTypeAdapterFactory();
+        $adapter = $factory->create(new TypeToken('?'), MockProvider::typeAdapterProvider());
 
-        self::assertTrue($factory->supports(new TypeToken(DateTimeInterface::class)));
+        self::assertInstanceOf(WildcardTypeAdapter::class, $adapter);
     }
 
     public function testCreate(): void

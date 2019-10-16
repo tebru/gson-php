@@ -21,18 +21,12 @@ use Tebru\PhpType\TypeToken;
  */
 class BooleanTypeAdapterFactoryTest extends TestCase
 {
-    public function testValidSupports(): void
-    {
-        $factory = new BooleanTypeAdapterFactory();
-
-        self::assertTrue($factory->supports(new TypeToken('boolean')));
-    }
-
     public function testInvalidSupports(): void
     {
         $factory = new BooleanTypeAdapterFactory();
+        $adapter = $factory->create(new TypeToken('string'), MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken('string')));
+        self::assertNull($adapter);
     }
 
     public function testCreate(): void

@@ -44,18 +44,6 @@ class TypeAdapterMock extends TypeAdapter implements TypeAdapterFactory, TypeAda
     }
 
     /**
-     * Will be called before ::create() is called.  The current type will be passed
-     * in.  Return false if ::create() should not be called.
-     *
-     * @param TypeToken $type
-     * @return bool
-     */
-    public function supports(TypeToken $type): bool
-    {
-        return 'string' === (string) $type;
-    }
-
-    /**
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
      * to be fetched during creation.  Should return a new instance of the TypeAdapter.
      *
@@ -63,8 +51,8 @@ class TypeAdapterMock extends TypeAdapter implements TypeAdapterFactory, TypeAda
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
      */
-    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return new self();
+        return 'string' === (string) $type ? new self() : null;
     }
 }

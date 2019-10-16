@@ -21,21 +21,13 @@ use Tebru\PhpType\TypeToken;
 interface TypeAdapterFactory
 {
     /**
-     * Will be called before ::create() is called.  The current type will be passed
-     * in.  Return false if ::create() should not be called.
-     *
-     * @param TypeToken $type
-     * @return bool
-     */
-    public function supports(TypeToken $type): bool;
-
-    /**
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
-     * to be fetched during creation.  Should return a new instance of the TypeAdapter.
+     * to be fetched during creation.  Should return a new instance of the TypeAdapter. Will return
+     * null if the type adapter is not supported for the provided type.
      *
      * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
-     * @return TypeAdapter
+     * @return TypeAdapter|null
      */
-    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter;
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter;
 }

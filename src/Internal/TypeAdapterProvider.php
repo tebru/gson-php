@@ -77,11 +77,10 @@ final class TypeAdapterProvider
                 continue;
             }
 
-            if (!$typeAdapterFactory->supports($type)) {
+            $adapter = $typeAdapterFactory->create($type, $this);
+            if ($adapter === null) {
                 continue;
             }
-
-            $adapter = $typeAdapterFactory->create($type, $this);
 
             // do not save skipped adapters
             if (null === $skip) {

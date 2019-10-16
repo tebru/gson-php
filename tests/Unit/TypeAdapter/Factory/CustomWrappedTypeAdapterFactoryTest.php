@@ -27,39 +27,44 @@ use Tebru\PhpType\TypeToken;
  */
 class CustomWrappedTypeAdapterFactoryTest extends TestCase
 {
-    public function testSupportsObject(): void
-    {
-        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, null, new MockDeserializer());
-
-        self::assertTrue($factory->supports(new TypeToken(UserMock::class)));
-    }
-
-    public function testSupportsParent(): void
-    {
-        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(ChildClassParent::class), false, null, new MockDeserializer());
-
-        self::assertTrue($factory->supports(new TypeToken(ChildClass::class)));
-    }
-
     public function testIgnoresParentStrict(): void
     {
         $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(ChildClassParent::class), true, null, new MockDeserializer());
+        $adapter = $factory->create(new TypeToken(ChildClass::class), MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken(ChildClass::class)));
+        self::assertNull($adapter);
     }
 
     public function testSupportsObjectFalse(): void
     {
         $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, null, new MockDeserializer());
+        $adapter = $factory->create(new TypeToken(ChildClass::class), MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken(ChildClass::class)));
+        self::assertNull($adapter);
     }
 
     public function testSupportsMismatchType(): void
     {
         $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, null, new MockDeserializer());
+        $adapter = $factory->create(new TypeToken('int'), MockProvider::typeAdapterProvider());
 
-        self::assertFalse($factory->supports(new TypeToken('int')));
+        self::assertNull($adapter);
+    }
+
+    public function testSupportsObject(): void
+    {
+        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, null, new MockDeserializer());
+        $adapter = $factory->create(new TypeToken(UserMock::class), MockProvider::typeAdapterProvider());
+
+        self::assertInstanceOf(CustomWrappedTypeAdapter::class, $adapter);
+    }
+
+    public function testSupportsParent(): void
+    {
+        $factory = new CustomWrappedTypeAdapterFactory(new TypeToken(ChildClassParent::class), false, null, new MockDeserializer());
+        $adapter = $factory->create(new TypeToken(ChildClass::class), MockProvider::typeAdapterProvider());
+
+        self::assertInstanceOf(CustomWrappedTypeAdapter::class, $adapter);
     }
 
     public function testCreate(): void

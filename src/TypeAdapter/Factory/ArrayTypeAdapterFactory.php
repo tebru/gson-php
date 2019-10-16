@@ -24,31 +24,20 @@ use Tebru\PhpType\TypeToken;
 class ArrayTypeAdapterFactory implements TypeAdapterFactory
 {
     /**
-     * Will be called before ::create() is called.  The current type will be passed
-     * in.  Return false if ::create() should not be called.
-     *
-     * @param TypeToken $type
-     * @return bool
-     */
-    public function supports(TypeToken $type): bool
-    {
-        if ($type->isArray()) {
-            return true;
-        }
-
-        return $type->isA(stdClass::class);
-    }
-
-    /**
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
-     * to be fetched during creation.  Should return a new instance of the TypeAdapter.
+     * to be fetched during creation.  Should return a new instance of the TypeAdapter. Will return
+     * null if the type adapter is not supported for the provided type.
      *
      * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
-     * @return TypeAdapter
+     * @return TypeAdapter|null
      */
-    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
+        if (!$type->isArray() && !$type->isA(stdClass::class)) {
+            return null;
+        }
+
         $genericTypes = $type->getGenerics();
         $numberOfGenericTypes = \count($genericTypes);
         $keyType = TypeToken::create(TypeToken::WILDCARD);

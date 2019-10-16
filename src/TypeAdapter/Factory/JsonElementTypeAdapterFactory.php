@@ -23,22 +23,6 @@ use Tebru\PhpType\TypeToken;
 class JsonElementTypeAdapterFactory implements TypeAdapterFactory
 {
     /**
-     * Will be called before ::create() is called.  The current type will be passed
-     * in.  Return false if ::create() should not be called.
-     *
-     * @param TypeToken $type
-     * @return bool
-     */
-    public function supports(TypeToken $type): bool
-    {
-        if (!$type->isObject()) {
-            return false;
-        }
-
-        return $type->isA(JsonElement::class);
-    }
-
-    /**
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
      * to be fetched during creation.  Should return a new instance of the TypeAdapter.
      *
@@ -46,8 +30,8 @@ class JsonElementTypeAdapterFactory implements TypeAdapterFactory
      * @param TypeAdapterProvider $typeAdapterProvider
      * @return TypeAdapter
      */
-    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return new JsonElementTypeAdapter();
+        return $type->isObject() && $type->isA(JsonElement::class) ?new JsonElementTypeAdapter() : null;
     }
 }
