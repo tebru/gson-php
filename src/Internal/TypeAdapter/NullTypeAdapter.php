@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal\TypeAdapter;
 
-use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonReadable;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\TypeAdapter;
 
 /**

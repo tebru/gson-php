@@ -10,8 +10,8 @@ namespace Tebru\Gson\Internal;
 
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\JsonReadable;
-use Tebru\Gson\ReaderContext;
 use Tebru\Gson\JsonToken;
+use Tebru\Gson\ReaderContext;
 
 /**
  * Class JsonReader

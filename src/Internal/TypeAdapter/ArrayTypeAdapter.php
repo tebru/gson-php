@@ -11,10 +11,10 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 use LogicException;
 use stdClass;
 use Tebru\Gson\Exception\JsonSyntaxException;
-use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\TypeAdapter;
 use Tebru\PhpType\TypeToken;
 

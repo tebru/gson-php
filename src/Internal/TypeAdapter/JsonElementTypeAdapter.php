@@ -14,9 +14,9 @@ use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\Element\JsonNull;
 use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\Element\JsonPrimitive;
-use Tebru\Gson\JsonWritable;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonToken;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\TypeAdapter;
 
 /**

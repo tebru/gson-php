@@ -10,11 +10,11 @@ namespace Tebru\Gson\Internal\TypeAdapter;
 
 use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
 use Tebru\Gson\Internal\DefaultJsonSerializationContext;
-use Tebru\Gson\JsonWritable;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonSerializer;
+use Tebru\Gson\JsonWritable;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 use Tebru\PhpType\TypeToken;

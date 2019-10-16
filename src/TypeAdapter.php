@@ -9,11 +9,11 @@ declare(strict_types=1);
 namespace Tebru\Gson;
 
 use Tebru\Gson\Element\JsonElement;
+use Tebru\Gson\Internal\DefaultReaderContext;
 use Tebru\Gson\Internal\JsonDecodeReader;
 use Tebru\Gson\Internal\JsonElementReader;
 use Tebru\Gson\Internal\JsonElementWriter;
 use Tebru\Gson\Internal\JsonEncodeWriter;
-use Tebru\Gson\Internal\DefaultReaderContext;
 
 /**
  * Class TypeAdapter
