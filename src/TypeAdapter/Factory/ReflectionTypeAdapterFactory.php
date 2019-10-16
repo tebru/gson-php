@@ -14,6 +14,7 @@ use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\ClassMetadataVisitor;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Data\ClassMetadataFactory;
+use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;
@@ -99,18 +100,19 @@ class ReflectionTypeAdapterFactory implements TypeAdapterFactory
 
         // if class uses a JsonAdapter annotation, use that instead
         /** @var JsonAdapter $jsonAdapterAnnotation */
-        $jsonAdapterAnnotation = $classMetadata->getAnnotation(JsonAdapter::class);
+        $jsonAdapterAnnotation = $classMetadata->annotations->get(JsonAdapter::class);
         if ($jsonAdapterAnnotation !== null) {
             return $typeAdapterProvider->getAdapterFromAnnotation($type, $jsonAdapterAnnotation);
         }
 
         $objectConstructor = $this->constructorConstructor->get($type);
-        $classVirtualProperty = $classMetadata->getAnnotation(VirtualProperty::class);
+        $classVirtualProperty = $classMetadata->annotations->get(VirtualProperty::class);
 
         $propertyExclusionCheck = false;
         if ($this->requireExclusionCheck) {
-            foreach ($classMetadata->getPropertyCollection()->toArray() as $property) {
-                if ($property->getAnnotation(ExclusionCheck::class) !== null) {
+            /** @var Property $property */
+            foreach ($classMetadata->properties->toArray() as $property) {
+                if ($property->annotations->get(ExclusionCheck::class) !== null) {
                     $propertyExclusionCheck = true;
                     break;
                 }

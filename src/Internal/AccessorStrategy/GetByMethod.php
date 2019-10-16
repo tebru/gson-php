@@ -15,6 +15,8 @@ use Tebru\Gson\Internal\GetterStrategy;
  *
  * Get data from an object using a public method
  *
+ * This class contains public properties to improve performance.
+ *
  * @author Nate Brunette <n@tebru.net>
  */
 final class GetByMethod implements GetterStrategy
@@ -24,7 +26,7 @@ final class GetByMethod implements GetterStrategy
      *
      * @var string
      */
-    private $methodName;
+    public $methodName;
 
     /**
      * Constructor

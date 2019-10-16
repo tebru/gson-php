@@ -22,16 +22,16 @@ use Tebru\Gson\PropertyMetadataCollection;
 final class PropertyCollection implements PropertyMetadataCollection
 {
     /**
-     * Array of [@see PropertyMetadata] objects
+     * Array of [@see Property] objects
      *
-     * @var PropertyMetadata[]
+     * @var Property[]
      */
-    private $elements;
+    public $elements;
 
     /**
      * Constructor
      *
-     * @param PropertyMetadata[] $elements
+     * @param Property[] $elements
      */
     public function __construct(array $elements = [])
     {
@@ -132,20 +132,20 @@ final class PropertyCollection implements PropertyMetadataCollection
     /**
      * Array of Property objects
      *
-     * @return PropertyMetadata[]
+     * @return Property[]
      */
     public function toArray(): array
     {
-        return \array_values($this->elements);
+        return array_values($this->elements);
     }
 
     /**
      * Retrieve an external iterator
      *
-     * @return ArrayIterator|PropertyMetadata[]
+     * @return ArrayIterator|Property[]
      */
     public function getIterator(): ArrayIterator
     {
-        return new ArrayIterator($this->toArray());
+        return new ArrayIterator(array_values($this->elements));
     }
 }

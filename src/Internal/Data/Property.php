@@ -11,6 +11,7 @@ namespace Tebru\Gson\Internal\Data;
 use Tebru\AnnotationReader\AbstractAnnotation;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\GetterStrategy;
 use Tebru\Gson\Internal\SetterStrategy;
 use Tebru\Gson\PropertyMetadata;
@@ -21,6 +22,8 @@ use Tebru\PhpType\TypeToken;
  *
  * Represents static information about an object property.  Instances of this class may be
  * cached for later use.
+ * 
+ * This class contains public properties to improve performance.
  *
  * @author Nate Brunette <n@tebru.net>
  */
@@ -31,42 +34,42 @@ final class Property implements PropertyMetadata
      *
      * @var string
      */
-    private $realName;
+    public $realName;
 
     /**
      * The serialized version of the property name
      *
      * @var string
      */
-    private $serializedName;
+    public $serializedName;
 
     /**
      * The property type
      *
      * @var TypeToken
      */
-    private $type;
+    public $type;
 
     /**
      * The method for getting values from this property
      *
      * @var GetterStrategy
      */
-    private $getterStrategy;
+    public $getterStrategy;
 
     /**
      * The method for setting values to this property
      *
      * @var SetterStrategy
      */
-    private $setterStrategy;
+    public $setterStrategy;
 
     /**
      * A set of annotations
      *
      * @var AnnotationCollection
      */
-    private $annotations;
+    public $annotations;
 
     /**
      * An integer that represents what modifiers are associated with the property
@@ -75,34 +78,34 @@ final class Property implements PropertyMetadata
      *
      * @var int
      */
-    private $modifiers;
+    public $modifiers;
 
     /**
      * The property's class metadata
      *
-     * @var ClassMetadata
+     * @var DefaultClassMetadata
      */
-    private $classMetadata;
+    public $classMetadata;
 
     /**
      * True if the property should be skipped during serialization
      *
      * @var bool
      */
-    private $skipSerialize = false;
+    public $skipSerialize = false;
 
     /**
      * True if the property should be skipped during deserialization
      *
      * @var bool
      */
-    private $skipDeserialize = false;
+    public $skipDeserialize = false;
 
     /**
      * If the property is a virtual property
      * @var bool
      */
-    private $virtual;
+    public $virtual;
 
     /**
      * Constructor
@@ -206,7 +209,7 @@ final class Property implements PropertyMetadata
      */
     public function getDeclaringClassName(): string
     {
-        return $this->classMetadata->getName();
+        return $this->classMetadata->name;
     }
 
     /**

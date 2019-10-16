@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\TypeAdapter;
 
+use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\ExclusionCheck;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Internal\Data\Property;
@@ -47,6 +48,11 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
      * @var DefaultClassMetadata
      */
     private $classMetadata;
+
+    /**
+     * @var AnnotationCollection
+     */
+    private $classAnnotations;
 
     /**
      * @var Excluder
@@ -145,9 +151,10 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
         $this->requireExclusionCheck = $requireExclusionCheck;
         $this->hasPropertyExclusionCheck = $hasPropertyExclusionCheck;
 
-        $this->properties = $classMetadata->getPropertyCollection();
-        $this->skipSerialize = $classMetadata->skipSerialize();
-        $this->skipDeserialize = $classMetadata->skipDeserialize();
+        $this->classAnnotations = $classMetadata->annotations;
+        $this->properties = $classMetadata->properties;
+        $this->skipSerialize = $classMetadata->skipSerialize;
+        $this->skipDeserialize = $classMetadata->skipDeserialize;
         $this->hasClassSerializationStrategies = $this->excluder->hasClassSerializationStrategies();
         $this->hasPropertySerializationStrategies = $this->excluder->hasPropertySerializationStrategies();
         $this->hasClassDeserializationStrategies = $this->excluder->hasClassDeserializationStrategies();
@@ -173,7 +180,7 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
 
         $object = $this->objectConstructor->construct();
         $classExclusionCheck = $this->hasClassDeserializationStrategies
-            && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $this->classMetadata->getAnnotation(ExclusionCheck::class) !== null));
+            && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $this->classAnnotations->get(ExclusionCheck::class) !== null));
         $propertyExclusionCheck = $this->hasPropertyDeserializationStrategies
             && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $this->hasPropertyExclusionCheck));
         $exclusionData = $classExclusionCheck || $propertyExclusionCheck
@@ -204,38 +211,28 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
 
         while ($reader->hasNext()) {
             $name = $reader->nextName();
-            $property = $this->propertyCache[$name] ?? $this->propertyCache[$name] = $this->properties->getBySerializedName($name);
+            $property = $this->propertyCache[$name] ?? ($this->propertyCache[$name] = ($this->properties->elements[$name] ?? null));
 
-            if ($property === null || $property->skipDeserialize()) {
+            if ($property === null || $property->skipDeserialize) {
                 $reader->skipValue();
                 continue;
             }
 
             $checkProperty = $this->hasPropertyDeserializationStrategies
-                && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $property->getAnnotation(ExclusionCheck::class) !== null));
+                && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $property->annotations->get(ExclusionCheck::class) !== null));
             if ($checkProperty && $this->excluder->excludePropertyByDeserializationStrategy($property)) {
                 $reader->skipValue();
                 continue;
             }
 
-            $realName = $property->getName();
-
-            $adapter = $this->adapters[$realName] ?? null;
+            $adapter = $this->adapters[$property->realName] ?? null;
             if ($adapter === null) {
-                /** @var JsonAdapter $jsonAdapterAnnotation */
-                $jsonAdapterAnnotation = $property->getAnnotations()->get(JsonAdapter::class);
-                $adapter = null === $jsonAdapterAnnotation
-                    ? $this->typeAdapterProvider->getAdapter($property->getType())
-                    : $this->typeAdapterProvider->getAdapterFromAnnotation(
-                        $property->getType(),
-                        $jsonAdapterAnnotation
-                    );
-                $this->adapters[$realName] = $adapter;
+                $adapter = $this->getAdapter($property);
             }
 
             if ($adapter instanceof ObjectConstructorAware && $usesExisting) {
                 try {
-                    $nestedObject = $property->get($object);
+                    $nestedObject = $property->getterStrategy->get($object);
                 } /** @noinspection BadExceptionsProcessingInspection */ catch (TypeError $error) {
                     // this may occur when attempting to get a nested object that doesn't exist and
                     // the method return is not nullable. The type error only occurs because we are
@@ -248,7 +245,7 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
                 }
             }
 
-            $property->set($object, $adapter->read($reader));
+            $property->setterStrategy->set($object, $adapter->read($reader));
         }
         $reader->endObject();
 
@@ -274,7 +271,7 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
         }
 
         $classExclusionCheck = $this->hasClassSerializationStrategies
-            && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $this->classMetadata->getAnnotation(ExclusionCheck::class) !== null));
+            && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $this->classAnnotations->get(ExclusionCheck::class) !== null));
         $propertyExclusionCheck = $this->hasPropertySerializationStrategies
             && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $this->hasPropertyExclusionCheck));
         $exclusionData = $classExclusionCheck || $propertyExclusionCheck
@@ -304,29 +301,24 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
         /** @var Property $property */
         foreach ($this->properties as $property) {
             $writer->name($property->getSerializedName());
-            if ($property->skipSerialize()) {
+            if ($property->skipSerialize) {
                 $writer->writeNull();
                 continue;
             }
 
             $checkProperty = $this->hasPropertySerializationStrategies
-                && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $property->getAnnotation(ExclusionCheck::class) !== null));
+                && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $property->annotations->get(ExclusionCheck::class) !== null));
             if ($checkProperty && $this->excluder->excludePropertyBySerializationStrategy($property)) {
                 $writer->writeNull();
                 continue;
             }
 
-            $realName = $property->getName();
-            $adapter = $this->adapters[$realName] ?? null;
+            $adapter = $this->adapters[$property->realName] ?? null;
             if ($adapter === null) {
-                /** @var JsonAdapter $jsonAdapterAnnotation */
-                $jsonAdapterAnnotation = $property->getAnnotations()->get(JsonAdapter::class);
-                $adapter = null === $jsonAdapterAnnotation
-                    ? $this->typeAdapterProvider->getAdapter($property->getType())
-                    : $this->typeAdapterProvider->getAdapterFromAnnotation($property->getType(), $jsonAdapterAnnotation);
-                $this->adapters[$realName] = $adapter;
+                $adapter = $this->getAdapter($property);
             }
-            $adapter->write($writer, $property->get($value));
+
+            $adapter->write($writer, $property->getterStrategy->get($value));
         }
 
         $writer->endObject();
@@ -334,5 +326,23 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
         if ($this->classVirtualProperty !== null) {
             $writer->endObject();
         }
+    }
+
+    /**
+     * Get the next type adapter
+     *
+     * @param Property $property
+     * @return TypeAdapter
+     */
+    private function getAdapter(Property $property): TypeAdapter
+    {
+        /** @var JsonAdapter $jsonAdapterAnnotation */
+        $jsonAdapterAnnotation = $property->annotations->get(JsonAdapter::class);
+        $adapter = null === $jsonAdapterAnnotation
+            ? $this->typeAdapterProvider->getAdapter($property->type)
+            : $this->typeAdapterProvider->getAdapterFromAnnotation($property->type, $jsonAdapterAnnotation);
+        $this->adapters[$property->realName] = $adapter;
+
+        return $adapter;
     }
 }

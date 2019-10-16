@@ -25,21 +25,21 @@ final class GetByClosure implements GetterStrategy
      *
      * @var string
      */
-    private $propertyName;
+    public $propertyName;
 
     /**
      * The name of the class
      *
      * @var string
      */
-    private $className;
+    public $className;
 
     /**
      * The cached closure
      *
      * @var Closure
      */
-    private $getter;
+    public $getter;
 
     /**
      * Constructor

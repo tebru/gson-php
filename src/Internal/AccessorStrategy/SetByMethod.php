@@ -13,6 +13,8 @@ use Tebru\Gson\Internal\SetterStrategy;
 /**
  * Class SetByMethod
  *
+ * This class contains public properties to improve performance.
+ *
  * @author Nate Brunette <n@tebru.net>
  */
 final class SetByMethod implements SetterStrategy
@@ -20,7 +22,7 @@ final class SetByMethod implements SetterStrategy
     /**
      * @var string
      */
-    private $methodName;
+    public $methodName;
 
     /**
      * Constructor

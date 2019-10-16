@@ -20,6 +20,8 @@ use Tebru\Gson\PropertyMetadataCollection;
  *
  * Represents a class an its annotations
  *
+ * This class contains public properties to improve performance.
+ *
  * @author Nate Brunette <n@tebru.net>
  */
 final class DefaultClassMetadata implements ClassMetadata
@@ -29,29 +31,29 @@ final class DefaultClassMetadata implements ClassMetadata
      *
      * @var string
      */
-    private $name;
+    public $name;
 
     /**
      * The class annotations
      *
      * @var AnnotationCollection
      */
-    private $annotations;
+    public $annotations;
 
     /**
      * @var PropertyCollection
      */
-    private $properties;
+    public $properties;
 
     /**
      * @var bool
      */
-    private $skipSerialize = false;
+    public $skipSerialize = false;
 
     /**
      * @var bool
      */
-    private $skipDeserialize = false;
+    public $skipDeserialize = false;
 
     /**
      * Constructor
