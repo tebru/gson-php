@@ -47,7 +47,7 @@ class DateTimeTypeAdapter extends TypeAdapter
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param DateTimeInterface|null $value
+     * @param string|null $value
      * @param ReaderContext $context
      * @return DateTimeInterface|null
      */

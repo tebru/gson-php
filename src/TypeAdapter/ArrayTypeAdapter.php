@@ -150,7 +150,7 @@ class ArrayTypeAdapter extends TypeAdapter
     /**
      * Write the value to the writer for the type
      *
-     * @param array|stdClass|null $value
+     * @param array|null $value
      * @param WriterContext $context
      * @return array|null
      */
