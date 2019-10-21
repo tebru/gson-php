@@ -51,6 +51,13 @@ final class Property implements PropertyMetadata
     public $type;
 
     /**
+     * If the property is a scalar type
+     *
+     * @var bool
+     */
+    public $isScalar;
+
+    /**
      * The method for getting values from this property
      *
      * @var GetterStrategy
@@ -134,6 +141,7 @@ final class Property implements PropertyMetadata
         $this->realName = $realName;
         $this->serializedName = $serializedName;
         $this->type = $type;
+        $this->isScalar = $type->isScalar() && $type->genericTypes === [];
         $this->getterStrategy = $getterStrategy;
         $this->setterStrategy = $setterStrategy;
         $this->annotations = $annotations;

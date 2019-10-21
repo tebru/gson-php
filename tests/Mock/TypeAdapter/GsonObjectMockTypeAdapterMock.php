@@ -6,8 +6,8 @@
 
 namespace Tebru\Gson\Test\Mock\TypeAdapter;
 
-use Tebru\Gson\JsonReadable;
-use Tebru\Gson\JsonWritable;
+use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
 use Tebru\Gson\TypeAdapter;
 
@@ -21,28 +21,24 @@ class GsonObjectMockTypeAdapterMock extends TypeAdapter
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param JsonReadable $reader
+     * @param mixed $value
+     * @param ReaderContext $context
      * @return mixed
      */
-    public function read(JsonReadable $reader)
+    public function read($value, ReaderContext $context)
     {
-        $reader->beginObject();
-        $reader->nextName();
-        $gsonObjectMock = new GsonObjectMock($reader->nextString());
-        $reader->endObject();
-
-        return $gsonObjectMock;
+        return new GsonObjectMock($value['foo']);
     }
 
     /**
      * Write the value to the writer for the type
      *
-     * @param JsonWritable $writer
      * @param mixed $value
-     * @return void
+     * @param WriterContext $context
+     * @return mixed
      */
-    public function write(JsonWritable $writer, $value): void
+    public function write($value, WriterContext $context)
     {
-        // TODO: Implement write() method.
+        return null;
     }
 }

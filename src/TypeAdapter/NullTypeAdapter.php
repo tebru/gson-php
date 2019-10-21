@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\TypeAdapter;
 
-use Tebru\Gson\JsonReadable;
-use Tebru\Gson\JsonWritable;
+use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\TypeAdapter;
+use Tebru\Gson\Context\WriterContext;
 
 /**
  * Class NullTypeAdapter
@@ -22,23 +22,24 @@ class NullTypeAdapter extends TypeAdapter
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param JsonReadable $reader
-     * @return void|null
+     * @param null $value
+     * @param ReaderContext $context
+     * @return null
      */
-    public function read(JsonReadable $reader): void
+    public function read($value, ReaderContext $context)
     {
-        $reader->nextNull();
+        return null;
     }
 
     /**
      * Write the value to the writer for the type
      *
-     * @param JsonWritable $writer
-     * @param mixed $value
-     * @return void
+     * @param int|null $value
+     * @param WriterContext $context
+     * @return void|null
      */
-    public function write(JsonWritable $writer, $value): void
+    public function write($value, WriterContext $context)
     {
-        $writer->writeNull();
+        return null;
     }
 }

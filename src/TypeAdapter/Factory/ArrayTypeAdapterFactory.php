@@ -12,7 +12,7 @@ use stdClass;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapter\ArrayTypeAdapter;
-use Tebru\Gson\TypeAdapter\WildcardTypeAdapter;
+use Tebru\Gson\TypeAdapter\ScalarArrayTypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 use Tebru\PhpType\TypeToken;
 
@@ -23,6 +23,21 @@ use Tebru\PhpType\TypeToken;
  */
 class ArrayTypeAdapterFactory implements TypeAdapterFactory
 {
+    /**
+     * @var bool
+     */
+    private $enableScalarAdapters;
+
+    /**
+     * Constructor
+     *
+     * @param bool $enableScalarAdapters
+     */
+    public function __construct(bool $enableScalarAdapters)
+    {
+        $this->enableScalarAdapters = $enableScalarAdapters;
+    }
+
     /**
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
      * to be fetched during creation.  Should return a new instance of the TypeAdapter. Will return
@@ -39,20 +54,22 @@ class ArrayTypeAdapterFactory implements TypeAdapterFactory
         }
 
         $genericTypes = $type->genericTypes;
-        $numberOfGenericTypes = \count($genericTypes);
-        $keyType = TypeToken::create(TypeToken::WILDCARD);
+        $numberOfGenericTypes = count($genericTypes);
 
-        switch ($numberOfGenericTypes) {
-            case 1:
-                $valueTypeAdapter = $typeAdapterProvider->getAdapter($genericTypes[0]);
-                break;
-            case 2:
-                $keyType = $genericTypes[0];
-                $valueTypeAdapter = $typeAdapterProvider->getAdapter($genericTypes[1]);
-                break;
-            default:
-                $valueTypeAdapter = new WildcardTypeAdapter($typeAdapterProvider);
+        $keyType = TypeToken::create(TypeToken::WILDCARD);
+        $valueType = TypeToken::create(TypeToken::WILDCARD);
+
+        if ($numberOfGenericTypes === 1) {
+            $valueType = $genericTypes[0];
+        } elseif ($numberOfGenericTypes === 2) {
+            [$keyType, $valueType] = $genericTypes;
         }
+
+        if (!$this->enableScalarAdapters && $numberOfGenericTypes < 2 && $valueType->genericTypes === [] && $valueType->isScalar()) {
+            return new ScalarArrayTypeAdapter();
+        }
+
+        $valueTypeAdapter = $typeAdapterProvider->getAdapter($valueType);
 
         return new ArrayTypeAdapter($typeAdapterProvider, $keyType, $valueTypeAdapter, $numberOfGenericTypes);
     }

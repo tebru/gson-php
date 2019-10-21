@@ -12,10 +12,9 @@ use LogicException;
 use stdClass;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\JsonReadable;
-use Tebru\Gson\JsonToken;
-use Tebru\Gson\JsonWritable;
+use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\TypeAdapter;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -46,6 +45,13 @@ class ArrayTypeAdapter extends TypeAdapter
     private $numberOfGenerics;
 
     /**
+     * A TypeAdapter cache keyed by raw type
+     *
+     * @var TypeAdapter[]
+     */
+    private $adapters = [];
+
+    /**
      * Constructor
      *
      * @param TypeAdapterProvider $typeAdapterProvider
@@ -68,175 +74,138 @@ class ArrayTypeAdapter extends TypeAdapter
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param JsonReadable $reader
+     * @param array|null $value
+     * @param ReaderContext $context
      * @return array|null
-     * @throws \LogicException
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If trying to read from non object/array
      */
-    public function read(JsonReadable $reader): ?array
+    public function read($value, ReaderContext $context): ?array
     {
-        $token = $reader->peek();
-        if ($token === JsonToken::NULL) {
-            $reader->nextNull();
+        if ($value === null) {
             return null;
         }
 
-        $array = [];
+        if (!is_array($value)) {
+            throw new JsonSyntaxException(sprintf('Could not parse json, expected array or object but found "%s"', gettype($value)));
+        }
+
+        $result = [];
 
         if ($this->numberOfGenerics > 2) {
-            throw new LogicException(\sprintf('Array may not have more than 2 generic types at "%s"', $reader->getPath()));
+            throw new LogicException('Array may not have more than 2 generic types');
         }
 
-        switch ($token) {
-            case JsonToken::BEGIN_OBJECT:
-                $reader->beginObject();
-
-                while ($reader->hasNext()) {
-                    $name = $reader->nextName();
-
-                    switch ($this->numberOfGenerics) {
-                        // no generics specified
-                        case 0:
-                            // By now we know that we're deserializing a json object to an array.
-                            // If there is a nested object, continue deserializing to an array,
-                            // otherwise guess the type using the wildcard
-                            $type = $reader->peek() === JsonToken::BEGIN_OBJECT
-                                ? TypeToken::create(TypeToken::HASH)
-                                : TypeToken::create(TypeToken::WILDCARD);
-
-                            $adapter = $this->typeAdapterProvider->getAdapter($type);
-                            $array[$name] = $adapter->read($reader);
-                            break;
-                        // generic for value specified
-                        case 1:
-                            $array[$name] = $this->valueTypeAdapter->read($reader);
-                            break;
-                        // generic for key and value specified
-                        case 2:
-                            if ($this->keyType->phpType !== TypeToken::STRING && $this->keyType->phpType !== TypeToken::INTEGER) {
-                                throw new LogicException(\sprintf('Array keys must be strings or integers at "%s"', $reader->getPath()));
-                            }
-
-                            if ($this->keyType->phpType === TypeToken::INTEGER) {
-                                if (!\ctype_digit($name)) {
-                                    throw new JsonSyntaxException(\sprintf('Expected integer, but found string for key at "%s"', $reader->getPath()));
-                                }
-
-                                $name = (int)$name;
-                            }
-
-                            $array[$name] = $this->valueTypeAdapter->read($reader);
-
-                            break;
-                    }
-                }
-
-                $reader->endObject();
-
-                break;
-            case JsonToken::BEGIN_ARRAY:
-                $reader->beginArray();
-
-                while ($reader->hasNext()) {
-                    switch ($this->numberOfGenerics) {
-                        // no generics specified
-                        case 0:
-                        case 1:
-                            $array[] = $this->valueTypeAdapter->read($reader);
-
-                            break;
-                        default:
-                            throw new LogicException(\sprintf('An array may only specify a generic type for the value at "%s"', $reader->getPath()));
-                    }
-                }
-
-                $reader->endArray();
-
-                break;
-            default:
-                throw new JsonSyntaxException(\sprintf('Could not parse json, expected array or object but found "%s" at "%s"', $token, $reader->getPath()));
+        if ($this->keyType->phpType !== TypeToken::WILDCARD
+            && $this->keyType->phpType !== TypeToken::STRING
+            && $this->keyType->phpType !== TypeToken::INTEGER
+        ) {
+            throw new LogicException('Array keys must be strings or integers');
         }
 
-        return $array;
+        $arrayIsObject = $this->numberOfGenerics === 2 || is_string(key($value));
+        $enableScalarAdapters = $context->enableScalarAdapters();
+
+        foreach ($value as $key => $item) {
+            $itemValue = null;
+            switch ($this->numberOfGenerics) {
+                case 0:
+                    if (!$enableScalarAdapters && is_scalar($item)) {
+                        $itemValue = $item;
+                        break;
+                    }
+
+                    if (!$arrayIsObject) {
+                        $itemValue = $this->valueTypeAdapter->read($item, $context);
+                        break;
+                    }
+
+                    if (is_array($item)) {
+                        $itemValue = $this->read($item, $context);
+                        break;
+                    }
+
+                    $type = TypeToken::createFromVariable($item);
+                    $adapter = $this->adapters[$type->rawType] ?? $this->adapters[$type->rawType] = $this->typeAdapterProvider->getAdapter($type);
+                    $itemValue = $adapter->read($item, $context);
+                    break;
+                case 1:
+                    $itemValue = $this->valueTypeAdapter->read($item, $context);
+                    break;
+                case 2:
+                    if (($this->keyType->phpType === TypeToken::INTEGER) && !ctype_digit((string)$key)) {
+                        throw new JsonSyntaxException('Expected integer, but found string for key');
+                    }
+
+                    $itemValue = (!$enableScalarAdapters && is_scalar($item))
+                        ? $item
+                        : $this->valueTypeAdapter->read($item, $context);
+                    break;
+            }
+
+            $result[$arrayIsObject ? (string)$key : (int)$key] = $itemValue;
+        }
+
+        return $result;
     }
 
     /**
      * Write the value to the writer for the type
      *
-     * @param JsonWritable $writer
      * @param array|stdClass|null $value
-     * @return void
-     * @throws \LogicException
+     * @param WriterContext $context
+     * @return array|null
      */
-    public function write(JsonWritable $writer, $value): void
+    public function write($value, WriterContext $context): ?array
     {
-        if (null === $value) {
-            $writer->writeNull();
-
-            return;
+        if ($value === null) {
+            return null;
         }
 
         if ($this->numberOfGenerics > 2) {
-            throw new LogicException(\sprintf('Array may not have more than 2 generic types at "%s"', $writer->getPath()));
+            throw new LogicException('Array may not have more than 2 generic types');
         }
 
-        $arrayIsObject = $this->isArrayObject($value, $this->numberOfGenerics);
-
-        if ($arrayIsObject) {
-            $writer->beginObject();
-        } else {
-            $writer->beginArray();
-        }
+        $arrayIsObject = $this->numberOfGenerics === 2 || is_string(key($value));
+        $enableScalarAdapters = $context->enableScalarAdapters();
+        $serializeNull = $context->serializeNull();
+        $result = [];
 
         foreach ($value as $key => $item) {
+            if ($item === null && !$serializeNull) {
+                continue;
+            }
+
+            if (!$enableScalarAdapters && is_scalar($item)) {
+                $result[$arrayIsObject ? (string)$key : (int)$key] = $item;
+                continue;
+            }
+
+            $itemValue = null;
             switch ($this->numberOfGenerics) {
                 // no generics specified
                 case 0:
-                    if ($arrayIsObject) {
-                        $writer->name((string)$key);
+                    if (is_array($item)) {
+                        $itemValue = $this->write($item, $context);
+                        break;
                     }
 
-                    $adapter = $this->typeAdapterProvider->getAdapter(TypeToken::createFromVariable($item));
-                    $adapter->write($writer, $item);
-
+                    $type = TypeToken::createFromVariable($item);
+                    $adapter = $this->adapters[$type->rawType] ?? $this->adapters[$type->rawType] = $this->typeAdapterProvider->getAdapter($type);
+                    $itemValue = $adapter->write($item, $context);
                     break;
                 // generic for value specified
                 case 1:
-                    if ($arrayIsObject) {
-                        $writer->name((string)$key);
-                    }
-
-                    $this->valueTypeAdapter->write($writer, $item);
-
-                    break;
-                // generic for key and value specified
                 case 2:
-                    $writer->name($key);
-                    $this->valueTypeAdapter->write($writer, $item);
-
+                    $itemValue = $this->valueTypeAdapter->write($item, $context);
                     break;
             }
+
+            if ($itemValue === null && !$serializeNull) {
+                continue;
+            }
+
+            $result[$arrayIsObject ? (string)$key : (int)$key] = $itemValue;
         }
 
-        if ($arrayIsObject) {
-            $writer->endObject();
-        } else {
-            $writer->endArray();
-        }
-    }
-
-    /**
-     * Returns true if the array is acting like an object
-     * @param array|stdClass $array
-     * @param int $numberOfGenerics
-     * @return bool
-     */
-    private function isArrayObject($array, int $numberOfGenerics): bool
-    {
-        if (2 === $numberOfGenerics) {
-            return true;
-        }
-
-        return \is_string(\key($array));
+        return $result;
     }
 }

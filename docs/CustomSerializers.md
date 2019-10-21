@@ -9,25 +9,23 @@ Custom Serializer
 
 By implementing the `JsonSerializer` interface, you can completely
 control how serialization is accomplished.  You will receive the
-object that should be serialized, and will utilize the `JsonElement`
-objects to construct the JSON you ultimately want returned.
+object that should be serialized, and will return something that can
+be passed into `json_encode`.
 
 ```php
 class FooSerializer implements JsonSerializer
 {
-    public function serialize($object, PhpType $type, JsonSerializationContext $context): JsonElement
+    public function serialize($object, TypeToken $type, JsonSerializationContext $context)
     {
-        $jsonObject = new JsonObject();
-        $jsonObject->addInteger('id', $object->getId());
-        $jsonObject->addString('name', $object->getName());
-
-        return $jsonObject;
+        return [
+            'id' => $object->getId(),
+            'name' => $object->getName(),
+        ];
     }
 }
 ```
 
-This bypasses all other handling for the object and sub-objects.  Once
-you return the `JsonElement` it will get converted to JSON and returned.
+This bypasses all other handling for the object and sub-objects.
 
 If you have a sub-object you do not want to manually serialize, you can
 pass it off to the context.
@@ -35,14 +33,13 @@ pass it off to the context.
 ```php
 class FooSerializer implements JsonSerializer
 {
-    public function serialize($object, PhpType $type, JsonSerializationContext $context): JsonElement
+    public function serialize($object, TypeToken $type, JsonSerializationContext $context)
     {
-        $jsonObject = new JsonObject();
-        $jsonObject->addInteger('id', $object->getId());
-        $jsonObject->addString('name', $object->getName());
-        $jsonObject->add('foo', $context->serialize($object->getFoo()));
-
-        return $jsonObject;
+        return [
+            'id' => $object->getId(),
+            'name' => $object->getName(),
+            'foo' => $context->serialize($object->getFoo()),
+        ];
     }
 }
 ```
@@ -54,22 +51,19 @@ Custom Deserializer
 -------------------
 
 This operates similarly to the custom serializer.  The `deserialize`
-method receives a `JsonElement` and you use that to return an
+method receives data from `json_decode` and you use that to return an
 instantiated object.  Delegation is available here in the same way
 as the serializer.
 
 ```php
 class FooDeserializer implements JsonDeserializer
 {
-    public function deserialize(JsonElement $jsonElement, PhpType $type, JsonDeserializationContext $context)
+    public function deserialize($value, TypeToken $type, JsonDeserializationContext $context)
     {
-        // we can type the JsonElement if we know it's an object
-        $jsonObject = $jsonElement->asJsonObject();
-
         $fooObject = new FooObject();
-        $fooObject->setId($jsonObject->getAsInteger('id'));
-        $fooObject->setName($jsonObject->getAsString('name'));
-        $fooObject->setBar($context->deserialize($jsonObject->getAsJsonObject('bar'), Bar::class));
+        $fooObject->setId($value['id']);
+        $fooObject->setName($value['name']);
+        $fooObject->setBar($context->deserialize($value['bar'], Bar::class));
 
         return $fooObject;
     }
@@ -77,47 +71,34 @@ class FooDeserializer implements JsonDeserializer
 ```
 
 This is operating in reverse of the custom serializer.  Here we are
-getting values from the `JsonElement` and setting them to an instantiated
-object.  To set `bar`, we are pulling the nested object out and passing
-it to Gson to deserialize normally.
+getting values and setting them to an instantiated object.  To set
+`bar`, we are pulling the nested object out and passing it to Gson
+to deserialize normally.
 
 Custom Type Adapter
 -------------------
 
 The Type Adapter system is how all type handling is implemented.
 Extending the `TypeAdapter` base class will require implementing both
-`read` and `write` methods.  Each receives a `JsonReadable` and
-`JsonWritable` respectively.
+`read` and `write` methods. Each method receives the data and context.
 
 Implementing a Type Adapter is a good idea if you just want to change
 the way a simple type (non-object, non-array) is serialized and
-deserialized.  Alternatively, if you don't want to pay for the overhead
-of a custom serializer or deserializer as it must convert to `JsonElement`
-objects.
+deserialized.
 
 The `IntegerTypeAdapter` implementation is shown below as an example
 
 ```php
 class IntegerTypeAdapter extends TypeAdapter
 {
-    public function read(JsonReadable $reader): ?int
+    public function read($value, ReaderContext $context): ?int
     {
-        if ($reader->peek() === JsonToken::NULL) {
-            return $reader->nextNull();
-        }
-
-        return $reader->nextInteger();
+        return $value === null ? null : (int)$value;
     }
 
-    public function write(JsonWritable $writer, $value): void
+    public function write($value, WriterContext $context): void
     {
-        if (null === $value) {
-            $writer->writeNull();
-
-            return;
-        }
-
-        $writer->writeInteger($value);
+        return $value === null ? null : (int)$value;
     }
 }
 ```
@@ -136,7 +117,7 @@ provided type.
 ```php
 class IntegerTypeAdapterFactory implements TypeAdapterFactory
 {
-    public function create(PhpType $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
         return $type->isInteger() ? new IntegerTypeAdapter() : null;
     }

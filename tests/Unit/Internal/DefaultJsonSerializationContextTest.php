@@ -6,7 +6,6 @@
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit\Framework\TestCase;
-use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\Test\Mock\AddressMock;
 use Tebru\Gson\Test\MockProvider;
 
@@ -29,12 +28,11 @@ class DefaultJsonSerializationContextTest extends TestCase
 
         $context = MockProvider::serializationContext(MockProvider::excluder());
 
-        /** @var JsonObject $addressElement */
         $addressElement = $context->serialize($address);
 
-        self::assertSame('123 ABC St', $addressElement->getAsString('street'));
-        self::assertSame('Foo', $addressElement->getAsString('city'));
-        self::assertSame('MN', $addressElement->getAsString('state'));
-        self::assertSame(12345, $addressElement->getAsInteger('zip'));
+        self::assertSame('123 ABC St', $addressElement['street']);
+        self::assertSame('Foo', $addressElement['city']);
+        self::assertSame('MN', $addressElement['state']);
+        self::assertSame(12345, $addressElement['zip']);
     }
 }

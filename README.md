@@ -61,34 +61,15 @@ Now we call `Gson::fromJson` and pass in the json as a string and the type
 of object we'd like to map to.  In this example, we will be getting
 an instantiated `Foo` object back.
 
-If you want to convert your object to a [JsonElement](docs/JsonElement.md),
-there's a convenience method to do that for you.
+Gson has a concept of "normalized" forms. This just means data that has
+been decoded with `json_decode`, or can be passed into `json_encode`.
 
 ```php
 // $object obtained elsewhere
 
 $gson = Gson::builder()->build();
-$jsonElement = $gson->toJsonElement($object);
-```
-
-This provides a simple way to manipulate the JSON before final encoding.
-From here, you can call `json_encode()` on the element to convert it to
-JSON.
-
-```php
-$jsonElement = $gson->toJsonElement($object);
-$jsonElement->asObject()->addString('foo', 'bar');
-$json = json_encode($jsonElement);
-```
-
-Likewise, there are methods to operate on arrays instead of strings of json
-
-```php
-// $object obtained elsewhere
-
-$gson = Gson::builder()->build();
-$jsonArray = $gson->toArray($object);
-$object = $gson->fromArray($jsonArray);
+$jsonArray = $gson->toNormalized($object);
+$object = $gson->fromNormalized($jsonArray, Foo::class);
 ```
 
 Documentation
@@ -98,7 +79,6 @@ Documentation
 * [Excluding Classes and Properties](docs/Exclusion.md)
 * [Customizing Class Instantiation](docs/InstanceCreator.md)
 * [Types](docs/Types.md)
-* [Json Element](docs/JsonElement.md)
 * [Annotation Reference](docs/Annotations.md)
 * [Advanced Usage](docs/Advanced.md)
 

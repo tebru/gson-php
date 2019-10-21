@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Test\Unit\TypeAdapter;
 
-use PHPUnit\Framework\TestCase;
 use Tebru\Gson\TypeAdapter\StringTypeAdapter;
 
 /**
@@ -16,40 +15,40 @@ use Tebru\Gson\TypeAdapter\StringTypeAdapter;
  * @covers \Tebru\Gson\TypeAdapter\StringTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class StringTypeAdapterTest extends TestCase
+class StringTypeAdapterTest extends TypeAdapterTestCase
 {
     public function testNull(): void
     {
         $adapter = new StringTypeAdapter();
 
-        self::assertNull($adapter->readFromJson('null'));
+        self::assertNull($adapter->read(json_decode('null', true), $this->readerContext));
     }
 
     public function testRead(): void
     {
         $adapter = new StringTypeAdapter();
 
-        self::assertSame('foo', $adapter->readFromJson('"foo"'));
+        self::assertSame('foo', $adapter->read(json_decode('"foo"', true), $this->readerContext));
     }
 
     public function testReadNumberInString(): void
     {
         $adapter = new StringTypeAdapter();
 
-        self::assertSame('1', $adapter->readFromJson('"1"'));
+        self::assertSame('1', $adapter->read(json_decode('"1"', true), $this->readerContext));
     }
 
     public function testSerializeNull(): void
     {
         $adapter = new StringTypeAdapter();
 
-        self::assertSame('null', $adapter->writeToJson(null, false));
+        self::assertNull($adapter->write(null, $this->writerContext));
     }
 
     public function testSerializeFloat(): void
     {
         $adapter = new StringTypeAdapter();
 
-        self::assertSame('"foo"', $adapter->writeToJson('foo', false));
+        self::assertSame('foo', $adapter->write('foo', $this->writerContext));
     }
 }

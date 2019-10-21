@@ -6,8 +6,8 @@
 
 namespace Tebru\Gson\Test\Mock\TypeAdapter;
 
-use Tebru\Gson\JsonWritable;
-use Tebru\Gson\JsonReadable;
+use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\TypeAdapter;
 
 /**
@@ -20,24 +20,24 @@ class Integer1TypeAdapter extends TypeAdapter
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param JsonReadable $reader
+     * @param int $value
+     * @param ReaderContext $context
      * @return mixed
      */
-    public function read(JsonReadable $reader)
+    public function read($value, ReaderContext $context)
     {
-        return $reader->nextInteger() + 1;
+        return $value + 1;
     }
 
     /**
      * Write the value to the writer for the type
      *
-     * @param JsonWritable $writer
-     * @param int $value
-     * @return void
+     * @param mixed $value
+     * @param WriterContext $context
+     * @return mixed
      */
-    public function write(JsonWritable $writer, $value): void
+    public function write($value, WriterContext $context)
     {
-        $writer->writeInteger($value + 1);
+        return $value + 1;
     }
-
 }

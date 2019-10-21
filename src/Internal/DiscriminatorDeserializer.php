@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace Tebru\Gson\Internal;
 
 use Tebru\Gson\Discriminator;
-use Tebru\Gson\Element\JsonElement;
 use Tebru\Gson\JsonDeserializationContext;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\PhpType\TypeToken;
@@ -39,16 +38,16 @@ final class DiscriminatorDeserializer implements JsonDeserializer
     }
 
     /**
-     * Called during deserialization process, passing in the JsonElement for the type.  Use
+     * Called during deserialization process, passing in the decoded json. Use
      * the JsonDeserializationContext if you want to delegate deserialization of sub types.
      *
-     * @param JsonElement $jsonElement
+     * @param object $value
      * @param TypeToken $type
      * @param JsonDeserializationContext $context
      * @return mixed
      */
-    public function deserialize(JsonElement $jsonElement, TypeToken $type, JsonDeserializationContext $context)
+    public function deserialize($value, TypeToken $type, JsonDeserializationContext $context)
     {
-        return $context->deserialize($jsonElement, $this->discriminator->getClass($jsonElement->asJsonObject()));
+        return $context->deserialize($value, $this->discriminator->getClass($value));
     }
 }

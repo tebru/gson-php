@@ -5,7 +5,7 @@
  */
 namespace Tebru\Gson\Test\Unit\TypeAdapter;
 
-use PHPUnit\Framework\TestCase;
+use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
 use Tebru\Gson\Test\Mock\AddressMock;
@@ -22,7 +22,7 @@ use Tebru\PhpType\TypeToken;
  * @covers \Tebru\Gson\TypeAdapter\CustomWrappedTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class CustomWrappedTypeAdapterTest extends TestCase
+class CustomWrappedTypeAdapterTest extends TypeAdapterTestCase
 {
     public function testUsesDeserializer(): void
     {
@@ -35,7 +35,7 @@ class CustomWrappedTypeAdapterTest extends TestCase
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
         /** @var UserMock $user */
-        $user = $adapter->readFromJson($this->json());
+        $user = $adapter->read(json_decode($this->json(), true), new ReaderContext());
 
         $address = $user->getAddress();
 
@@ -51,6 +51,20 @@ class CustomWrappedTypeAdapterTest extends TestCase
         self::assertSame(12345, $address->getZip());
     }
 
+    public function testDeserializeNull(): void
+    {
+        $typeAdapterProvider = MockProvider::typeAdapterProvider(
+            MockProvider::excluder(),
+            [new CustomWrappedTypeAdapterFactory(new TypeToken(UserMock::class), false, null, new MockDeserializer())]
+        );
+
+        /** @var CustomWrappedTypeAdapter $adapter */
+        $adapter = $typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
+        $user = $adapter->read(null, new ReaderContext());
+
+        self::assertNull($user);
+    }
+
     public function testDelegatesDeserializer(): void
     {
         $typeAdapterProvider = MockProvider::typeAdapterProvider(
@@ -61,7 +75,7 @@ class CustomWrappedTypeAdapterTest extends TestCase
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
         /** @var UserMock $user */
-        $user = $adapter->readFromJson($this->json());
+        $user = $adapter->read(json_decode($this->json(), true), new ReaderContext());
 
         self::assertSame(1, $user->getId());
         self::assertSame('test@example.com', $user->getEmail());
@@ -81,7 +95,7 @@ class CustomWrappedTypeAdapterTest extends TestCase
         /** @var CustomWrappedTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
-        self::assertSame('null', $adapter->writeToJson(null, false));
+        self::assertNull($adapter->write(null, $this->writerContext));
     }
 
     public function testUsesSerializer(): void
@@ -97,7 +111,7 @@ class CustomWrappedTypeAdapterTest extends TestCase
         $expected = json_decode($this->json(), true);
         unset($expected['password']);
 
-        self::assertJsonStringEqualsJsonString(json_encode($expected), $adapter->writeToJson($this->user(), false));
+        self::assertJsonStringEqualsJsonString(json_encode($expected), json_encode($adapter->write($this->user(), $this->writerContext)));
     }
 
     public function testDelegatesSerialization(): void
@@ -110,7 +124,7 @@ class CustomWrappedTypeAdapterTest extends TestCase
         /** @var CustomWrappedTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
-        $json = $adapter->writeToJson($this->user(), false);
+        $json = $adapter->write($this->user(), $this->writerContext);
 
         $expectedJson = '{
             "id": 1,
@@ -125,7 +139,7 @@ class CustomWrappedTypeAdapterTest extends TestCase
             "phone": "(123) 456-7890"
         }';
 
-        self::assertJsonStringEqualsJsonString($expectedJson, $json);
+        self::assertJsonStringEqualsJsonString($expectedJson, json_encode($json));
     }
 
     private function json(): string

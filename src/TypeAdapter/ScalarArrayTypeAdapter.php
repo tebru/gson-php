@@ -13,33 +13,33 @@ use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\Context\WriterContext;
 
 /**
- * Class FloatTypeAdapter
+ * Class ScalarArrayTypeAdapter
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class FloatTypeAdapter extends TypeAdapter
+class ScalarArrayTypeAdapter extends TypeAdapter
 {
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param float|null $value
+     * @param array|null $value
      * @param ReaderContext $context
-     * @return float|null
+     * @return array|null
      */
-    public function read($value, ReaderContext $context): ?float
+    public function read($value, ReaderContext $context): ?array
     {
-        return $value === null ? null : (float)$value;
+        return $value === null ? null : (array)$value;
     }
 
     /**
      * Write the value to the writer for the type
      *
-     * @param float|null $value
+     * @param array|null $value
      * @param WriterContext $context
-     * @return float|null
+     * @return array|null
      */
-    public function write($value, WriterContext $context): ?float
+    public function write($value, WriterContext $context): ?array
     {
-        return $value === null ? null : (float)$value;
+        return $value === null ? null : (array)$value;
     }
 }

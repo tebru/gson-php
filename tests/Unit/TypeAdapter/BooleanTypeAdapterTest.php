@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Test\Unit\TypeAdapter;
 
-use PHPUnit\Framework\TestCase;
 use Tebru\Gson\TypeAdapter\BooleanTypeAdapter;
 
 /**
@@ -16,47 +15,47 @@ use Tebru\Gson\TypeAdapter\BooleanTypeAdapter;
  * @covers \Tebru\Gson\TypeAdapter\BooleanTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class BooleanTypeAdapterTest extends TestCase
+class BooleanTypeAdapterTest extends TypeAdapterTestCase
 {
     public function testDeserializeNull(): void
     {
         $adapter = new BooleanTypeAdapter();
 
-        self::assertNull($adapter->readFromJson('null'));
+        self::assertNull($adapter->read(json_decode('null', true), $this->readerContext));
     }
 
     public function testDeserializeReadTrue(): void
     {
         $adapter = new BooleanTypeAdapter();
 
-        self::assertTrue($adapter->readFromJson('true'));
+        self::assertTrue($adapter->read(json_decode('true', true), $this->readerContext));
     }
 
     public function testDeserializeReadFalse(): void
     {
         $adapter = new BooleanTypeAdapter();
 
-        self::assertFalse($adapter->readFromJson('false'));
+        self::assertFalse($adapter->read(json_decode('false', true), $this->readerContext));
     }
 
     public function testSerializeNull(): void
     {
         $adapter = new BooleanTypeAdapter();
 
-        self::assertSame('null', $adapter->writeToJson(null, false));
+        self::assertNull($adapter->write(null, $this->writerContext));
     }
 
     public function testSerializeTrue(): void
     {
         $adapter = new BooleanTypeAdapter();
 
-        self::assertSame('true', $adapter->writeToJson(true, false));
+        self::assertTrue($adapter->write(true, $this->writerContext));
     }
 
     public function testSerializeFalse(): void
     {
         $adapter = new BooleanTypeAdapter();
 
-        self::assertSame('false', $adapter->writeToJson(false, false));
+        self::assertFalse($adapter->write(false, $this->writerContext));
     }
 }

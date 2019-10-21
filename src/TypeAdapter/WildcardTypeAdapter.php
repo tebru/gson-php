@@ -8,12 +8,10 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\TypeAdapter;
 
-use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\JsonReadable;
-use Tebru\Gson\JsonToken;
-use Tebru\Gson\JsonWritable;
+use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\TypeAdapter;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -41,55 +39,34 @@ class WildcardTypeAdapter extends TypeAdapter
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param JsonReadable $reader
+     * @param $value
+     * @param ReaderContext $context
      * @return mixed
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the token can't be processed
      */
-    public function read(JsonReadable $reader)
+    public function read($value, ReaderContext $context)
     {
-        switch ($reader->peek()) {
-            case JsonToken::BEGIN_ARRAY:
-                $type = TypeToken::create(TypeToken::HASH);
-                break;
-            case JsonToken::BEGIN_OBJECT:
-                $type = TypeToken::create(TypeToken::OBJECT);
-                break;
-            case JsonToken::STRING:
-            case JsonToken::NAME:
-                $type = TypeToken::create(TypeToken::STRING);
-                break;
-            case JsonToken::BOOLEAN:
-                $type = TypeToken::create(TypeToken::BOOLEAN);
-                break;
-            case JsonToken::NUMBER:
-                $type = TypeToken::create(TypeToken::FLOAT);
-                break;
-            case JsonToken::NULL:
-                $type = TypeToken::create(TypeToken::NULL);
-                break;
-            default:
-                throw new JsonSyntaxException(
-                    \sprintf(
-                        'Could not parse token "%s" at "%s"',
-                        $reader->peek(),
-                        $reader->getPath()
-                    )
-                );
+        $type = TypeToken::createFromVariable($value);
+        if ($type->genericTypes === [] && !$context->enableScalarAdapters() && $type->isScalar()) {
+            return $value;
         }
 
-        return $this->typeAdapterProvider->getAdapter($type)->read($reader);
+        return $this->typeAdapterProvider->getAdapter($type)->read($value, $context);
     }
 
     /**
      * Write the value to the writer for the type
      *
-     * @param JsonWritable $writer
      * @param mixed $value
-     * @return void
+     * @param WriterContext $context
+     * @return mixed
      */
-    public function write(JsonWritable $writer, $value): void
+    public function write($value, WriterContext $context)
     {
-        $adapter = $this->typeAdapterProvider->getAdapter(TypeToken::createFromVariable($value));
-        $adapter->write($writer, $value);
+        $type = TypeToken::createFromVariable($value);
+        if ($type->genericTypes === [] && !$context->enableScalarAdapters() && $type->isScalar()) {
+            return $value;
+        }
+
+        return $this->typeAdapterProvider->getAdapter($type)->write($value, $context);
     }
 }

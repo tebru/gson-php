@@ -9,8 +9,7 @@ declare(strict_types=1);
 namespace Tebru\Gson\Internal;
 
 use Tebru\Gson\Exclusion\DeserializationExclusionData;
-use Tebru\Gson\JsonReadable;
-use Tebru\Gson\ReaderContext;
+use Tebru\Gson\Context\ReaderContext;
 
 /**
  * Class DefaultDeserializationExclusionData
@@ -25,30 +24,20 @@ class DefaultDeserializationExclusionData implements DeserializationExclusionDat
     private $objectToReadInto;
 
     /**
-     * @var JsonReadable
+     * @var ReaderContext
      */
-    private $reader;
+    private $context;
 
     /**
      * Constructor
      *
      * @param object $objectToReadInto
-     * @param JsonReadable $reader
+     * @param ReaderContext $context
      */
-    public function __construct($objectToReadInto, JsonReadable $reader)
+    public function __construct($objectToReadInto, ReaderContext $context)
     {
         $this->objectToReadInto = $objectToReadInto;
-        $this->reader = $reader;
-    }
-
-    /**
-     * Get the json data after json_decode()
-     *
-     * @return mixed
-     */
-    public function getPayload()
-    {
-        return $this->reader->getPayload();
+        $this->context = $context;
     }
 
     /**
@@ -68,16 +57,6 @@ class DefaultDeserializationExclusionData implements DeserializationExclusionDat
      */
     public function getContext(): ReaderContext
     {
-        return $this->reader->getContext();
-    }
-
-    /**
-     * Get the current path formatted as json xpath
-     *
-     * @return string
-     */
-    public function getPath(): string
-    {
-        return $this->reader->getPath();
+        return $this->context;
     }
 }

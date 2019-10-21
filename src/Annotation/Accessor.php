@@ -40,7 +40,7 @@ class Accessor extends AbstractAnnotation
     /**
      * Constructor
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function init(): void
     {

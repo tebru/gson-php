@@ -8,7 +8,6 @@ namespace Tebru\Gson\Test\Unit\TypeAdapter;
 
 use DateTime;
 use DateTimeImmutable;
-use PHPUnit\Framework\TestCase;
 use Tebru\Gson\TypeAdapter\DateTimeTypeAdapter;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\PhpType\TypeToken;
@@ -20,19 +19,19 @@ use Tebru\PhpType\TypeToken;
  * @covers \Tebru\Gson\TypeAdapter\DateTimeTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class DateTimeTypeAdapterTest extends TestCase
+class DateTimeTypeAdapterTest extends TypeAdapterTestCase
 {
     public function testDeserializeNull(): void
     {
         $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
 
-        self::assertNull($adapter->readFromJson('null'));
+        self::assertNull($adapter->read(json_decode('null', true), $this->readerContext));
     }
 
     public function testDeserializeCreateDatetimeDefault(): void
     {
         $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
-        $result = $adapter->readFromJson('"2016-01-02T12:23:53-06:00"');
+        $result = $adapter->read(json_decode('"2016-01-02T12:23:53-06:00"', true), $this->readerContext);
 
         self::assertSame('2016-01-02T12:23:53-06:00', $result->format(DateTime::ATOM));
     }
@@ -40,7 +39,7 @@ class DateTimeTypeAdapterTest extends TestCase
     public function testDeserializeCreateDatetimeImmutable(): void
     {
         $adapter = new DateTimeTypeAdapter(new TypeToken(DateTimeImmutable::class), DateTime::ATOM);
-        $result = $adapter->readFromJson('"2016-01-02T12:23:53-06:00"');
+        $result = $adapter->read(json_decode('"2016-01-02T12:23:53-06:00"', true), $this->readerContext);
 
         self::assertSame('2016-01-02T12:23:53-06:00', $result->format(DateTime::ATOM));
     }
@@ -49,9 +48,9 @@ class DateTimeTypeAdapterTest extends TestCase
     {
         $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
         try {
-            $adapter->readFromJson('"2016-0102T12:23:53-06:00"');
+            $adapter->read(json_decode('"2016-0102T12:23:53-06:00"', true), $this->readerContext);
         } catch (JsonSyntaxException $exception) {
-            self::assertSame('Could not create "DateTime" class from "2016-0102T12:23:53-06:00" using format "Y-m-d\TH:i:sP" at "$"', $exception->getMessage());
+            self::assertSame('Could not create "DateTime" class from "2016-0102T12:23:53-06:00" using format "Y-m-d\TH:i:sP"', $exception->getMessage());
             return;
         }
         self::assertTrue(false);
@@ -62,7 +61,7 @@ class DateTimeTypeAdapterTest extends TestCase
         $type = new TypeToken(DateTime::class);
         $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
 
-        self::assertSame('null', $adapter->writeToJson(null, false));
+        self::assertNull($adapter->write(null, $this->writerContext));
     }
 
     public function testSerializeDefault(): void
@@ -72,7 +71,7 @@ class DateTimeTypeAdapterTest extends TestCase
 
         $dateTime = DateTime::createFromFormat(DateTime::ATOM, '2016-01-02T12:23:53-06:00');
 
-        self::assertSame('"2016-01-02T12:23:53-06:00"', $adapter->writeToJson($dateTime, false));
+        self::assertSame('2016-01-02T12:23:53-06:00', $adapter->write($dateTime, $this->writerContext));
     }
 
     public function testSerializeImmutable(): void
@@ -82,6 +81,6 @@ class DateTimeTypeAdapterTest extends TestCase
 
         $dateTime = DateTimeImmutable::createFromFormat(DateTime::ATOM, '2016-01-02T12:23:53-06:00');
 
-        self::assertSame('"2016-01-02T12:23:53-06:00"', $adapter->writeToJson($dateTime, false));
+        self::assertSame('2016-01-02T12:23:53-06:00', $adapter->write($dateTime, $this->writerContext));
     }
 }

@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Exclusion;
 
+use Tebru\Gson\Context\WriterContext;
+
 /**
  * Interface SerializationExclusionData
  *
@@ -25,9 +27,9 @@ interface SerializationExclusionData
     public function getObjectToSerialize();
 
     /**
-     * Get the current path formatted as json xpath
+     * Get the writer context
      *
-     * @return string
+     * @return WriterContext
      */
-    public function getPath(): string;
+    public function getContext(): WriterContext;
 }

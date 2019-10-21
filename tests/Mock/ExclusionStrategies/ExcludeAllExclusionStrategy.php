@@ -24,7 +24,7 @@ use Tebru\Gson\PropertyMetadata;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class ExcludeAllCacheableExclusionStrategy implements
+class ExcludeAllExclusionStrategy implements
     ClassSerializationExclusionStrategy,
     ClassDeserializationExclusionStrategy,
     PropertySerializationExclusionStrategy,
@@ -64,7 +64,7 @@ class ExcludeAllCacheableExclusionStrategy implements
      */
     public function shouldCache(): bool
     {
-        return true;
+        return false;
     }
 
     /**

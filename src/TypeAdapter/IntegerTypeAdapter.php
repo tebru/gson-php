@@ -8,10 +8,9 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\TypeAdapter;
 
-use Tebru\Gson\JsonReadable;
-use Tebru\Gson\JsonToken;
-use Tebru\Gson\JsonWritable;
+use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\TypeAdapter;
+use Tebru\Gson\Context\WriterContext;
 
 /**
  * Class IntegerTypeAdapter
@@ -23,34 +22,24 @@ class IntegerTypeAdapter extends TypeAdapter
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param JsonReadable $reader
+     * @param int|null $value
+     * @param ReaderContext $context
      * @return int|null
      */
-    public function read(JsonReadable $reader): ?int
+    public function read($value, ReaderContext $context): ?int
     {
-        if ($reader->peek() === JsonToken::NULL) {
-            $reader->nextNull();
-            return null;
-        }
-
-        return $reader->nextInteger();
+        return $value === null ? null : (int)$value;
     }
 
     /**
      * Write the value to the writer for the type
      *
-     * @param JsonWritable $writer
      * @param int|null $value
-     * @return void
+     * @param WriterContext $context
+     * @return int|null
      */
-    public function write(JsonWritable $writer, $value): void
+    public function write($value, WriterContext $context): ?int
     {
-        if (null === $value) {
-            $writer->writeNull();
-
-            return;
-        }
-
-        $writer->writeInteger((int)$value);
+        return $value === null ? null : (int)$value;
     }
 }

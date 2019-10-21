@@ -12,11 +12,11 @@ use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
 use Tebru\Gson\Internal\DefaultJsonSerializationContext;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
-use Tebru\Gson\JsonReadable;
 use Tebru\Gson\JsonSerializer;
-use Tebru\Gson\JsonWritable;
+use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -86,57 +86,52 @@ class CustomWrappedTypeAdapter extends TypeAdapter
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param JsonReadable $reader
+     * @param mixed $value
+     * @param ReaderContext $context
      * @return mixed
      */
-    public function read(JsonReadable $reader)
+    public function read($value, ReaderContext $context)
     {
-        if (null === $this->deserializer) {
+        if ($this->deserializer === null) {
             $this->delegateTypeAdapter = $this->delegateTypeAdapter ?? $this->typeAdapterProvider->getAdapter($this->type, $this->skip);
 
-            return $this->delegateTypeAdapter->read($reader);
+            return $this->delegateTypeAdapter->read($value, $context);
         }
 
-        $jsonElementTypeAdapter = new JsonElementTypeAdapter();
-        $jsonElement = $jsonElementTypeAdapter->read($reader);
+        if ($value === null) {
+            return null;
+        }
 
         return $this->deserializer->deserialize(
-            $jsonElement,
+            $value,
             $this->type,
-            new DefaultJsonDeserializationContext($this->typeAdapterProvider, $reader->getContext())
+            new DefaultJsonDeserializationContext($this->typeAdapterProvider, $context)
         );
     }
 
     /**
      * Write the value to the writer for the type
      *
-     * @param JsonWritable $writer
      * @param mixed $value
-     * @return void
+     * @param WriterContext $context
+     * @return mixed
      */
-    public function write(JsonWritable $writer, $value): void
+    public function write($value, WriterContext $context)
     {
-        if (null === $this->serializer) {
+        if ($this->serializer === null) {
             $this->delegateTypeAdapter = $this->delegateTypeAdapter ?? $this->typeAdapterProvider->getAdapter($this->type, $this->skip);
 
-            $this->delegateTypeAdapter->write($writer, $value);
-
-            return;
+            return $this->delegateTypeAdapter->write($value, $context);
         }
 
-        if (null === $value) {
-            $writer->writeNull();
-
-            return;
+        if ($value === null) {
+            return null;
         }
 
-        $jsonElement = $this->serializer->serialize(
+        return $this->serializer->serialize(
             $value,
             $this->type,
-            new DefaultJsonSerializationContext($this->typeAdapterProvider, $writer->isSerializeNull())
+            new DefaultJsonSerializationContext($this->typeAdapterProvider, $context)
         );
-
-        $jsonElementTypeAdapter = new JsonElementTypeAdapter();
-        $jsonElementTypeAdapter->write($writer, $jsonElement);
     }
 }

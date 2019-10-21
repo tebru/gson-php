@@ -53,11 +53,11 @@ within the deserializer, delegate deserialization for the concrete.
 ```php
 class FooDeserializer implements JsonDeserializer
 {
-    public function deserialize(JsonElement $jsonElement, PhpType $type, JsonDeserializationContext $context)
+    public function deserialize($value, TypeToken $type, JsonDeserializationContext $context)
     {
-        return $jsonElement->asJsonObject()->getAsBoolean('property')
-            ? $context->deserialize($jsonElement, Foo::class)
-            : $context->deserialize($jsonElement, Bar::class);
+        return $value['property']
+            ? $context->deserialize($value, Foo::class)
+            : $context->deserialize($value, Bar::class);
     }
 }
 ```
@@ -78,9 +78,9 @@ Gson::builder()
 ```php
 class FooDiscriminator implements Discriminator
 {
-    public function getClass(JsonObject $object): string
+    public function getClass($object): string
     {
-        switch ($object->getAsString('status')) {
+        switch ($object['status']) {
             case 'foo':
                 return Child1::class;
             case 'bar':
@@ -149,12 +149,20 @@ Gson::builder()
     ->build();
 ```
 
-Enable Serializing Nulls
-------------------------
+Reader/Writer Contexts
+----------------------
+
+Contexts can now be defined during reading and writing and set on the
+builder at compile time. You can set custom attributes to use for
+custom type adapters.
 
 ```php
+$writerContext = new WriterContext();
+$writerContext->setSerializeNull(true);
+$writerContext->setAttribute('foo', 'bar');
+
 Gson::builder()
-    ->serializeNull()
+    ->setWriterContext($writerContext)
     ->build();
 ```
 

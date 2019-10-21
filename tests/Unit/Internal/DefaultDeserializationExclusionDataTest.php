@@ -7,9 +7,8 @@ namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\Internal\DefaultDeserializationExclusionData;
-use Tebru\Gson\Internal\DefaultReaderContext;
-use Tebru\Gson\Internal\JsonDecodeReader;
 
 /**
  * Class DefaultDeserializationExclusionDataTest
@@ -22,23 +21,11 @@ class DefaultDeserializationExclusionDataTest extends TestCase
     public function testGetters(): void
     {
         $object = new stdClass();
-        $context = new DefaultReaderContext();
-        $exclusionData = new DefaultDeserializationExclusionData($object, new JsonDecodeReader('{}', $context));
-        self::assertInstanceOf(stdClass::class, $exclusionData->getPayload());
+        $context = new ReaderContext();
+        $context->setPayload(json_decode('{}', true));
+        $exclusionData = new DefaultDeserializationExclusionData($object, $context);
+        self::assertSame([], $exclusionData->getContext()->getPayload());
         self::assertSame($object, $exclusionData->getObjectToReadInto());
         self::assertSame($context, $exclusionData->getContext());
-        self::assertSame('$', $exclusionData->getPath());
-    }
-
-    public function testUpdatePath(): void
-    {
-        $object = new stdClass();
-        $context = new DefaultReaderContext();
-        $reader = new JsonDecodeReader('{"foo": "bar"}', $context);
-        $reader->beginObject();
-        $exclusionData = new DefaultDeserializationExclusionData($object, $reader);
-        $reader->nextName();
-
-        self::assertSame('$.foo', $exclusionData->getPath());
     }
 }

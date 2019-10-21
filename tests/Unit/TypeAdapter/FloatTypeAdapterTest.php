@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Test\Unit\TypeAdapter;
 
-use PHPUnit\Framework\TestCase;
 use Tebru\Gson\TypeAdapter\FloatTypeAdapter;
 
 /**
@@ -16,19 +15,19 @@ use Tebru\Gson\TypeAdapter\FloatTypeAdapter;
  * @covers \Tebru\Gson\TypeAdapter\FloatTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class FloatTypeAdapterTest extends TestCase
+class FloatTypeAdapterTest extends TypeAdapterTestCase
 {
     public function testDeserializeNull(): void
     {
         $adapter = new FloatTypeAdapter();
 
-        self::assertNull($adapter->readFromJson('null'));
+        self::assertNull($adapter->read(json_decode('null', true), $this->readerContext));
     }
 
     public function testDeserializeRead(): void
     {
         $adapter = new FloatTypeAdapter();
-        $result = $adapter->readFromJson('1.1');
+        $result = $adapter->read(json_decode('1.1', true), $this->readerContext);
 
         self::assertSame(1.1, $result);
     }
@@ -36,7 +35,7 @@ class FloatTypeAdapterTest extends TestCase
     public function testDeserializeReadIntegerToFloat(): void
     {
         $adapter = new FloatTypeAdapter();
-        $result = $adapter->readFromJson('1');
+        $result = $adapter->read(json_decode('1', true), $this->readerContext);
 
         self::assertSame(1.0, $result);
     }
@@ -45,20 +44,20 @@ class FloatTypeAdapterTest extends TestCase
     {
         $adapter = new FloatTypeAdapter();
 
-        self::assertSame('null', $adapter->writeToJson(null, false));
+        self::assertNull($adapter->write(null, $this->writerContext));
     }
 
     public function testSerializeFloat(): void
     {
         $adapter = new FloatTypeAdapter();
 
-        self::assertSame('1.1', $adapter->writeToJson(1.1, false));
+        self::assertSame(1.1, $adapter->write(1.1, $this->writerContext));
     }
 
     public function testSerializeFloatAsInt(): void
     {
         $adapter = new FloatTypeAdapter();
 
-        self::assertSame('1', $adapter->writeToJson(1, false));
+        self::assertSame(1.0, $adapter->write(1, $this->writerContext));
     }
 }

@@ -57,7 +57,7 @@ final class SetByClosure implements SetterStrategy
     public function set($object, $value): void
     {
         if (null === $this->setter) {
-            $this->setter = Closure::bind(function ($object, $value, string $propertyName) {
+            $this->setter = Closure::bind(static function ($object, $value, string $propertyName) {
                 $object->{$propertyName} = $value;
             }, null, $this->className);
         }

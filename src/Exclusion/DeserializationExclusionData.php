@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Exclusion;
 
-use Tebru\Gson\ReaderContext;
+use Tebru\Gson\Context\ReaderContext;
 
 /**
  * Interface DeserializationExclusionData
@@ -19,13 +19,6 @@ use Tebru\Gson\ReaderContext;
  */
 interface DeserializationExclusionData
 {
-    /**
-     * Get the json data after json_decode()
-     *
-     * @return mixed
-     */
-    public function getPayload();
-
     /**
      * Returns the initial object if it was provided to Gson::fromJson() or null
      *
@@ -39,11 +32,4 @@ interface DeserializationExclusionData
      * @return ReaderContext
      */
     public function getContext(): ReaderContext;
-
-    /**
-     * Get the current path formatted as json xpath
-     *
-     * @return string
-     */
-    public function getPath(): string;
 }

@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Tebru\Gson;
 
-use Tebru\Gson\Element\JsonElement;
-
 /**
  * Interface JsonDeserializationContext
  *
@@ -21,13 +19,13 @@ use Tebru\Gson\Element\JsonElement;
 interface JsonDeserializationContext
 {
     /**
-     * Delegate deserialization of a JsonElement.  Should not be called on the original
+     * Delegate deserialization of normalized data.  Should not be called on the original
      * element as doing so will result in an infinite loop.  Should return a deserialized
      * object.
      *
-     * @param JsonElement $jsonElement
+     * @param mixed $value
      * @param string $type
      * @return mixed
      */
-    public function deserialize(JsonElement $jsonElement, string $type);
+    public function deserialize($value, string $type);
 }

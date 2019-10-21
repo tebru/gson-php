@@ -5,9 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Tebru\Gson\Internal;
-
-use Tebru\Gson\ReaderContext;
+namespace Tebru\Gson\Context;
 
 /**
  * Class JsonReaderContext
@@ -16,7 +14,7 @@ use Tebru\Gson\ReaderContext;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class DefaultReaderContext implements ReaderContext
+class ReaderContext extends Context
 {
     /**
      * True if we're reading into an existing object
@@ -24,6 +22,13 @@ class DefaultReaderContext implements ReaderContext
      * @var bool
      */
     private $usesExistingObject = false;
+
+    /**
+     * The initial json_decode'd payload
+     *
+     * @var mixed
+     */
+    private $payload;
 
     /**
      * If we're reading into an existing object
@@ -44,6 +49,25 @@ class DefaultReaderContext implements ReaderContext
     public function setUsesExistingObject(bool $usesExistingObject): ReaderContext
     {
         $this->usesExistingObject = $usesExistingObject;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPayload()
+    {
+        return $this->payload;
+    }
+
+    /**
+     * @param mixed $payload
+     * @return ReaderContext
+     */
+    public function setPayload($payload): ReaderContext
+    {
+        $this->payload = $payload;
 
         return $this;
     }

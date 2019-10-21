@@ -125,7 +125,7 @@ final class TypeTokenFactory
         if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
             $parameter = $setterMethod->getParameters()[0];
             if ($parameter->isDefaultValueAvailable() && null !== $parameter->getDefaultValue()) {
-                $setterType = TypeToken::create(\gettype($parameter->getDefaultValue()));
+                $setterType = TypeToken::create(gettype($parameter->getDefaultValue()));
                 return $this->checkGenericArray($setterType, $property, $getterMethod, $setterMethod);
             }
         }
@@ -167,7 +167,7 @@ final class TypeTokenFactory
         if ($setter !== null) {
             $docComment = $setter->getDocComment() ?: null;
             $parameters = $setter->getParameters();
-            if (\count($parameters) === 1) {
+            if (count($parameters) === 1) {
                 $tag = $this->getTypeFromDoc($setter, $docComment, 'param', $parameters[0]->getName());
                 if ($tag !== null) {
                     $returnTag = $tag;
@@ -256,11 +256,11 @@ final class TypeTokenFactory
             return TypeToken::create($this->unwrapArray($type));
         }
 
-        $types = \iterator_to_array($type->getIterator());
-        $types = \array_values(\array_filter($types, function ($innerType) {
+        $types = iterator_to_array($type->getIterator());
+        $types = array_values(array_filter($types, static function ($innerType) {
             return !$innerType instanceof Null_;
         }));
-        $count = \count($types);
+        $count = count($types);
 
         if ($count !== 1) {
             return null;
@@ -295,15 +295,15 @@ final class TypeTokenFactory
     private function unwrapArray(string $type): string
     {
         // if not in array syntax
-        if (\strpos($type, '[]') === false) {
+        if (strpos($type, '[]') === false) {
             // convert mixed to wildcard
             return $type === 'mixed' ? TypeToken::WILDCARD : $type;
         }
 
-        $parts = \explode('[]', $type);
-        $primaryType = \array_shift($parts);
+        $parts = explode('[]', $type);
+        $primaryType = array_shift($parts);
 
-        $numParts = \count($parts);
+        $numParts = count($parts);
 
         // same as mixed
         if ($primaryType === 'array') {
@@ -311,7 +311,7 @@ final class TypeTokenFactory
             $numParts++;
         }
 
-        return \str_repeat('array<', $numParts) . $primaryType . \str_repeat('>', $numParts);
+        return str_repeat('array<', $numParts) . $primaryType . str_repeat('>', $numParts);
     }
 
     /**

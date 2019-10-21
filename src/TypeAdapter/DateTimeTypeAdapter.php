@@ -10,10 +10,9 @@ namespace Tebru\Gson\TypeAdapter;
 
 use DateTimeInterface;
 use Tebru\Gson\Exception\JsonSyntaxException;
-use Tebru\Gson\JsonReadable;
-use Tebru\Gson\JsonToken;
-use Tebru\Gson\JsonWritable;
+use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\TypeAdapter;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -48,53 +47,42 @@ class DateTimeTypeAdapter extends TypeAdapter
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param JsonReadable $reader
+     * @param DateTimeInterface|null $value
+     * @param ReaderContext $context
      * @return DateTimeInterface|null
-     * @throws \Tebru\Gson\Exception\JsonSyntaxException If the DateTime could not be created from format
      */
-    public function read(JsonReadable $reader): ?DateTimeInterface
+    public function read($value, ReaderContext $context): ?DateTimeInterface
     {
-        if ($reader->peek() === JsonToken::NULL) {
-            $reader->nextNull();
+        if ($value === null) {
             return null;
         }
-
-        $formattedDateTime = $reader->nextString();
 
         $class = $this->type->rawType;
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $dateTime = $class::createFromFormat($this->format, $formattedDateTime);
+        $dateTime = $class::createFromFormat($this->format, $value);
 
         if ($dateTime !== false) {
             return $dateTime;
         }
 
-        throw new JsonSyntaxException(\sprintf(
-            'Could not create "%s" class from "%s" using format "%s" at "%s"',
+        throw new JsonSyntaxException(sprintf(
+            'Could not create "%s" class from "%s" using format "%s"',
             $class,
-            $formattedDateTime,
-            $this->format,
-            $reader->getPath()
+            $value,
+            $this->format
         ));
     }
 
     /**
      * Write the value to the writer for the type
      *
-     * @param JsonWritable $writer
      * @param DateTimeInterface $value
-     * @return void
+     * @param WriterContext $context
+     * @return string|null
      */
-    public function write(JsonWritable $writer, $value): void
+    public function write($value, WriterContext $context): ?string
     {
-        if (null === $value) {
-            $writer->writeNull();
-
-            return;
-        }
-
-        $dateTime = $value->format($this->format);
-        $writer->writeString($dateTime);
+        return $value === null ? null : $value->format($this->format);
     }
 }

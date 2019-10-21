@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Tebru\Gson;
 
-use Tebru\Gson\Element\JsonObject;
-
 /**
  * Interface Discriminator
  *
@@ -21,10 +19,10 @@ use Tebru\Gson\Element\JsonObject;
 interface Discriminator
 {
     /**
-     * Returns a classname based on data provided in a [@see JsonObject]
+     * Returns a classname based on an object data
      *
-     * @param JsonObject $object
+     * @param object $object
      * @return string
      */
-    public function getClass(JsonObject $object): string;
+    public function getClass($object): string;
 }

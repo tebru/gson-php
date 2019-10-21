@@ -6,8 +6,6 @@
 
 namespace Tebru\Gson\Test\Mock;
 
-use Tebru\Gson\Element\JsonElement;
-use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\JsonDeserializationContext;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializationContext;
@@ -22,62 +20,57 @@ use Tebru\PhpType\TypeToken;
 class MockSerializerDeserializer implements JsonSerializer, JsonDeserializer
 {
     /**
-     * Called during serialization process, passing in the object and type that should
-     * be serialized.  Delegate serialization using the provided context.  Method should
-     * return a JsonElement.
-     *
-     * @param UserMock $object
-     * @param TypeToken $type
-     * @param JsonSerializationContext $context
-     * @return JsonElement
-     */
-    public function serialize($object, TypeToken $type, JsonSerializationContext $context): JsonElement
-    {
-        $jsonUser = new JsonObject();
-        $jsonUser->addInteger('id', $object->getId());
-        $jsonUser->addString('email', $object->getEmail());
-        $jsonUser->addString('name', $object->getName());
-        $jsonUser->addString('phone', $object->getPhone());
-        $jsonUser->addBoolean('enabled', $object->isEnabled());
-
-        $address = $object->getAddress();
-
-        $jsonUser->addString('city', $address->getCity());
-        $jsonUser->addString('state', $address->getState());
-        $jsonUser->addString('street', $address->getStreet());
-        $jsonUser->addInteger('zip', $address->getZip());
-
-        return $jsonUser;
-    }
-
-    /**
-     * Called during deserialization process, passing in the JsonElement for the type.  Use
+     * Called during deserialization process, passing in the normalized data. Use
      * the JsonDeserializationContext if you want to delegate deserialization of sub types.
      *
-     * @param JsonElement $jsonElement
+     * @param mixed $value
      * @param TypeToken $type
      * @param JsonDeserializationContext $context
-     * @return UserMock
+     * @return mixed
      */
-    public function deserialize(JsonElement $jsonElement, TypeToken $type, JsonDeserializationContext $context): UserMock
+    public function deserialize($value, TypeToken $type, JsonDeserializationContext $context)
     {
-        /** @var JsonObject $jsonUser */
-        $jsonUser = $jsonElement;
         $user = new UserMock();
-        $user->setId($jsonUser->get('id')->asInteger());
-        $user->setEmail($jsonUser->get('email')->asString());
-        $user->setName($jsonUser->get('name')->asString());
-        $user->setPhone($jsonUser->get('phone')->asString());
-        $user->setEnabled($jsonUser->get('enabled')->asBoolean());
+        $user->setId($value['id']);
+        $user->setEmail($value['email']);
+        $user->setName($value['name']);
+        $user->setPhone($value['phone']);
+        $user->setEnabled($value['enabled']);
 
         $address = new AddressMock();
-        $address->setCity($jsonUser->get('city')->asString());
-        $address->setState($jsonUser->get('state')->asString());
-        $address->setStreet($jsonUser->get('street')->asString());
-        $address->setZip($jsonUser->get('zip')->asInteger());
+        $address->setCity($value['city']);
+        $address->setState($value['state']);
+        $address->setStreet($value['street']);
+        $address->setZip($value['zip']);
 
         $user->setAddress($address);
 
         return $user;
+    }
+
+    /**
+     * Called during serialization process, passing in the object and type that should
+     * be serialized. Delegate serialization using the provided context.
+     *
+     * @param UserMock $object
+     * @param TypeToken $type
+     * @param JsonSerializationContext $context
+     * @return mixed
+     */
+    public function serialize($object, TypeToken $type, JsonSerializationContext $context)
+    {
+        $address = $object->getAddress();
+
+        return [
+            'id' => $object->getId(),
+            'email' => $object->getEmail(),
+            'name' => $object->getName(),
+            'phone' => $object->getPhone(),
+            'enabled' => $object->isEnabled(),
+            'city' => $address->getCity(),
+            'state' => $address->getState(),
+            'street' => $address->getStreet(),
+            'zip' => $address->getZip(),
+        ];
     }
 }

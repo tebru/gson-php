@@ -6,7 +6,6 @@
 
 namespace Tebru\Gson\Test\Unit\TypeAdapter;
 
-use PHPUnit\Framework\TestCase;
 use Tebru\Gson\TypeAdapter\NullTypeAdapter;
 
 /**
@@ -16,19 +15,19 @@ use Tebru\Gson\TypeAdapter\NullTypeAdapter;
  * @covers \Tebru\Gson\TypeAdapter\NullTypeAdapter
  * @covers \Tebru\Gson\TypeAdapter
  */
-class NullTypeAdapterTest extends TestCase
+class NullTypeAdapterTest extends TypeAdapterTestCase
 {
     public function testRead(): void
     {
         $adapter = new NullTypeAdapter();
 
-        self::assertNull($adapter->readFromJson('null'));
+        self::assertNull($adapter->read(json_decode('null', true), $this->readerContext));
     }
 
     public function testWrite(): void
     {
         $adapter = new NullTypeAdapter();
 
-        self::assertSame('null', $adapter->writeToJson(null, false));
+        self::assertNull($adapter->write(null, $this->writerContext));
     }
 }
