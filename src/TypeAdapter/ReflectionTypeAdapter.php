@@ -41,86 +41,86 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
     /**
      * @var PropertyCollection
      */
-    private $properties;
+    protected $properties;
 
     /**
      * @var DefaultClassMetadata
      */
-    private $classMetadata;
+    protected $classMetadata;
 
     /**
      * @var AnnotationCollection
      */
-    private $classAnnotations;
+    protected $classAnnotations;
 
     /**
      * @var Excluder
      */
-    private $excluder;
+    protected $excluder;
 
     /**
      * @var TypeAdapterProvider
      */
-    private $typeAdapterProvider;
+    protected $typeAdapterProvider;
 
     /**
      * @var null|string
      */
-    private $classVirtualProperty;
+    protected $classVirtualProperty;
 
     /**
      * @var bool
      */
-    private $skipSerialize;
+    protected $skipSerialize;
 
     /**
      * @var bool
      */
-    private $skipDeserialize;
+    protected $skipDeserialize;
 
     /**
      * @var bool
      */
-    private $hasClassSerializationStrategies;
+    protected $hasClassSerializationStrategies;
 
     /**
      * @var bool
      */
-    private $hasPropertySerializationStrategies;
+    protected $hasPropertySerializationStrategies;
 
     /**
      * @var bool
      */
-    private $hasClassDeserializationStrategies;
+    protected $hasClassDeserializationStrategies;
 
     /**
      * @var bool
      */
-    private $hasPropertyDeserializationStrategies;
+    protected $hasPropertyDeserializationStrategies;
 
     /**
      * An memory cache of used type adapters
      *
      * @var TypeAdapter[]
      */
-    private $adapters = [];
+    protected $adapters = [];
 
     /**
      * A memory cache of read properties
      *
      * @var Property[]
      */
-    private $propertyCache = [];
+    protected $propertyCache = [];
 
     /**
      * @var bool
      */
-    private $requireExclusionCheck;
+    protected $requireExclusionCheck;
 
     /**
      * @var bool
      */
-    private $hasPropertyExclusionCheck;
+    protected $hasPropertyExclusionCheck;
 
     /**
      * Constructor
@@ -328,7 +328,7 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
      * @param Property $property
      * @return TypeAdapter
      */
-    private function getAdapter(Property $property): TypeAdapter
+    protected function getAdapter(Property $property): TypeAdapter
     {
         /** @var JsonAdapter $jsonAdapterAnnotation */
         $jsonAdapterAnnotation = $property->annotations->get(JsonAdapter::class);

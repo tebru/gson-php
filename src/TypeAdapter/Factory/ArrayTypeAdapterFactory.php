@@ -26,7 +26,7 @@ class ArrayTypeAdapterFactory implements TypeAdapterFactory
     /**
      * @var bool
      */
-    private $enableScalarAdapters;
+    protected $enableScalarAdapters;
 
     /**
      * Constructor

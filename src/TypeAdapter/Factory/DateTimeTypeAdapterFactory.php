@@ -25,7 +25,7 @@ class DateTimeTypeAdapterFactory implements TypeAdapterFactory
     /**
      * @var string
      */
-    private $format;
+    protected $format;
 
     /**
      * Constructor

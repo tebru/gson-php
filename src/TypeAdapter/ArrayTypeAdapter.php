@@ -27,29 +27,29 @@ class ArrayTypeAdapter extends TypeAdapter
     /**
      * @var TypeAdapterProvider
      */
-    private $typeAdapterProvider;
+    protected $typeAdapterProvider;
 
     /**
      * @var TypeToken
      */
-    private $keyType;
+    protected $keyType;
 
     /**
      * @var TypeAdapter
      */
-    private $valueTypeAdapter;
+    protected $valueTypeAdapter;
 
     /**
      * @var int
      */
-    private $numberOfGenerics;
+    protected $numberOfGenerics;
 
     /**
      * A TypeAdapter cache keyed by raw type
      *
      * @var TypeAdapter[]
      */
-    private $adapters = [];
+    protected $adapters = [];
 
     /**
      * Constructor

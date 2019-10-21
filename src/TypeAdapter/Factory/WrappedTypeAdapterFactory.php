@@ -23,16 +23,16 @@ class WrappedTypeAdapterFactory implements TypeAdapterFactory
     /**
      * @var TypeAdapter
      */
-    private $typeAdapter;
+    protected $typeAdapter;
 
     /**
      * @var TypeToken
      */
-    private $type;
+    protected $type;
     /**
      * @var bool
      */
-    private $strict;
+    protected $strict;
 
     /**
      * Constructor

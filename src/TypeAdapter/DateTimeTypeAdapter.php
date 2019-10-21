@@ -25,12 +25,12 @@ class DateTimeTypeAdapter extends TypeAdapter
     /**
      * @var TypeToken
      */
-    private $type;
+    protected $type;
 
     /**
      * @var string
      */
-    private $format;
+    protected $format;
 
     /**
      * Constructor

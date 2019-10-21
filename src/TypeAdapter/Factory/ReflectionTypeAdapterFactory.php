@@ -32,27 +32,27 @@ class ReflectionTypeAdapterFactory implements TypeAdapterFactory
     /**
      * @var ConstructorConstructor
      */
-    private $constructorConstructor;
+    protected $constructorConstructor;
 
     /**
      * @var ClassMetadataFactory
      */
-    private $classMetadataFactory;
+    protected $classMetadataFactory;
 
     /**
      * @var Excluder
      */
-    private $excluder;
+    protected $excluder;
 
     /**
      * @var bool
      */
-    private $requireExclusionCheck;
+    protected $requireExclusionCheck;
 
     /**
      * @var array
      */
-    private $classMetadataVisitors;
+    protected $classMetadataVisitors;
 
     /**
      * Constructor

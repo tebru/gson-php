@@ -26,22 +26,22 @@ class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
     /**
      * @var TypeToken
      */
-    private $type;
+    protected $type;
 
     /**
      * @var JsonSerializer
      */
-    private $serializer;
+    protected $serializer;
 
     /**
      * @var JsonDeserializer
      */
-    private $deserializer;
+    protected $deserializer;
 
     /**
      * @var bool
      */
-    private $strict;
+    protected $strict;
 
     /**
      * Constructor

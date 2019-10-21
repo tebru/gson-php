@@ -24,7 +24,7 @@ class WildcardTypeAdapter extends TypeAdapter
     /**
      * @var TypeAdapterProvider
      */
-    private $typeAdapterProvider;
+    protected $typeAdapterProvider;
 
     /**
      * Constructor

@@ -31,34 +31,34 @@ class CustomWrappedTypeAdapter extends TypeAdapter
     /**
      * @var TypeToken
      */
-    private $type;
+    protected $type;
 
     /**
      * @var TypeAdapterProvider
      */
-    private $typeAdapterProvider;
+    protected $typeAdapterProvider;
 
     /**
      * @var JsonSerializer
      */
-    private $serializer;
+    protected $serializer;
 
     /**
      * @var JsonDeserializer
      */
-    private $deserializer;
+    protected $deserializer;
 
     /**
      * @var TypeAdapterFactory
      */
-    private $skip;
+    protected $skip;
 
     /**
      * Cached instance of the delegate type adapter
      *
      * @var TypeAdapter
      */
-    private $delegateTypeAdapter;
+    protected $delegateTypeAdapter;
 
     /**
      * Constructor
