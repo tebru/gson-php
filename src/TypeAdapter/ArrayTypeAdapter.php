@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace Tebru\Gson\TypeAdapter;
 
 use LogicException;
-use stdClass;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Context\ReaderContext;

@@ -29,15 +29,15 @@ use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Internal\TypeTokenFactory;
 use Tebru\Gson\PropertyNamingPolicy;
+use Tebru\Gson\TypeAdapter\BooleanTypeAdapter;
 use Tebru\Gson\TypeAdapter\Factory\ArrayTypeAdapterFactory;
-use Tebru\Gson\TypeAdapter\Factory\BooleanTypeAdapterFactory;
 use Tebru\Gson\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
-use Tebru\Gson\TypeAdapter\Factory\FloatTypeAdapterFactory;
-use Tebru\Gson\TypeAdapter\Factory\IntegerTypeAdapterFactory;
-use Tebru\Gson\TypeAdapter\Factory\NullTypeAdapterFactory;
 use Tebru\Gson\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
-use Tebru\Gson\TypeAdapter\Factory\StringTypeAdapterFactory;
 use Tebru\Gson\TypeAdapter\Factory\WildcardTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\FloatTypeAdapter;
+use Tebru\Gson\TypeAdapter\IntegerTypeAdapter;
+use Tebru\Gson\TypeAdapter\NullTypeAdapter;
+use Tebru\Gson\TypeAdapter\StringTypeAdapter;
 
 /**
  * Class MockProvider
@@ -114,11 +114,11 @@ class MockProvider
             array_merge(
                 $factories,
                 [
-                    new StringTypeAdapterFactory(),
-                    new IntegerTypeAdapterFactory(),
-                    new FloatTypeAdapterFactory(),
-                    new BooleanTypeAdapterFactory(),
-                    new NullTypeAdapterFactory(),
+                    new StringTypeAdapter(),
+                    new IntegerTypeAdapter(),
+                    new FloatTypeAdapter(),
+                    new BooleanTypeAdapter(),
+                    new NullTypeAdapter(),
                     new DateTimeTypeAdapterFactory(DateTime::ATOM),
                     new ArrayTypeAdapterFactory(false),
                     $reflectionTypeAdapterFactory,

@@ -195,7 +195,7 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
         }
 
         if ($this->classVirtualProperty !== null) {
-            $value = array_pop($value);
+            $value = array_shift($value);
         }
 
         $usesExisting = $context->usesExistingObject();

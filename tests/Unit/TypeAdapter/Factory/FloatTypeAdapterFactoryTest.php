@@ -8,7 +8,6 @@ namespace Tebru\Gson\Test\Unit\TypeAdapter\Factory;
 
 
 use PHPUnit\Framework\TestCase;
-use Tebru\Gson\TypeAdapter\Factory\FloatTypeAdapterFactory;
 use Tebru\Gson\TypeAdapter\FloatTypeAdapter;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
@@ -17,13 +16,13 @@ use Tebru\PhpType\TypeToken;
  * Class FloatTypeAdapterFactoryTest
  *
  * @author Nate Brunette <n@tebru.net>
- * @covers \Tebru\Gson\TypeAdapter\Factory\FloatTypeAdapterFactory
+ * @covers \Tebru\Gson\TypeAdapter\FloatTypeAdapter
  */
 class FloatTypeAdapterFactoryTest extends TestCase
 {
     public function testInvalidSupports(): void
     {
-        $factory = new FloatTypeAdapterFactory();
+        $factory = new FloatTypeAdapter();
         $adapter = $factory->create(new TypeToken('string'), MockProvider::typeAdapterProvider());
 
         self::assertNull($adapter);
@@ -31,7 +30,7 @@ class FloatTypeAdapterFactoryTest extends TestCase
 
     public function testCreate(): void
     {
-        $factory = new FloatTypeAdapterFactory();
+        $factory = new FloatTypeAdapter();
         $adapter = $factory->create(new TypeToken('float'), MockProvider::typeAdapterProvider());
 
         self::assertInstanceOf(FloatTypeAdapter::class, $adapter);
