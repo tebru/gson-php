@@ -646,6 +646,7 @@ class GsonTest extends TestCase
     {
         $gson = Gson::builder()
             ->addTypeAdapterFactory(new CustomTypeAdapter())
+            ->setEnableScalarAdapters(false)
             ->build();
         $result = $gson->fromJson('1', '');
 
@@ -952,6 +953,17 @@ class GsonTest extends TestCase
         self::assertSame('foo', $result);
     }
 
+    public function testSerializeIntegerWithoutScalarTypeAdapters(): void
+    {
+        $gson = Gson::builder()
+            ->addTypeAdapterFactory(new CustomTypeAdapter())
+            ->setEnableScalarAdapters(false)
+            ->build();
+        $result = $gson->toNormalized(1);
+
+        self::assertSame(1, $result);
+    }
+
     public function testSerializeChildExclude(): void
     {
         $gson = Gson::builder()
@@ -1029,7 +1041,7 @@ class GsonTest extends TestCase
     public function testIncompatibleContext(): void
     {
         $context = new ReaderContext();
-        $context->setEnableScalarAdapters(true);
+        $context->setEnableScalarAdapters(false);
 
         try {
             Gson::builder()

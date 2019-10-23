@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
-use Tebru\Gson\JsonSerializationContext;
 use Tebru\Gson\Context\WriterContext;
+use Tebru\Gson\JsonSerializationContext;
 use Tebru\PhpType\TypeToken;
 
 /**

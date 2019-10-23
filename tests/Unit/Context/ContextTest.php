@@ -22,12 +22,12 @@ class ContextTest extends TestCase
     public function testReaderContext(): void
     {
         $context = new ReaderContext();
-        $context->setEnableScalarAdapters(true);
         $context->setPayload([]);
         $context->setUsesExistingObject(true);
         $context->setAttribute('foo', 'bar');
+        $context->setEnableScalarAdapters(false);
 
-        self::assertTrue($context->enableScalarAdapters());
+        self::assertFalse($context->enableScalarAdapters());
         self::assertTrue($context->usesExistingObject());
         self::assertSame([], $context->getPayload());
         self::assertSame(['foo' => 'bar'], $context->getAttributes());
@@ -37,11 +37,11 @@ class ContextTest extends TestCase
     public function testWriterContext(): void
     {
         $context = new WriterContext();
-        $context->setEnableScalarAdapters(true);
         $context->setAttribute('foo', 'bar');
         $context->setSerializeNull(true);
+        $context->setEnableScalarAdapters(false);
 
-        self::assertTrue($context->enableScalarAdapters());
+        self::assertFalse($context->enableScalarAdapters());
         self::assertTrue($context->serializeNull());
         self::assertSame(['foo' => 'bar'], $context->getAttributes());
         self::assertSame('bar', $context->getAttribute('foo'));

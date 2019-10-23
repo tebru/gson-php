@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Tebru\Gson\Context;
 
 /**
- * Class JsonReaderContext
+ * Class ReaderContext
  *
  * Runtime context that can be used during reading
  *

@@ -60,6 +60,16 @@ class WildcardTypeAdapterTest extends TypeAdapterTestCase
         self::assertSame('foo', $result);
     }
 
+    public function testDeserializeStringWithoutScalarTypeAdapters(): void
+    {
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
+        $this->readerContext->setEnableScalarAdapters(false);
+
+        $result = $adapter->read(json_decode('"foo"', true), $this->readerContext);
+
+        self::assertSame('foo', $result);
+    }
+
     public function testDeserializeName(): void
     {
         $adapter = new WildcardTypeAdapter($this->typeAdapterProvider);
@@ -130,6 +140,14 @@ class WildcardTypeAdapterTest extends TypeAdapterTestCase
     public function testSerializeString(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
+
+        self::assertSame('foo', $adapter->write('foo', $this->writerContext));
+    }
+
+    public function testSerializeStringWithoutScalarTypeAdapters(): void
+    {
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('?'));
+        $this->writerContext->setEnableScalarAdapters(false);
 
         self::assertSame('foo', $adapter->write('foo', $this->writerContext));
     }

@@ -11,6 +11,8 @@ namespace Tebru\Gson\TypeAdapter;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\Gson\Annotation\ExclusionCheck;
 use Tebru\Gson\Annotation\JsonAdapter;
+use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\DefaultClassMetadata;
@@ -22,9 +24,7 @@ use Tebru\Gson\Internal\ObjectConstructor\CreateFromInstance;
 use Tebru\Gson\Internal\ObjectConstructorAware;
 use Tebru\Gson\Internal\ObjectConstructorAwareTrait;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\TypeAdapter;
-use Tebru\Gson\Context\WriterContext;
 use TypeError;
 
 /**
@@ -219,11 +219,7 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
                 continue;
             }
 
-            $adapter = $this->adapters[$name] ?? null;
-            if ($adapter === null) {
-                $adapter = $this->getAdapter($property);
-            }
-
+            $adapter = $this->adapters[$name] ?? $this->getAdapter($property);
             if ($usesExisting && $adapter instanceof ObjectConstructorAware) {
                 try {
                     $nestedObject = $property->getterStrategy->get($object);
@@ -284,12 +280,11 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
 
         /** @var Property $property */
         foreach ($this->properties as $property) {
-            $serializedName = $property->serializedName;
-
             if ($property->skipSerialize) {
                 continue;
             }
 
+            $serializedName = $property->serializedName;
             $checkProperty = $this->hasPropertySerializationStrategies
                 && (!$this->requireExclusionCheck || ($this->requireExclusionCheck && $property->annotations->get(ExclusionCheck::class) !== null));
             if ($checkProperty && $this->excluder->excludePropertyBySerializationStrategy($property)) {
@@ -304,11 +299,7 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
                 continue;
             }
 
-            $adapter = $this->adapters[$serializedName] ?? null;
-            if ($adapter === null) {
-                $adapter = $this->getAdapter($property);
-            }
-
+            $adapter = $this->adapters[$serializedName] ?? $this->getAdapter($property);
             $propertyValue = $adapter->write($property->getterStrategy->get($value), $context);
             if ($serializeNull || $propertyValue !== null) {
                 $result[$serializedName] = $propertyValue;

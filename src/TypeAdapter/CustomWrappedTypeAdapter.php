@@ -8,15 +8,15 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\TypeAdapter;
 
+use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
 use Tebru\Gson\Internal\DefaultJsonSerializationContext;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
-use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
-use Tebru\Gson\Context\WriterContext;
 use Tebru\PhpType\TypeToken;
 
 /**

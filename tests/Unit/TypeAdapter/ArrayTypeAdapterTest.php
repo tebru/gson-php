@@ -36,8 +36,6 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
     {
         parent::setUp();
 
-        $this->readerContext->setEnableScalarAdapters(true);
-        $this->writerContext->setEnableScalarAdapters(true);
         $this->typeAdapterProvider = MockProvider::typeAdapterProvider(MockProvider::excluder());
     }
     

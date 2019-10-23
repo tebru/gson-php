@@ -9,10 +9,10 @@ declare(strict_types=1);
 namespace Tebru\Gson\TypeAdapter;
 
 use DateTimeInterface;
-use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\Context\ReaderContext;
-use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\Context\WriterContext;
+use Tebru\Gson\Exception\JsonSyntaxException;
+use Tebru\Gson\TypeAdapter;
 use Tebru\PhpType\TypeToken;
 
 /**

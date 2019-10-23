@@ -8,10 +8,10 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\TypeAdapter;
 
-use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Context\ReaderContext;
-use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\Context\WriterContext;
+use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\TypeAdapter;
 use Tebru\PhpType\TypeToken;
 
 /**

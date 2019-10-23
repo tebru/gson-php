@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
-use Tebru\Gson\Exclusion\DeserializationExclusionData;
 use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\Exclusion\DeserializationExclusionData;
 
 /**
  * Class DefaultDeserializationExclusionData

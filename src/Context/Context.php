@@ -7,6 +7,11 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Context;
 
+/**
+ * Class Context
+ *
+ * @author Nate Brunette <n@tebru.net>
+ */
 abstract class Context
 {
     /**
@@ -21,7 +26,7 @@ abstract class Context
      *
      * @var bool
      */
-    protected $enableScalarAdapters = false;
+    protected $enableScalarAdapters = true;
 
     /**
      * Get an array of user defined attributes
@@ -78,7 +83,6 @@ abstract class Context
      */
     public function setEnableScalarAdapters(bool $enable): Context
     {
-
         $this->enableScalarAdapters = $enable;
 
         return $this;

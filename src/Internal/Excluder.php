@@ -427,6 +427,7 @@ final class Excluder
     private function excludeClass(DefaultClassMetadata $classMetadata, bool $serialize): bool
     {
         $annotations = $classMetadata->annotations;
+
         // exclude if version doesn't match
         if (!$this->validVersion($annotations)) {
             return true;
@@ -459,12 +460,13 @@ final class Excluder
     /**
      * Checks various annotations to see if the property should be excluded
      *
-     * - [@param Property $property
-     * @param bool $serialize
-     * @return bool
-     *@see Since] / [@see Until]
+     * - [@see Since] / [@see Until]
      * - [@see Exclude]
      * - [@see Expose] (if requireExpose is set)
+     *
+     * @param Property $property
+     * @param bool $serialize
+     * @return bool
      *
      */
     private function excludeProperty(Property $property, bool $serialize): bool

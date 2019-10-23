@@ -405,6 +405,12 @@ class GsonBuilder
         return $this;
     }
 
+    /**
+     * Set context to use during deserialization
+     *
+     * @param ReaderContext $context
+     * @return GsonBuilder
+     */
     public function setReaderContext(ReaderContext $context): GsonBuilder
     {
         $this->readerContext = $context;
@@ -412,13 +418,25 @@ class GsonBuilder
         return $this;
     }
 
-    public function setWriterContext(WriterContext $context)
+    /**
+     * Set context to use during serialization
+     *
+     * @param WriterContext $context
+     * @return GsonBuilder
+     */
+    public function setWriterContext(WriterContext $context): GsonBuilder
     {
         $this->writerContext = $context;
 
         return $this;
     }
 
+    /**
+     * Enable or disable scalar type adapters
+     *
+     * @param bool $enableScalarAdapters
+     * @return GsonBuilder
+     */
     public function setEnableScalarAdapters(bool $enableScalarAdapters): GsonBuilder
     {
         $this->enableScalarAdapters = $enableScalarAdapters;

@@ -85,7 +85,45 @@ class ReflectionTypeAdapterTest extends TypeAdapterTestCase
                 "phone": null,
                 "enabled": true
             }
-        ', true), new ReaderContext());
+        ', true), $this->readerContext);
+        $address = $user->getAddress();
+
+        self::assertInstanceOf(UserMock::class, $user);
+        self::assertSame(1, $user->getId());
+        self::assertSame('test@example.com', $user->getEmail());
+        self::assertSame('Test User', $user->getName());
+        self::assertNull($user->getPhone());
+        self::assertTrue($user->isEnabled());
+        self::assertNull($user->getPassword());
+        self::assertSame('123 ABC St.', $address->getStreet());
+        self::assertSame('My City', $address->getCity());
+        self::assertSame('MN', $address->getState());
+        self::assertSame(12345, $address->getZip());
+    }
+
+    public function testDeserializeWithoutScalarTypeAdapters(): void
+    {
+        /** @var ReflectionTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
+        $this->readerContext->setEnableScalarAdapters(false);
+
+        /** @var UserMock $user */
+        $user = $adapter->read(json_decode('
+            {
+                "id": 1,
+                "name": "Test User",
+                "email": "test@example.com",
+                "password": "password1",
+                "address": {
+                    "street": "123 ABC St.",
+                    "city": "My City",
+                    "state": "MN",
+                    "zip": 12345
+                },
+                "phone": null,
+                "enabled": true
+            }
+        ', true), $this->readerContext);
         $address = $user->getAddress();
 
         self::assertInstanceOf(UserMock::class, $user);
@@ -114,8 +152,7 @@ class ReflectionTypeAdapterTest extends TypeAdapterTestCase
         $userMock->setAddress($address);
 
         $adapter->setObjectConstructor(new CreateFromInstance($userMock));
-        $context = new ReaderContext();
-        $context->setUsesExistingObject(true);
+        $this->readerContext->setUsesExistingObject(true);
 
         /** @var UserMock $user */
         $user = $adapter->read(json_decode('
@@ -132,7 +169,7 @@ class ReflectionTypeAdapterTest extends TypeAdapterTestCase
                 "phone": null,
                 "enabled": true
             }
-        ', true), $context);
+        ', true), $this->readerContext);
         $address = $user->getAddress();
 
         self::assertInstanceOf(UserMock::class, $user);
@@ -156,8 +193,7 @@ class ReflectionTypeAdapterTest extends TypeAdapterTestCase
         $userMock = new UserMock();
 
         $adapter->setObjectConstructor(new CreateFromInstance($userMock));
-        $context = new ReaderContext();
-        $context->setUsesExistingObject(true);
+        $this->readerContext->setUsesExistingObject(true);
 
         /** @var UserMock $user */
         $user = $adapter->read(json_decode('
@@ -175,7 +211,7 @@ class ReflectionTypeAdapterTest extends TypeAdapterTestCase
                 "phone": null,
                 "enabled": true
             }
-        ', true), $context);
+        ', true), $this->readerContext);
         $address = $user->getAddress();
 
         self::assertInstanceOf(UserMock::class, $user);
@@ -214,7 +250,7 @@ class ReflectionTypeAdapterTest extends TypeAdapterTestCase
                 "phone": null,
                 "enabled": true
             }
-        ', true), new ReaderContext());
+        ', true), $this->readerContext);
 
         self::assertNull($user);
     }
@@ -242,7 +278,7 @@ class ReflectionTypeAdapterTest extends TypeAdapterTestCase
                 "phone": null,
                 "enabled": true
             }
-        ', true), new ReaderContext());
+        ', true), $this->readerContext);
 
         self::assertInstanceOf(UserMock::class, $user);
         self::assertNull($user->getEmail());
@@ -271,7 +307,7 @@ class ReflectionTypeAdapterTest extends TypeAdapterTestCase
                     "enabled": true
                 }
             }
-        ', true), new ReaderContext());
+        ', true), $this->readerContext);
         $address = $user->getAddress();
 
         self::assertInstanceOf(UserMockVirtual::class, $user);
@@ -304,6 +340,43 @@ class ReflectionTypeAdapterTest extends TypeAdapterTestCase
     public function testSerialize(): void
     {
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
+
+        $user = new UserMock();
+        $user->setId(1);
+        $user->setEmail('test@example.com');
+        $user->setPassword('password1');
+        $user->setName('John Doe');
+        $user->setPhone('(123) 456-7890');
+        $user->setEnabled(true);
+
+        $address = new AddressMock();
+        $address->setStreet('123 ABC St');
+        $address->setCity('Foo');
+        $address->setState('MN');
+        $address->setZip(12345);
+
+        $user->setAddress($address);
+
+        $expectedJson = '{
+            "id": 1,
+            "email": "test@example.com",
+            "name": "John Doe",
+            "address": {
+                "street": "123 ABC St",
+                "city": "Foo",
+                "state": "MN",
+                "zip": 12345
+            },
+            "phone": "(123) 456-7890"
+        }';
+
+        self::assertJsonStringEqualsJsonString($expectedJson, json_encode($adapter->write($user, $this->writerContext)));
+    }
+
+    public function testSerializeWithoutScalarTypeAdapters(): void
+    {
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
+        $this->writerContext->setEnableScalarAdapters(false);
 
         $user = new UserMock();
         $user->setId(1);

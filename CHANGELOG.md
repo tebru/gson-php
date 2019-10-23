@@ -12,7 +12,6 @@ master
 * BC BREAK: Changed JsonSerializer/JsonDeserializer definition
 * BC BREAK: Changed JsonSerializationContext/JsonDeserializationContext definition
 * BC BREAK: Changed TypeAdapter definition
-* BC BREAK: Removed scalar type adapters by default
 * BC BREAK: Moved serializeNull to Context
 * CHANGE: Moved TypeAdapters out of internal namespace and removed final
 * ADDED: ReaderContext and WriterContext

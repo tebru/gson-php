@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
-use Tebru\Gson\JsonDeserializationContext;
 use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\JsonDeserializationContext;
 use Tebru\PhpType\TypeToken;
 
 /**
