@@ -52,7 +52,7 @@ final class ConstructorConstructor
      */
     public function get(TypeToken $type): ObjectConstructor
     {
-        $class = $type->getRawType();
+        $class = $type->rawType;
         foreach ($this->instanceCreators as $instanceCreatorClass => $creator) {
             if ($type->isA($instanceCreatorClass)) {
                 return new CreateFromInstanceCreator($creator, $type);

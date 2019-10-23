@@ -8,8 +8,6 @@ declare(strict_types=1);
 
 namespace Tebru\Gson;
 
-use Tebru\Gson\Element\JsonElement;
-
 /**
  * Interface JsonSerializationContext
  *
@@ -22,10 +20,10 @@ interface JsonSerializationContext
 {
     /**
      * Delegate serialization of an object.  Should never be called with the original object
-     * as doing so will result in an infinite loop.  Will return a JsonElement.
+     * as doing so will result in an infinite loop.  Will return normalized data.
      *
      * @param mixed $object
-     * @return JsonElement
+     * @return mixed
      */
-    public function serialize($object): JsonElement;
+    public function serialize($object);
 }

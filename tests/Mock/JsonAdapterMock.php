@@ -17,13 +17,13 @@ use Tebru\Gson\Annotation\VirtualProperty;
 class JsonAdapterMock
 {
     /**
-     * @JsonAdapter("Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter")
+     * @JsonAdapter("Tebru\Gson\StringTypeAdapter")
      */
     private $foo;
 
     /**
      * @VirtualProperty()
-     * @JsonAdapter("Tebru\Gson\Internal\TypeAdapter\BooleanTypeAdapter")
+     * @JsonAdapter("Tebru\Gson\BooleanTypeAdapter")
      */
     public function virtualProperty(): string
     {

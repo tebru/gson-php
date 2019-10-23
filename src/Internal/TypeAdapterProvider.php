@@ -10,10 +10,10 @@ namespace Tebru\Gson\Internal;
 
 use InvalidArgumentException;
 use Tebru\Gson\Annotation\JsonAdapter;
-use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\TypeAdapter;
+use Tebru\Gson\TypeAdapter\CustomWrappedTypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 use Tebru\PhpType\TypeToken;
 
@@ -63,7 +63,7 @@ final class TypeAdapterProvider
      * @param TypeToken $type
      * @param TypeAdapterFactory|null $skip
      * @return TypeAdapter
-     * @throws \InvalidArgumentException if the type cannot be handled by a type adapter
+     * @throws InvalidArgumentException if the type cannot be handled by a type adapter
      */
     public function getAdapter(TypeToken $type, TypeAdapterFactory $skip = null): TypeAdapter
     {
@@ -77,21 +77,20 @@ final class TypeAdapterProvider
                 continue;
             }
 
-            if (!$typeAdapterFactory->supports($type)) {
+            $adapter = $typeAdapterFactory->create($type, $this);
+            if ($adapter === null) {
                 continue;
             }
 
-            $adapter = $typeAdapterFactory->create($type, $this);
-
             // do not save skipped adapters
-            if (null === $skip) {
+            if ($skip === null) {
                 $this->typeAdapters[$key] = $adapter;
             }
 
             return $adapter;
         }
 
-        throw new InvalidArgumentException(\sprintf(
+        throw new InvalidArgumentException(sprintf(
             'The type "%s" could not be handled by any of the registered type adapters',
             (string)$type
         ));
@@ -105,7 +104,7 @@ final class TypeAdapterProvider
      * @param TypeToken $type
      * @param JsonAdapter $jsonAdapterAnnotation
      * @return TypeAdapter
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getAdapterFromAnnotation(TypeToken $type, JsonAdapter $jsonAdapterAnnotation): TypeAdapter
     {
@@ -131,9 +130,9 @@ final class TypeAdapterProvider
             return new CustomWrappedTypeAdapter($type, $this, null, $object);
         }
 
-        throw new InvalidArgumentException(\sprintf(
+        throw new InvalidArgumentException(sprintf(
             'The type adapter must be an instance of TypeAdapter, TypeAdapterFactory, JsonSerializer, or JsonDeserializer, but "%s" was found',
-            \get_class($object)
+            get_class($object)
         ));
     }
 }

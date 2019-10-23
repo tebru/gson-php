@@ -7,8 +7,8 @@ namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Internal\DefaultSerializationExclusionData;
-use Tebru\Gson\Internal\JsonEncodeWriter;
 
 /**
  * Class DefaultSerializationExclusionDataTest
@@ -21,19 +21,9 @@ class DefaultSerializationExclusionDataTest extends TestCase
     public function testGetters(): void
     {
         $object = new stdClass();
-        $exclusionData = new DefaultSerializationExclusionData($object, new JsonEncodeWriter());
+        $context = new WriterContext();
+        $exclusionData = new DefaultSerializationExclusionData($object, $context);
         self::assertSame($object, $exclusionData->getObjectToSerialize());
-        self::assertSame('$', $exclusionData->getPath());
-    }
-
-    public function testUpdatePath(): void
-    {
-        $object = new stdClass();
-        $writer = new JsonEncodeWriter();
-        $writer->beginObject();
-        $exclusionData = new DefaultSerializationExclusionData($object, $writer);
-        $writer->name('foo');
-
-        self::assertSame('$.foo', $exclusionData->getPath());
+        self::assertSame($context, $exclusionData->getContext());
     }
 }

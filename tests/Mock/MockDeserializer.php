@@ -6,8 +6,6 @@
 
 namespace Tebru\Gson\Test\Mock;
 
-use Tebru\Gson\Element\JsonElement;
-use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\JsonDeserializationContext;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\PhpType\TypeToken;
@@ -20,30 +18,28 @@ use Tebru\PhpType\TypeToken;
 class MockDeserializer implements JsonDeserializer
 {
     /**
-     * Called during deserialization process, passing in the JsonElement for the type.  Use
+     * Called during deserialization process, passing in the normalized data. Use
      * the JsonDeserializationContext if you want to delegate deserialization of sub types.
      *
-     * @param JsonElement $jsonElement
+     * @param mixed $value
      * @param TypeToken $type
      * @param JsonDeserializationContext $context
      * @return UserMock
      */
-    public function deserialize(JsonElement $jsonElement, TypeToken $type, JsonDeserializationContext $context): UserMock
+    public function deserialize($value, TypeToken $type, JsonDeserializationContext $context): UserMock
     {
-        /** @var JsonObject $jsonUser */
-        $jsonUser = $jsonElement;
         $user = new UserMock();
-        $user->setId($jsonUser->get('id')->asInteger());
-        $user->setEmail($jsonUser->get('email')->asString());
-        $user->setName($jsonUser->get('name')->asString());
-        $user->setPhone($jsonUser->get('phone')->asString());
-        $user->setEnabled($jsonUser->get('enabled')->asBoolean());
+        $user->setId($value['id']);
+        $user->setEmail($value['email']);
+        $user->setName($value['name']);
+        $user->setPhone($value['phone']);
+        $user->setEnabled($value['enabled']);
 
         $address = new AddressMock();
-        $address->setCity($jsonUser->get('city')->asString());
-        $address->setState($jsonUser->get('state')->asString());
-        $address->setStreet($jsonUser->get('street')->asString());
-        $address->setZip($jsonUser->get('zip')->asInteger());
+        $address->setCity($value['city']);
+        $address->setState($value['state']);
+        $address->setStreet($value['street']);
+        $address->setZip($value['zip']);
 
         $user->setAddress($address);
 

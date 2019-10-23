@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
-use Tebru\Gson\Element\JsonElement;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\JsonSerializationContext;
 use Tebru\PhpType\TypeToken;
 
@@ -23,35 +23,34 @@ final class DefaultJsonSerializationContext implements JsonSerializationContext
      * @var TypeAdapterProvider
      */
     private $typeAdapterProvider;
-
     /**
-     * @var bool
+     * @var WriterContext
      */
-    private $serializeNull;
+    private $context;
 
     /**
      * Constructor
      *
      * @param TypeAdapterProvider $typeAdapterProvider
-     * @param bool $serializeNull
+     * @param WriterContext $context
      */
-    public function __construct(TypeAdapterProvider $typeAdapterProvider, bool $serializeNull)
+    public function __construct(TypeAdapterProvider $typeAdapterProvider, WriterContext $context)
     {
         $this->typeAdapterProvider = $typeAdapterProvider;
-        $this->serializeNull = $serializeNull;
+        $this->context = $context;
     }
 
     /**
-     * Delegate serialization of an object.  Should never be called with the original object
-     * as doing so will result in an infinite loop.  Will return a JsonElement.
+     * Delegate serialization of an object. Should never be called with the original object
+     * as doing so will result in an infinite loop. Should return normalized data.
      *
      * @param mixed $object
-     * @return JsonElement
+     * @return mixed
      */
-    public function serialize($object): JsonElement
+    public function serialize($object)
     {
         $typeAdapter = $this->typeAdapterProvider->getAdapter(TypeToken::createFromVariable($object));
 
-        return $typeAdapter->writeToJsonElement($object, $this->serializeNull);
+        return $typeAdapter->write($object, $this->context);
     }
 }

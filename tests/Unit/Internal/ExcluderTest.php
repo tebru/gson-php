@@ -14,21 +14,20 @@ use Tebru\Gson\Annotation\Exclude;
 use Tebru\Gson\Annotation\Expose;
 use Tebru\Gson\Annotation\Since;
 use Tebru\Gson\Annotation\Until;
+use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Internal\AccessorStrategy\GetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\DefaultDeserializationExclusionData;
-use Tebru\Gson\Internal\DefaultReaderContext;
 use Tebru\Gson\Internal\DefaultSerializationExclusionData;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\JsonDecodeReader;
-use Tebru\Gson\Internal\JsonEncodeWriter;
 use Tebru\Gson\Test\Mock\ExcluderExcludeSerializeMock;
 use Tebru\Gson\Test\Mock\ExcluderExposeMock;
 use Tebru\Gson\Test\Mock\ExcluderVersionMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\BarPropertyExclusionStrategy;
-use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcludeAllCacheableExclusionStrategy;
+use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcludeAllExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooDeserializationExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooSerializationExclusionStrategy;
@@ -184,7 +183,7 @@ class ExcluderTest extends TestCase
 
     public function testExcludeCacheable(): void
     {
-        $this->excluder->addCachedExclusionStrategy(new ExcludeAllCacheableExclusionStrategy());
+        $this->excluder->addCachedExclusionStrategy(new ExcludeAllExclusionStrategy());
         $classMetadata = MockProvider::classMetadata(Foo::class, $this->propertyCollection);
         $property = new Property(
             'foo',
@@ -207,10 +206,10 @@ class ExcluderTest extends TestCase
 
     public function testClassDataAware(): void
     {
-        $strategy = new ExcludeAllCacheableExclusionStrategy();
+        $strategy = new ExcludeAllExclusionStrategy();
         $this->excluder->addExclusionStrategy($strategy);
-        $serializationData = new DefaultSerializationExclusionData(new stdClass(), new JsonEncodeWriter());
-        $deserializationData = new DefaultDeserializationExclusionData(new stdClass(), new JsonDecodeReader('{}', new DefaultReaderContext()));
+        $serializationData = new DefaultSerializationExclusionData(new stdClass(), new WriterContext());
+        $deserializationData = new DefaultDeserializationExclusionData(new stdClass(), new ReaderContext());
         $this->excluder->applyClassSerializationExclusionData($serializationData);
         $this->excluder->applyClassDeserializationExclusionData($deserializationData);
         self::assertTrue($strategy->calledSerialize);
@@ -219,10 +218,10 @@ class ExcluderTest extends TestCase
 
     public function testPropertyDataAware(): void
     {
-        $strategy = new ExcludeAllCacheableExclusionStrategy();
+        $strategy = new ExcludeAllExclusionStrategy();
         $this->excluder->addExclusionStrategy($strategy);
-        $serializationData = new DefaultSerializationExclusionData(new stdClass(), new JsonEncodeWriter());
-        $deserializationData = new DefaultDeserializationExclusionData(new stdClass(), new JsonDecodeReader('{}', new DefaultReaderContext()));
+        $serializationData = new DefaultSerializationExclusionData(new stdClass(), new WriterContext());
+        $deserializationData = new DefaultDeserializationExclusionData(new stdClass(), new ReaderContext());
         $this->excluder->applyPropertySerializationExclusionData($serializationData);
         $this->excluder->applyPropertyDeserializationExclusionData($deserializationData);
         self::assertTrue($strategy->calledSerialize);

@@ -22,16 +22,17 @@ class DefaultJsonDeserializationContextTest extends TestCase
 {
     public function testDeserialize(): void
     {
-        $jsonObject = new JsonObject();
-        $jsonObject->addString('street', '123 ABC St');
-        $jsonObject->addString('city', 'Foo');
-        $jsonObject->addString('state', 'MN');
-        $jsonObject->addInteger('zip', 12345);
+        $data = [
+            'street' => '123 ABC St',
+            'city' => 'Foo',
+            'state' => 'MN',
+            'zip' => 12345,
+        ];
 
         $context = MockProvider::deserializationContext(MockProvider::excluder());
 
         /** @var AddressMock $address */
-        $address = $context->deserialize($jsonObject, new TypeToken(AddressMock::class));
+        $address = $context->deserialize($data, new TypeToken(AddressMock::class));
 
         self::assertSame('123 ABC St', $address->getStreet());
         self::assertSame('Foo', $address->getCity());

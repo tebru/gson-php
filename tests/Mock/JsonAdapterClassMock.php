@@ -13,7 +13,7 @@ use Tebru\Gson\Annotation\JsonAdapter;
  *
  * @author Nate Brunette <n@tebru.net>
  *
- * @JsonAdapter("Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter")
+ * @JsonAdapter("Tebru\Gson\TypeAdapter\StringTypeAdapter")
  */
 class JsonAdapterClassMock
 {

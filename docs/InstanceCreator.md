@@ -17,7 +17,7 @@ class FooIntanceCreator implements InstanceCreator
         $this->required = $required;
     }
 
-    public function createInstance(PhpType $phpType)
+    public function createInstance(TypeToken $phpType)
     {
         return new Foo($this->required);
     }

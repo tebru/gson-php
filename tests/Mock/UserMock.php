@@ -44,7 +44,7 @@ class UserMock
     private $address;
 
     /**
-     * @Gson\JsonAdapter("Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter")
+     * @Gson\JsonAdapter("Tebru\Gson\TypeAdapter\StringTypeAdapter")
      * @var string
      */
     private $phone;

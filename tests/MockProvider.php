@@ -11,6 +11,8 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
+use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\ConstructorConstructor;
@@ -20,24 +22,22 @@ use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
 use Tebru\Gson\Internal\DefaultJsonSerializationContext;
-use Tebru\Gson\Internal\DefaultReaderContext;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\FloatTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\JsonElementTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Internal\TypeTokenFactory;
 use Tebru\Gson\PropertyNamingPolicy;
+use Tebru\Gson\TypeAdapter\BooleanTypeAdapter;
+use Tebru\Gson\TypeAdapter\Factory\ArrayTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\Factory\WildcardTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\FloatTypeAdapter;
+use Tebru\Gson\TypeAdapter\IntegerTypeAdapter;
+use Tebru\Gson\TypeAdapter\NullTypeAdapter;
+use Tebru\Gson\TypeAdapter\StringTypeAdapter;
 
 /**
  * Class MockProvider
@@ -114,14 +114,13 @@ class MockProvider
             array_merge(
                 $factories,
                 [
-                    new StringTypeAdapterFactory(),
-                    new IntegerTypeAdapterFactory(),
-                    new FloatTypeAdapterFactory(),
-                    new BooleanTypeAdapterFactory(),
-                    new NullTypeAdapterFactory(),
+                    new StringTypeAdapter(),
+                    new IntegerTypeAdapter(),
+                    new FloatTypeAdapter(),
+                    new BooleanTypeAdapter(),
+                    new NullTypeAdapter(),
                     new DateTimeTypeAdapterFactory(DateTime::ATOM),
-                    new ArrayTypeAdapterFactory(),
-                    new JsonElementTypeAdapterFactory(),
+                    new ArrayTypeAdapterFactory(false),
                     $reflectionTypeAdapterFactory,
                     new WildcardTypeAdapterFactory(),
                 ]
@@ -132,11 +131,11 @@ class MockProvider
 
     public static function deserializationContext(Excluder $excluder)
     {
-        return new DefaultJsonDeserializationContext(self::typeAdapterProvider($excluder), new DefaultReaderContext());
+        return new DefaultJsonDeserializationContext(self::typeAdapterProvider($excluder), new ReaderContext());
     }
 
     public static function serializationContext(Excluder $excluder)
     {
-        return new DefaultJsonSerializationContext(self::typeAdapterProvider($excluder), false);
+        return new DefaultJsonSerializationContext(self::typeAdapterProvider($excluder), new WriterContext());
     }
 }

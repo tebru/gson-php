@@ -14,6 +14,8 @@ use Tebru\Gson\Internal\SetterStrategy;
 /**
  * Class SetByClosure
  *
+ * This class contains public properties to improve performance.
+ *
  * @author Nate Brunette <n@tebru.net>
  */
 final class SetByClosure implements SetterStrategy
@@ -21,17 +23,17 @@ final class SetByClosure implements SetterStrategy
     /**
      * @var string
      */
-    private $propertyName;
+    public $propertyName;
 
     /**
      * @var string
      */
-    private $className;
+    public $className;
 
     /**
      * @var Closure
      */
-    private $setter;
+    public $setter;
 
     /**
      * Constructor
@@ -55,7 +57,7 @@ final class SetByClosure implements SetterStrategy
     public function set($object, $value): void
     {
         if (null === $this->setter) {
-            $this->setter = Closure::bind(function ($object, $value, string $propertyName) {
+            $this->setter = Closure::bind(static function ($object, $value, string $propertyName) {
                 $object->{$propertyName} = $value;
             }, null, $this->className);
         }

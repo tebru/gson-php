@@ -93,6 +93,23 @@ class ClassMetadataTest extends TestCase
         self::assertNull($this->metadata->getProperty('foo'));
     }
 
+    public function testPropertyCollection(): void
+    {
+        $property = new Property(
+            'foo',
+            'foo',
+            TypeToken::create('string'),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
+            new AnnotationCollection(),
+            0,
+            false,
+            $this->metadata
+        );
+        $this->propertyCollection->add($property);
+        self::assertSame($this->propertyCollection, $this->metadata->getPropertyCollection());
+    }
+
     public function testGetAnnotation(): void
     {
         $annotation = new FooAnnotation([]);
@@ -104,5 +121,23 @@ class ClassMetadataTest extends TestCase
     public function testGetAnnotationNull(): void
     {
         self::assertNull($this->metadata->getAnnotation(FooAnnotation::class));
+    }
+
+    public function testSkipSerialize(): void
+    {
+        $property = new Property(
+            'foo',
+            'foo',
+            TypeToken::create('string'),
+            new GetByPublicProperty('foo'),
+            new SetByPublicProperty('foo'),
+            new AnnotationCollection(),
+            0,
+            false,
+            $this->metadata
+        );
+        $this->propertyCollection->add($property);
+        self::assertFalse($this->metadata->skipSerialize());
+        self::assertFalse($this->metadata->skipDeserialize());
     }
 }

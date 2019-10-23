@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Tebru\Gson;
 
-use Tebru\Gson\Element\JsonElement;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -22,13 +21,12 @@ interface JsonSerializer
 {
     /**
      * Called during serialization process, passing in the object and type that should
-     * be serialized.  Delegate serialization using the provided context.  Method should
-     * return a JsonElement.
+     * be serialized. Delegate serialization using the provided context.
      *
      * @param mixed $object
      * @param TypeToken $type
      * @param JsonSerializationContext $context
-     * @return JsonElement
+     * @return mixed
      */
-    public function serialize($object, TypeToken $type, JsonSerializationContext $context): JsonElement;
+    public function serialize($object, TypeToken $type, JsonSerializationContext $context);
 }

@@ -9,11 +9,11 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Tebru\Gson\Annotation\JsonAdapter;
+use Tebru\Gson\TypeAdapter\ArrayTypeAdapter;
+use Tebru\Gson\TypeAdapter\CustomWrappedTypeAdapter;
+use Tebru\Gson\TypeAdapter\Factory\ArrayTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\Factory\WrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\ConstructorConstructor;
-use Tebru\Gson\Internal\TypeAdapter\CustomWrappedTypeAdapter;
-use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\MockDeserializer;
@@ -112,9 +112,9 @@ class TypeAdapterProviderTest extends TestCase
 
     public function testGetTypeAdapterFactoryFromAnnotation(): void
     {
-        $adapter = $this->typeAdapterProvider->getAdapterFromAnnotation(new TypeToken('string'), new JsonAdapter(['value' => StringTypeAdapterFactory::class]));
+        $adapter = $this->typeAdapterProvider->getAdapterFromAnnotation(new TypeToken('array'), new JsonAdapter(['value' => ArrayTypeAdapterFactory::class]));
 
-        self::assertInstanceOf(StringTypeAdapter::class, $adapter);
+        self::assertInstanceOf(ArrayTypeAdapter::class, $adapter);
     }
 
     public function testGetJsonSerializerFromAnnotation(): void

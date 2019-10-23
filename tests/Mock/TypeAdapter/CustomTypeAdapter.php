@@ -6,9 +6,9 @@
 
 namespace Tebru\Gson\Test\Mock\TypeAdapter;
 
+use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\JsonReadable;
-use Tebru\Gson\JsonWritable;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 use Tebru\PhpType\TypeToken;
@@ -23,50 +23,38 @@ class CustomTypeAdapter extends TypeAdapter implements TypeAdapterFactory
     /**
      * Read the next value, convert it to its type and return it
      *
-     * @param JsonReadable $reader
+     * @param mixed $value
+     * @param ReaderContext $context
      * @return mixed
      */
-    public function read(JsonReadable $reader)
+    public function read($value, ReaderContext $context)
     {
-        $reader->skipValue();
-
         return null;
     }
 
     /**
      * Write the value to the writer for the type
      *
-     * @param JsonWritable $writer
      * @param mixed $value
-     * @return void
+     * @param WriterContext $context
+     * @return mixed
      */
-    public function write(JsonWritable $writer, $value): void
+    public function write($value, WriterContext $context)
     {
-        $writer->writeNull();
-    }
-
-    /**
-     * Will be called before ::create() is called.  The current type will be passed
-     * in.  Return false if ::create() should not be called.
-     *
-     * @param TypeToken $type
-     * @return bool
-     */
-    public function supports(TypeToken $type): bool
-    {
-        return 'CustomType' === $type->getRawType();
+        return null;
     }
 
     /**
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
-     * to be fetched during creation.  Should return a new instance of the TypeAdapter.
+     * to be fetched during creation.  Should return a new instance of the TypeAdapter. Will return
+     * null if the type adapter is not supported for the provided type.
      *
      * @param TypeToken $type
      * @param TypeAdapterProvider $typeAdapterProvider
-     * @return TypeAdapter
+     * @return TypeAdapter|null
      */
-    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): TypeAdapter
+    public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
-        return new self();
+        return 'CustomType' === $type->getRawType() ? new self() : null;
     }
 }

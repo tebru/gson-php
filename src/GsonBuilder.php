@@ -20,10 +20,11 @@ use Symfony\Component\Cache\Simple\NullCache;
 use Symfony\Component\Cache\Simple\PhpFilesCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Annotation\ExclusionCheck;
+use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Exclusion\DeserializationExclusionDataAware;
 use Tebru\Gson\Exclusion\ExclusionStrategy;
 use Tebru\Gson\Exclusion\SerializationExclusionDataAware;
-use Tebru\Gson\ExclusionStrategy as DeprecatedExclusionStrategy;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\ConstructorConstructor;
@@ -31,24 +32,22 @@ use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
 use Tebru\Gson\Internal\DiscriminatorDeserializer;
 use Tebru\Gson\Internal\Excluder;
-use Tebru\Gson\Internal\ExclusionStrategyAdapter;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ArrayTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\BooleanTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\FloatTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\IntegerTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\JsonElementTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\NullTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\StringTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\WildcardTypeAdapterFactory;
-use Tebru\Gson\Internal\TypeAdapter\Factory\WrappedTypeAdapterFactory;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Internal\TypeTokenFactory;
+use Tebru\Gson\TypeAdapter\BooleanTypeAdapter;
+use Tebru\Gson\TypeAdapter\Factory\ArrayTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\Factory\CustomWrappedTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\Factory\DateTimeTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\Factory\WildcardTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\Factory\WrappedTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\FloatTypeAdapter;
+use Tebru\Gson\TypeAdapter\IntegerTypeAdapter;
+use Tebru\Gson\TypeAdapter\NullTypeAdapter;
+use Tebru\Gson\TypeAdapter\StringTypeAdapter;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -143,11 +142,19 @@ class GsonBuilder
     private $cachedExclusionStrategies = [];
 
     /**
-     * If we should serialize nulls, defaults to false
-     *
-     * @var bool
+     * @var ReaderContext
      */
-    private $serializeNull = false;
+    private $readerContext;
+
+    /**
+     * @var WriterContext
+     */
+    private $writerContext;
+
+    /**
+     * @var bool|null
+     */
+    private $enableScalarAdapters;
 
     /**
      * Default format for DateTimes
@@ -249,7 +256,7 @@ class GsonBuilder
             return $this;
         }
 
-        throw new InvalidArgumentException(\sprintf('Handler of type "%s" is not supported', \get_class($handler)));
+        throw new InvalidArgumentException(sprintf('Handler of type "%s" is not supported', get_class($handler)));
     }
 
     /**
@@ -262,7 +269,7 @@ class GsonBuilder
     public function addInstanceCreator(string $type, InstanceCreator $instanceCreator): GsonBuilder
     {
         $phpType = TypeToken::create($type);
-        $this->instanceCreators[$phpType->getRawType()] = $instanceCreator;
+        $this->instanceCreators[$phpType->rawType] = $instanceCreator;
 
         return $this;
     }
@@ -335,24 +342,6 @@ class GsonBuilder
     }
 
     /**
-     * Add an exclusion strategy that should be used during serialization/deserialization
-     *
-     * @param DeprecatedExclusionStrategy $strategy
-     * @param bool $serialization
-     * @param bool $deserialization
-     * @return GsonBuilder
-     * @deprecated Since v0.6.0 to be removed in v0.7.0. Use GsonBuilder::addExclusion() instead.
-     */
-    public function addExclusionStrategy(DeprecatedExclusionStrategy $strategy, bool $serialization, bool $deserialization): GsonBuilder
-    {
-        @trigger_error('Gson: GsonBuilder::addExclusionStrategy() is deprecated since v0.6.0 and will be removed in v0.7.0. Use GsonBuilder::addExclusion() instead.', E_USER_DEPRECATED);
-
-        $this->addExclusion(new ExclusionStrategyAdapter($strategy, $serialization, $deserialization));
-
-        return $this;
-    }
-
-    /**
      * Add an [@see ExclusionStrategy]
      *
      * @param ExclusionStrategy $exclusionStrategy
@@ -417,13 +406,40 @@ class GsonBuilder
     }
 
     /**
-     * Set whether we should serialize null
+     * Set context to use during deserialization
      *
+     * @param ReaderContext $context
      * @return GsonBuilder
      */
-    public function serializeNull(): GsonBuilder
+    public function setReaderContext(ReaderContext $context): GsonBuilder
     {
-        $this->serializeNull = true;
+        $this->readerContext = $context;
+
+        return $this;
+    }
+
+    /**
+     * Set context to use during serialization
+     *
+     * @param WriterContext $context
+     * @return GsonBuilder
+     */
+    public function setWriterContext(WriterContext $context): GsonBuilder
+    {
+        $this->writerContext = $context;
+
+        return $this;
+    }
+
+    /**
+     * Enable or disable scalar type adapters
+     *
+     * @param bool $enableScalarAdapters
+     * @return GsonBuilder
+     */
+    public function setEnableScalarAdapters(bool $enableScalarAdapters): GsonBuilder
+    {
+        $this->enableScalarAdapters = $enableScalarAdapters;
 
         return $this;
     }
@@ -454,7 +470,6 @@ class GsonBuilder
         return $this;
     }
 
-
     /**
      * Set whether caching is enabled
      *
@@ -467,7 +482,6 @@ class GsonBuilder
 
         return $this;
     }
-
     /**
      * Setting a cache directory will turn on filesystem caching
      *
@@ -485,12 +499,23 @@ class GsonBuilder
      * Builds a new [@see Gson] object based on configuration set
      *
      * @return Gson
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function build(): Gson
     {
         if (null === $this->cacheDir && true === $this->enableCache) {
             throw new LogicException('Cannot enable cache without a cache directory');
+        }
+
+        $readerContext = $this->readerContext ?? new ReaderContext();
+        $writerContext = $this->writerContext ?? new WriterContext();
+        if ($this->enableScalarAdapters !== null) {
+            $readerContext->setEnableScalarAdapters($this->enableScalarAdapters);
+            $writerContext->setEnableScalarAdapters($this->enableScalarAdapters);
+        }
+
+        if ($readerContext->enableScalarAdapters() !== $writerContext->enableScalarAdapters()) {
+            throw new LogicException('The "enableScalarAdapter" values for the reader and writer contexts must match');
         }
 
         $propertyNamingStrategy = $this->propertyNamingStrategy ?? new DefaultPropertyNamingStrategy($this->propertyNamingPolicy);
@@ -529,11 +554,16 @@ class GsonBuilder
         );
         $constructorConstructor = new ConstructorConstructor($this->instanceCreators);
         $typeAdapterProvider = new TypeAdapterProvider(
-            $this->getTypeAdapterFactories($classMetadataFactory, $excluder, $constructorConstructor),
+            $this->getTypeAdapterFactories(
+                $classMetadataFactory,
+                $excluder,
+                $constructorConstructor,
+                $readerContext->enableScalarAdapters()
+            ),
             $constructorConstructor
         );
 
-        return new Gson($typeAdapterProvider, $this->serializeNull);
+        return new Gson($typeAdapterProvider, $readerContext, $writerContext);
     }
 
     /**
@@ -542,24 +572,32 @@ class GsonBuilder
      * @param ClassMetadataFactory $classMetadataFactory
      * @param Excluder $excluder
      * @param ConstructorConstructor $constructorConstructor
+     * @param bool $enableScalarAdapters
      * @return array|TypeAdapterFactory[]
      */
     private function getTypeAdapterFactories(
         ClassMetadataFactory $classMetadataFactory,
         Excluder $excluder,
-        ConstructorConstructor $constructorConstructor
+        ConstructorConstructor $constructorConstructor,
+        bool $enableScalarAdapters
     ): array {
-        return \array_merge(
+        $scalarFactories = [];
+        if ($enableScalarAdapters) {
+            $scalarFactories = [
+                new StringTypeAdapter(),
+                new IntegerTypeAdapter(),
+                new FloatTypeAdapter(),
+                new BooleanTypeAdapter(),
+                new NullTypeAdapter(),
+            ];
+        }
+
+        return array_merge(
             $this->typeAdapterFactories,
+            $scalarFactories,
             [
-                new StringTypeAdapterFactory(),
-                new IntegerTypeAdapterFactory(),
-                new FloatTypeAdapterFactory(),
-                new BooleanTypeAdapterFactory(),
-                new NullTypeAdapterFactory(),
                 new DateTimeTypeAdapterFactory($this->dateTimeFormat),
-                new ArrayTypeAdapterFactory(),
-                new JsonElementTypeAdapterFactory(),
+                new ArrayTypeAdapterFactory($enableScalarAdapters),
                 new ReflectionTypeAdapterFactory(
                     $constructorConstructor,
                     $classMetadataFactory,

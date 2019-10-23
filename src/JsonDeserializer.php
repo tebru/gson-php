@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 namespace Tebru\Gson;
 
-use Tebru\Gson\Element\JsonElement;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -21,13 +20,13 @@ use Tebru\PhpType\TypeToken;
 interface JsonDeserializer
 {
     /**
-     * Called during deserialization process, passing in the JsonElement for the type.  Use
+     * Called during deserialization process, passing in the normalized data. Use
      * the JsonDeserializationContext if you want to delegate deserialization of sub types.
      *
-     * @param JsonElement $jsonElement
+     * @param mixed $value
      * @param TypeToken $type
      * @param JsonDeserializationContext $context
      * @return mixed
      */
-    public function deserialize(JsonElement $jsonElement, TypeToken $type, JsonDeserializationContext $context);
+    public function deserialize($value, TypeToken $type, JsonDeserializationContext $context);
 }

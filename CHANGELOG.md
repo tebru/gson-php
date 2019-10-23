@@ -3,6 +3,19 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+master
+------
+* BC BREAK: Combined TypeAdapterFactory methods into a nullable create
+* BC BREAK: Removed JsonElement
+* BC BREAK: Removed Readable/Writable and json readers/writers
+* BC BREAK: Changed Discriminator definition
+* BC BREAK: Changed JsonSerializer/JsonDeserializer definition
+* BC BREAK: Changed JsonSerializationContext/JsonDeserializationContext definition
+* BC BREAK: Changed TypeAdapter definition
+* BC BREAK: Moved serializeNull to Context
+* CHANGE: Moved TypeAdapters out of internal namespace and removed final
+* ADDED: ReaderContext and WriterContext
+
 v0.6.6
 ------
 * ADDED: Support for listening/manipulating property collection on load

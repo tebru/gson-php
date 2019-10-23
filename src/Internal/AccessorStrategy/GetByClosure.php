@@ -25,21 +25,21 @@ final class GetByClosure implements GetterStrategy
      *
      * @var string
      */
-    private $propertyName;
+    public $propertyName;
 
     /**
      * The name of the class
      *
      * @var string
      */
-    private $className;
+    public $className;
 
     /**
      * The cached closure
      *
      * @var Closure
      */
-    private $getter;
+    public $getter;
 
     /**
      * Constructor
@@ -62,7 +62,7 @@ final class GetByClosure implements GetterStrategy
     public function get($object)
     {
         if (null === $this->getter) {
-            $this->getter = Closure::bind(function ($object, string $propertyName) {
+            $this->getter = Closure::bind(static function ($object, string $propertyName) {
                 return $object->{$propertyName};
             }, null, $this->className);
         }

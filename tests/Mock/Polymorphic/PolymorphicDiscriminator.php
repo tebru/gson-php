@@ -9,7 +9,6 @@ declare(strict_types=1);
 namespace Tebru\Gson\Test\Mock\Polymorphic;
 
 use Tebru\Gson\Discriminator;
-use Tebru\Gson\Element\JsonObject;
 
 /**
  * Class PolymorphicDiscriminator
@@ -21,12 +20,12 @@ class PolymorphicDiscriminator implements Discriminator
     /**
      * Returns a classname based on data provided in a [@see JsonObject]
      *
-     * @param JsonObject $object
+     * @param object $object
      * @return string
      */
-    public function getClass(JsonObject $object): string
+    public function getClass($object): string
     {
-        switch ($object->getAsString('status')) {
+        switch ($object['status']) {
             case 'foo':
                 return PolymorphicChild1::class;
             case 'bar':

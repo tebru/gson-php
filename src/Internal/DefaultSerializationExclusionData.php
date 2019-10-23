@@ -8,8 +8,8 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
+use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Exclusion\SerializationExclusionData;
-use Tebru\Gson\JsonWritable;
 
 /**
  * Class DefaultSerializationExclusionData
@@ -24,24 +24,21 @@ class DefaultSerializationExclusionData implements SerializationExclusionData
      * @var object
      */
     private $objectToSerialize;
-
     /**
-     * Instance of the current writer
-     *
-     * @var JsonWritable
+     * @var WriterContext
      */
-    private $writer;
+    private $context;
 
     /**
      * Constructor
      *
      * @param object $objectToSerialize
-     * @param JsonWritable $writer
+     * @param WriterContext $context
      */
-    public function __construct($objectToSerialize, JsonWritable $writer)
+    public function __construct($objectToSerialize, WriterContext $context)
     {
         $this->objectToSerialize = $objectToSerialize;
-        $this->writer = $writer;
+        $this->context = $context;
     }
 
     /**
@@ -55,12 +52,12 @@ class DefaultSerializationExclusionData implements SerializationExclusionData
     }
 
     /**
-     * Get the current path formatted as json xpath
+     * Get the writer context
      *
-     * @return string
+     * @return WriterContext
      */
-    public function getPath(): string
+    public function getContext(): WriterContext
     {
-        return $this->writer->getPath();
+        return $this->context;
     }
 }
