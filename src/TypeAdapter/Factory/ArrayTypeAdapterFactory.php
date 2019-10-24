@@ -65,11 +65,16 @@ class ArrayTypeAdapterFactory implements TypeAdapterFactory
             [$keyType, $valueType] = $genericTypes;
         }
 
-        if (!$this->enableScalarAdapters && $numberOfGenericTypes < 2 && $valueType->genericTypes === [] && $valueType->isScalar()) {
-            return new ScalarArrayTypeAdapter();
+        if (!$this->enableScalarAdapters && $valueType->isScalar()) {
+            if ($numberOfGenericTypes < 2 && $valueType->genericTypes === []) {
+                return new ScalarArrayTypeAdapter();
+            }
+
+            $valueTypeAdapter = new TypeAdapter\WildcardTypeAdapter($typeAdapterProvider);
+        } else {
+            $valueTypeAdapter = $typeAdapterProvider->getAdapter($valueType);
         }
 
-        $valueTypeAdapter = $typeAdapterProvider->getAdapter($valueType);
 
         return new ArrayTypeAdapter($typeAdapterProvider, $keyType, $valueTypeAdapter, $numberOfGenericTypes);
     }

@@ -3,7 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
-master
+v0.7.1
+------
+* FIXED: Fixed issue with null value in array
+
+v0.7.0
 ------
 * BC BREAK: Combined TypeAdapterFactory methods into a nullable create
 * BC BREAK: Removed JsonElement

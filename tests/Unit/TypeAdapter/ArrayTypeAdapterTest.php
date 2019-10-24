@@ -57,9 +57,29 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
         self::assertSame([1, 2, 3], $result);
     }
 
-    public function testDeserializeSimpleObjectsWithout(): void
+    public function testDeserializeEmptyArray(): void
     {
-        $this->readerContext->setEnableScalarAdapters(false);
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
+        $result = $adapter->read(json_decode('[]', true), $this->readerContext);
+
+        self::assertSame([], $result);
+    }
+
+    public function testDeserializeSimpleArrayWithNull(): void
+    {
+        $this->disableTypeAdaptersForReader();
+
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
+        $result = $adapter->read(json_decode('[1, 2, null]', true), $this->readerContext);
+
+        self::assertSame([1, 2, null], $result);
+    }
+
+    public function testDeserializeSimpleObjectsWithoutScalarTypeAdapter(): void
+    {
+        $this->disableTypeAdaptersForReader();
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -95,6 +115,28 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
         self::assertSame(['key' => 'value'], $result);
     }
 
+    public function testDeserializeSimpleObjectWithNull(): void
+    {
+        $this->disableTypeAdaptersForReader();
+
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
+        $result = $adapter->read(json_decode('{"key": "value", "key2": null}', true), $this->readerContext);
+
+        self::assertSame(['key' => 'value', 'key2' => null], $result);
+    }
+
+    public function testDeserializeSimpleObjectWithGenerics(): void
+    {
+        $this->disableTypeAdaptersForReader();
+
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<string, string>'));
+        $result = $adapter->read(json_decode('{"key": "value", "key2": null}', true), $this->readerContext);
+
+        self::assertSame(['key' => 'value', 'key2' => null], $result);
+    }
+
     public function testDeserializeNestedObject(): void
     {
         /** @var ArrayTypeAdapter $adapter */
@@ -124,7 +166,7 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
 
     public function testDeserializeNestedObjectWithKeyAndValueTypesWithoutScalarTypeAdapters(): void
     {
-        $this->readerContext->setEnableScalarAdapters(false);
+        $this->disableTypeAdaptersForReader();
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<string, array<string, string>>'));
@@ -216,9 +258,17 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
         self::assertSame([1, 2, 3], $adapter->write([1, 2, 3], $this->writerContext));
     }
 
+    public function testSerializeEmptyArray(): void
+    {
+        /** @var ArrayTypeAdapter $adapter */
+        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
+
+        self::assertSame([], $adapter->write([], $this->writerContext));
+    }
+
     public function testSerializeArrayIntsWithoutScalarTypeAdapters(): void
     {
-        $this->writerContext->setEnableScalarAdapters(false);
+        $this->disableScalarTypeAdaptersForWriter();
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -228,7 +278,7 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
 
     public function testSerializNestedeArrayIntsWithoutScalarTypeAdapters(): void
     {
-        $this->writerContext->setEnableScalarAdapters(false);
+        $this->disableScalarTypeAdaptersForWriter();
 
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array'));
@@ -307,5 +357,23 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
             return;
         }
         self::assertTrue(false);
+    }
+
+    /**
+     * Disable scalar type adapters for reader
+     */
+    private function disableTypeAdaptersForReader(): void
+    {
+        $this->readerContext->setEnableScalarAdapters(false);
+        $this->typeAdapterProvider = MockProvider::typeAdapterProvider(MockProvider::excluder(), [], null, false);
+    }
+
+    /**
+     * Disable scalar type adapters for writer
+     */
+    private function disableScalarTypeAdaptersForWriter(): void
+    {
+        $this->writerContext->setEnableScalarAdapters(false);
+        $this->typeAdapterProvider = MockProvider::typeAdapterProvider(MockProvider::excluder(), [], null, false);
     }
 }
