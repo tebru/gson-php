@@ -8,6 +8,8 @@ Instance Creator is not provided, Gson will use reflection to instantiate
 the class.
 
 ```php
+use Tebru\Gson\InstanceCreator;
+use Tebru\PhpType\TypeToken;
 class FooIntanceCreator implements InstanceCreator
 {
     private $required;

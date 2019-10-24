@@ -81,6 +81,7 @@ Documentation
 * [Types](docs/Types.md)
 * [Annotation Reference](docs/Annotations.md)
 * [Advanced Usage](docs/Advanced.md)
+* [Performance Considerations](docs/Performance.md)
 
 
 Installation

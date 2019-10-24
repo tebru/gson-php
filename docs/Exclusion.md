@@ -25,6 +25,8 @@ decision.
 For example, if you wanted to exclude a property from being serialized
 
 ```php
+use Tebru\Gson\Exclusion\PropertySerializationExclusionStrategy;
+use Tebru\Gson\PropertyMetadata;
 class FooExclusionStrategy implements PropertySerializationExclusionStrategy
 {
     public function skipSerializingProperty(PropertyMetadata $property): bool
@@ -42,6 +44,8 @@ class FooExclusionStrategy implements PropertySerializationExclusionStrategy
 Or a class from being deserialized
 
 ```php
+use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\Exclusion\ClassDeserializationExclusionStrategy;
 class FooExclusionStrategy implements ClassDeserializationExclusionStrategy
 {
     public function skipDeserializingClass(ClassMetadata $class): bool
@@ -75,9 +79,13 @@ serialized, and other contextual information like the current path. This
 is not compatible with a cacheable strategy.
 
 ```php
+use Tebru\Gson\Exclusion\PropertySerializationExclusionStrategy;
+use Tebru\Gson\Exclusion\SerializationExclusionData;
+use Tebru\Gson\Exclusion\SerializationExclusionDataAware;
+use Tebru\Gson\PropertyMetadata;
 class FooExclusionStrategy implements
     PropertySerializationExclusionStrategy,
-    SerialzationExclusionDataAware
+    SerializationExclusionDataAware
 {
     private $serializationData;
 
@@ -107,6 +115,9 @@ would be to handle `ClassMetadata` after it's loaded. Here, you can
 turn on/off properties before they're passed to the type adapter.
 
 ```php
+use Tebru\Gson\ClassMetadata;
+use Tebru\Gson\ClassMetadataVisitor;
+use Tebru\Gson\Gson;
 class FooVisitor implements ClassMetadataVisitor
 {
     public function onLoaded(ClassMetadata $classMetadata): void

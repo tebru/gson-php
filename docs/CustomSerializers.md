@@ -13,6 +13,9 @@ object that should be serialized, and will return something that can
 be passed into `json_encode`.
 
 ```php
+use Tebru\Gson\JsonSerializationContext;
+use Tebru\Gson\JsonSerializer;
+use Tebru\PhpType\TypeToken;
 class FooSerializer implements JsonSerializer
 {
     public function serialize($object, TypeToken $type, JsonSerializationContext $context)
@@ -31,6 +34,9 @@ If you have a sub-object you do not want to manually serialize, you can
 pass it off to the context.
 
 ```php
+use Tebru\Gson\JsonSerializationContext;
+use Tebru\Gson\JsonSerializer;
+use Tebru\PhpType\TypeToken;
 class FooSerializer implements JsonSerializer
 {
     public function serialize($object, TypeToken $type, JsonSerializationContext $context)
@@ -56,6 +62,9 @@ instantiated object.  Delegation is available here in the same way
 as the serializer.
 
 ```php
+use Tebru\Gson\JsonDeserializationContext;
+use Tebru\Gson\JsonDeserializer;
+use Tebru\PhpType\TypeToken;
 class FooDeserializer implements JsonDeserializer
 {
     public function deserialize($value, TypeToken $type, JsonDeserializationContext $context)
@@ -89,6 +98,9 @@ deserialized.
 The `IntegerTypeAdapter` implementation is shown below as an example
 
 ```php
+use Tebru\Gson\Context\ReaderContext;
+use Tebru\Gson\Context\WriterContext;
+use Tebru\Gson\TypeAdapter;
 class IntegerTypeAdapter extends TypeAdapter
 {
     public function read($value, ReaderContext $context): ?int
@@ -96,7 +108,7 @@ class IntegerTypeAdapter extends TypeAdapter
         return $value === null ? null : (int)$value;
     }
 
-    public function write($value, WriterContext $context): void
+    public function write($value, WriterContext $context): ?int
     {
         return $value === null ? null : (int)$value;
     }
@@ -115,6 +127,11 @@ Return null from create if the type adapter does not support the
 provided type.
 
 ```php
+use Tebru\Gson\Internal\TypeAdapterProvider;
+use Tebru\Gson\TypeAdapter;
+use Tebru\Gson\TypeAdapter\IntegerTypeAdapter;
+use Tebru\Gson\TypeAdapterFactory;
+use Tebru\PhpType\TypeToken;
 class IntegerTypeAdapterFactory implements TypeAdapterFactory
 {
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
