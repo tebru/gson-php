@@ -94,7 +94,12 @@ class MockProvider
         );
     }
 
-    public static function typeAdapterProvider(Excluder $excluder = null, array $factories = [], ?ReflectionTypeAdapterFactory $reflectionTypeAdapterFactory = null)
+    public static function typeAdapterProvider(
+        Excluder $excluder = null,
+        array $factories = [],
+        ?ReflectionTypeAdapterFactory $reflectionTypeAdapterFactory = null,
+        bool $enableScalarTypeAdapters = true
+    )
     {
         if (null === $excluder) {
             $excluder = self::excluder();
@@ -110,15 +115,19 @@ class MockProvider
             );
         }
 
+        $scalarTypeAdapters = $enableScalarTypeAdapters ? [
+            new StringTypeAdapter(),
+            new IntegerTypeAdapter(),
+            new FloatTypeAdapter(),
+            new BooleanTypeAdapter(),
+            new NullTypeAdapter(),
+        ] : [];
+
         return new TypeAdapterProvider(
             array_merge(
                 $factories,
+                $scalarTypeAdapters,
                 [
-                    new StringTypeAdapter(),
-                    new IntegerTypeAdapter(),
-                    new FloatTypeAdapter(),
-                    new BooleanTypeAdapter(),
-                    new NullTypeAdapter(),
                     new DateTimeTypeAdapterFactory(DateTime::ATOM),
                     new ArrayTypeAdapterFactory(false),
                     $reflectionTypeAdapterFactory,

@@ -107,7 +107,7 @@ class ArrayTypeAdapter extends TypeAdapter
             $itemValue = null;
             switch ($this->numberOfGenerics) {
                 case 0:
-                    if (!$enableScalarAdapters && is_scalar($item)) {
+                    if (!$enableScalarAdapters && ($item === null || is_scalar($item))) {
                         $itemValue = $item;
                         break;
                     }
@@ -134,7 +134,7 @@ class ArrayTypeAdapter extends TypeAdapter
                         throw new JsonSyntaxException('Expected integer, but found string for key');
                     }
 
-                    $itemValue = (!$enableScalarAdapters && is_scalar($item))
+                    $itemValue = (!$enableScalarAdapters && ($item ===  null || is_scalar($item)))
                         ? $item
                         : $this->valueTypeAdapter->read($item, $context);
                     break;
