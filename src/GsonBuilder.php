@@ -503,7 +503,7 @@ class GsonBuilder
      */
     public function build(): Gson
     {
-        if (null === $this->cacheDir && true === $this->enableCache) {
+        if ($this->enableCache === true && ($this->cacheDir === null && $this->cache === null)) {
             throw new LogicException('Cannot enable cache without a cache directory');
         }
 

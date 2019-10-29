@@ -3,6 +3,11 @@ Change Log
 
 This document keeps track of changes between releases of the library.
 
+master
+------
+
+* FIXED: Don't error if using custom cache without directory
+
 v0.7.1
 ------
 * FIXED: Fixed issue with null value in array
