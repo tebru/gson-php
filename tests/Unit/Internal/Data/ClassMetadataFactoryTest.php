@@ -8,8 +8,6 @@ namespace Tebru\Gson\Test\Unit\Internal\Data;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Cache\Simple\ArrayCache;
-use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\AnnotationReader\AnnotationCollection;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Internal\AccessorMethodProvider;
@@ -21,6 +19,7 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\SetByNull;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
+use Tebru\Gson\Internal\CacheProvider;
 use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
@@ -104,8 +103,8 @@ class ClassMetadataFactoryTest extends TestCase
 
     public function testCreateUsesCache(): void
     {
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
-        $cache = new ArrayCache();
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), CacheProvider::createNullCache());
+        $cache = CacheProvider::createMemoryCache();
 
         $factory = new ClassMetadataFactory(
             new ReflectionPropertySetFactory(),
