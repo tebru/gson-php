@@ -7,6 +7,7 @@ master
 ------
 
 * FIXED: Don't error if using custom cache without directory
+* FIXED: deprecated ReflectionType::__toString no longer called
 
 v0.7.1
 ------

@@ -17,6 +17,7 @@ use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Compound;
 use phpDocumentor\Reflection\Types\ContextFactory;
 use phpDocumentor\Reflection\Types\Null_;
+use ReflectionException;
 use ReflectionMethod;
 use ReflectionProperty;
 use Reflector;
@@ -57,7 +58,6 @@ final class TypeTokenFactory
 
     /**
      * Attempts to guess a property type based method type hints, defaults to wildcard type
-     *
      * - @Type annotation if it exists
      * - Getter return type if it exists
      * - Setter typehint if it exists
@@ -67,12 +67,12 @@ final class TypeTokenFactory
      * - Property default value if it exists
      * - Setter default value if it exists
      * - Defaults to wildcard type
-     *
      * @param AnnotationCollection $annotations
      * @param ReflectionProperty|null $property
      * @param ReflectionMethod|null $getterMethod
      * @param ReflectionMethod|null $setterMethod
      * @return TypeToken
+     * @throws ReflectionException
      */
     public function create(
         AnnotationCollection $annotations,
@@ -88,14 +88,14 @@ final class TypeTokenFactory
         }
 
         if (null !== $getterMethod && null !== $getterMethod->getReturnType()) {
-            $getterType = TypeToken::create((string)$getterMethod->getReturnType());
+            $getterType = TypeToken::create($getterMethod->getReturnType()->getName());
             return $this->checkGenericArray($getterType, $property, $getterMethod, $setterMethod);
         }
 
         if (null !== $setterMethod && [] !== $setterMethod->getParameters()) {
             $parameter = $setterMethod->getParameters()[0];
             if (null !== $parameter->getType()) {
-                $setterType = TypeToken::create((string)$parameter->getType());
+                $setterType = TypeToken::create($parameter->getType()->getName());
                 return $this->checkGenericArray($setterType, $property, $getterMethod, $setterMethod);
             }
         }
