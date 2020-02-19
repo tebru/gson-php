@@ -14,10 +14,6 @@ use InvalidArgumentException;
 use LogicException;
 use Psr\SimpleCache\CacheInterface;
 use ReflectionProperty;
-use Symfony\Component\Cache\Simple\ArrayCache;
-use Symfony\Component\Cache\Simple\ChainCache;
-use Symfony\Component\Cache\Simple\NullCache;
-use Symfony\Component\Cache\Simple\PhpFilesCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
 use Tebru\Gson\Annotation\ExclusionCheck;
 use Tebru\Gson\Context\ReaderContext;
@@ -30,6 +26,7 @@ use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
+use Tebru\Gson\Internal\CacheProvider;
 use Tebru\Gson\Internal\DiscriminatorDeserializer;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
@@ -523,12 +520,12 @@ class GsonBuilder
 
         if ($this->cache === null) {
             $this->cache = false === $this->enableCache
-                ? new ArrayCache(0, false)
-                : new ChainCache([new ArrayCache(0, false), new PhpFilesCache('', 0, $this->cacheDir)]);
+                ? CacheProvider::createMemoryCache()
+                : CacheProvider::createFileCache($this->cacheDir);
         }
 
         // no need to cache the annotations as they get cached with the class/properties
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), CacheProvider::createNullCache());
         $excluder = new Excluder();
         $excluder->setVersion($this->version);
         $excluder->setExcludedModifiers($this->excludedModifiers);

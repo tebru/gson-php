@@ -10,8 +10,8 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
-use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
+use Tebru\Gson\Internal\CacheProvider;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
 use Tebru\Gson\PropertyNamingPolicy;
@@ -29,7 +29,7 @@ class PropertyNamerTest extends TestCase
     {
         $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
         $reflectionProperty = new ReflectionProperty(AnnotatedMock::class, 'fooBar');
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), CacheProvider::createNullCache());
         $annotations = $annotationReader->readProperty(
             $reflectionProperty->getName(),
             $reflectionProperty->getDeclaringClass()->getName(),
@@ -44,7 +44,7 @@ class PropertyNamerTest extends TestCase
     {
         $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
         $reflectionMethod = new ReflectionMethod(AnnotatedMock::class, 'virtualFoo');
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), CacheProvider::createNullCache());
         $annotations = $annotationReader->readMethod(
             $reflectionMethod->getName(),
             $reflectionMethod->getDeclaringClass()->getName(),
@@ -59,7 +59,7 @@ class PropertyNamerTest extends TestCase
     {
         $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
         $reflectionMethod = new ReflectionMethod(AnnotatedMock::class, 'virtualFooWithSerializedName');
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), CacheProvider::createNullCache());
         $annotations = $annotationReader->readMethod(
             $reflectionMethod->getName(),
             $reflectionMethod->getDeclaringClass()->getName(),
@@ -74,7 +74,7 @@ class PropertyNamerTest extends TestCase
     {
         $namer = new PropertyNamer(new DefaultPropertyNamingStrategy(PropertyNamingPolicy::LOWER_CASE_WITH_UNDERSCORES));
         $reflectionProperty = new ReflectionProperty(AnnotatedMock::class, 'fooBarBaz');
-        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), new NullCache());
+        $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), CacheProvider::createNullCache());
         $annotations = $annotationReader->readProperty(
             $reflectionProperty->getName(),
             $reflectionProperty->getDeclaringClass()->getName(),

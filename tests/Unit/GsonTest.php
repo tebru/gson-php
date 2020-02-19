@@ -10,12 +10,12 @@ use DateTime;
 use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\TestCase;
+use Psr\SimpleCache\CacheInterface;
 use ReflectionProperty;
-use Symfony\Component\Cache\Simple\ChainCache;
-use Symfony\Component\Cache\Simple\NullCache;
 use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Gson;
+use Tebru\Gson\Internal\CacheProvider;
 use Tebru\Gson\Internal\Naming\UpperCaseMethodNamingStrategy;
 use Tebru\Gson\PropertyNamingPolicy;
 use Tebru\Gson\Test\Mock\ChildClass;
@@ -735,7 +735,7 @@ class GsonTest extends TestCase
             ->setWriterContext($context)
             ->build();
         $result = $gson->toJson(new GsonMock());
-        
+
         $expected = '{
             "integer": null,
             "float": null,
@@ -994,7 +994,7 @@ class GsonTest extends TestCase
             ->enableCache(true);
         $gsonBuilder->build();
 
-        self::assertAttributeInstanceOf(ChainCache::class, 'cache', $gsonBuilder);
+        self::assertAttributeInstanceOf(CacheInterface::class, 'cache', $gsonBuilder);
     }
 
     public function testEnableCacheWithoutDirectoryThrowsException(): void
@@ -1012,8 +1012,9 @@ class GsonTest extends TestCase
 
     public function testCanOverrideCache(): void
     {
+        $cache = CacheProvider::createNullCache();
         $gson = Gson::builder()
-            ->setCache(new NullCache())
+            ->setCache($cache)
             ->build();
 
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
