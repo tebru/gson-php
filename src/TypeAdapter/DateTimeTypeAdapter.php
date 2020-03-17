@@ -77,7 +77,7 @@ class DateTimeTypeAdapter extends TypeAdapter
      */
     public function write($value, WriterContext $context): ?string
     {
-        return $value === null ? null : $value->format($context->getDateFormat());
+        return $value === null ? null : $value->format($this->dateFormat ?? $this->dateFormat = $context->getDateFormat());
     }
 
     /**

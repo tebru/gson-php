@@ -13,6 +13,7 @@ use Psr\SimpleCache\CacheInterface;
 use ReflectionClass;
 use ReflectionProperty;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
+use Tebru\Gson\Annotation\Accessor;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\Internal\AccessorMethodProvider;
@@ -139,6 +140,7 @@ final class ClassMetadataFactory
                 true
             );
 
+            $accessor = $annotations->get(Accessor::class);
             $serializedName = $this->propertyNamer->serializedName($reflectionProperty->getName(), $annotations);
             $getterMethod = $this->accessorMethodProvider->getterMethod($reflectionClass, $reflectionProperty, $annotations);
             $setterMethod = $this->accessorMethodProvider->setterMethod($reflectionClass, $reflectionProperty, $annotations);
@@ -150,7 +152,7 @@ final class ClassMetadataFactory
                 $reflectionProperty->getName(),
                 $serializedName,
                 $type,
-                $getterStrategy,
+                $accessor && $accessor->getter() ? $getterStrategy : null,
                 $setterStrategy,
                 $annotations,
                 $reflectionProperty->getModifiers(),

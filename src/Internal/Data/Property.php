@@ -149,7 +149,7 @@ final class Property implements PropertyMetadata
         string $realName,
         string $serializedName,
         TypeToken $type,
-        GetterStrategy $getterStrategy,
+        ?GetterStrategy $getterStrategy,
         SetterStrategy $setterStrategy,
         AnnotationCollection $annotations,
         int $modifiers,

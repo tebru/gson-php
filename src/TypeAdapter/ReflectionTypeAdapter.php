@@ -161,40 +161,73 @@ class ReflectionTypeAdapter extends TypeAdapter implements ObjectConstructorAwar
         }
 
         $result = [];
-        $serializeNull = $context->serializeNull();
-        $enableScalarAdapters = $context->enableScalarAdapters();
-        $typeAdapterProvider = $context->getTypeAdapterProvider();
-        $excluder = $context->getExcluder();
+        $serializeNull = $this->serializeNull ?? $this->serializeNull = $context->serializeNull();
+        $enableScalarAdapters = $this->enableScalarAdapters ?? $this->enableScalarAdapters = $context->enableScalarAdapters();
+        $typeAdapterProvider = $this->typeAdapterProvider ?? $this->typeAdapterProvider = $context->getTypeAdapterProvider();
+        $excluder = $this->excluder ?? $this->excluder = $context->getExcluder();
+        $extractor = $this->extractor ?? $this->extractor = \Closure::bind(function ($value, array $properties) use ($excluder, $enableScalarAdapters, $typeAdapterProvider, $serializeNull, $context) {
+
+            $values = [];
+            foreach ($properties as $property) {
+                if ($property->skipSerialize) {
+                    continue;
+                }
+                if ($property->hasExclusions && $excluder->skipPropertySerializeByStrategy($property, $value)) {
+                    continue;
+                }
+                $serializedName = $property->serializedName;
+                $propertyValue = $property->getterStrategy ? $value->{$property->getterStrategy->methodName}() : $value->{$property->realName};
+                $isNull = $propertyValue === null;
+                $adapter = $property->adapter;
+                if ($adapter === null && ($enableScalarAdapters || !$property->isScalar)) {
+                    $adapter = $typeAdapterProvider->getAdapterFromProperty($property);
+                }
+                if (!$isNull && $adapter !== null) {
+                    $propertyValue = $adapter->write($propertyValue, $context);
+                }
+
+                if ($serializeNull || !$isNull) {
+                    $values[$serializedName] = $propertyValue;
+                }
+            }
+
+            return $values;
+            }, null, $this->classMetadata->name);
 
         if ($this->classMetadata->hasExclusions && $excluder->skipClassSerializeByStrategy($this->classMetadata, $value)) {
             return null;
         }
 
-        foreach ($this->properties as $property) {
-            if ($property->skipSerialize) {
-                continue;
-            }
-            if ($property->hasExclusions && $excluder->skipPropertySerializeByStrategy($property, $value)) {
-                continue;
-            }
+//        $propertys = [];
+//        foreach ($this->properties as $property) {
+//            if ($property->skipSerialize) {
+//                continue;
+//            }
+//            if ($property->hasExclusions && $excluder->skipPropertySerializeByStrategy($property, $value)) {
+//                continue;
+//            }
+//            $propertys[] = $property;
+//            continue;
+//
+//            $serializedName = $property->serializedName;
+//            $propertyValue = $value->{$property->getterStrategy->propertyName};
+//            $isNull = $propertyValue === null;
+//            $adapter = $property->adapter;
+//
+//            if ($adapter === null && ($enableScalarAdapters || !$property->isScalar)) {
+//                $adapter = $typeAdapterProvider->getAdapterFromProperty($property);
+//            }
+//
+//            if (!$isNull && $adapter !== null) {
+//                $propertyValue = $adapter->write($propertyValue, $context);
+//            }
+//
+//            if ($serializeNull || !$isNull) {
+//                $result[$serializedName] = $propertyValue;
+//            }
+//        }
 
-            $serializedName = $property->serializedName;
-            $propertyValue = $property->getterStrategy->get($value);
-            $isNull = $propertyValue === null;
-            $adapter = $property->adapter;
-
-            if ($adapter === null && ($enableScalarAdapters || !$property->isScalar)) {
-                $adapter = $typeAdapterProvider->getAdapterFromProperty($property);
-            }
-
-            if (!$isNull && $adapter !== null) {
-                $propertyValue = $adapter->write($propertyValue, $context);
-            }
-
-            if ($serializeNull || !$isNull) {
-                $result[$serializedName] = $propertyValue;
-            }
-        }
+        $result = $extractor($value, $this->properties);
 
         if ($this->classVirtualProperty !== null) {
             $result = [$this->classVirtualProperty => $result];
