@@ -9,14 +9,7 @@ declare(strict_types=1);
 namespace Tebru\Gson\Test\Mock\ExclusionStrategies;
 
 use Tebru\Gson\ClassMetadata;
-use Tebru\Gson\Exclusion\ClassDeserializationExclusionStrategy;
-use Tebru\Gson\Exclusion\ClassSerializationExclusionStrategy;
-use Tebru\Gson\Exclusion\DeserializationExclusionData;
-use Tebru\Gson\Exclusion\DeserializationExclusionDataAware;
-use Tebru\Gson\Exclusion\PropertyDeserializationExclusionStrategy;
-use Tebru\Gson\Exclusion\PropertySerializationExclusionStrategy;
-use Tebru\Gson\Exclusion\SerializationExclusionData;
-use Tebru\Gson\Exclusion\SerializationExclusionDataAware;
+use Tebru\Gson\Exclusion\ExclusionStrategy;
 use Tebru\Gson\PropertyMetadata;
 
 /**
@@ -24,24 +17,14 @@ use Tebru\Gson\PropertyMetadata;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class ExcludeAllExclusionStrategy implements
-    ClassSerializationExclusionStrategy,
-    ClassDeserializationExclusionStrategy,
-    PropertySerializationExclusionStrategy,
-    PropertyDeserializationExclusionStrategy,
-    SerializationExclusionDataAware,
-    DeserializationExclusionDataAware
+class ExcludeAllExclusionStrategy implements ExclusionStrategy
 {
-    public $calledSerialize = false;
-    public $calledDeserialize =false;
-
     /**
-     * Returns true if the class should be skipped during deserialization
+     * Return true if object can be written to disk
      *
-     * @param ClassMetadata $class
      * @return bool
      */
-    public function skipDeserializingClass(ClassMetadata $class): bool
+    public function canCache(): bool
     {
         return true;
     }
@@ -50,30 +33,23 @@ class ExcludeAllExclusionStrategy implements
      * Returns true if the class should be skipped during serialization
      *
      * @param ClassMetadata $class
+     * @param object|null $object
      * @return bool
      */
-    public function skipSerializingClass(ClassMetadata $class): bool
+    public function skipSerializingClass(ClassMetadata $class, $object = null): bool
     {
         return true;
     }
 
     /**
-     * Return true if the result of the strategy should be cached
+     * Returns true if the class should be skipped during deserialization
      *
+     * @param ClassMetadata $class
+     * @param object|null $object
+     * @param null $payload
      * @return bool
      */
-    public function shouldCache(): bool
-    {
-        return false;
-    }
-
-    /**
-     * Returns true if the property should be skipped during deserialization
-     *
-     * @param PropertyMetadata $property
-     * @return bool
-     */
-    public function skipDeserializingProperty(PropertyMetadata $property): bool
+    public function skipDeserializingClass(ClassMetadata $class, $object = null, $payload = null): bool
     {
         return true;
     }
@@ -82,32 +58,34 @@ class ExcludeAllExclusionStrategy implements
      * Returns true if the property should be skipped during serialization
      *
      * @param PropertyMetadata $property
+     * @param object|null $object
      * @return bool
      */
-    public function skipSerializingProperty(PropertyMetadata $property): bool
+    public function skipSerializingProperty(PropertyMetadata $property, $object = null): bool
     {
         return true;
     }
 
     /**
-     * Sets the deserialization exclusion data
+     * Returns true if the property should be skipped during deserialization
      *
-     * @param DeserializationExclusionData $data
-     * @return void
+     * @param PropertyMetadata $property
+     * @param object|null $object
+     * @param null $payload
+     * @return bool
      */
-    public function setDeserializationExclusionData(DeserializationExclusionData $data): void
+    public function skipDeserializingProperty(PropertyMetadata $property, $object = null, $payload = null): bool
     {
-        $this->calledDeserialize = true;
+        return true;
     }
 
     /**
-     * Sets the serialization exclusion data
+     * Returns true if the result of the strategy should be cached
      *
-     * @param SerializationExclusionData $data
-     * @return void
+     * @return bool
      */
-    public function setSerializationExclusionData(SerializationExclusionData $data): void
+    public function cacheResult(): bool
     {
-        $this->calledSerialize = true;
+        return true;
     }
 }

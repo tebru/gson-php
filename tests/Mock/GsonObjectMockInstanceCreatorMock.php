@@ -26,4 +26,14 @@ class GsonObjectMockInstanceCreatorMock implements InstanceCreator
     {
         return new GsonObjectMock(null);
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
+    }
 }

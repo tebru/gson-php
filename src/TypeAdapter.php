@@ -19,7 +19,7 @@ use Tebru\Gson\Context\WriterContext;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-abstract class TypeAdapter
+abstract class TypeAdapter implements Cacheable
 {
     /**
      * Read the next value, convert it to its type and return it
@@ -38,4 +38,9 @@ abstract class TypeAdapter
      * @return mixed
      */
     abstract public function write($value, WriterContext $context);
+
+    public function canCache(): bool
+    {
+        return false;
+    }
 }

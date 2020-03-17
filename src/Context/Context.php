@@ -7,6 +7,10 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Context;
 
+use DateTime;
+use Tebru\Gson\Internal\Excluder;
+use Tebru\Gson\Internal\TypeAdapterProvider;
+
 /**
  * Class Context
  *
@@ -19,14 +23,29 @@ abstract class Context
      *
      * @var mixed[]
      */
-    protected $attributes = [];
+    public $attributes = [];
 
     /**
      * If the default scalar type adapters should be enabled
      *
      * @var bool
      */
-    protected $enableScalarAdapters = true;
+    public $enableScalarAdapters = true;
+
+    /**
+     * @var Excluder
+     */
+    public $excluder;
+
+    /**
+     * @var TypeAdapterProvider
+     */
+    public $typeAdapterProvider;
+
+    /**
+     * @var string
+     */
+    public $dateFormat = DateTime::ATOM;
 
     /**
      * Get an array of user defined attributes
@@ -84,6 +103,63 @@ abstract class Context
     public function setEnableScalarAdapters(bool $enable): Context
     {
         $this->enableScalarAdapters = $enable;
+
+        return $this;
+    }
+
+    /**
+     * @return TypeAdapterProvider
+     */
+    public function getTypeAdapterProvider(): TypeAdapterProvider
+    {
+        return $this->typeAdapterProvider;
+    }
+
+    /**
+     * @param TypeAdapterProvider $typeAdapterProvider
+     * @return Context
+     */
+    public function setTypeAdapterProvider(TypeAdapterProvider $typeAdapterProvider): Context
+    {
+        $this->typeAdapterProvider = $typeAdapterProvider;
+
+        return $this;
+    }
+
+    /**
+     * @return Excluder
+     */
+    public function getExcluder(): Excluder
+    {
+        return $this->excluder;
+    }
+
+    /**
+     * @param Excluder $excluder
+     * @return Context
+     */
+    public function setExcluder(Excluder $excluder): Context
+    {
+        $this->excluder = $excluder;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDateFormat(): string
+    {
+        return $this->dateFormat;
+    }
+
+    /**
+     * @param string $dateFormat
+     * @return Context
+     */
+    public function setDateFormat(string $dateFormat): Context
+    {
+        $this->dateFormat = $dateFormat;
 
         return $this;
     }

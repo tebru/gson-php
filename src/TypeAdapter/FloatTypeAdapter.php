@@ -59,4 +59,14 @@ class FloatTypeAdapter extends TypeAdapter implements TypeAdapterFactory
     {
         return $value === null ? null : (float)$value;
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
+    }
 }

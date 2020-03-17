@@ -6,7 +6,6 @@
 namespace Tebru\Gson\Test\Unit\TypeAdapter;
 
 use InvalidArgumentException;
-use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\Gson\TypeAdapter\WildcardTypeAdapter;
@@ -72,8 +71,8 @@ class WildcardTypeAdapterTest extends TypeAdapterTestCase
 
     public function testDeserializeName(): void
     {
-        $adapter = new WildcardTypeAdapter($this->typeAdapterProvider);
-        $result = $adapter->read('key', new ReaderContext());
+        $adapter = new WildcardTypeAdapter();
+        $result = $adapter->read('key', $this->readerContext);
 
         self::assertSame('key', $result);
     }

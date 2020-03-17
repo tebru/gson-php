@@ -17,7 +17,7 @@ use Tebru\PhpType\TypeToken;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-interface JsonDeserializer
+interface JsonDeserializer extends Cacheable
 {
     /**
      * Called during deserialization process, passing in the normalized data. Use

@@ -8,12 +8,13 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal\Data;
 
+use InvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
 use ReflectionClass;
 use ReflectionProperty;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
+use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Annotation\VirtualProperty;
-use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategy\GetByMethod;
 use Tebru\Gson\Internal\AccessorStrategy\SetByNull;
@@ -21,6 +22,7 @@ use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\PropertyNamer;
+use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\Internal\TypeTokenFactory;
 use Tebru\PhpType\TypeToken;
 
@@ -107,12 +109,12 @@ final class ClassMetadataFactory
     }
 
     /**
-     * Create a new [@see ClassMetadata] with properties of the provided type
+     * Create a new [@param TypeToken $phpType
      *
-     * @param TypeToken $phpType
+     * @param TypeAdapterProvider $typeAdapterProvider
      * @return DefaultClassMetadata
      */
-    public function create(TypeToken $phpType): DefaultClassMetadata
+    public function create(TypeToken $phpType, TypeAdapterProvider $typeAdapterProvider): DefaultClassMetadata
     {
         $class = $phpType->rawType;
         $key = 'gson.classmetadata.'.str_replace('\\', '', $class);
@@ -153,21 +155,16 @@ final class ClassMetadataFactory
                 $annotations,
                 $reflectionProperty->getModifiers(),
                 false,
-                $classMetadata
+                $classMetadata,
+                $annotations->get(JsonAdapter::class)
             );
 
-            $skipSerialize = $this->excluder->excludePropertySerialize($property);
-            $skipDeserialize = $this->excluder->excludePropertyDeserialize($property);
-
-            // if we're skipping serialization and deserialization, we don't need
-            // to add the property to the collection
-            if ($skipSerialize && $skipDeserialize) {
+            $this->applyExcludes($property);
+            if ($property->skipSerialize && $property->skipDeserialize) {
                 continue;
             }
 
-            $property->setSkipSerialize($skipSerialize);
-            $property->setSkipDeserialize($skipDeserialize);
-
+            $this->applyAdapter($typeAdapterProvider, $property);
             $properties->add($property);
         }
 
@@ -197,21 +194,16 @@ final class ClassMetadataFactory
                 $annotations,
                 $reflectionMethod->getModifiers(),
                 true,
-                $classMetadata
+                $classMetadata,
+                $annotations->get(JsonAdapter::class)
             );
 
-            $skipSerialize = $this->excluder->excludePropertySerialize($property);
-            $skipDeserialize = $this->excluder->excludePropertyDeserialize($property);
-
-            // if we're skipping serialization and deserialization, we don't need
-            // to add the property to the collection
-            if ($skipSerialize && $skipDeserialize) {
+            $this->applyExcludes($property);
+            if ($property->skipSerialize && $property->skipDeserialize) {
                 continue;
             }
 
-            $property->setSkipSerialize($skipSerialize);
-            $property->setSkipDeserialize($skipDeserialize);
-
+            $this->applyAdapter($typeAdapterProvider, $property);
             $properties->add($property);
         }
 
@@ -221,5 +213,30 @@ final class ClassMetadataFactory
         $this->cache->set($key, $classMetadata);
 
         return $classMetadata;
+    }
+
+    private function applyExcludes(Property $property)
+    {
+        $skipSerialize = $this->excluder->excludePropertySerialize($property);
+        $skipDeserialize = $this->excluder->excludePropertyDeserialize($property);
+
+        $property->setSkipSerialize($skipSerialize);
+        $property->setSkipDeserialize($skipDeserialize);
+    }
+
+    /**
+     * @param TypeAdapterProvider $typeAdapterProvider
+     * @param Property $property
+     */
+    private function applyAdapter(TypeAdapterProvider $typeAdapterProvider, Property $property): void
+    {
+        $adapter = null;
+        try {
+            $adapter = $typeAdapterProvider->getAdapterFromProperty($property);
+        } catch (InvalidArgumentException $exception) { }
+
+        if ($adapter && $adapter->canCache() === true) {
+            $property->adapter = $adapter;
+        }
     }
 }

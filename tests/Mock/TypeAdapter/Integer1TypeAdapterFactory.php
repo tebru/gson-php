@@ -31,4 +31,14 @@ class Integer1TypeAdapterFactory implements TypeAdapterFactory
     {
         return $type->isInteger() ? new Integer1TypeAdapter() : null;
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
+    }
 }

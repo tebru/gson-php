@@ -50,4 +50,14 @@ final class DiscriminatorDeserializer implements JsonDeserializer
     {
         return $context->deserialize($value, $this->discriminator->getClass($value));
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return $this->discriminator->canCache();
+    }
 }

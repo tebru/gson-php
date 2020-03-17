@@ -71,4 +71,9 @@ final class GetByClosure implements GetterStrategy
 
         return $getter($object, $this->propertyName);
     }
+
+    public function __sleep()
+    {
+        return ['propertyName', 'className'];
+    }
 }

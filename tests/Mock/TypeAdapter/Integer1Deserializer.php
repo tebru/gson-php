@@ -55,4 +55,14 @@ class Integer1Deserializer implements JsonDeserializer
 
         return $mock;
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
+    }
 }

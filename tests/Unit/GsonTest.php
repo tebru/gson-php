@@ -12,7 +12,6 @@ use LogicException;
 use PHPUnit\Framework\TestCase;
 use Psr\SimpleCache\CacheInterface;
 use ReflectionProperty;
-use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Gson;
 use Tebru\Gson\Internal\CacheProvider;
@@ -23,10 +22,10 @@ use Tebru\Gson\Test\Mock\ExclusionStrategies\CacheableDataAwareExclusionStrategy
 use Tebru\Gson\Test\Mock\ExclusionStrategies\CacheableGsonMockExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcludeAllExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\GsonMockMetadataVisitor;
+use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\GsonMockChild;
 use Tebru\Gson\Test\Mock\GsonMockResponse;
 use Tebru\Gson\Test\Mock\GsonObjectMock;
-use Tebru\Gson\Test\Mock\GsonMock;
 use Tebru\Gson\Test\Mock\GsonObjectMockable;
 use Tebru\Gson\Test\Mock\GsonObjectMockInstanceCreatorMock;
 use Tebru\Gson\Test\Mock\Strategy\TwoPropertyNamingStrategy;
@@ -388,7 +387,6 @@ class GsonTest extends TestCase
     {
         $gson = Gson::builder()
             ->addClassMetadataVisitor(new GsonMockMetadataVisitor())
-            ->requireExclusionCheckAnnotation()
             ->build();
 
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
@@ -447,17 +445,6 @@ class GsonTest extends TestCase
         $gsonMock = $gson->fromJson($this->json(), GsonMock::class);
 
         self::assertNull($gsonMock);
-    }
-
-    public function testCachedDataAwareExclusionStrategy(): void
-    {
-        try {
-            Gson::builder()->addExclusion(new CacheableDataAwareExclusionStrategy());
-        } catch (LogicException $exception) {
-            self::assertSame('Gson: Cacheable exclusion strategies must not implement *DataAware interfaces', $exception->getMessage());
-            return;
-        }
-        self::fail('Exception not thrown');
     }
 
     public function testDeserializeWithPropertyNamingPolicy(): void
@@ -1037,25 +1024,6 @@ class GsonTest extends TestCase
         self::assertNull($gsonMock->getExclude());
         self::assertTrue($gsonMock->getExcludeFromStrategy());
         self::assertEquals(new GsonObjectMock('bar'), $gsonMock->getGsonObjectMock());
-    }
-
-    public function testIncompatibleContext(): void
-    {
-        $context = new ReaderContext();
-        $context->setEnableScalarAdapters(false);
-
-        try {
-            Gson::builder()
-                ->setWriterContext(new WriterContext())
-                ->setReaderContext($context)
-                ->build();
-        } catch (LogicException $exception) {
-
-            self::assertSame('The "enableScalarAdapter" values for the reader and writer contexts must match', $exception->getMessage());
-            return;
-        }
-
-        self::fail('Exception was not thrown');
     }
 
     private function json(): string

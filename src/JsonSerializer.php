@@ -17,7 +17,7 @@ use Tebru\PhpType\TypeToken;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-interface JsonSerializer
+interface JsonSerializer extends Cacheable
 {
     /**
      * Called during serialization process, passing in the object and type that should

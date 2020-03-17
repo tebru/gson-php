@@ -28,20 +28,13 @@ class DateTimeTypeAdapter extends TypeAdapter
     protected $type;
 
     /**
-     * @var string
-     */
-    protected $format;
-
-    /**
      * Constructor
      *
      * @param TypeToken $type
-     * @param string $format
      */
-    public function __construct(TypeToken $type, string $format)
+    public function __construct(TypeToken $type)
     {
         $this->type = $type;
-        $this->format = $format;
     }
 
     /**
@@ -58,9 +51,10 @@ class DateTimeTypeAdapter extends TypeAdapter
         }
 
         $class = $this->type->rawType;
+        $format = $context->getDateFormat();
 
         /** @noinspection PhpUndefinedMethodInspection */
-        $dateTime = $class::createFromFormat($this->format, $value);
+        $dateTime = $class::createFromFormat($format, $value);
 
         if ($dateTime !== false) {
             return $dateTime;
@@ -70,7 +64,7 @@ class DateTimeTypeAdapter extends TypeAdapter
             'Could not create "%s" class from "%s" using format "%s"',
             $class,
             $value,
-            $this->format
+            $format
         ));
     }
 
@@ -83,6 +77,16 @@ class DateTimeTypeAdapter extends TypeAdapter
      */
     public function write($value, WriterContext $context): ?string
     {
-        return $value === null ? null : $value->format($this->format);
+        return $value === null ? null : $value->format($context->getDateFormat());
+    }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
     }
 }

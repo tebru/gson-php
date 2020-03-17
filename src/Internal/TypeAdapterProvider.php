@@ -10,6 +10,7 @@ namespace Tebru\Gson\Internal;
 
 use InvalidArgumentException;
 use Tebru\Gson\Annotation\JsonAdapter;
+use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\TypeAdapter;
@@ -53,6 +54,15 @@ final class TypeAdapterProvider
     {
         $this->typeAdapterFactories = $typeAdapterFactories;
         $this->constructorConstructor = $constructorConstructor;
+    }
+
+    public function getAdapterFromProperty(Property $property): TypeAdapter
+    {
+        $adapterAnnotation = $property->jsonAdapter;
+
+        return $adapterAnnotation
+            ? $this->getAdapterFromAnnotation($property->type, $property->jsonAdapter)
+            : $this->getAdapter($property->type);
     }
 
     /**
@@ -119,15 +129,15 @@ final class TypeAdapterProvider
         }
 
         if ($object instanceof JsonSerializer && $object instanceof JsonDeserializer) {
-            return new CustomWrappedTypeAdapter($type, $this, $object, $object);
+            return new CustomWrappedTypeAdapter($type, $object, $object);
         }
 
         if ($object instanceof JsonSerializer) {
-            return new CustomWrappedTypeAdapter($type, $this, $object);
+            return new CustomWrappedTypeAdapter($type, $object);
         }
 
         if ($object instanceof JsonDeserializer) {
-            return new CustomWrappedTypeAdapter($type, $this, null, $object);
+            return new CustomWrappedTypeAdapter($type, null, $object);
         }
 
         throw new InvalidArgumentException(sprintf(

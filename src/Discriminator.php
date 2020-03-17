@@ -16,7 +16,7 @@ namespace Tebru\Gson;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-interface Discriminator
+interface Discriminator extends Cacheable
 {
     /**
      * Returns a classname based on an object data

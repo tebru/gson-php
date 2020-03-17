@@ -18,7 +18,7 @@ use Tebru\PhpType\TypeToken;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-interface TypeAdapterFactory
+interface TypeAdapterFactory extends Cacheable
 {
     /**
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs

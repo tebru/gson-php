@@ -65,4 +65,9 @@ final class SetByClosure implements SetterStrategy
         $setter = $this->setter;
         $setter($object, $value, $this->propertyName);
     }
+
+    public function __sleep()
+    {
+        return ['propertyName', 'className'];
+    }
 }

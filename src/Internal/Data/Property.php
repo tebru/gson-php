@@ -10,11 +10,13 @@ namespace Tebru\Gson\Internal\Data;
 
 use Tebru\AnnotationReader\AbstractAnnotation;
 use Tebru\AnnotationReader\AnnotationCollection;
+use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\ClassMetadata;
 use Tebru\Gson\Internal\DefaultClassMetadata;
 use Tebru\Gson\Internal\GetterStrategy;
 use Tebru\Gson\Internal\SetterStrategy;
 use Tebru\Gson\PropertyMetadata;
+use Tebru\Gson\TypeAdapter;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -115,6 +117,21 @@ final class Property implements PropertyMetadata
     public $virtual;
 
     /**
+     * @var TypeAdapter|null
+     */
+    public $adapter;
+
+    /**
+     * @var JsonAdapter|null
+     */
+    public $jsonAdapter;
+
+    /**
+     * @var bool
+     */
+    public $hasExclusions;
+
+    /**
      * Constructor
      *
      * @param string $realName
@@ -126,6 +143,7 @@ final class Property implements PropertyMetadata
      * @param int $modifiers
      * @param bool $virtual
      * @param ClassMetadata $classMetadata
+     * @param JsonAdapter|null $jsonAdapter
      */
     public function __construct(
         string $realName,
@@ -136,7 +154,8 @@ final class Property implements PropertyMetadata
         AnnotationCollection $annotations,
         int $modifiers,
         bool $virtual,
-        ClassMetadata $classMetadata
+        ClassMetadata $classMetadata,
+        ?JsonAdapter $jsonAdapter = null
     ) {
         $this->realName = $realName;
         $this->serializedName = $serializedName;
@@ -148,6 +167,7 @@ final class Property implements PropertyMetadata
         $this->modifiers = $modifiers;
         $this->virtual = $virtual;
         $this->classMetadata = $classMetadata;
+        $this->jsonAdapter = $jsonAdapter;
     }
 
     /**

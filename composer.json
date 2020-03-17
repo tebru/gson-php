@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=7.1",
+        "ext-json": "*",
         "phpdocumentor/reflection-docblock": "^3.2.3|^4.0.1",
         "tebru/php-type": "^0.1.7",
         "tebru/doctrine-annotation-reader": "^0.3.7",

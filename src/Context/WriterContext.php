@@ -21,7 +21,7 @@ class WriterContext extends Context
      *
      * @var bool
      */
-    private $serializeNull = false;
+    public $serializeNull = false;
 
     /**
      * If we should serialize null

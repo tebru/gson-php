@@ -35,7 +35,7 @@ class CustomWrappedTypeAdapterTest extends TypeAdapterTestCase
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
         /** @var UserMock $user */
-        $user = $adapter->read(json_decode($this->json(), true), new ReaderContext());
+        $user = $adapter->read(json_decode($this->json(), true), $this->readerContext);
 
         $address = $user->getAddress();
 
@@ -60,7 +60,7 @@ class CustomWrappedTypeAdapterTest extends TypeAdapterTestCase
 
         /** @var CustomWrappedTypeAdapter $adapter */
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
-        $user = $adapter->read(null, new ReaderContext());
+        $user = $adapter->read(null, $this->readerContext);
 
         self::assertNull($user);
     }
@@ -75,7 +75,7 @@ class CustomWrappedTypeAdapterTest extends TypeAdapterTestCase
         $adapter = $typeAdapterProvider->getAdapter(new TypeToken(UserMock::class));
 
         /** @var UserMock $user */
-        $user = $adapter->read(json_decode($this->json(), true), new ReaderContext());
+        $user = $adapter->read(json_decode($this->json(), true), $this->readerContext);
 
         self::assertSame(1, $user->getId());
         self::assertSame('test@example.com', $user->getEmail());

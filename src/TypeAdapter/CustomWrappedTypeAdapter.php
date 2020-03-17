@@ -12,7 +12,6 @@ use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Internal\DefaultJsonDeserializationContext;
 use Tebru\Gson\Internal\DefaultJsonSerializationContext;
-use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\JsonDeserializer;
 use Tebru\Gson\JsonSerializer;
 use Tebru\Gson\TypeAdapter;
@@ -32,11 +31,6 @@ class CustomWrappedTypeAdapter extends TypeAdapter
      * @var TypeToken
      */
     protected $type;
-
-    /**
-     * @var TypeAdapterProvider
-     */
-    protected $typeAdapterProvider;
 
     /**
      * @var JsonSerializer
@@ -64,20 +58,17 @@ class CustomWrappedTypeAdapter extends TypeAdapter
      * Constructor
      *
      * @param TypeToken $type
-     * @param TypeAdapterProvider $typeAdapterProvider
      * @param JsonSerializer|null $serializer
      * @param JsonDeserializer|null $deserializer
      * @param TypeAdapterFactory|null $skip
      */
     public function __construct(
         TypeToken $type,
-        TypeAdapterProvider $typeAdapterProvider,
         JsonSerializer $serializer = null,
         JsonDeserializer $deserializer = null,
         TypeAdapterFactory $skip = null
     ) {
         $this->type = $type;
-        $this->typeAdapterProvider = $typeAdapterProvider;
         $this->serializer = $serializer;
         $this->deserializer = $deserializer;
         $this->skip = $skip;
@@ -92,8 +83,9 @@ class CustomWrappedTypeAdapter extends TypeAdapter
      */
     public function read($value, ReaderContext $context)
     {
+        $provider = $context->getTypeAdapterProvider();
         if ($this->deserializer === null) {
-            $this->delegateTypeAdapter = $this->delegateTypeAdapter ?? $this->typeAdapterProvider->getAdapter($this->type, $this->skip);
+            $this->delegateTypeAdapter = $this->delegateTypeAdapter ?? $provider->getAdapter($this->type, $this->skip);
 
             return $this->delegateTypeAdapter->read($value, $context);
         }
@@ -105,7 +97,7 @@ class CustomWrappedTypeAdapter extends TypeAdapter
         return $this->deserializer->deserialize(
             $value,
             $this->type,
-            new DefaultJsonDeserializationContext($this->typeAdapterProvider, $context)
+            new DefaultJsonDeserializationContext($provider, $context)
         );
     }
 
@@ -118,8 +110,9 @@ class CustomWrappedTypeAdapter extends TypeAdapter
      */
     public function write($value, WriterContext $context)
     {
+        $provider = $context->getTypeAdapterProvider();
         if ($this->serializer === null) {
-            $this->delegateTypeAdapter = $this->delegateTypeAdapter ?? $this->typeAdapterProvider->getAdapter($this->type, $this->skip);
+            $this->delegateTypeAdapter = $this->delegateTypeAdapter ?? $provider->getAdapter($this->type, $this->skip);
 
             return $this->delegateTypeAdapter->write($value, $context);
         }
@@ -131,7 +124,28 @@ class CustomWrappedTypeAdapter extends TypeAdapter
         return $this->serializer->serialize(
             $value,
             $this->type,
-            new DefaultJsonSerializationContext($this->typeAdapterProvider, $context)
+            new DefaultJsonSerializationContext($provider, $context)
         );
+    }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        $cacheSerializer = true;
+        $cacheDeserializer = true;
+
+        if ($this->serializer !== null) {
+            $cacheSerializer = $this->serializer->canCache();
+        }
+
+        if ($this->deserializer !== null) {
+            $cacheDeserializer = $this->deserializer->canCache();
+        }
+
+        return $cacheSerializer && $cacheDeserializer;
     }
 }

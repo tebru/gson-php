@@ -6,7 +6,6 @@
 namespace Tebru\Gson\Test\Unit\Internal;
 
 use PHPUnit\Framework\TestCase;
-use Tebru\Gson\Element\JsonObject;
 use Tebru\Gson\Test\Mock\AddressMock;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;

@@ -76,12 +76,33 @@ class CustomWrappedTypeAdapterFactory implements TypeAdapterFactory
     {
         if ($this->strict) {
             return $type->rawType === $this->type->rawType
-                ? new CustomWrappedTypeAdapter($type, $typeAdapterProvider, $this->serializer, $this->deserializer, $this)
+                ? new CustomWrappedTypeAdapter($type, $this->serializer, $this->deserializer, $this)
                 : null;
         }
 
         return $type->isA($this->type->rawType)
-            ? new CustomWrappedTypeAdapter($type, $typeAdapterProvider, $this->serializer, $this->deserializer, $this)
+            ? new CustomWrappedTypeAdapter($type, $this->serializer, $this->deserializer, $this)
             : null;
+    }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        $cacheSerializer = true;
+        $cacheDeserializer = true;
+
+        if ($this->serializer !== null) {
+            $cacheSerializer = $this->serializer->canCache();
+        }
+
+        if ($this->deserializer !== null) {
+            $cacheDeserializer = $this->deserializer->canCache();
+        }
+
+        return $cacheSerializer && $cacheDeserializer;
     }
 }

@@ -18,7 +18,7 @@ use Tebru\PhpType\TypeToken;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-interface InstanceCreator
+interface InstanceCreator extends Cacheable
 {
     /**
      * Accepts a [@see PhpType] and returns an instantiated object

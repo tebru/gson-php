@@ -14,19 +14,18 @@ use InvalidArgumentException;
 use LogicException;
 use Psr\SimpleCache\CacheInterface;
 use ReflectionProperty;
+use RuntimeException;
+use Symfony\Component\Cache\Exception\CacheException;
 use Tebru\AnnotationReader\AnnotationReaderAdapter;
-use Tebru\Gson\Annotation\ExclusionCheck;
 use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\Context\WriterContext;
-use Tebru\Gson\Exclusion\DeserializationExclusionDataAware;
 use Tebru\Gson\Exclusion\ExclusionStrategy;
-use Tebru\Gson\Exclusion\SerializationExclusionDataAware;
 use Tebru\Gson\Internal\AccessorMethodProvider;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
+use Tebru\Gson\Internal\CacheProvider;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
-use Tebru\Gson\Internal\CacheProvider;
 use Tebru\Gson\Internal\DiscriminatorDeserializer;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\Naming\DefaultPropertyNamingStrategy;
@@ -118,25 +117,11 @@ class GsonBuilder
     private $requireExpose = false;
 
     /**
-     * True if the [@see ExclusionCheck] annotation is required to use non-cached exclusion strategies
-     *
-     * @var bool
-     */
-    private $requireExclusionCheck = false;
-
-    /**
-     * An array of [@see ExclusionStrategy] objects
-     *
-     * @var ExclusionStrategy[]
-     */
-    private $exclusionStrategies = [];
-
-    /**
      * An array of Cacheable [@see ExclusionStrategy] objects
      *
      * @var ExclusionStrategy[]
      */
-    private $cachedExclusionStrategies = [];
+    private $exclusionStrategies = [];
 
     /**
      * @var ReaderContext
@@ -149,9 +134,9 @@ class GsonBuilder
     private $writerContext;
 
     /**
-     * @var bool|null
+     * @var bool
      */
-    private $enableScalarAdapters;
+    private $enableScalarAdapters = true;
 
     /**
      * Default format for DateTimes
@@ -327,18 +312,6 @@ class GsonBuilder
     }
 
     /**
-     * Require the [@see ExclusionCheck] annotation to use non-cached exclusion strategies
-     *
-     * @return GsonBuilder
-     */
-    public function requireExclusionCheckAnnotation(): GsonBuilder
-    {
-        $this->requireExclusionCheck = true;
-
-        return $this;
-    }
-
-    /**
      * Add an [@see ExclusionStrategy]
      *
      * @param ExclusionStrategy $exclusionStrategy
@@ -346,19 +319,11 @@ class GsonBuilder
      */
     public function addExclusion(ExclusionStrategy $exclusionStrategy): GsonBuilder
     {
-        if (!$exclusionStrategy->shouldCache()) {
-            $this->exclusionStrategies[] = $exclusionStrategy;
-            return $this;
+        if (!$exclusionStrategy->cacheResult()) {
+            throw new RuntimeException('Exclusion strategies must be cacheable');
         }
 
-        if (
-            $exclusionStrategy instanceof SerializationExclusionDataAware
-            || $exclusionStrategy instanceof DeserializationExclusionDataAware
-        ) {
-            throw new LogicException('Gson: Cacheable exclusion strategies must not implement *DataAware interfaces');
-        }
-
-        $this->cachedExclusionStrategies[] = $exclusionStrategy;
+        $this->exclusionStrategies[] = $exclusionStrategy;
 
         return $this;
     }
@@ -496,7 +461,7 @@ class GsonBuilder
      * Builds a new [@see Gson] object based on configuration set
      *
      * @return Gson
-     * @throws LogicException
+     * @throws LogicException|CacheException
      */
     public function build(): Gson
     {
@@ -511,10 +476,6 @@ class GsonBuilder
             $writerContext->setEnableScalarAdapters($this->enableScalarAdapters);
         }
 
-        if ($readerContext->enableScalarAdapters() !== $writerContext->enableScalarAdapters()) {
-            throw new LogicException('The "enableScalarAdapter" values for the reader and writer contexts must match');
-        }
-
         $propertyNamingStrategy = $this->propertyNamingStrategy ?? new DefaultPropertyNamingStrategy($this->propertyNamingPolicy);
         $methodNamingStrategy = $this->methodNamingStrategy ?? new UpperCaseMethodNamingStrategy();
 
@@ -526,17 +487,15 @@ class GsonBuilder
 
         // no need to cache the annotations as they get cached with the class/properties
         $annotationReader = new AnnotationReaderAdapter(new AnnotationReader(), CacheProvider::createNullCache());
-        $excluder = new Excluder();
+
+        $constructorConstructor = new ConstructorConstructor($this->instanceCreators);
+        $excluder = new Excluder($constructorConstructor);
         $excluder->setVersion($this->version);
         $excluder->setExcludedModifiers($this->excludedModifiers);
         $excluder->setRequireExpose($this->requireExpose);
 
         foreach ($this->exclusionStrategies as $strategy) {
             $excluder->addExclusionStrategy($strategy);
-        }
-
-        foreach ($this->cachedExclusionStrategies as $strategy) {
-            $excluder->addCachedExclusionStrategy($strategy);
         }
 
         $classMetadataFactory = new ClassMetadataFactory(
@@ -549,7 +508,6 @@ class GsonBuilder
             $excluder,
             $this->cache
         );
-        $constructorConstructor = new ConstructorConstructor($this->instanceCreators);
         $typeAdapterProvider = new TypeAdapterProvider(
             $this->getTypeAdapterFactories(
                 $classMetadataFactory,
@@ -559,6 +517,15 @@ class GsonBuilder
             ),
             $constructorConstructor
         );
+
+        $readerContext->setTypeAdapterProvider($typeAdapterProvider);
+        $writerContext->setTypeAdapterProvider($typeAdapterProvider);
+
+        $readerContext->setDateFormat($this->dateTimeFormat);
+        $writerContext->setDateFormat($this->dateTimeFormat);
+
+        $readerContext->setExcluder($excluder);
+        $writerContext->setExcluder($excluder);
 
         return new Gson($typeAdapterProvider, $readerContext, $writerContext);
     }
@@ -593,13 +560,12 @@ class GsonBuilder
             $this->typeAdapterFactories,
             $scalarFactories,
             [
-                new DateTimeTypeAdapterFactory($this->dateTimeFormat),
+                new DateTimeTypeAdapterFactory(),
                 new ArrayTypeAdapterFactory($enableScalarAdapters),
                 new ReflectionTypeAdapterFactory(
                     $constructorConstructor,
                     $classMetadataFactory,
                     $excluder,
-                    $this->requireExclusionCheck,
                     $this->classMetadataVisitors
                 ),
                 new WildcardTypeAdapterFactory(),

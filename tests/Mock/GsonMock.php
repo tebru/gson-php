@@ -76,10 +76,6 @@ class GsonMock
      */
     private $exclude;
 
-    /**
-     * @Gson\ExclusionCheck()
-     * @var bool
-     */
     private $excludeFromStrategy;
 
     private $gsonObjectMock;

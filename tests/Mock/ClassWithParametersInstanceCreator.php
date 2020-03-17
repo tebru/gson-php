@@ -26,4 +26,14 @@ class ClassWithParametersInstanceCreator implements InstanceCreator
     {
         return new ClassWithParameters($type->getRawType());
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
+    }
 }

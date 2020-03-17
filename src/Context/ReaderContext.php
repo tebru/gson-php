@@ -21,14 +21,14 @@ class ReaderContext extends Context
      *
      * @var bool
      */
-    private $usesExistingObject = false;
+    public $usesExistingObject = false;
 
     /**
      * The initial json_decode'd payload
      *
      * @var mixed
      */
-    private $payload;
+    public $payload;
 
     /**
      * If we're reading into an existing object

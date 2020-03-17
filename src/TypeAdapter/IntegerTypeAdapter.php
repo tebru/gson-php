@@ -59,4 +59,14 @@ class IntegerTypeAdapter extends TypeAdapter implements TypeAdapterFactory
     {
         return $value === null ? null : (int)$value;
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
+    }
 }

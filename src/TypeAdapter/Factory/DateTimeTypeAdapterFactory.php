@@ -23,21 +23,6 @@ use Tebru\PhpType\TypeToken;
 class DateTimeTypeAdapterFactory implements TypeAdapterFactory
 {
     /**
-     * @var string
-     */
-    protected $format;
-
-    /**
-     * Constructor
-     *
-     * @param string $format
-     */
-    public function __construct(string $format)
-    {
-        $this->format = $format;
-    }
-
-    /**
      * Accepts the current type and a [@see TypeAdapterProvider] in case another type adapter needs
      * to be fetched during creation.  Should return a new instance of the TypeAdapter. Will return
      * null if the type adapter is not supported for the provided type.
@@ -49,7 +34,17 @@ class DateTimeTypeAdapterFactory implements TypeAdapterFactory
     public function create(TypeToken $type, TypeAdapterProvider $typeAdapterProvider): ?TypeAdapter
     {
         return $type->phpType === TypeToken::OBJECT && $type->isA(DateTimeInterface::class)
-            ? new DateTimeTypeAdapter($type, $this->format)
+            ? new DateTimeTypeAdapter($type)
             : null;
+    }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
     }
 }

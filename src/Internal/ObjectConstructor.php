@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\Internal;
 
+use Tebru\Gson\Cacheable;
+
 /**
  * Interface ObjectConstructor
  *
@@ -16,7 +18,7 @@ namespace Tebru\Gson\Internal;
  *
  * @author Nate Brunette <n@tebru.net>
  */
-interface ObjectConstructor
+interface ObjectConstructor extends Cacheable
 {
     /**
      * Returns the instantiated object

@@ -12,7 +12,7 @@ use Tebru\Gson\Gson;
 use Tebru\Gson\PropertyMetadata;
 
 override(Gson::fromJson(1), map(['' => '@']));
-override(Gson::fromArray(1), map(['' => '@']));
+override(Gson::fromNormalized(1), map(['' => '@']));
 override(AnnotationCollection::get(0), map(['' => '@']));
 override(ClassMetadata::getAnnotation(0), map(['' => '@']));
 override(PropertyMetadata::getAnnotation(0), map(['' => '@']));

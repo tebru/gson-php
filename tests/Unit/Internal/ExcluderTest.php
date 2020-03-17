@@ -28,9 +28,7 @@ use Tebru\Gson\Test\Mock\ExcluderExposeMock;
 use Tebru\Gson\Test\Mock\ExcluderVersionMock;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\BarPropertyExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\ExcludeAllExclusionStrategy;
-use Tebru\Gson\Test\Mock\ExclusionStrategies\FooDeserializationExclusionStrategy;
 use Tebru\Gson\Test\Mock\ExclusionStrategies\FooPropertyExclusionStrategy;
-use Tebru\Gson\Test\Mock\ExclusionStrategies\FooSerializationExclusionStrategy;
 use Tebru\Gson\Test\Mock\Foo;
 use Tebru\Gson\Test\Mock\GsonMockChild;
 use Tebru\Gson\Test\MockProvider;
@@ -155,35 +153,9 @@ class ExcluderTest extends TestCase
         self::assertFalse($this->excluder->excludeClassDeserialize($classMetadata));
     }
 
-    public function testExcludeClassWithStrategySerialization(): void
-    {
-        $this->excluder->addExclusionStrategy(new FooSerializationExclusionStrategy());
-        $classMetadata = MockProvider::classMetadata(Foo::class, $this->propertyCollection);
-
-        self::assertTrue($this->excluder->hasClassSerializationStrategies());
-        self::assertFalse($this->excluder->hasClassDeserializationStrategies());
-        self::assertFalse($this->excluder->hasPropertySerializationStrategies());
-        self::assertFalse($this->excluder->hasPropertyDeserializationStrategies());
-        self::assertTrue($this->excluder->excludeClassBySerializationStrategy($classMetadata));
-        self::assertFalse($this->excluder->excludeClassByDeserializationStrategy($classMetadata));
-    }
-
-    public function testExcludeClassWithStrategyDeserialization(): void
-    {
-        $this->excluder->addExclusionStrategy(new FooDeserializationExclusionStrategy());
-        $classMetadata = MockProvider::classMetadata(Foo::class, $this->propertyCollection);
-
-        self::assertFalse($this->excluder->hasClassSerializationStrategies());
-        self::assertTrue($this->excluder->hasClassDeserializationStrategies());
-        self::assertFalse($this->excluder->hasPropertySerializationStrategies());
-        self::assertFalse($this->excluder->hasPropertyDeserializationStrategies());
-        self::assertFalse($this->excluder->excludeClassBySerializationStrategy($classMetadata));
-        self::assertTrue($this->excluder->excludeClassByDeserializationStrategy($classMetadata));
-    }
-
     public function testExcludeCacheable(): void
     {
-        $this->excluder->addCachedExclusionStrategy(new ExcludeAllExclusionStrategy());
+        $this->excluder->addExclusionStrategy(new ExcludeAllExclusionStrategy());
         $classMetadata = MockProvider::classMetadata(Foo::class, $this->propertyCollection);
         $property = new Property(
             'foo',
@@ -202,30 +174,6 @@ class ExcluderTest extends TestCase
         self::assertTrue($this->excluder->excludeClassDeserialize($classMetadata));
         self::assertTrue($this->excluder->excludePropertySerialize($property));
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
-    }
-
-    public function testClassDataAware(): void
-    {
-        $strategy = new ExcludeAllExclusionStrategy();
-        $this->excluder->addExclusionStrategy($strategy);
-        $serializationData = new DefaultSerializationExclusionData(new stdClass(), new WriterContext());
-        $deserializationData = new DefaultDeserializationExclusionData(new stdClass(), new ReaderContext());
-        $this->excluder->applyClassSerializationExclusionData($serializationData);
-        $this->excluder->applyClassDeserializationExclusionData($deserializationData);
-        self::assertTrue($strategy->calledSerialize);
-        self::assertTrue($strategy->calledDeserialize);
-    }
-
-    public function testPropertyDataAware(): void
-    {
-        $strategy = new ExcludeAllExclusionStrategy();
-        $this->excluder->addExclusionStrategy($strategy);
-        $serializationData = new DefaultSerializationExclusionData(new stdClass(), new WriterContext());
-        $deserializationData = new DefaultDeserializationExclusionData(new stdClass(), new ReaderContext());
-        $this->excluder->applyPropertySerializationExclusionData($serializationData);
-        $this->excluder->applyPropertyDeserializationExclusionData($deserializationData);
-        self::assertTrue($strategy->calledSerialize);
-        self::assertTrue($strategy->calledDeserialize);
     }
 
     public function testExcludePropertyDefaultModifiers(): void
@@ -677,44 +625,5 @@ class ExcluderTest extends TestCase
 
         self::assertTrue($this->excluder->excludePropertySerialize($property));
         self::assertTrue($this->excluder->excludePropertyDeserialize($property));
-    }
-
-    public function testExcludeFromStrategy(): void
-    {
-        $this->excluder->addExclusionStrategy(new BarPropertyExclusionStrategy());
-        $this->excluder->addExclusionStrategy(new FooPropertyExclusionStrategy());
-
-        $property = new Property(
-            'foo',
-            'foo',
-            new TypeToken('string'),
-            new GetByPublicProperty('foo'),
-            new SetByPublicProperty('foo'),
-            new AnnotationCollection(),
-            ReflectionProperty::IS_PRIVATE,
-            false,
-            MockProvider::classMetadata(Foo::class, $this->propertyCollection)
-        );
-
-        self::assertTrue($this->excluder->excludePropertyBySerializationStrategy($property));
-        self::assertTrue($this->excluder->excludePropertyByDeserializationStrategy($property));
-    }
-
-    public function testExcludeFromStrategyFalse(): void
-    {
-        $property = new Property(
-            'foo',
-            'foo',
-            new TypeToken('string'),
-            new GetByPublicProperty('foo'),
-            new SetByPublicProperty('foo'),
-            new AnnotationCollection(),
-            ReflectionProperty::IS_PRIVATE,
-            false,
-            MockProvider::classMetadata(Foo::class, $this->propertyCollection)
-        );
-
-        self::assertFalse($this->excluder->excludePropertyBySerializationStrategy($property));
-        self::assertFalse($this->excluder->excludePropertyByDeserializationStrategy($property));
     }
 }

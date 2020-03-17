@@ -56,4 +56,14 @@ final class CreateFromInstanceCreator implements ObjectConstructor
     {
         return $this->instanceCreator->createInstance($this->type);
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return $this->instanceCreator->canCache();
+    }
 }

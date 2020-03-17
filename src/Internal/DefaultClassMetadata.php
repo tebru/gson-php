@@ -56,6 +56,11 @@ final class DefaultClassMetadata implements ClassMetadata
     public $skipDeserialize = false;
 
     /**
+     * @var bool
+     */
+    public $hasExclusions;
+
+    /**
      * Constructor
      *
      * @param string $name

@@ -45,4 +45,14 @@ class MockDeserializer implements JsonDeserializer
 
         return $user;
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
+    }
 }

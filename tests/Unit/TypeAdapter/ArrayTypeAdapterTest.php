@@ -11,9 +11,7 @@ use stdClass;
 use Tebru\Gson\Test\Mock\ExcludedClass;
 use Tebru\Gson\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\Exception\JsonSyntaxException;
-use Tebru\Gson\TypeAdapter\IntegerTypeAdapter;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\PhpType\TypeToken;
 
@@ -146,15 +144,6 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
         self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
     }
 
-    public function testDeserializeNestedObjectWithGeneric(): void
-    {
-        /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<array>'));
-        $result = $adapter->read(json_decode('{"key": {"nestedKey": "nestedValue", "nestedKey2": "nestedValue2"}}', true), $this->readerContext);
-
-        self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
-    }
-
     public function testDeserializeNestedObjectWithKeyAndValueTypes(): void
     {
         /** @var ArrayTypeAdapter $adapter */
@@ -173,19 +162,6 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
         $result = $adapter->read(json_decode('{"key": {"nestedKey": "nestedValue", "nestedKey2": "nestedValue2"}}', true), $this->readerContext);
 
         self::assertSame(['key' => ['nestedKey' => 'nestedValue', 'nestedKey2' => 'nestedValue2']], $result);
-    }
-
-    public function testDeserializeArrayWithNonStringOrIntegerKey(): void
-    {
-        /** @var ArrayTypeAdapter $adapter */
-        $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<float, string>'));
-        try {
-            $adapter->read(json_decode('{"1.1": "foo"}', true), $this->readerContext);
-        } catch (LogicException $exception) {
-            self::assertSame('Array keys must be strings or integers', $exception->getMessage());
-            return;
-        }
-        self::assertTrue(false);
     }
 
     public function testDeserializeArrayWithIntegerKeyPassedString(): void
@@ -210,21 +186,9 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
         self::assertSame(['foo'], $result);
     }
 
-    public function testDeserializeMoreThanTwoGenericTypes(): void
-    {
-        $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('string'), new StringTypeAdapter(), 3);
-        try {
-            $adapter->read(json_decode('{}', true), $this->readerContext);
-        } catch (LogicException $exception) {
-            self::assertSame('Array may not have more than 2 generic types', $exception->getMessage());
-            return;
-        }
-        self::assertTrue(false);
-    }
-
     public function testDeserializeNonArrayOrObject(): void
     {
-        $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('?'), new IntegerTypeAdapter(), 1);
+        $adapter = new ArrayTypeAdapter();
         try {
             $adapter->read(json_decode('1', true), $this->readerContext);
         } catch (JsonSyntaxException $exception) {
@@ -331,12 +295,17 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
         self::assertSame([1,2,3], $adapter->write([1, 2, 3], $this->writerContext));
     }
 
-    public function testSerializeArrayAsObjectOneGenericType(): void
+    public function testSerializeArrayWithIntKeyPassedString(): void
     {
         /** @var ArrayTypeAdapter $adapter */
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<string>'));
-
-        self::assertSame(['foo' => 'bar'], $adapter->write(['foo' => 'bar'], $this->writerContext));
+        try {
+            $adapter->write(['foo' => 'bar'], $this->writerContext);
+        } catch (JsonSyntaxException $exception) {
+            self::assertSame('Expected integer, but found string for key', $exception->getMessage());
+            return;
+        }
+        self::fail('Exception was not thrown');
     }
 
     public function testSerializeArrayTwoGenericTypes(): void
@@ -345,18 +314,6 @@ class ArrayTypeAdapterTest extends TypeAdapterTestCase
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken('array<string, string>'));
 
         self::assertSame(['foo' => 'bar'], $adapter->write(['foo' => 'bar'], $this->writerContext));
-    }
-
-    public function testSerializeTooManyGenerics(): void
-    {
-        $adapter = new ArrayTypeAdapter($this->typeAdapterProvider, TypeToken::create('string'), new StringTypeAdapter(), 3);
-        try {
-            $adapter->write([], $this->writerContext);
-        } catch (LogicException $exception) {
-            self::assertSame('Array may not have more than 2 generic types', $exception->getMessage());
-            return;
-        }
-        self::assertTrue(false);
     }
 
     /**

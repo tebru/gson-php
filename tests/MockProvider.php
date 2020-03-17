@@ -63,7 +63,7 @@ class MockProvider
 
     public static function excluder()
     {
-        return new Excluder();
+        return new Excluder(new ConstructorConstructor());
     }
 
     public static function classMetadataFactory(Excluder $excluder)
@@ -89,7 +89,6 @@ class MockProvider
             new ConstructorConstructor(),
             self::classMetadataFactory($excluder),
             $excluder,
-            $requireCheck,
             $metadataVisitors
         );
     }
@@ -110,7 +109,6 @@ class MockProvider
                 new ConstructorConstructor(),
                 self::classMetadataFactory($excluder),
                 $excluder,
-                false,
                 []
             );
         }
@@ -128,8 +126,8 @@ class MockProvider
                 $factories,
                 $scalarTypeAdapters,
                 [
-                    new DateTimeTypeAdapterFactory(DateTime::ATOM),
-                    new ArrayTypeAdapterFactory(false),
+                    new DateTimeTypeAdapterFactory(),
+                    new ArrayTypeAdapterFactory($enableScalarTypeAdapters),
                     $reflectionTypeAdapterFactory,
                     new WildcardTypeAdapterFactory(),
                 ]
@@ -140,11 +138,21 @@ class MockProvider
 
     public static function deserializationContext(Excluder $excluder)
     {
-        return new DefaultJsonDeserializationContext(self::typeAdapterProvider($excluder), new ReaderContext());
+        $provider = self::typeAdapterProvider($excluder);
+        $context = new ReaderContext();
+        $context->setTypeAdapterProvider($provider);
+        $context->setExcluder($excluder);
+
+        return new DefaultJsonDeserializationContext($provider, $context);
     }
 
     public static function serializationContext(Excluder $excluder)
     {
-        return new DefaultJsonSerializationContext(self::typeAdapterProvider($excluder), new WriterContext());
+        $provider = self::typeAdapterProvider($excluder);
+        $context = new WriterContext();
+        $context->setTypeAdapterProvider($provider);
+        $context->setExcluder($excluder);
+
+        return new DefaultJsonSerializationContext($provider, $context);
     }
 }

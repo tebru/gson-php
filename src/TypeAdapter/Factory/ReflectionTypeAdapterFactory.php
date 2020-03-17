@@ -8,13 +8,11 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\TypeAdapter\Factory;
 
-use Tebru\Gson\Annotation\ExclusionCheck;
 use Tebru\Gson\Annotation\JsonAdapter;
 use Tebru\Gson\Annotation\VirtualProperty;
 use Tebru\Gson\ClassMetadataVisitor;
 use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Data\ClassMetadataFactory;
-use Tebru\Gson\Internal\Data\Property;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;
@@ -42,15 +40,10 @@ class ReflectionTypeAdapterFactory implements TypeAdapterFactory
     /**
      * @var Excluder
      */
-    protected $excluder;
+    private $excluder;
 
     /**
-     * @var bool
-     */
-    protected $requireExclusionCheck;
-
-    /**
-     * @var array
+     * @var ClassMetadataVisitor[]
      */
     protected $classMetadataVisitors;
 
@@ -60,21 +53,18 @@ class ReflectionTypeAdapterFactory implements TypeAdapterFactory
      * @param ConstructorConstructor $constructorConstructor
      * @param ClassMetadataFactory $propertyCollectionFactory
      * @param Excluder $excluder
-     * @param bool $requireExclusionCheck
      * @param ClassMetadataVisitor[] $classMetadataVisitors
      */
     public function __construct(
         ConstructorConstructor $constructorConstructor,
         ClassMetadataFactory $propertyCollectionFactory,
         Excluder $excluder,
-        bool $requireExclusionCheck,
         array $classMetadataVisitors
     ) {
         $this->constructorConstructor = $constructorConstructor;
         $this->classMetadataFactory = $propertyCollectionFactory;
-        $this->excluder = $excluder;
-        $this->requireExclusionCheck = $requireExclusionCheck;
         $this->classMetadataVisitors = $classMetadataVisitors;
+        $this->excluder = $excluder;
     }
 
     /**
@@ -92,10 +82,19 @@ class ReflectionTypeAdapterFactory implements TypeAdapterFactory
             return null;
         }
 
-        $classMetadata = $this->classMetadataFactory->create($type);
+        $classMetadata = $this->classMetadataFactory->create($type, $typeAdapterProvider);
+        if ($this->excluder->hasRuntimeClassStrategies($classMetadata)) {
+            $classMetadata->hasExclusions = true;
+        }
 
         foreach ($this->classMetadataVisitors as $visitor) {
             $visitor->onLoaded($classMetadata);
+        }
+
+        foreach ($classMetadata->properties as $property) {
+            if ($this->excluder->hasRuntimePropertyStrategies($property)) {
+                $property->hasExclusions = true;
+            }
         }
 
         // if class uses a JsonAdapter annotation, use that instead
@@ -107,26 +106,18 @@ class ReflectionTypeAdapterFactory implements TypeAdapterFactory
 
         $objectConstructor = $this->constructorConstructor->get($type);
         $classVirtualProperty = $classMetadata->annotations->get(VirtualProperty::class);
+        $classVirtualProperty = $classVirtualProperty ? $classVirtualProperty->getValue() : null;
 
-        $propertyExclusionCheck = false;
-        if ($this->requireExclusionCheck) {
-            /** @var Property $property */
-            foreach ($classMetadata->properties->toArray() as $property) {
-                if ($property->annotations->get(ExclusionCheck::class) !== null) {
-                    $propertyExclusionCheck = true;
-                    break;
-                }
-            }
-        }
+        return new ReflectionTypeAdapter($objectConstructor, $classMetadata, $classVirtualProperty);
+    }
 
-        return new ReflectionTypeAdapter(
-            $objectConstructor,
-            $classMetadata,
-            $this->excluder,
-            $typeAdapterProvider,
-            $classVirtualProperty ? $classVirtualProperty->getValue() : null,
-            $this->requireExclusionCheck,
-            $propertyExclusionCheck
-        );
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return false;
     }
 }

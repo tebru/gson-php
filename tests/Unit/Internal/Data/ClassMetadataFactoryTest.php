@@ -20,6 +20,7 @@ use Tebru\Gson\Internal\AccessorStrategy\SetByNull;
 use Tebru\Gson\Internal\AccessorStrategy\SetByPublicProperty;
 use Tebru\Gson\Internal\AccessorStrategyFactory;
 use Tebru\Gson\Internal\CacheProvider;
+use Tebru\Gson\Internal\ConstructorConstructor;
 use Tebru\Gson\Internal\Data\ClassMetadataFactory;
 use Tebru\Gson\Internal\Data\PropertyCollection;
 use Tebru\Gson\Internal\Data\ReflectionPropertySetFactory;
@@ -66,7 +67,7 @@ class ClassMetadataFactoryTest extends TestCase
     }
     public function testCreate(): void
     {
-        $classMetadata = $this->classMetadataFactory->create(new TypeToken(PropertyCollectionMock::class));
+        $classMetadata = $this->classMetadataFactory->create(new TypeToken(PropertyCollectionMock::class), $this->typeAdapterProvider);
 
         self::assertSame(PropertyCollectionMock::class, $classMetadata->getName());
 
@@ -113,21 +114,21 @@ class ClassMetadataFactoryTest extends TestCase
             new AccessorMethodProvider(new UpperCaseMethodNamingStrategy()),
             new AccessorStrategyFactory(),
             new TypeTokenFactory(),
-            new Excluder(),
+            new Excluder(new ConstructorConstructor()),
             $cache
         );
 
         $cacheKey = 'gson.classmetadata.'.str_replace('\\', '', PropertyCollectionMock::class);
 
         // assert data is stored in cache
-        $factory->create(new TypeToken(PropertyCollectionMock::class));
+        $factory->create(new TypeToken(PropertyCollectionMock::class), $this->typeAdapterProvider);
         self::assertCount(4, $cache->get($cacheKey)->getPropertyCollection()->toArray());
 
         // overwrite cache
         $cache->set($cacheKey, new DefaultClassMetadata('foo', new AnnotationCollection(), new PropertyCollection()));
 
         // assert we use the new cache
-        $collection = $factory->create(new TypeToken(PropertyCollectionMock::class));
+        $collection = $factory->create(new TypeToken(PropertyCollectionMock::class), $this->typeAdapterProvider);
         self::assertCount(0, $collection->getPropertyCollection()->toArray());
     }
 }

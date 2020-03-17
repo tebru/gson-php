@@ -10,7 +10,6 @@ namespace Tebru\Gson\TypeAdapter;
 
 use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\Context\WriterContext;
-use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;
 use Tebru\PhpType\TypeToken;
 
@@ -21,21 +20,6 @@ use Tebru\PhpType\TypeToken;
  */
 class WildcardTypeAdapter extends TypeAdapter
 {
-    /**
-     * @var TypeAdapterProvider
-     */
-    protected $typeAdapterProvider;
-
-    /**
-     * Constructor
-     *
-     * @param TypeAdapterProvider $typeAdapterProvider
-     */
-    public function __construct(TypeAdapterProvider $typeAdapterProvider)
-    {
-        $this->typeAdapterProvider = $typeAdapterProvider;
-    }
-
     /**
      * Read the next value, convert it to its type and return it
      *
@@ -50,7 +34,7 @@ class WildcardTypeAdapter extends TypeAdapter
             return $value;
         }
 
-        return $this->typeAdapterProvider->getAdapter($type)->read($value, $context);
+        return $context->getTypeAdapterProvider()->getAdapter($type)->read($value, $context);
     }
 
     /**
@@ -67,6 +51,16 @@ class WildcardTypeAdapter extends TypeAdapter
             return $value;
         }
 
-        return $this->typeAdapterProvider->getAdapter($type)->write($value, $context);
+        return $context->getTypeAdapterProvider()->getAdapter($type)->write($value, $context);
+    }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
     }
 }

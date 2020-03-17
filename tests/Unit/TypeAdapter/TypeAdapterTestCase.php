@@ -10,6 +10,7 @@ namespace Tebru\Gson\Test\Unit\TypeAdapter;
 use PHPUnit\Framework\TestCase;
 use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\Context\WriterContext;
+use Tebru\Gson\Test\MockProvider;
 
 /**
  * Class TypeAdapterTestCase
@@ -30,7 +31,12 @@ class TypeAdapterTestCase extends TestCase
 
     public function setUp()
     {
+        $provider = MockProvider::typeAdapterProvider();
         $this->readerContext = new ReaderContext();
+        $this->readerContext->setTypeAdapterProvider($provider);
+        $this->readerContext->setExcluder(MockProvider::excluder());
         $this->writerContext = new WriterContext();
+        $this->writerContext->setTypeAdapterProvider($provider);
+        $this->writerContext->setExcluder(MockProvider::excluder());
     }
 }

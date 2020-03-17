@@ -37,7 +37,7 @@ class ChildClass extends ChildClassParent
     private $withTypehint;
 
     /**
-     * @Gson\ExclusionCheck()
+     * @var int
      */
     private $default = 1;
 

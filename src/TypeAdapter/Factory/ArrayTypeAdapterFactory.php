@@ -8,11 +8,15 @@ declare(strict_types=1);
 
 namespace Tebru\Gson\TypeAdapter\Factory;
 
+use InvalidArgumentException;
+use LogicException;
 use stdClass;
 use Tebru\Gson\Internal\TypeAdapterProvider;
 use Tebru\Gson\TypeAdapter;
 use Tebru\Gson\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\TypeAdapter\ScalarArrayTypeAdapter;
+use Tebru\Gson\TypeAdapter\TypedArrayTypeAdapter;
+use Tebru\Gson\TypeAdapter\WildcardTypeAdapter;
 use Tebru\Gson\TypeAdapterFactory;
 use Tebru\PhpType\TypeToken;
 
@@ -56,26 +60,43 @@ class ArrayTypeAdapterFactory implements TypeAdapterFactory
         $genericTypes = $type->genericTypes;
         $numberOfGenericTypes = count($genericTypes);
 
-        $keyType = TypeToken::create(TypeToken::WILDCARD);
-        $valueType = TypeToken::create(TypeToken::WILDCARD);
+        if ($numberOfGenericTypes > 2) {
+            throw new LogicException('Array may not have more than 2 generic types');
+        }
+
+        $keyType = $valueType = TypeToken::create(TypeToken::WILDCARD);
 
         if ($numberOfGenericTypes === 1) {
+            $keyType = TypeToken::create(TypeToken::INTEGER);
             $valueType = $genericTypes[0];
         } elseif ($numberOfGenericTypes === 2) {
             [$keyType, $valueType] = $genericTypes;
         }
 
-        if (!$this->enableScalarAdapters && $valueType->isScalar()) {
-            if ($numberOfGenericTypes < 2 && $valueType->genericTypes === []) {
-                return new ScalarArrayTypeAdapter();
-            }
-
-            $valueTypeAdapter = new TypeAdapter\WildcardTypeAdapter($typeAdapterProvider);
-        } else {
-            $valueTypeAdapter = $typeAdapterProvider->getAdapter($valueType);
+        if ($keyType->phpType !== TypeToken::WILDCARD && $keyType->phpType !== TypeToken::INTEGER && $keyType->phpType !== TypeToken::STRING) {
+            throw new LogicException('Array keys must be strings or integers');
         }
 
+        if (!$this->enableScalarAdapters && $numberOfGenericTypes <= 2 && $valueType->genericTypes === [] && $valueType->isScalar()) {
+            return new ScalarArrayTypeAdapter();
+        }
 
-        return new ArrayTypeAdapter($typeAdapterProvider, $keyType, $valueTypeAdapter, $numberOfGenericTypes);
+        $valueTypeAdapter = $typeAdapterProvider->getAdapter($valueType);
+
+        if (!$valueTypeAdapter instanceof WildcardTypeAdapter && !$keyType->phpType !== TypeToken::WILDCARD && $numberOfGenericTypes >= 1) {
+            return new TypedArrayTypeAdapter($valueTypeAdapter, $keyType->phpType === TypeToken::STRING);
+        }
+
+        return new ArrayTypeAdapter();
+    }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return false;
     }
 }

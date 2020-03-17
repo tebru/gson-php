@@ -45,4 +45,14 @@ final class CreateWithoutArguments implements ObjectConstructor
     {
         return new $this->class();
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
+    }
 }

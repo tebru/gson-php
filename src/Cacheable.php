@@ -18,9 +18,9 @@ namespace Tebru\Gson;
 interface Cacheable
 {
     /**
-     * Return true if caching should be enabled
+     * Return true if object can be written to disk
      *
      * @return bool
      */
-    public function shouldCache(): bool;
+    public function canCache(): bool;
 }

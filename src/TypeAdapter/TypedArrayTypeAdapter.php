@@ -12,21 +12,35 @@ use Tebru\Gson\Context\ReaderContext;
 use Tebru\Gson\Context\WriterContext;
 use Tebru\Gson\Exception\JsonSyntaxException;
 use Tebru\Gson\TypeAdapter;
-use Tebru\PhpType\TypeToken;
 
 /**
- * Class ArrayTypeAdapter
+ * Class TypedArrayTypeAdapter
  *
  * @author Nate Brunette <n@tebru.net>
  */
-class ArrayTypeAdapter extends TypeAdapter
+class TypedArrayTypeAdapter extends TypeAdapter
 {
     /**
-     * A TypeAdapter cache keyed by raw type
-     *
-     * @var TypeAdapter[]
+     * @var TypeAdapter
      */
-    protected $adapters = [];
+    protected $valueTypeAdapter;
+
+    /**
+     * @var bool
+     */
+    private $stringKeys;
+
+    /**
+     * Constructor
+     *
+     * @param TypeAdapter $valueTypeAdapter
+     * @param bool $stringKeys
+     */
+    public function __construct(TypeAdapter $valueTypeAdapter, bool $stringKeys)
+    {
+        $this->valueTypeAdapter = $valueTypeAdapter;
+        $this->stringKeys = $stringKeys;
+    }
 
     /**
      * Read the next value, convert it to its type and return it
@@ -46,21 +60,25 @@ class ArrayTypeAdapter extends TypeAdapter
         }
 
         $result = [];
-
         $arrayIsObject = is_string(key($value));
-        $enableScalarAdapters = $context->enableScalarAdapters();
-        $typeAdapterProvider = $context->getTypeAdapterProvider();
+
+        if ($arrayIsObject !== $this->stringKeys) {
+            throw new JsonSyntaxException(
+                sprintf(
+                    'Expected %s, but found %s for key',
+                    $this->stringKeys ? 'string' : 'integer',
+                    $arrayIsObject ? 'string' : 'integer'
+                )
+            );
+        }
 
         foreach ($value as $key => $item) {
-            if (!$enableScalarAdapters && ($item === null || is_scalar($item))) {
-                $itemValue = $item;
+            $itemValue = $this->valueTypeAdapter->read($item, $context);
+            if ($this->stringKeys) {
+                $result[(string)$key] = $itemValue;
             } else {
-                $type = TypeToken::createFromVariable($item);
-                $adapter = $this->adapters[$type->rawType] ?? $this->adapters[$type->rawType] = $typeAdapterProvider->getAdapter($type);
-                $itemValue = $adapter->read($item, $context);
+                $result[] = $itemValue;
             }
-
-            $result[$arrayIsObject ? (string)$key : (int)$key] = $itemValue;
         }
 
         return $result;
@@ -79,32 +97,35 @@ class ArrayTypeAdapter extends TypeAdapter
             return null;
         }
 
-        $arrayIsObject = is_string(key($value));
-        $enableScalarAdapters = $context->enableScalarAdapters();
         $serializeNull = $context->serializeNull();
-        $typeAdapterProvider = $context->getTypeAdapterProvider();
         $result = [];
+        $arrayIsObject = is_string(key($value));
+
+        if ($arrayIsObject !== $this->stringKeys) {
+            throw new JsonSyntaxException(
+                sprintf(
+                    'Expected %s, but found %s for key',
+                    $this->stringKeys ? 'string' : 'integer',
+                    $arrayIsObject ? 'string' : 'integer'
+                )
+            );
+        }
 
         foreach ($value as $key => $item) {
             if ($item === null && !$serializeNull) {
                 continue;
             }
 
-            if (!$enableScalarAdapters && is_scalar($item)) {
-                $result[$arrayIsObject ? (string)$key : (int)$key] = $item;
-                continue;
-            }
-
-            $itemValue = null;
-            $type = TypeToken::createFromVariable($item);
-            $adapter = $this->adapters[$type->rawType] ?? $this->adapters[$type->rawType] = $typeAdapterProvider->getAdapter($type);
-            $itemValue = $adapter->write($item, $context);
-
+            $itemValue = $this->valueTypeAdapter->write($item, $context);
             if ($itemValue === null && !$serializeNull) {
                 continue;
             }
 
-            $result[$arrayIsObject ? (string)$key : (int)$key] = $itemValue;
+            if ($this->stringKeys) {
+                $result[(string)$key] = $itemValue;
+            } else {
+                $result[] = $itemValue;
+            }
         }
 
         return $result;
@@ -117,11 +138,6 @@ class ArrayTypeAdapter extends TypeAdapter
      */
     public function canCache(): bool
     {
-        return true;
-    }
-
-    public function __sleep()
-    {
-        return [];
+        return $this->valueTypeAdapter->canCache();
     }
 }

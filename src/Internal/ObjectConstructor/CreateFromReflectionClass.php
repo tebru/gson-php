@@ -47,4 +47,14 @@ final class CreateFromReflectionClass implements ObjectConstructor
 
         return $reflectionClass->newInstanceWithoutConstructor();
     }
+
+    /**
+     * Return true if object can be written to disk
+     *
+     * @return bool
+     */
+    public function canCache(): bool
+    {
+        return true;
+    }
 }

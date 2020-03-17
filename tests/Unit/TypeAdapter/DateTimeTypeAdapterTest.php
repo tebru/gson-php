@@ -23,14 +23,14 @@ class DateTimeTypeAdapterTest extends TypeAdapterTestCase
 {
     public function testDeserializeNull(): void
     {
-        $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
+        $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class));
 
         self::assertNull($adapter->read(json_decode('null', true), $this->readerContext));
     }
 
     public function testDeserializeCreateDatetimeDefault(): void
     {
-        $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
+        $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class));
         $result = $adapter->read(json_decode('"2016-01-02T12:23:53-06:00"', true), $this->readerContext);
 
         self::assertSame('2016-01-02T12:23:53-06:00', $result->format(DateTime::ATOM));
@@ -38,7 +38,7 @@ class DateTimeTypeAdapterTest extends TypeAdapterTestCase
 
     public function testDeserializeCreateDatetimeImmutable(): void
     {
-        $adapter = new DateTimeTypeAdapter(new TypeToken(DateTimeImmutable::class), DateTime::ATOM);
+        $adapter = new DateTimeTypeAdapter(new TypeToken(DateTimeImmutable::class));
         $result = $adapter->read(json_decode('"2016-01-02T12:23:53-06:00"', true), $this->readerContext);
 
         self::assertSame('2016-01-02T12:23:53-06:00', $result->format(DateTime::ATOM));
@@ -46,7 +46,7 @@ class DateTimeTypeAdapterTest extends TypeAdapterTestCase
 
     public function testDeserializeException(): void
     {
-        $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class), DateTime::ATOM);
+        $adapter = new DateTimeTypeAdapter(new TypeToken(DateTime::class));
         try {
             $adapter->read(json_decode('"2016-0102T12:23:53-06:00"', true), $this->readerContext);
         } catch (JsonSyntaxException $exception) {
@@ -59,7 +59,7 @@ class DateTimeTypeAdapterTest extends TypeAdapterTestCase
     public function testSerializeNull(): void
     {
         $type = new TypeToken(DateTime::class);
-        $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
+        $adapter = new DateTimeTypeAdapter($type);
 
         self::assertNull($adapter->write(null, $this->writerContext));
     }
@@ -67,7 +67,7 @@ class DateTimeTypeAdapterTest extends TypeAdapterTestCase
     public function testSerializeDefault(): void
     {
         $type = new TypeToken(DateTime::class);
-        $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
+        $adapter = new DateTimeTypeAdapter($type);
 
         $dateTime = DateTime::createFromFormat(DateTime::ATOM, '2016-01-02T12:23:53-06:00');
 
@@ -77,7 +77,7 @@ class DateTimeTypeAdapterTest extends TypeAdapterTestCase
     public function testSerializeImmutable(): void
     {
         $type = new TypeToken(DateTime::class);
-        $adapter = new DateTimeTypeAdapter($type, DateTime::ATOM);
+        $adapter = new DateTimeTypeAdapter($type);
 
         $dateTime = DateTimeImmutable::createFromFormat(DateTime::ATOM, '2016-01-02T12:23:53-06:00');
 

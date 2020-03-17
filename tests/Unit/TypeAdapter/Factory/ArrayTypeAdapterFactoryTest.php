@@ -7,12 +7,14 @@
 namespace Tebru\Gson\Test\Unit\TypeAdapter\Factory;
 
 
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use Tebru\Gson\TypeAdapter\ArrayTypeAdapter;
 use Tebru\Gson\TypeAdapter\Factory\ArrayTypeAdapterFactory;
 use Tebru\Gson\TypeAdapter\IntegerTypeAdapter;
 use Tebru\Gson\Test\MockProvider;
 use Tebru\Gson\TypeAdapter\ScalarArrayTypeAdapter;
+use Tebru\Gson\TypeAdapter\TypedArrayTypeAdapter;
 use Tebru\Gson\TypeAdapter\WildcardTypeAdapter;
 use Tebru\PhpType\TypeToken;
 
@@ -49,10 +51,7 @@ class ArrayTypeAdapterFactoryTest extends TestCase
         $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [], null, $enable);
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
-        self::assertAttributeSame($typeAdapterProvider, 'typeAdapterProvider', $adapter);
-        self::assertAttributeSame(TypeToken::create(TypeToken::WILDCARD), 'keyType', $adapter);
-        self::assertAttributeEquals(new WildcardTypeAdapter($typeAdapterProvider), 'valueTypeAdapter', $adapter);
-        self::assertAttributeSame(0, 'numberOfGenerics', $adapter);
+        self::assertInstanceOf(ArrayTypeAdapter::class, $adapter);
     }
 
     public function testCreateScalar(): void
@@ -76,10 +75,7 @@ class ArrayTypeAdapterFactoryTest extends TestCase
         $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [], null, $enable);
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
-        self::assertAttributeSame($typeAdapterProvider, 'typeAdapterProvider', $adapter);
-        self::assertAttributeSame(TypeToken::create(TypeToken::WILDCARD), 'keyType', $adapter);
-        self::assertAttributeEquals(new WildcardTypeAdapter($typeAdapterProvider), 'valueTypeAdapter', $adapter);
-        self::assertAttributeSame(0, 'numberOfGenerics', $adapter);
+        self::assertInstanceOf(ArrayTypeAdapter::class, $adapter);
     }
 
     public function testCreateOneGenericType(): void
@@ -89,10 +85,7 @@ class ArrayTypeAdapterFactoryTest extends TestCase
         $typeAdapterProvider = MockProvider::typeAdapterProvider();
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
-        self::assertAttributeSame($typeAdapterProvider, 'typeAdapterProvider', $adapter);
-        self::assertAttributeSame(TypeToken::create(TypeToken::WILDCARD), 'keyType', $adapter);
-        self::assertAttributeEquals(new IntegerTypeAdapter(), 'valueTypeAdapter', $adapter);
-        self::assertAttributeSame(1, 'numberOfGenerics', $adapter);
+        self::assertInstanceOf(TypedArrayTypeAdapter::class, $adapter);
     }
 
     public function testCreateOneGenericTypeWithoutScalarTypeAdapters(): void
@@ -112,9 +105,7 @@ class ArrayTypeAdapterFactoryTest extends TestCase
         $typeAdapterProvider = MockProvider::typeAdapterProvider();
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
-        self::assertAttributeSame(TypeToken::create('string'), 'keyType', $adapter);
-        self::assertAttributeEquals(new IntegerTypeAdapter(), 'valueTypeAdapter', $adapter);
-        self::assertAttributeSame(2, 'numberOfGenerics', $adapter);
+        self::assertInstanceOf(TypedArrayTypeAdapter::class, $adapter);
     }
 
     public function testCreateTwoGenericTypesWithoutScalarTypeAdapters(): void
@@ -124,9 +115,7 @@ class ArrayTypeAdapterFactoryTest extends TestCase
         $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [], null, false);
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
-        self::assertAttributeSame(TypeToken::create('string'), 'keyType', $adapter);
-        self::assertAttributeInstanceOf(WildcardTypeAdapter::class, 'valueTypeAdapter', $adapter);
-        self::assertAttributeSame(2, 'numberOfGenerics', $adapter);
+        self::assertInstanceOf(ScalarArrayTypeAdapter::class, $adapter);
     }
 
     /**
@@ -140,9 +129,8 @@ class ArrayTypeAdapterFactoryTest extends TestCase
         $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [], null, $enable);
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
-        self::assertAttributeSame(TypeToken::create('?'), 'keyType', $adapter);
+        self::assertInstanceOf(TypedArrayTypeAdapter::class, $adapter);
         self::assertAttributeInstanceOf(ArrayTypeAdapter::class, 'valueTypeAdapter', $adapter);
-        self::assertAttributeSame(1, 'numberOfGenerics', $adapter);
     }
 
     /**
@@ -156,9 +144,12 @@ class ArrayTypeAdapterFactoryTest extends TestCase
         $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [], null, $enable);
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
-        self::assertAttributeSame(TypeToken::create('?'), 'keyType', $adapter);
-        self::assertAttributeInstanceOf(ScalarArrayTypeAdapter::class, 'valueTypeAdapter', $adapter);
-        self::assertAttributeSame(1, 'numberOfGenerics', $adapter);
+        self::assertInstanceOf(TypedArrayTypeAdapter::class, $adapter);
+        if ($enable) {
+            self::assertAttributeInstanceOf(TypedArrayTypeAdapter::class, 'valueTypeAdapter', $adapter);
+        } else {
+            self::assertAttributeInstanceOf(ScalarArrayTypeAdapter::class, 'valueTypeAdapter', $adapter);
+        }
     }
 
     /**
@@ -172,9 +163,40 @@ class ArrayTypeAdapterFactoryTest extends TestCase
         $typeAdapterProvider = MockProvider::typeAdapterProvider(null, [], null, $enable);
         $adapter = $factory->create($phpType, $typeAdapterProvider);
 
-        self::assertAttributeSame(TypeToken::create('?'), 'keyType', $adapter);
-        self::assertAttributeInstanceOf(ArrayTypeAdapter::class, 'valueTypeAdapter', $adapter);
-        self::assertAttributeSame(1, 'numberOfGenerics', $adapter);
+        self::assertInstanceOf(TypedArrayTypeAdapter::class, $adapter);
+        if ($enable) {
+            self::assertAttributeInstanceOf(TypedArrayTypeAdapter::class, 'valueTypeAdapter', $adapter);
+        } else {
+            self::assertAttributeInstanceOf(ScalarArrayTypeAdapter::class, 'valueTypeAdapter', $adapter);
+        }
+    }
+
+    public function testCreateWithNonStringOrIntegerKey(): void
+    {
+        $factory = new ArrayTypeAdapterFactory(true);
+        $phpType = new TypeToken('array<float, string>');
+        $typeAdapterProvider = MockProvider::typeAdapterProvider();
+        try {
+            $factory->create($phpType, $typeAdapterProvider);
+        } catch (LogicException $exception) {
+            self::assertSame('Array keys must be strings or integers', $exception->getMessage());
+            return;
+        }
+        self::fail('Exception was not thrown');
+    }
+
+    public function testCreateWithTooManyGenerics(): void
+    {
+        $factory = new ArrayTypeAdapterFactory(true);
+        $phpType = new TypeToken('array<string, string, int>');
+        $typeAdapterProvider = MockProvider::typeAdapterProvider();
+        try {
+            $factory->create($phpType, $typeAdapterProvider);
+        } catch (LogicException $exception) {
+            self::assertSame('Array may not have more than 2 generic types', $exception->getMessage());
+            return;
+        }
+        self::fail('Exception was not thrown');
     }
 
     public function enableScalarTypeAdapters(): array

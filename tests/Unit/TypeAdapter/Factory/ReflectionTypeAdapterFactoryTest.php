@@ -9,14 +9,14 @@ namespace Tebru\Gson\Test\Unit\TypeAdapter\Factory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Tebru\Gson\ClassMetadataVisitor;
-use Tebru\Gson\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
 use Tebru\Gson\Internal\Excluder;
 use Tebru\Gson\Internal\TypeAdapterProvider;
-use Tebru\Gson\TypeAdapter\ReflectionTypeAdapter;
-use Tebru\Gson\TypeAdapter\StringTypeAdapter;
 use Tebru\Gson\Test\Mock\ChildClass;
 use Tebru\Gson\Test\Mock\JsonAdapterClassMock;
 use Tebru\Gson\Test\MockProvider;
+use Tebru\Gson\TypeAdapter\Factory\ReflectionTypeAdapterFactory;
+use Tebru\Gson\TypeAdapter\ReflectionTypeAdapter;
+use Tebru\Gson\TypeAdapter\StringTypeAdapter;
 use Tebru\PhpType\TypeToken;
 
 /**
@@ -24,7 +24,6 @@ use Tebru\PhpType\TypeToken;
  *
  * @author Nate Brunette <n@tebru.net>
  * @covers \Tebru\Gson\TypeAdapter\Factory\ReflectionTypeAdapterFactory
- * @covers \Tebru\Gson\Annotation\ExclusionCheck
  */
 class ReflectionTypeAdapterFactoryTest extends TestCase
 {
@@ -78,7 +77,7 @@ class ReflectionTypeAdapterFactoryTest extends TestCase
 
     public function testCreate(): void
     {
-        $this->visitorMock->expects($this->once())->method('onLoaded');
+        $this->visitorMock->expects($this->exactly(3))->method('onLoaded');
 
         $adapter = $this->typeAdapterProvider->getAdapter(new TypeToken(ChildClass::class));
 
