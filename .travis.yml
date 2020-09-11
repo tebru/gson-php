@@ -2,9 +2,6 @@ sudo: false
 
 language: php
 php:
-  - 7.1
-  - 7.2
-  - 7.3
   - 7.4
 
 env:
@@ -12,12 +9,6 @@ env:
   - SF_CACHE=4
   - SF_CACHE=4.3
   - SF_CACHE=5
-
-jobs:
-  exclude:
-    - php: 7.1
-      env:
-        - SF_CACHE=5
 
 before_script:
   - composer install --no-interaction -o

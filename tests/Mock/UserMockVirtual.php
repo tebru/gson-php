@@ -35,10 +35,7 @@ class UserMockVirtual
      */
     private $password;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
     /**
      * @var AddressMock

@@ -21,5 +21,5 @@ class ExcludedClassMock
      * @Type("Tebru\Gson\Test\Mock\GsonMock")
      */
     private $foo;
-    private $bar;
+    private bool $bar;
 }

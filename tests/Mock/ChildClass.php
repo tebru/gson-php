@@ -41,6 +41,8 @@ class ChildClass extends ChildClassParent
      */
     private $default = 1;
 
+    private array $typedArray;
+
     public function getBaz()
     {
         return $this->baz;

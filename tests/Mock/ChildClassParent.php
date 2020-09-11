@@ -26,6 +26,6 @@ class ChildClassParent extends ChildClassParent2
      * @QuxAnnotation("qux")
      */
     private $foo;
-    private $bar;
+    private string $bar;
     protected $baz;
 }
