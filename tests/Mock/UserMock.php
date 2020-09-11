@@ -33,10 +33,7 @@ class UserMock
      */
     private $password;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
 
     /**
      * @var AddressMock

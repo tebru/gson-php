@@ -48,6 +48,7 @@ class ReflectionPropertySetFactoryTest extends TestCase
             new ReflectionProperty(ChildClass::class, 'overridden'),
             new ReflectionProperty(ChildClass::class, 'withTypehint'),
             new ReflectionProperty(ChildClass::class, 'default'),
+            new ReflectionProperty(ChildClass::class, 'typedArray'),
             new ReflectionProperty(ChildClassParent::class, 'baz'),
             new ReflectionProperty(ChildClassParent2::class, 'qux'),
             new ReflectionProperty(ChildClassParent::class, 'bar'),

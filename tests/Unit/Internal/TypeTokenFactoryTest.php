@@ -46,6 +46,40 @@ class TypeTokenFactoryTest extends TestCase
         self::assertSame(ChildClass::class, $phpType->getRawType());
     }
 
+    public function testCreateFromAnnotationWithTypedProperty(): void
+    {
+        $type = new Type(['value' => ChildClass::class]);
+        $annotations = new AnnotationCollection();
+        $annotations->add($type);
+
+        $factory = new TypeTokenFactory();
+        $property = new ReflectionProperty(ChildClass::class, 'typedArray');
+        $phpType = $factory->create($annotations, null, null, $property);
+
+        self::assertSame(ChildClass::class, $phpType->getRawType());
+    }
+
+    public function testCreateFromPropertyType(): void
+    {
+        $annotations = new AnnotationCollection();
+        $factory = new TypeTokenFactory();
+        $property = new ReflectionProperty(ChildClass::class, 'typedArray');
+        $phpType = $factory->create($annotations, null, null, $property);
+
+        self::assertSame('array', $phpType->getRawType());
+    }
+
+    public function testCreateFromArrayPropertyTypeWithGeneric(): void
+    {
+        $annotations = new AnnotationCollection();
+        $factory = new TypeTokenFactory();
+        $property = new ReflectionProperty(DocblockMock::class, 'fullyTypedArray');
+        $phpType = $factory->create($annotations, null, null, $property);
+
+        self::assertSame(TypeToken::HASH, $phpType->getRawType());
+        self::assertSame(TypeToken::INTEGER, $phpType->getGenerics()[0]->getRawType());
+    }
+
     public function testCreateFromSetterTypehint(): void
     {
         $annotations = new AnnotationCollection();
@@ -355,6 +389,28 @@ class TypeTokenFactoryTest extends TestCase
         $factory = new TypeTokenFactory();
         $property = new ReflectionProperty(DocblockMock::class, 'differentSetter');
         $setter = new ReflectionMethod(DocblockMock::class, 'setDifferentSetter');
+        $phpType = $factory->create($annotations, null, $setter, $property);
+
+        self::assertSame('array<Tebru\Gson\Test\Mock\DocblockType\DocblockFoo>', (string)$phpType);
+    }
+
+    public function testCreateFromDocblockDifferentGetterWithTypedProperty(): void
+    {
+        $annotations = new AnnotationCollection();
+        $factory = new TypeTokenFactory();
+        $property = new ReflectionProperty(DocblockMock::class, 'differentGetterTyped');
+        $getter = new ReflectionMethod(DocblockMock::class, 'getDifferentGetterTyped');
+        $phpType = $factory->create($annotations, $getter, null, $property);
+
+        self::assertSame('array<Tebru\Gson\Test\Mock\DocblockType\DocblockFoo>', (string)$phpType);
+    }
+
+    public function testCreateFromDocblockDifferentSetterWithTypedProperty(): void
+    {
+        $annotations = new AnnotationCollection();
+        $factory = new TypeTokenFactory();
+        $property = new ReflectionProperty(DocblockMock::class, 'differentSetterTyped');
+        $setter = new ReflectionMethod(DocblockMock::class, 'setDifferentSetterTyped');
         $phpType = $factory->create($annotations, null, $setter, $property);
 
         self::assertSame('array<Tebru\Gson\Test\Mock\DocblockType\DocblockFoo>', (string)$phpType);

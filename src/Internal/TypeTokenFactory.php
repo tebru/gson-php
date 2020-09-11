@@ -100,6 +100,11 @@ final class TypeTokenFactory
             }
         }
 
+        if ($property !== null && $property->getType() !== null) {
+            $propertyType = TypeToken::create($property->getType()->getName());
+            return $this->checkGenericArray($propertyType, $property, $getterMethod, $setterMethod);
+        }
+
         $type = $this->checkDocBlocks($property, $getterMethod, $setterMethod);
         if ($type !== null) {
             return $this->checkGenericArray(

@@ -21,7 +21,7 @@ class AnnotatedMock
      */
     private $fooBar;
 
-    private $fooBarBaz;
+    private float $fooBarBaz;
 
     /**
      * @Gson\VirtualProperty("vfoo")

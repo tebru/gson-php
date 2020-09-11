@@ -24,7 +24,7 @@ class ClassWithoutParent
      * @FooAnnotation("foo")
      * @BarAnnotation("bar")
      */
-    private $foo;
+    private int $foo;
 
     /**
      * @FooAnnotation("foo2")

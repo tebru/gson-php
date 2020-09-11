@@ -113,12 +113,17 @@ class DocblockMock
     /**
      * @var ArrayObject
      */
-    private $classGlobal;
+    private ArrayObject $classGlobal;
 
     /**
      * @var array
      */
     private $array;
+
+    /**
+     * @var int[]
+     */
+    private array $fullyTypedArray;
 
     /**
      * @var int[]
@@ -161,6 +166,16 @@ class DocblockMock
     private $differentSetter;
 
     /**
+     * @var ArrayObject
+     */
+    private ArrayObject $differentGetterTyped;
+
+    /**
+     * @var ArrayObject
+     */
+    private ArrayObject $differentSetterTyped;
+
+    /**
      * @return int
      */
     public function getFoo()
@@ -196,5 +211,21 @@ class DocblockMock
     public function setDifferentSetter(array $foos): void
     {
         $this->differentSetter = $foos;
+    }
+
+    /**
+     * @return DocblockFoo[]
+     */
+    public function getDifferentGetterTyped(): array
+    {
+        return $this->differentGetterTyped->getArrayCopy();
+    }
+
+    /**
+     * @param DocblockFoo[] $foos
+     */
+    public function setDifferentSetterTyped(array $foos): void
+    {
+        $this->differentSetterTyped = new ArrayObject($foos);
     }
 }

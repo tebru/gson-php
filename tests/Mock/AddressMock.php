@@ -18,10 +18,7 @@ class AddressMock
      */
     private $street;
 
-    /**
-     * @var string
-     */
-    private $city;
+    private string $city;
 
     /**
      * @var string
