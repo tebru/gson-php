@@ -34,7 +34,7 @@ class PropertyCollectionTest extends TestCase
      */
     private $propertyCollection;
 
-    public function setUp()
+    public function setUp(): void
     {
         $realName = 'foo';
         $serializedName = 'foo_bar';

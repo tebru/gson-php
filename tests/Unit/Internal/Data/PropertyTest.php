@@ -42,7 +42,7 @@ class PropertyTest extends TestCase
      */
     private $classMetadata;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->propertyCollection = new PropertyCollection();
         $this->classMetadata = MockProvider::classMetadata(stdClass::class, $this->propertyCollection);

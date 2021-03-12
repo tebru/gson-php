@@ -42,7 +42,7 @@ class TypeAdapterProviderTest extends TestCase
      */
     private $typeAdapterProvider;
     
-    public function setUp()
+    public function setUp(): void
     {
         $this->typeAdapterMock = new TypeAdapterMock();
         $this->typeAdapterProvider = MockProvider::typeAdapterProvider(MockProvider::excluder(), [$this->typeAdapterMock]);

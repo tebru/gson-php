@@ -28,7 +28,7 @@ class TypeAdapterTestCase extends TestCase
      */
     protected $writerContext;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->readerContext = new ReaderContext();
         $this->writerContext = new WriterContext();

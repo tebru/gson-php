@@ -41,7 +41,7 @@ class ClassMetadataTest extends TestCase
      */
     private $metadata;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->annotations = new AnnotationCollection();
         $this->propertyCollection = new PropertyCollection();

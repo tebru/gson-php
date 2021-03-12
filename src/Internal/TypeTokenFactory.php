@@ -10,6 +10,7 @@ namespace Tebru\Gson\Internal;
 
 use InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlock\Tag;
+use phpDocumentor\Reflection\DocBlock\Tags\InvalidTag;
 use phpDocumentor\Reflection\DocBlock\Tags\Param;
 use phpDocumentor\Reflection\DocBlock\Tags\Return_;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
@@ -224,6 +225,10 @@ final class TypeTokenFactory
         $tags = $docblock->getTagsByName($tagName);
 
         if (empty($tags)) {
+            return null;
+        }
+
+        if (count($tags) === 1 && $tags[0] instanceof InvalidTag) {
             return null;
         }
 
