@@ -48,7 +48,7 @@ class ReflectionTypeAdapterFactoryTest extends TestCase
      */
     private $visitorMock;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->visitorMock = $this->getMockBuilder(ClassMetadataVisitor::class)
             ->setMethods(['onLoaded'])

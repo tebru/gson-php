@@ -58,7 +58,7 @@ class ClassMetadataFactoryTest extends TestCase
      */
     private $typeAdapterProvider;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->excluder = MockProvider::excluder();
         $this->classMetadataFactory = MockProvider::classMetadataFactory($this->excluder);

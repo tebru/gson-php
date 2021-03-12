@@ -6,6 +6,7 @@ php:
   - 7.2
   - 7.3
   - 7.4
+  - 8.0
 
 env:
   - SF_CACHE=3
@@ -18,13 +19,16 @@ jobs:
     - php: 7.1
       env:
         - SF_CACHE=5
+    - php: 8.0
+      env:
+        - SF_CACHE=4
 
 before_script:
   - composer install --no-interaction -o
   - if [ "$SF_CACHE" = "3" ]; then composer require symfony/cache:^3.3; fi;
   - if [ "$SF_CACHE" = "4" ]; then composer require symfony/cache:">=4.0 <4.3"; fi;
   - if [ "$SF_CACHE" = "4.3" ]; then composer require symfony/cache:^4.3; fi;
-  - if [ "$SF_CACHE" = "5" ]; then composer require symfony/cache:5.0; fi;
+  - if [ "$SF_CACHE" = "5" ]; then composer require symfony/cache:^5.0; fi;
 
 script:
   - mkdir -p build/logs

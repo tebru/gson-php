@@ -25,7 +25,7 @@ class WrappedTypeAdapterFactoryTest extends TestCase
      */
     private $wrappedTypeAdapterFactory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->wrappedTypeAdapterFactory = new WrappedTypeAdapterFactory(new TypeAdapterMock(), new TypeToken(TypeAdapterMockable::class), false);
     }

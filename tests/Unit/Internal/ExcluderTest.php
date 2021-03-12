@@ -57,7 +57,7 @@ class ExcluderTest extends TestCase
     /**
      * Set up dependencies
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->excluder = MockProvider::excluder();
         $this->propertyCollection = new PropertyCollection();
